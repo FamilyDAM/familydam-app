@@ -15,19 +15,46 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var LoginService = function($http)
+var LoginService = function($http, AuthService)
 {
 
-    this.login = function(username, password)
+    this.login = function(username_, password_)
     {
         var _config = {};
         _config.headers = {};
+        _config.headers['Accept'] = "application/json";
         _config.headers['Content-Type'] = "application/x-www-form-urlencoded";
         _config.headers['X-Requested-With'] = "XMLHttpRequest";
 
-        var _args = $.param({ j_username:username, j_password:password, resource:"/", selectedAuthType:"form", _charset_:"UTF-8", j_use_cookie_auth:"true", j_uri:"/foo" });
+        //var _args = $.param({ username:username, password:password });
 
-        var method =  $http.post('http://localhost:9000/j_security_check', _args, _config);
+        //todo: make port dynamic
+        var method =  $http.post('http://localhost:8080/api/users/login',
+            "username=" +username_ +"&password=" +password_,
+            _config);
+
+        return method.then(
+            function(result){
+                AuthService.isAuthenticated = true;
+                AuthService.username = username_;
+                AuthService.password = password_;
+                return result;
+            },function(responseError){
+                return responseError;
+            }
+        );
+    };
+
+
+
+    this.listUsers = function()
+    {
+        var _config = {};
+        _config.headers = {};
+        _config.headers['Accept'] = "application/json";
+
+        //todo: make port dynamic
+        var method =  $http.get('http://localhost:8080/api/users'); //, _config);
 
         return method;
     };
@@ -35,11 +62,15 @@ var LoginService = function($http)
 
     this.getUser = function(username)
     {
-        var method =  $http.get('http://localhost:9000/system/userManager/user/' +username +'.2.json');
-        return method;
+        var method =  $http.get('http://localhost:8080/api/users/' +username);
+        return method.then(
+            function(result){
+                return result;
+            }
+        );
     };
 
 };
 
-LoginService.$inject = ['$http'];
+LoginService.$inject = ['$http', 'authService'];
 module.exports = LoginService;

@@ -18,11 +18,13 @@
 /**
  * Define the required js libraries needed for this application. The compiler will merge them all into a single download
  */
-require('moment');
 require('angular');
 require('angular-resource');
 require('angular-ui-router');
+
 require('ui.bootstrap');
 require('ui.bootstrap.tpls');
+
+require('moment');
 require('angular-moment');
 

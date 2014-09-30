@@ -1,10 +1,10 @@
-
+<script src="../../../../components/platform/platform.js"></script>
 <link rel="import" href="../../../../components/core-animated-pages/core-animated-pages.html"/>
 <link rel="import" href="../../../../components/paper-input/paper-input.html"/>
 <link rel="import" href="../../../../components/paper-button/paper-button.html"/>
 
 
-<polymer-element name="login-user" attributes="validationMessage">
+<polymer-element name="login-users" attributes="validationMessage">
     <template>
 
         <style>
@@ -97,10 +97,10 @@
 
                 <div class="chip-container" hero-p on-tap="{{transition}}">
 
-                    <template repeat="{{items as item}}">
+                    <template repeat="{{users as item}}">
 
-                        <div class="chip" hero-id="{{item.id}}" hero?="{{selectedAlbum === item }}">
-                            <div class="chip-top" style="background:{{item.color}};" hero-id="{{item.id}}-art" hero?="{{selectedAlbum === item}}"></div>
+                        <div class="chip" hero-id="{{item.name}}" hero?="{{selectedAlbum === item }}">
+                            <div class="chip-top" style="background:{{item.color}};" hero-id="{{item.name}}-art" hero?="{{selectedAlbum === item}}"></div>
                             <div class="chip-bottom">
                                 <div class="chip-album-title">{{item.name}}</div>
                             </div>
@@ -113,8 +113,8 @@
 
             <section id="details">
 
-                <div class="card" layout horizontal hero-id="{{selectedAlbum.id}}" hero >
-                    <div class="card-left" style="background:{{selectedAlbum.color}};" hero-id="{{selectedAlbum.id}}-art" hero ></div>
+                <div class="card" layout horizontal hero-id="{{selectedAlbum.name}}" hero >
+                    <div class="card-left" style="background:{{selectedAlbum.color}};" hero-id="{{selectedAlbum.name}}-art" hero ></div>
                     <div class="card-right" flex>
                         <div layout horizontal center>
                             <div flex>
@@ -127,7 +127,7 @@
                                              floating="true" password></paper-input>
                                 <paper-button id="login-button" label="Login" style="width:150px;" raisedButton on-click="{{loginHandler}}"></paper-button>
                                 <paper-button id="cancel-button" label="cancel" on-tap="{{transition}}"></paper-button>
-                                <paper-input type="hidden" id="username" inputValue="{{selectedAlbum.username}}"/>
+                                <paper-input type="hidden" id="username" inputValue="{{selectedAlbum.name}}"/>
                             </div>
                         </div>
                     </div>
@@ -140,17 +140,22 @@
     </template>
     <script>
 
-        Polymer('login-user', {
+        Polymer('login-users', {
             applyAuthorStyles: false,
             page: 0,
             validationMessage: "",
 
-            items: [
-                { id:'0001', name: 'Mike', username:'mnimer', color: '#3949ab' },
+            users: [
+                { id:'0001', name: 'admin', username:'admin', color: '#3949ab' },
                 { id:'0002', name: 'Angela', username:'animer', color: '#3949ab' },
                 { id:'0003', name: 'Kayden', username:'knimer', color: '#3949ab' },
                 { id:'0004', name: 'Hailey', username:'hnimer', color: '#3949ab' }
             ],
+
+            usersChanged: function(newVal, oldVal){
+                console.log(newVal);
+                this.users = newVal;
+            },
 
             validationMessageChanged: function(oldVal, newVal) {
                 //var newVal = this.getAttribute(attrName);

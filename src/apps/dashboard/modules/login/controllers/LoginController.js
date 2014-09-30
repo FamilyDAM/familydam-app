@@ -21,51 +21,59 @@ var LoginController = function($window, $scope, $rootScope, $location, loginServ
     $scope.nowTimestamp = new Date();
     $scope.validationErrorMessage = "";
 
+    // reset the logged in user
+    $rootScope.user = null;
+    $scope.users = [];
+
+
     var timestampPromise = $interval(function(){
         $scope.nowTimestamp = new Date();
     }, 1000);
 
 
-    $scope.authenticateUser = function()
+    $scope.loadUserList = function()
     {
-        var loginQ = loginService.login($scope.loginForm.username, $scope.loginForm.password);
-        loginQ.then(
-            function(data, status, headers, config)
+        var userListSrv = loginService.listUsers();
+        userListSrv.then(
+            function(response, status, headers, config)
             {
-                $rootScope.username = $scope.loginForm.username;
-
-                var getUserQ = loginService.getUser($scope.loginForm.username);
-                getUserQ.then(
-                    function(data)
-                    {
-                        $rootScope.user = data;
-                        //$location.path("")
-                        // after login, turn off full screen
-
-
-                    }, function(reason) {
-                        $scope.message = reason;
-                    }
-                );
-            }, function(response){
+                $scope.users = response.data;
+            },
+            function(response){
                 // todo: error handler
                 $scope.message = response.data;
             }
         );
     };
 
-    // reset the logged in user
-    $rootScope.user = null;
-
-
     $scope.handleLogin = function(event){
         //$scope.validationErrorMessage = "Event Caught, Service not implemented yet";
-        console.log("username=" +event.detail.username);
-        console.log("password=" +event.detail.password);
+        //console.log("username=" +event.detail.username);
+        //console.log("password=" +event.detail.password);
 
-        //redirect to files (todo: redirect to /dashboard)
-        $location.path('/files');
+        var loginQ = loginService.login(event.detail.username, event.detail.password);
+        loginQ.then(
+            function(response, status, headers, config)
+            {
+                //$rootScope.username = $scope.loginForm.username;
+
+                $rootScope.user = response.data;
+                $location.path('/files');
+
+            }, function(reason){
+                // todo: error handler
+                $scope.message = reason;
+            }
+        );
+
+
     };
+
+
+    // On startup, load users
+    $scope.$on('$viewContentLoaded', function() {
+      $scope.loadUserList();
+    });
 };
 
 LoginController.$inject = ['$window','$scope', '$rootScope', '$location', 'loginService', '$interval', '$document'];

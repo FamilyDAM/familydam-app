@@ -35,6 +35,7 @@ var App = angular.module('dashboard', [
     .service('metadataService', require('./services/MetadataService'))
     .service('userService', require('./services/UserService'))
     .service('searchService', require('./services/SearchService'))
+    .service('authService', require('./services/AuthService'))
 
     .constant('USER_ROLES', {
         all: '*',
@@ -43,8 +44,24 @@ var App = angular.module('dashboard', [
     })
 
 
-    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider)
+
+    .factory('basicAuthInjector', ['authService', function(authService) {
+        var authInjector = {
+            request: function(config) {
+                if (authService.isAuthenticated) {
+                    config.headers['Authentication'] = authService.getToken();
+                }
+                return config;
+            }
+        };
+        return authInjector;
+    }])
+
+
+    .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $httpProvider)
     {
+        $httpProvider.interceptors.push('basicAuthInjector');
+
         $urlRouterProvider.rule(function ($injector, $location) {
             //what this function returns will be set as the $location.url
             var path = $location.path(), normalized = path.toLowerCase();
@@ -89,7 +106,7 @@ App.run(["$rootScope", '$state', 'appService',
 
 
 
-App.$inject = ['ui.router', '$rootScope', '$state', 'appService'];
+App.$inject = ['ui.router', '$rootScope', '$state', 'appService', 'authService'];
 
 // Array Remove - By John Resig (MIT Licensed)
 Array.prototype.remove = function (from, to) {

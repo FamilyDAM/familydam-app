@@ -1,10 +1,18 @@
 <script src="components/platform/platform.js"></script>
-<link rel="import" href="modules/login/components/login-users/login-user.html"/>
+<link rel="import" href="modules/login/components/login-users/login-users.html"/>
 
 <div class="header">
     <div class="timestamp">{{nowTimestamp|date:'h:mm:ss a'}}</div>
 </div>
 
+<div>USERS</div>
+
+<login-users
+        id="loginUsersList"
+        users="{{users}}"
+        validationMessage="{{validationErrorMessage}}"
+        login-event-bridge></login-users>
+        <!--
 <login-user id="loginUsersList"
             validationMessage="{{validationErrorMessage}}"
-            login-event-bridge></login-user>
+            login-event-bridge></login-user>-->
