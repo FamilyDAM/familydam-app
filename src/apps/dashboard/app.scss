@@ -16,9 +16,6 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
 @font-face
 {
   font-family: 'Roboto';
@@ -201,3 +198,5 @@ core-list
 
 // features
 @import "modules/login/login";
+@import "modules/home/home";
+@import "modules/files/files";

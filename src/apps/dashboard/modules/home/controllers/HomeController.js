@@ -25,36 +25,14 @@
  * @param $dialog
  * @constructor
  */
-var MainController = function ($scope, $rootScope, $window, $location, $state, $stateParams) {
-
-    // logged in user
-    $rootScope.user = null;
-    $rootScope.defaultView = "files";
-
-    $scope.$state = $state;
-    $scope.$stateParams = $stateParams;
-    $scope.activePath = "/";
-    $scope.showNavigation = false;
-
-    $scope.toggleFullScreenMode = function()
-    {
-    };
+var HomeController = function ($scope, $rootScope, $window, $location, $state, $stateParams) {
 
 
-    $scope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error)
-    {
-        $rootScope.user = null;
-        //$state.go("login");
-    });
-
-    /**
-     * Invoked on startup, like a constructor.
-     */
     var init = function () {
 
     };
     init();
 };
 
-MainController.$inject = ['$scope', '$rootScope', '$window', '$location', '$state', '$stateParams'];
-module.exports = MainController;
+HomeController.$inject = ['$scope', '$rootScope', '$window', '$location', '$state', '$stateParams'];
+module.exports = HomeController;

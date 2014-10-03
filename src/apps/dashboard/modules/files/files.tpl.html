@@ -1,20 +1,393 @@
-<!--
-  ~ This file is part of FamilyDAM Project.
-  ~
-  ~     The FamilyDAM Project is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     (at your option) any later version.
-  ~
-  ~     The FamilyDAM Project is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+<body unresolved onload="onLoadHandler()">
 
-<script src="components/platform/platform.js"></script>
+<core-drawer-panel id="filePanel" class="right-drawer" selected="main" >
+    <div main>
+        <core-scroll-header-panel >
+            <core-toolbar  class="medium-tall">
+                <core-icon-button icon="arrow-back" onclick="window.location.href='index.html';"></core-icon-button>
+                <div flex>FamilyDAM</div>
+                <paper-tabs style="min-width: 150px;">
+                    <paper-tab ui-sref="files">Files</paper-tab>
+                    <paper-tab ui-sref="photos">Photos</paper-tab>
+                </paper-tabs>
+                <core-icon-button icon="search"></core-icon-button>
+                <core-icon-button icon="more-vert"></core-icon-button>
+                <div class="middle indent title" style="margin-left: 100px;">/photos/</div>
+                <div class="bottom">
+                    <paper-fab icon="add" onclick="toggleUploader();" style="z-index: 10"></paper-fab>
+                </div>
+            </core-toolbar>
+        </core-scroll-header-panel>
 
-TODO FILE LIST
+
+
+        <div horizontal layout style="height: 45px; width: 100%; background-color: #eee; top:128px; position:absolute; left:0px; right: 0px;">
+            <div flex></div>
+            <div style="height:45px; vertical-align: bottom;font-size: 24px;margin-top: 10px; margin-bottom: 10px;">
+
+            </div>
+            <div style="width:80px;"></div>
+        </div>
+
+
+        <core-drawer-panel class="drawer" style="top:180px;">
+            <!-- LEFT DRAWER -->
+            <div drawer>
+                <div id="fileTree" class="sidebar">
+
+                    <ul style="margin-left: -20px;list-style: none;">
+
+                        <li>
+                            <core-icon icon="folder"></core-icon>
+                            <a href="familyplanning.html" style="text-decoration:none;">Family Planning (3.0)</a>
+                        </li>
+                        <li>
+                            <core-icon icon="folder"></core-icon>
+                            <b><i>Files</i></b>
+                            <ul style="list-style: none;">
+                                <li>
+                                    <core-icon icon="folder"></core-icon>
+                                    Angela
+                                </li>
+                                <li>
+                                    <core-icon icon="folder"></core-icon>
+                                    <i><b>Mike</b></i>
+                                </li>
+                                <li>
+                                    <core-icon icon="folder"></core-icon>
+                                    Kayden
+                                </li>
+                                <li>
+                                    <core-icon icon="folder"></core-icon>
+                                    Hailey
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <core-icon icon="folder"></core-icon>
+                            <a href="photos.html"  style="text-decoration:none;">Photos</a>
+                        </li>
+                        <li>
+                            <core-icon icon="folder"></core-icon>
+                            <a href="music.html"  style="text-decoration:none;">Music</a>
+                        </li>
+                        <li>
+                            <core-icon icon="folder"></core-icon>
+                            <a href="movies.html"  style="text-decoration:none;">Movies</a>
+                        </li>
+                        <li>
+                            <core-icon icon="folder"></core-icon>
+                            <a href="emails.html"  style="text-decoration:none;">Email Archive (2.0)</a>
+                        </li>
+                        <li>
+                            <core-icon icon="folder"></core-icon>
+                            <a href="social.html"  style="text-decoration:none;">Social Web (2.0)</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <!-- MAIN -->
+            <div main>
+                <div folders>
+                    <h2>Folders</h2>
+
+                    <core-list id="folderList">
+                        <template>
+                            <div class="item folder">
+                                        <span>
+                                            <core-icon icon="folder"></core-icon>
+                                        </span>
+                                        <span class="">
+                                            <span class="folderName">{{name}}</span>
+                                        </span>
+                            </div>
+                        </template>
+                    </core-list>
+                </div>
+
+                <div files>
+                    <h2>Files</h2>
+
+                    <core-list id="fileList" height="80">
+                        <template>
+
+                            <div class="row {{ {selected: selected} | tokenList }}" height="80">
+                                <div horizontal layout>
+                                            <span style="padding-right: 10px;">
+                                                <img src="{{thumbnail}}" style="width:70px; height:70px;"/>
+                                            </span>
+                                            <span flex>
+                                                <span class="fileName">{{name}}</span><br/>
+                                                <span class="album">{{album}}</span><br/>
+                                                <span class="timestamp">{{dateCreated}}</span> by <span class="fileName">{{owner}}</span>
+                                            </span>
+                                            <span style="width: 100px;">
+                                                <span class="status" style="color:#ccc;">debug<br/>selected:{{selected}}</span>
+                                            </span>
+                                </div>
+                            </div>
+
+                        </template>
+                    </core-list>
+                </div>
+            </div>
+        </core-drawer-panel>
+    </div>
+
+
+
+    <div id="rightDrawer" drawer >
+
+        <core-scroll-header-panel id="rightDrawerHeaderPanel" condensedHeaderHeight="65"
+                                  style="border-bottom: 1px solid #000;">
+            <core-toolbar class="medium-tall">
+                <div flex></div>
+                <core-icon-button icon="close" on-click="$('#filePanel').closeDrawer();"></core-icon-button>
+            </core-toolbar>
+        </core-scroll-header-panel>
+
+
+        <div horizontal layout style="height: 45px; width: 100%; background-color: #eee; top:128px; position:absolute; left:0px; right: 0px;">
+            <div><h2>Preview</h2></div>
+        </div>
+        <!-- RIGHT DRAWER -->
+        <div style="position: relative; top:180px;">
+            <preview-photo id="photoPreview"
+                           class="sidebar preview"></preview-photo>
+
+            <preview-album id="musicPreview"
+                           class="sidebar preview"></preview-album>
+
+            <preview-video id="videoPreview"
+                           class="sidebar preview"></preview-video>
+        </div>
+    </div>
+</core-drawer-panel>
+
+<file-uploader id="uploaderOverlay"></file-uploader>
+
+<script>
+
+    // custom transformation: scale header's title
+    var titleStyle = document.querySelector('.title').style;
+    addEventListener('core-header-transform', function (e) {
+        var d = e.detail;
+        var m = d.height - d.condensedHeight;
+        var scale = Math.max(0.75, (m - d.y) / (m / 0.25) + 0.75);
+        titleStyle.webkitTransform = titleStyle.transform =
+                'scale(' + scale + ') translateZ(0)';
+    });
+
+</script>
+
+
+
+<script>
+    var timerId;
+    var firstClick = 0;
+    var fileSelectionHandler = function (event) {
+
+        // update ui //todo, fix this.
+        event.detail.data.selected = true;
+        event.detail.item.selected = true;
+
+        $(".row").css("background-color", "#fff");
+        event.detail.item.style.backgroundColor = "lightgrey";
+
+        //trigger events
+        var now = Number(new Date());
+        if (firstClick > 0 && (now - firstClick) < 300)
+        {
+            now = 0;
+            window.clearTimeout(timerId);
+            doubleClickHandler(event);
+        } else
+        {
+            firstClick = now;
+            timerId = window.setTimeout(function () {
+                singleClickHandler(event);
+            }, 310);
+        }
+
+    };
+
+    var doubleClickHandler = function (event) {
+        console.log("{FileSelectAction} doubleClickHandler");
+        var details = event.detail.data;
+        switch (details.type)
+        {
+            case "image":
+                console.log("goto photo detail page");
+                break;
+            case "music":
+                console.log("goto audio detail page");
+                break;
+            case "movies":
+                console.log("goto music detail page");
+                break;
+        }
+    }
+
+
+    var singleClickHandler = function (event) {
+
+        console.log("{FileSelectAction} singleClickHandler");
+        var item = event.detail.item;
+        var details = event.detail.data;
+
+        switch (details.type)
+        {
+            case "image":
+                previewPhoto(details);
+                break;
+            case "music":
+                previewMusic(details);
+                break;
+            case "movies":
+                previewMovie(details);
+                break;
+        }
+    }
+
+    var previewPhoto = function (_details) {
+        document.querySelector("#rightDrawer").style.display = "inline-block";
+        document.querySelector("#filePanel").openDrawer();
+        document.querySelector("#photoPreview").data = _details;
+        document.querySelector("#photoPreview").style.display = "block";
+        document.querySelector("#musicPreview").style.display = "none";
+        document.querySelector("#videoPreview").style.display = "none";
+
+
+        //document.querySelector("#videoPreviewTag").pause();
+        //document.querySelector("#audioPreviewTag").pause();
+    };
+
+    var previewMusic = function (details) {
+        document.querySelector("#rightDrawer").style.display = "inline-block";
+        document.querySelector("#filePanel").openDrawer();
+        document.querySelector("#photoPreview").style.display = "none";
+        document.querySelector("#musicPreview").style.display = "block";
+        document.querySelector("#videoPreview").style.display = "none";
+
+        //document.querySelector("#videoPreviewTag").pause();
+    };
+
+    var previewMovie = function (details) {
+        document.querySelector("#rightDrawer").style.display = "inline-block";
+        document.querySelector("#filePanel").openDrawer();
+        document.querySelector("#photoPreview").style.display = "none";
+        document.querySelector("#musicPreview").style.display = "none";
+        document.querySelector("#videoPreview").style.display = "block";
+
+        //document.querySelector("#audioPreviewTag").pause();
+    };
+
+</script>
+
+
+<script>
+
+
+    var strings = [
+        "PARKOUR!",
+        "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    ];
+
+    var generateString = function (inLength) {
+        var s = '';
+        for (var i = 0; i < inLength; i++)
+        {
+            s += String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+        }
+        return s;
+    };
+
+    var generateName = function (inMin, inMax) {
+        return this.generateString(Math.floor(Math.random() * (inMax - inMin + 1) + inMin));
+    };
+
+
+    var generateData = function (listCount) {
+        var data = [];
+        var names = ['Mike', 'Angela', 'Kayden'];
+        var types = ["image", "music", "movies"];
+        var imgWidth = [640, 1136, 640];
+        var imgHeight = [1136, 640, 640];
+        var imgUrls = ['http://lorempixel.com/{w}/{h}/abstract/', 'https://placeimg.com/{w}/{h}/any', 'http://placehold.it/{w}x{h}'];
+        var musicUrl = ['http://www.vorbis.com/music/Epoq-Lepidoptera.ogg', 'http://www.vorbis.com/music/Epoq-Lepidoptera.ogg', 'http://www.vorbis.com/music/Epoq-Lepidoptera.ogg'];
+        //var musicUrl = ['http://www.columbia.edu/cu/cuo/F2001-9.mp3', 'http://www.columbia.edu/cu/cuo/F2001-9.mp3', 'http://www.columbia.edu/cu/cuo/F2001-9.mp3'];
+        //var movieUrl = ['http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4','http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4','http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4'];
+        var movieUrl = ['http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_stereo.ogg', 'http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_stereo.ogg', 'http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_stereo.ogg'];
+
+
+        for (var i = 0; i < listCount; i++)
+        {
+            var indx = Math.floor(Math.random() * 3);
+            var file = {};
+            file.type = types[indx];
+            file.owner = names[indx];
+            file.dateCreated = "07/0" + indx + "/2014"
+
+            if (file.type == "image")
+            {
+                file.name = generateName(8, 20) + ".jpg";
+                file.width = imgWidth[indx];
+                file.height = imgHeight[indx];
+                file.src = imgUrls[indx].replace("{w}", file.width).replace("{h}", file.height);
+                file.thumbnail = imgUrls[indx].replace("{w}", 200).replace("{h}", 200);
+            }
+            else if (file.type == "music")
+            {
+                file.name = generateName(12, 18) + ".mp3";
+                file.artist = generateString(12);
+                file.width = imgWidth[2];
+                file.height = imgHeight[2];
+                file.src = musicUrl[indx];
+                file.thumbnail = imgUrls[indx].replace("{w}", 70).replace("{h}", 70);
+            }
+            else if (file.type == "movies")
+            {
+                file.name = generateName(12, 24) + ".mp4";
+                file.width = imgWidth[1];
+                file.height = imgHeight[1];
+                file.src = movieUrl[indx];
+                file.thumbnail = imgUrls[indx].replace("{w}", 70).replace("{h}", 70);
+            }
+
+            data.push(file);
+        }
+
+        return data;
+    };
+
+
+    var onLoadHandler = function () {
+        folders = [
+            {name: "2011"},
+            {name: "2012"},
+            {name: "2013"},
+            {name: "2014"}
+        ];
+        files = generateData(100);
+        document.querySelector("#folderList").data = folders;
+        document.querySelector("#fileList").data = files;
+
+        var selectHandler = document.querySelector("#fileList");
+        selectHandler.addEventListener('core-activate', function (event) {
+            fileSelectionHandler(event);
+        });
+
+        // by default close right preview panel
+        document.querySelector("#filePanel").closeDrawer();
+    };
+
+
+    var toggleUploader = function () {
+        document.querySelector("#uploaderOverlay").toggle();
+    }
+
+
+</script>

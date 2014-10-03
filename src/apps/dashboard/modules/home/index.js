@@ -16,5 +16,12 @@
  */
 
 module.exports = angular.module('dashboard.main', ['ui.router'])
-    .controller('MainController', require('./MainController'));
+    .controller('HomeController', require('./controllers/HomeController'))
 
+    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+        $stateProvider.state('home', {
+            url: '/home',
+            templateUrl: "modules/home/home.tpl.html",
+            controller: "./controllers/HomeController"
+        });
+    }]);

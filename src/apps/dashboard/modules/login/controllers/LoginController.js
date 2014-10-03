@@ -58,6 +58,7 @@ var LoginController = function($window, $scope, $rootScope, $location, loginServ
                 //$rootScope.username = $scope.loginForm.username;
 
                 $rootScope.user = response.data;
+                //$location.path('/home');
                 $location.path('/files');
 
             }, function(reason){
