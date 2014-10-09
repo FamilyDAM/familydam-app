@@ -1,0 +1,92 @@
+
+<!--
+  ~ This file is part of FamilyDAM Project.
+  ~
+  ~     The FamilyDAM Project is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     The FamilyDAM Project is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<polymer-element name="dam-photo-lightbox">
+
+    <style type="text/css">
+        .lightbox-photo{
+            border-bottom: 1px solid #3949ab;
+        }
+    </style>
+
+    <template>
+        <h2>Selected Items</h2>
+        <core-list id="itemList" data="{{selectedItems}}" height="60">
+            <template>
+                <div class="lightbox-photo">
+                    <img src="http://placehold.it/40x40"/>
+                    {{name}}<br/>
+                </div>
+            </template>
+        </core-list>
+        <paper-button label="Download All"></paper-button>
+    </template>
+
+
+    <script type="text/javascript">
+        (function() {
+            Polymer('dam-photo-lightbox', {
+                selectedItems:[],
+
+                publish:{
+                    selectedItems: []
+                },
+
+                ready: function (e) {},
+
+                domReady: function (e) {},
+
+                addPhoto:function(item_){
+                    var pos = this.selectedItems.indexOf(item_);
+                    if( pos == -1){
+                        this.selectedItems.push(item_);
+                    }
+
+                    this.$.itemList.refresh();
+                },
+
+                removePhoto:function(item_){
+                    var pos = this.selectedItems.indexOf(item_);
+                    if( pos > -1 ){
+                        delete this.selectedItems[pos];
+                    }
+
+                    var items = [];
+                    for (var item in this.selectedItems)
+                    {
+                        items.push( this.selectedItems[item] );
+                    }
+                    this.selectedItems = items;
+
+                    //this.$.itemList.refresh();
+                },
+
+                removeOthers: function(item_){
+                    for (var i = 0; i < this.selectedItems.length; i++)
+                    {
+                        var obj = this.selectedItems[i];
+                        if( obj != item_ ){
+                            this.removePhoto(item_);
+                        }
+                    }
+                }
+
+            });
+        })();
+    </script>
+</polymer-element>

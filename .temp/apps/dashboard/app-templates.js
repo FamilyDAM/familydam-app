@@ -1,4 +1,4 @@
-angular.module('dashboard.templates', ['apps/dashboard/modules/files/files.tpl.html', 'apps/dashboard/modules/home/home.tpl.html', 'apps/dashboard/modules/login/login.tpl.html']);
+angular.module('dashboard.templates', ['apps/dashboard/modules/files/files.tpl.html', 'apps/dashboard/modules/home/home.tpl.html', 'apps/dashboard/modules/login/login.tpl.html', 'apps/dashboard/modules/photos/left-drawer.tpl.html', 'apps/dashboard/modules/photos/photos.tpl.html', 'apps/dashboard/modules/photos/right-drawer.tpl.html']);
 
 angular.module("apps/dashboard/modules/files/files.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("apps/dashboard/modules/files/files.tpl.html",
@@ -100,12 +100,12 @@ angular.module("apps/dashboard/modules/files/files.tpl.html", []).run(["$templat
     "                    <core-list id=\"folderList\">\n" +
     "                        <template>\n" +
     "                            <div class=\"item folder\">\n" +
-    "                                        <span>\n" +
-    "                                            <core-icon icon=\"folder\"></core-icon>\n" +
-    "                                        </span>\n" +
-    "                                        <span class=\"\">\n" +
-    "                                            <span class=\"folderName\">{{name}}</span>\n" +
-    "                                        </span>\n" +
+    "                                <span>\n" +
+    "                                    <core-icon icon=\"folder\"></core-icon>\n" +
+    "                                </span>\n" +
+    "                                <span class=\"\">\n" +
+    "                                    <span class=\"folderName\">{{name}}</span>\n" +
+    "                                </span>\n" +
     "                            </div>\n" +
     "                        </template>\n" +
     "                    </core-list>\n" +
@@ -400,101 +400,114 @@ angular.module("apps/dashboard/modules/files/files.tpl.html", []).run(["$templat
 
 angular.module("apps/dashboard/modules/home/home.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("apps/dashboard/modules/home/home.tpl.html",
+    "<div id=\"homeTemplate\" layout horizontal>\n" +
     "\n" +
-    "    <style shim-shadowdom>\n" +
+    "    <core-scroll-header-panel style=\"background-color: #fff;\" flex>\n" +
     "\n" +
-    "        core-scroll-header-panel {\n" +
-    "            position: absolute;\n" +
-    "            top: 0;\n" +
-    "            right: 0;\n" +
-    "            bottom: 0;\n" +
-    "            left: 0;\n" +
-    "            background-color: #FFF;\n" +
-    "        }\n" +
+    "        <core-toolbar class=\"medium-tall\" style=\"background-color: #5c6bc0;\">\n" +
+    "            <core-icon-button id=\"primaryToolbarIcon\" icon=\"home\" onclick=\"toolbarIconHelper()\"></core-icon-button>\n" +
     "\n" +
-    "        /* background for toolbar when it is at its full size */\n" +
-    "        core-scroll-header-panel::shadow #headerBg {\n" +
-    "            background-color: #0000ff;\n" +
-    "        }\n" +
+    "            <div flex>FamilyDAM</div>\n" +
+    "            <paper-tabs style=\"min-width: 150px;\">\n" +
+    "                <paper-tab ui-sref=\"files\">Files</paper-tab>\n" +
+    "                <paper-tab ui-sref=\"home.photos\">Photos</paper-tab>\n" +
+    "            </paper-tabs>\n" +
+    "            <core-icon-button icon=\"search\"></core-icon-button>\n" +
+    "            <core-icon-button icon=\"more-vert\"></core-icon-button>\n" +
+    "            <div class=\"middle indent title\" style=\"margin-left: 100px;\">/photos/</div>\n" +
+    "            <div class=\"bottom\">\n" +
+    "                <paper-fab icon=\"add\"\n" +
+    "                           onclick=\"this.fire('toggle');\"\n" +
+    "                           addfilebridge\n" +
+    "                           style=\"z-index: 10\"></paper-fab>\n" +
+    "            </div>\n" +
+    "        </core-toolbar>\n" +
     "\n" +
-    "        /* background for toolbar when it is condensed */\n" +
-    "        core-scroll-header-panel::shadow #condensedHeaderBg {\n" +
-    "            background-color: #0000ff;\n" +
-    "        }\n" +
+    "        <div content>\n" +
+    "            <div layout horizontal style=\"top:128px;\">\n" +
     "\n" +
-    "        core-toolbar {\n" +
-    "            color: #f1f1f1;\n" +
-    "            fill: #f1f1f1;\n" +
-    "            background-color: transparent;\n" +
-    "        }\n" +
+    "                <aside id=\"leftDrawer\"\n" +
+    "                       style=\"background-color: #eee; width:256px; height:100%;\">\n" +
     "\n" +
-    "        core-toolbar paper-fab {\n" +
-    "            top: 30px;\n" +
-    "            right: 30px;\n" +
-    "            position: absolute;\n" +
-    "        }\n" +
+    "                    <div horizontal layout\n" +
+    "                         style=\"height: 45px; width: 100%; position:relative; left:0px; right: 0px;\">\n" +
+    "                        <div flex> </div>\n" +
+    "                        <div>\n" +
+    "                            <paper-icon-button id=\"navicon\" icon=\"menu\"\n" +
+    "                                               onclick=\"this.fire('toggle', event)\"\n" +
+    "                                               leftdrawerbridge></paper-icon-button>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
     "\n" +
-    "        core-toolbar paper-tabs{\n" +
-    "            width:150px;\n" +
-    "        }\n" +
+    "                    <div ui-view=\".leftDrawer\"></div>\n" +
+    "               </aside>\n" +
     "\n" +
-    "        .title {\n" +
-    "            -webkit-transform-origin: 0;\n" +
-    "            transform-origin: 0;\n" +
-    "            font-size: 40px;\n" +
-    "        }\n" +
+    "                <div id=\"body\" style=\"width:100%;\">\n" +
+    "                    <div horizontal layout\n" +
+    "                         style=\"height: 45px; width: 100%; background-color: #eee; position:relative; left:0px; right: 0px;\">\n" +
+    "                        <div flex> </div>\n" +
+    "                        <div layout horizontal center>\n" +
+    "                            <label>Group By:</label>\n" +
+    "                            <paper-button label=\"Date\"></paper-button>\n" +
+    "                            |\n" +
+    "                            <paper-button label=\"Location\"></paper-button>\n" +
     "\n" +
-    "        .content {\n" +
-    "            padding: 10px 30px;\n" +
-    "            background-color: #fff;;\n" +
-    "        }\n" +
+    "                        </div>\n" +
+    "                        <div style=\"width:120px;\"></div>\n" +
+    "                        <div>\n" +
+    "                            <paper-icon-button id=\"navicon\" icon=\"menu\"\n" +
+    "                                               onclick=\"this.fire('toggle', event)\"\n" +
+    "                                               right-drawer-bridge></paper-icon-button>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
     "\n" +
-    "    </style>\n" +
+    "                    <div  ui-view=\".body\"></div>\n" +
     "\n" +
-    "</head>\n" +
-    "<body unresolved >\n" +
+    "                </div>\n" +
     "\n" +
-    "<core-scroll-header-panel condensedHeaderHeight=\"65\" >\n" +
+    "                <aside id=\"rightDrawer\"\n" +
+    "                       style=\"background-color:#eee;width:350px;display:none\">\n" +
+    "                    <div horizontal layout\n" +
+    "                         style=\"height: 45px; width: 100%; position:relative; left:0px; right: 0px;\">\n" +
+    "                        <div flex></div>\n" +
+    "                    </div>\n" +
     "\n" +
-    "    <core-toolbar  class=\"medium-tall\">\n" +
+    "                    <div ui-view=\".rightDrawer\"></div>\n" +
+    "                </aside>\n" +
     "\n" +
-    "        <core-icon-button icon=\"arrow-back\" onclick=\"window.location.href='index.html';\"></core-icon-button>\n" +
-    "        <div flex></div>\n" +
-    "        <paper-tabs style=\"min-width: 150px;\">\n" +
-    "            <paper-tab ui-sref=\"files\">Files</paper-tab>\n" +
-    "            <paper-tab ui-sref=\"photos\">Photos</paper-tab>\n" +
-    "        </paper-tabs>\n" +
-    "        <core-icon-button icon=\"search\"></core-icon-button>\n" +
-    "        <core-icon-button icon=\"more-vert\"></core-icon-button>\n" +
-    "        <div class=\"middle indent title\">Home</div>\n" +
-    "    </core-toolbar>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
-    "    <div class=\"content\">\n" +
+    "    </core-scroll-header-panel>\n" +
     "\n" +
-    "    </div>\n" +
+    "</div>\n" +
     "\n" +
-    "</core-scroll-header-panel>\n" +
+    "\n" +
+    "<file-uploader id=\"uploaderOverlay\"></file-uploader>\n" +
     "\n" +
     "<script>\n" +
     "\n" +
     "    // custom transformation: scale header's title\n" +
-    "    var titleStyle = document.querySelector('.title').style;\n" +
-    "    addEventListener('core-header-transform', function(e) {\n" +
+    "    /**  todo fix the selector since it is now in a template tag\n" +
+    "     var titleStyle = document.querySelector('.title').style;\n" +
+    "     addEventListener('core-header-transform', function (e) {\n" +
     "        var d = e.detail;\n" +
     "        var m = d.height - d.condensedHeight;\n" +
-    "        var scale = Math.max(0.75, (m - d.y) / (m / 0.25)  + 0.75);\n" +
+    "        var scale = Math.max(0.75, (m - d.y) / (m / 0.25) + 0.75);\n" +
     "        titleStyle.webkitTransform = titleStyle.transform =\n" +
-    "                'scale(' + scale + ') translateZ(0)';\n" +
+    "            'scale(' + scale + ') translateZ(0)';\n" +
     "    });\n" +
+    "     **/\n" +
     "\n" +
     "</script>\n" +
+    "\n" +
     "");
 }]);
 
 angular.module("apps/dashboard/modules/login/login.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("apps/dashboard/modules/login/login.tpl.html",
     "<link rel=\"import\" href=\"modules/login/components/login-users/login-users.html\"/>\n" +
-    "\n" +
+    "<div class=\"loginTemplate\">\n" +
     "<div class=\"header\">\n" +
     "    <div class=\"timestamp\">{{nowTimestamp|date:'h:mm:ss a'}}</div>\n" +
     "</div>\n" +
@@ -504,5 +517,518 @@ angular.module("apps/dashboard/modules/login/login.tpl.html", []).run(["$templat
     "        users=\"{{users}}\"\n" +
     "        validationMessage=\"{{validationErrorMessage}}\"\n" +
     "        login-event-bridge></login-users>\n" +
+    "</div>");
+}]);
+
+angular.module("apps/dashboard/modules/photos/left-drawer.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("apps/dashboard/modules/photos/left-drawer.tpl.html",
+    "<!--\n" +
+    "  ~ This file is part of FamilyDAM Project.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is free software: you can redistribute it and/or modify\n" +
+    "  ~     it under the terms of the GNU General Public License as published by\n" +
+    "  ~     the Free Software Foundation, either version 3 of the License, or\n" +
+    "  ~     (at your option) any later version.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is distributed in the hope that it will be useful,\n" +
+    "  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+    "  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+    "  ~     GNU General Public License for more details.\n" +
+    "  ~\n" +
+    "  ~     You should have received a copy of the GNU General Public License\n" +
+    "  ~     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.\n" +
+    "  -->\n" +
+    "\n" +
+    "<!-- LEFT DRAWER -->\n" +
+    "<div>\n" +
+    "\n" +
+    "\n" +
+    "    <div id=\"content\" style=\"background-color: #fff; position: absolute; width: 256px;\">\n" +
+    "        <div id=\"users\" style=\"margin: 20px;\">\n" +
+    "            <core-icon class=\"avatar\" icon=\"avatars:avatar-1\" aria-label=\"avatar-2\" role=\"img\">\n" +
+    "                <svg viewBox=\"0 0 128 128\" height=\"100%\" width=\"100%\"\n" +
+    "                     preserveAspectRatio=\"xMidYMid meet\" fit=\"\"\n" +
+    "                     style=\"pointer-events: none; display: block;\">\n" +
+    "                    <g>\n" +
+    "                        <path fill=\"#B9F6CA\" d=\"M0 0h128v128h-128z\"></path>\n" +
+    "                        <path fill=\"#FFCC80\"\n" +
+    "                              d=\"M70.1 122.5l.6-.1c6.1-.8 12-2.4 17.7-4.8 1.2-.5 2.4-1.1 3.2-2.1 1.3-1.7-.1-5.6-.5-7.7-.7-3.8-1.3-7.7-1.9-11.5-.7-4.5-1.5-9.1-1.6-13.7-.2-7.6.7-12.3 1.9-15.3h9l-2.6-10.4c-.2-2.4-.4-4.8-.7-6.8-.2-1.9-.6-3.6-1.2-5.3-14.9 2.2-24.5.9-30.7-1.8l-23.1 4.5-.7.1h-.7c-.4-.1-.9-.2-1.2-.4-.4 0-.9 0-1.4.1-4.1.6-6.9 4.7-6.3 9.1.3 2 1.2 3.8 2.6 5 .3.1 1.6.7 3.4 1.7.8.4 1.6 1 2.5 1.6 1.5 1.1 3.2 2.5 4.9 4.1 5.8 5.9 8.4 13.8 7.4 22-.6 4.7-2.2 9.4-4.4 13.6-.5 1-1 1.6-1.1 2.8-.1 1.1-.1 2.3.1 3.4.4 2.3 1.5 4.4 3 6.2 2.6 3.1 6.4 5 10.4 5.8 3.8.4 7.6.3 11.4-.1zm9.5-67.6c.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6s-1.6-.7-1.6-1.6c-.1-.8.7-1.6 1.6-1.6zM128 97.7c-3.3 1.9-6.6 3.7-9.9 5.3-3.2 1.5-6.3 2.9-9.6 4.2-.9.4-2.1.5-2.9 1.1-1.1.8-1.9 2.5-2.3 3.7-.6 1.6-.6 3.4.3 4.8.8 1.2 2.1 2 3.5 2.6 5.9 2.9 12.2 5.1 18.6 6.5 1.4.3 2.3 1.8 2.4.1v-28.1c-.1.1-.1-.1-.1-.2z\"></path>\n" +
+    "                        <path d=\"M38.9 47.4zM39.6 47.4z\" fill=\"none\"></path>\n" +
+    "                        <path fill=\"#444\"\n" +
+    "                              d=\"M94.2 44.9c-.8-2.6-1.8-5-3.2-7.2l-7.2 1.4-20.4 4c6.3 2.7 15.9 4 30.8 1.8z\"></path>\n" +
+    "                        <path fill=\"#E65100\"\n" +
+    "                              d=\"M38.9 48.4h.7c.2 0 .5 0 .7-.1l23.1-4.5 20.4-4 23.3-4.5c1.9-.4 3.2-2 2.9-3.6-.3-1.6-2.1-2.6-4.1-2.3l-19.6 3.8-1.3-6.8c-2-10.9-15-17.7-29.1-14.9-14 2.7-23.7 13.9-21.6 24.9h.1l1.7 9v.7c.2.8.7 1.4 1.4 1.9.5.1 1 .3 1.4.4z\"></path>\n" +
+    "                        <circle fill=\"#444\" cx=\"79.6\" cy=\"56.5\" r=\"2\"></circle>\n" +
+    "                        <path fill=\"#689F38\"\n" +
+    "                              d=\"M128 128v-1.8l-21.7-18.2-.4.2-2.9 1.3c-3 1.3-6 2.6-9.2 3.8l-1.4.5c-9 3.3-16.5 4.1-22.8 3.6-16.4-1.3-23.8-11.9-23.8-11.9-2.2 4.2-5.2 8.7-9.2 13.5l-.3.4-1.7 2c-.9 1.1-2 2.6-3.4 4.5-.4.6-.9 1.3-1.4 2l98.2.1z\"></path>\n" +
+    "                        <path fill=\"#FFCC80\" d=\"M36.3 119.3s.1-.2.2-.3c-.1.1-.2.2-.2.3z\"></path>\n" +
+    "                    </g>\n" +
+    "                </svg>\n" +
+    "            </core-icon>\n" +
+    "            <core-icon class=\"avatar\" icon=\"avatars:avatar-2\" aria-label=\"avatar-2\" role=\"img\">\n" +
+    "                <svg viewBox=\"0 0 128 128\" height=\"100%\" width=\"100%\"\n" +
+    "                     preserveAspectRatio=\"xMidYMid meet\" fit=\"\"\n" +
+    "                     style=\"pointer-events: none; display: block;\">\n" +
+    "                    <g>\n" +
+    "                        <path fill=\"#B9F6CA\" d=\"M0 0h128v128h-128z\"></path>\n" +
+    "                        <path fill=\"#FFCC80\"\n" +
+    "                              d=\"M70.1 122.5l.6-.1c6.1-.8 12-2.4 17.7-4.8 1.2-.5 2.4-1.1 3.2-2.1 1.3-1.7-.1-5.6-.5-7.7-.7-3.8-1.3-7.7-1.9-11.5-.7-4.5-1.5-9.1-1.6-13.7-.2-7.6.7-12.3 1.9-15.3h9l-2.6-10.4c-.2-2.4-.4-4.8-.7-6.8-.2-1.9-.6-3.6-1.2-5.3-14.9 2.2-24.5.9-30.7-1.8l-23.1 4.5-.7.1h-.7c-.4-.1-.9-.2-1.2-.4-.4 0-.9 0-1.4.1-4.1.6-6.9 4.7-6.3 9.1.3 2 1.2 3.8 2.6 5 .3.1 1.6.7 3.4 1.7.8.4 1.6 1 2.5 1.6 1.5 1.1 3.2 2.5 4.9 4.1 5.8 5.9 8.4 13.8 7.4 22-.6 4.7-2.2 9.4-4.4 13.6-.5 1-1 1.6-1.1 2.8-.1 1.1-.1 2.3.1 3.4.4 2.3 1.5 4.4 3 6.2 2.6 3.1 6.4 5 10.4 5.8 3.8.4 7.6.3 11.4-.1zm9.5-67.6c.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6s-1.6-.7-1.6-1.6c-.1-.8.7-1.6 1.6-1.6zM128 97.7c-3.3 1.9-6.6 3.7-9.9 5.3-3.2 1.5-6.3 2.9-9.6 4.2-.9.4-2.1.5-2.9 1.1-1.1.8-1.9 2.5-2.3 3.7-.6 1.6-.6 3.4.3 4.8.8 1.2 2.1 2 3.5 2.6 5.9 2.9 12.2 5.1 18.6 6.5 1.4.3 2.3 1.8 2.4.1v-28.1c-.1.1-.1-.1-.1-.2z\"></path>\n" +
+    "                        <path d=\"M38.9 47.4zM39.6 47.4z\" fill=\"none\"></path>\n" +
+    "                        <path fill=\"#444\"\n" +
+    "                              d=\"M94.2 44.9c-.8-2.6-1.8-5-3.2-7.2l-7.2 1.4-20.4 4c6.3 2.7 15.9 4 30.8 1.8z\"></path>\n" +
+    "                        <path fill=\"#E65100\"\n" +
+    "                              d=\"M38.9 48.4h.7c.2 0 .5 0 .7-.1l23.1-4.5 20.4-4 23.3-4.5c1.9-.4 3.2-2 2.9-3.6-.3-1.6-2.1-2.6-4.1-2.3l-19.6 3.8-1.3-6.8c-2-10.9-15-17.7-29.1-14.9-14 2.7-23.7 13.9-21.6 24.9h.1l1.7 9v.7c.2.8.7 1.4 1.4 1.9.5.1 1 .3 1.4.4z\"></path>\n" +
+    "                        <circle fill=\"#444\" cx=\"79.6\" cy=\"56.5\" r=\"2\"></circle>\n" +
+    "                        <path fill=\"#689F38\"\n" +
+    "                              d=\"M128 128v-1.8l-21.7-18.2-.4.2-2.9 1.3c-3 1.3-6 2.6-9.2 3.8l-1.4.5c-9 3.3-16.5 4.1-22.8 3.6-16.4-1.3-23.8-11.9-23.8-11.9-2.2 4.2-5.2 8.7-9.2 13.5l-.3.4-1.7 2c-.9 1.1-2 2.6-3.4 4.5-.4.6-.9 1.3-1.4 2l98.2.1z\"></path>\n" +
+    "                        <path fill=\"#FFCC80\" d=\"M36.3 119.3s.1-.2.2-.3c-.1.1-.2.2-.2.3z\"></path>\n" +
+    "                    </g>\n" +
+    "                </svg>\n" +
+    "            </core-icon>\n" +
+    "            <core-icon class=\"avatar\" icon=\"avatars:avatar-3\" aria-label=\"avatar-2\" role=\"img\">\n" +
+    "                <svg viewBox=\"0 0 128 128\" height=\"100%\" width=\"100%\"\n" +
+    "                     preserveAspectRatio=\"xMidYMid meet\" fit=\"\"\n" +
+    "                     style=\"pointer-events: none; display: block;\">\n" +
+    "                    <g>\n" +
+    "                        <path fill=\"#B9F6CA\" d=\"M0 0h128v128h-128z\"></path>\n" +
+    "                        <path fill=\"#FFCC80\"\n" +
+    "                              d=\"M70.1 122.5l.6-.1c6.1-.8 12-2.4 17.7-4.8 1.2-.5 2.4-1.1 3.2-2.1 1.3-1.7-.1-5.6-.5-7.7-.7-3.8-1.3-7.7-1.9-11.5-.7-4.5-1.5-9.1-1.6-13.7-.2-7.6.7-12.3 1.9-15.3h9l-2.6-10.4c-.2-2.4-.4-4.8-.7-6.8-.2-1.9-.6-3.6-1.2-5.3-14.9 2.2-24.5.9-30.7-1.8l-23.1 4.5-.7.1h-.7c-.4-.1-.9-.2-1.2-.4-.4 0-.9 0-1.4.1-4.1.6-6.9 4.7-6.3 9.1.3 2 1.2 3.8 2.6 5 .3.1 1.6.7 3.4 1.7.8.4 1.6 1 2.5 1.6 1.5 1.1 3.2 2.5 4.9 4.1 5.8 5.9 8.4 13.8 7.4 22-.6 4.7-2.2 9.4-4.4 13.6-.5 1-1 1.6-1.1 2.8-.1 1.1-.1 2.3.1 3.4.4 2.3 1.5 4.4 3 6.2 2.6 3.1 6.4 5 10.4 5.8 3.8.4 7.6.3 11.4-.1zm9.5-67.6c.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6s-1.6-.7-1.6-1.6c-.1-.8.7-1.6 1.6-1.6zM128 97.7c-3.3 1.9-6.6 3.7-9.9 5.3-3.2 1.5-6.3 2.9-9.6 4.2-.9.4-2.1.5-2.9 1.1-1.1.8-1.9 2.5-2.3 3.7-.6 1.6-.6 3.4.3 4.8.8 1.2 2.1 2 3.5 2.6 5.9 2.9 12.2 5.1 18.6 6.5 1.4.3 2.3 1.8 2.4.1v-28.1c-.1.1-.1-.1-.1-.2z\"></path>\n" +
+    "                        <path d=\"M38.9 47.4zM39.6 47.4z\" fill=\"none\"></path>\n" +
+    "                        <path fill=\"#444\"\n" +
+    "                              d=\"M94.2 44.9c-.8-2.6-1.8-5-3.2-7.2l-7.2 1.4-20.4 4c6.3 2.7 15.9 4 30.8 1.8z\"></path>\n" +
+    "                        <path fill=\"#E65100\"\n" +
+    "                              d=\"M38.9 48.4h.7c.2 0 .5 0 .7-.1l23.1-4.5 20.4-4 23.3-4.5c1.9-.4 3.2-2 2.9-3.6-.3-1.6-2.1-2.6-4.1-2.3l-19.6 3.8-1.3-6.8c-2-10.9-15-17.7-29.1-14.9-14 2.7-23.7 13.9-21.6 24.9h.1l1.7 9v.7c.2.8.7 1.4 1.4 1.9.5.1 1 .3 1.4.4z\"></path>\n" +
+    "                        <circle fill=\"#444\" cx=\"79.6\" cy=\"56.5\" r=\"2\"></circle>\n" +
+    "                        <path fill=\"#689F38\"\n" +
+    "                              d=\"M128 128v-1.8l-21.7-18.2-.4.2-2.9 1.3c-3 1.3-6 2.6-9.2 3.8l-1.4.5c-9 3.3-16.5 4.1-22.8 3.6-16.4-1.3-23.8-11.9-23.8-11.9-2.2 4.2-5.2 8.7-9.2 13.5l-.3.4-1.7 2c-.9 1.1-2 2.6-3.4 4.5-.4.6-.9 1.3-1.4 2l98.2.1z\"></path>\n" +
+    "                        <path fill=\"#FFCC80\" d=\"M36.3 119.3s.1-.2.2-.3c-.1.1-.2.2-.2.3z\"></path>\n" +
+    "                    </g>\n" +
+    "                </svg>\n" +
+    "            </core-icon>\n" +
+    "            <core-icon class=\"avatar\" icon=\"avatars:avatar-4\" aria-label=\"avatar-2\" role=\"img\">\n" +
+    "                <svg viewBox=\"0 0 128 128\" height=\"100%\" width=\"100%\"\n" +
+    "                     preserveAspectRatio=\"xMidYMid meet\" fit=\"\"\n" +
+    "                     style=\"pointer-events: none; display: block;\">\n" +
+    "                    <g>\n" +
+    "                        <path fill=\"#B9F6CA\" d=\"M0 0h128v128h-128z\"></path>\n" +
+    "                        <path fill=\"#FFCC80\"\n" +
+    "                              d=\"M70.1 122.5l.6-.1c6.1-.8 12-2.4 17.7-4.8 1.2-.5 2.4-1.1 3.2-2.1 1.3-1.7-.1-5.6-.5-7.7-.7-3.8-1.3-7.7-1.9-11.5-.7-4.5-1.5-9.1-1.6-13.7-.2-7.6.7-12.3 1.9-15.3h9l-2.6-10.4c-.2-2.4-.4-4.8-.7-6.8-.2-1.9-.6-3.6-1.2-5.3-14.9 2.2-24.5.9-30.7-1.8l-23.1 4.5-.7.1h-.7c-.4-.1-.9-.2-1.2-.4-.4 0-.9 0-1.4.1-4.1.6-6.9 4.7-6.3 9.1.3 2 1.2 3.8 2.6 5 .3.1 1.6.7 3.4 1.7.8.4 1.6 1 2.5 1.6 1.5 1.1 3.2 2.5 4.9 4.1 5.8 5.9 8.4 13.8 7.4 22-.6 4.7-2.2 9.4-4.4 13.6-.5 1-1 1.6-1.1 2.8-.1 1.1-.1 2.3.1 3.4.4 2.3 1.5 4.4 3 6.2 2.6 3.1 6.4 5 10.4 5.8 3.8.4 7.6.3 11.4-.1zm9.5-67.6c.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6s-1.6-.7-1.6-1.6c-.1-.8.7-1.6 1.6-1.6zM128 97.7c-3.3 1.9-6.6 3.7-9.9 5.3-3.2 1.5-6.3 2.9-9.6 4.2-.9.4-2.1.5-2.9 1.1-1.1.8-1.9 2.5-2.3 3.7-.6 1.6-.6 3.4.3 4.8.8 1.2 2.1 2 3.5 2.6 5.9 2.9 12.2 5.1 18.6 6.5 1.4.3 2.3 1.8 2.4.1v-28.1c-.1.1-.1-.1-.1-.2z\"></path>\n" +
+    "                        <path d=\"M38.9 47.4zM39.6 47.4z\" fill=\"none\"></path>\n" +
+    "                        <path fill=\"#444\"\n" +
+    "                              d=\"M94.2 44.9c-.8-2.6-1.8-5-3.2-7.2l-7.2 1.4-20.4 4c6.3 2.7 15.9 4 30.8 1.8z\"></path>\n" +
+    "                        <path fill=\"#E65100\"\n" +
+    "                              d=\"M38.9 48.4h.7c.2 0 .5 0 .7-.1l23.1-4.5 20.4-4 23.3-4.5c1.9-.4 3.2-2 2.9-3.6-.3-1.6-2.1-2.6-4.1-2.3l-19.6 3.8-1.3-6.8c-2-10.9-15-17.7-29.1-14.9-14 2.7-23.7 13.9-21.6 24.9h.1l1.7 9v.7c.2.8.7 1.4 1.4 1.9.5.1 1 .3 1.4.4z\"></path>\n" +
+    "                        <circle fill=\"#444\" cx=\"79.6\" cy=\"56.5\" r=\"2\"></circle>\n" +
+    "                        <path fill=\"#689F38\"\n" +
+    "                              d=\"M128 128v-1.8l-21.7-18.2-.4.2-2.9 1.3c-3 1.3-6 2.6-9.2 3.8l-1.4.5c-9 3.3-16.5 4.1-22.8 3.6-16.4-1.3-23.8-11.9-23.8-11.9-2.2 4.2-5.2 8.7-9.2 13.5l-.3.4-1.7 2c-.9 1.1-2 2.6-3.4 4.5-.4.6-.9 1.3-1.4 2l98.2.1z\"></path>\n" +
+    "                        <path fill=\"#FFCC80\" d=\"M36.3 119.3s.1-.2.2-.3c-.1.1-.2.2-.2.3z\"></path>\n" +
+    "                    </g>\n" +
+    "                </svg>\n" +
+    "            </core-icon>\n" +
+    "        </div>\n" +
+    "\n" +
+    "\n" +
+    "        <div id=\"fileTree\" class=\"sidebar\">\n" +
+    "\n" +
+    "            <ul style=\"margin-left: -20px;list-style: none;\">\n" +
+    "                <li>\n" +
+    "                    <core-icon icon=\"folder\"></core-icon>\n" +
+    "                    2014\n" +
+    "                </li>\n" +
+    "                <li>\n" +
+    "                    <core-icon icon=\"folder\"></core-icon>\n" +
+    "                    2013\n" +
+    "                </li>\n" +
+    "                <li>\n" +
+    "                    <core-icon icon=\"folder\"></core-icon>\n" +
+    "                    2012\n" +
+    "                </li>\n" +
+    "                <li>\n" +
+    "                    <core-icon icon=\"folder\"></core-icon>\n" +
+    "                    2011\n" +
+    "                </li>\n" +
+    "                <li>\n" +
+    "                    <core-icon icon=\"folder\"></core-icon>\n" +
+    "                    Social\n" +
+    "                    <ul style=\"margin-left: -20px;list-style: none;\">\n" +
+    "                        <li>\n" +
+    "                            <core-icon icon=\"folder\"></core-icon>\n" +
+    "                            Facebook\n" +
+    "                        </li>\n" +
+    "                        <li>\n" +
+    "                            <core-icon icon=\"folder\"></core-icon>\n" +
+    "                            Flickr\n" +
+    "                        </li>\n" +
+    "                    </ul>\n" +
+    "                </li>\n" +
+    "            </ul>\n" +
+    "        </div>\n" +
+    "\n" +
+    "\n" +
+    "        <div class=\"tagCloud\">\n" +
+    "            <div\n" +
+    "                    style=\"width:100%;background-color:#FFFFFF;font-family:Arial; border: 1px solid #FFFFFF; text-align:center;\">\n" +
+    "                <div style=\"padding:5px;\">\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:12px;text-decoration:none; color: #87A800;\">Landscape</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:16px;text-decoration:none; color: #FF7600;\">kids</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:19px;text-decoration:none; color: #87A800;\">Hailey</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:16px;text-decoration:none; color: #039FAF;\">Kayden</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:14px;text-decoration:none; color: #039FAF;\">mike</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:16px;text-decoration:none; color: #DE2159;\">Angie</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:12px;text-decoration:none; color: #DE2159;\">Vacation</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:12px;text-decoration:none; color: #87A800;\">Work</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:16px;text-decoration:none; color: #FF7600;\">Baseball</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:19px;text-decoration:none; color: #87A800;\">Birthday</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:16px;text-decoration:none; color: #039FAF;\">School</a>\n" +
+    "                    <a href=\"\"\n" +
+    "                       style=\"padding:10px;font-size:14px;text-decoration:none; color: #039FAF;\">B&W</a>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
     "");
+}]);
+
+angular.module("apps/dashboard/modules/photos/photos.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("apps/dashboard/modules/photos/photos.tpl.html",
+    "\n" +
+    "<div class=\".photoTemplate\">\n" +
+    "\n" +
+    "<!-- MAIN -->\n" +
+    "<div flex style=\"float:left; width: 100%\">\n" +
+    "\n" +
+    "    <div class=\"folder\">\n" +
+    "\n" +
+    "        <dam-photo-group id=\"photoList\"\n" +
+    "                         label=\"January 2014\"></dam-photo-group>\n" +
+    "\n" +
+    "        <hr/>\n" +
+    "\n" +
+    "        <dam-photo-group id=\"photoList2\"\n" +
+    "                         label=\"Feb 2014\"></dam-photo-group>\n" +
+    "\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "<script>\n" +
+    "var photos = [];\n" +
+    "var inDetailView = false;\n" +
+    "\n" +
+    "var shuffle = function (array) {\n" +
+    "    var currentIndex = array.length, temporaryValue, randomIndex;\n" +
+    "\n" +
+    "    // While there remain elements to shuffle...\n" +
+    "    while (0 !== currentIndex)\n" +
+    "    {\n" +
+    "\n" +
+    "        // Pick a remaining element...\n" +
+    "        randomIndex = Math.floor(Math.random() * currentIndex);\n" +
+    "        currentIndex -= 1;\n" +
+    "\n" +
+    "        // And swap it with the current element.\n" +
+    "        temporaryValue = array[currentIndex];\n" +
+    "        array[currentIndex] = array[randomIndex];\n" +
+    "        array[randomIndex] = temporaryValue;\n" +
+    "    }\n" +
+    "\n" +
+    "    return array;\n" +
+    "};\n" +
+    "\n" +
+    "var toolbarIconHelper = function(){\n" +
+    "    if( !inDetailView ){\n" +
+    "        window.location.href='index.html';\n" +
+    "    }else{\n" +
+    "        openLeftDrawer(\"leftDrawer\");\n" +
+    "        closeRightDrawer(\"rightDrawer\");\n" +
+    "        document.querySelector(\"#photoList\").$.pages.selected = 0;\n" +
+    "\n" +
+    "        inDetailView = false;\n" +
+    "        document.querySelector(\"#primaryToolbarIcon\").icon=\"home\";\n" +
+    "    }\n" +
+    "}\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "var toggleUploader = function () {\n" +
+    "    document.querySelector(\"#uploaderOverlay\").toggle();\n" +
+    "};\n" +
+    "\n" +
+    "\n" +
+    "var photoSelectHandler = function (event) {\n" +
+    "    console.dir(event.detail);\n" +
+    "\n" +
+    "    openRightDrawer(\"rightDrawer\");\n" +
+    "\n" +
+    "    document.querySelector(\"#photoPreview\").style.display = \"block\";\n" +
+    "    document.querySelector(\"#photoLightbox\").style.display = \"none\";\n" +
+    "};\n" +
+    "\n" +
+    "\n" +
+    "var photoMultiSelectHandler = function (event) {\n" +
+    "    console.dir(event.detail);\n" +
+    "\n" +
+    "    openRightDrawer(\"rightDrawer\");\n" +
+    "\n" +
+    "    document.querySelector(\"#photoLightbox\").addPhoto(event.detail);\n" +
+    "    if (document.querySelector(\"#photoLightbox\").selectedItems.length == 1)\n" +
+    "    {\n" +
+    "        document.querySelector(\"#photoPreview\").style.display = \"block\";\n" +
+    "        document.querySelector(\"#photoLightbox\").style.display = \"none\";\n" +
+    "    } else\n" +
+    "    {\n" +
+    "        document.querySelector(\"#photoLightbox\").style.display = \"block\";\n" +
+    "        document.querySelector(\"#photoPreview\").style.display = \"none\";\n" +
+    "    }\n" +
+    "\n" +
+    "};\n" +
+    "\n" +
+    "var photoDeselectHandler = function (event) {\n" +
+    "    console.dir(event.detail);\n" +
+    "\n" +
+    "    closeRightDrawer(\"rightDrawer\");\n" +
+    "    inDetailView = false;\n" +
+    "    document.querySelector(\"#primaryToolbarIcon\").icon=\"home\";\n" +
+    "};\n" +
+    "\n" +
+    "var photoHardSelectHandler = function (event) {\n" +
+    "    console.dir(event.detail);\n" +
+    "\n" +
+    "\n" +
+    "    openRightDrawer(\"rightDrawer\");\n" +
+    "    closeLeftDrawer(\"leftDrawer\");\n" +
+    "\n" +
+    "    inDetailView = true;\n" +
+    "    document.querySelector(\"#primaryToolbarIcon\").icon=\"arrow-back\";\n" +
+    "    //document.querySelector(\"#photoList\").unselectOthers(event.detail);\n" +
+    "    //document.querySelector(\"#photoLightbox\").removeOthers(event.detail);\n" +
+    "\n" +
+    "    //document.querySelector(\"#photoDetails\").model = event.detail;\n" +
+    "    //document.querySelector(\"#photoDetailOverlay\").toggle();\n" +
+    "}\n" +
+    "\n" +
+    "var onLoadHandler = function () {\n" +
+    "    photos = [\n" +
+    "        {\n" +
+    "            id: \"001\",\n" +
+    "            indx: 1,\n" +
+    "            name: \"dsc0001.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/325x245\",\n" +
+    "            width: 325,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"012\",\n" +
+    "            indx: 12,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"004\",\n" +
+    "            indx: 4,\n" +
+    "            name: \"dsc0001.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/325x245\",\n" +
+    "            width: 325,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"014\",\n" +
+    "            indx: 14,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"013\",\n" +
+    "            indx: 13,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"005\",\n" +
+    "            indx: 5,\n" +
+    "            name: \"dsc0001.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/325x245\",\n" +
+    "            width: 325,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"016\",\n" +
+    "            indx: 16,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"009\",\n" +
+    "            indx: 9,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"007\",\n" +
+    "            indx: 7,\n" +
+    "            name: \"dsc0001.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/325x245\",\n" +
+    "            width: 325,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"008\",\n" +
+    "            indx: 8,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"010\",\n" +
+    "            indx: 10,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"011\",\n" +
+    "            indx: 11,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"002\",\n" +
+    "            indx: 2,\n" +
+    "            name: \"dsc0001.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/325x245\",\n" +
+    "            width: 325,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"015\",\n" +
+    "            indx: 15,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"003\",\n" +
+    "            indx: 3,\n" +
+    "            name: \"dsc0001.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/325x245\",\n" +
+    "            width: 325,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"006\",\n" +
+    "            indx: 6,\n" +
+    "            name: \"dsc0001.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/325x245\",\n" +
+    "            width: 325,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "        {\n" +
+    "            id: \"017\",\n" +
+    "            indx: 17,\n" +
+    "            name: \"dsc0002.jpg\",\n" +
+    "            date: '01/21/2014',\n" +
+    "            src: \"http://placehold.it/160x245\",\n" +
+    "            width: 160,\n" +
+    "            height: 245\n" +
+    "        },\n" +
+    "    ];\n" +
+    "    document.querySelector(\"#photoList\").model = photos;//shuffle(photos);\n" +
+    "    document.querySelector(\"#photoList\").addEventListener('photo-select', photoSelectHandler);\n" +
+    "    document.querySelector(\"#photoList\").addEventListener('photo-multiselect', photoMultiSelectHandler);\n" +
+    "    document.querySelector(\"#photoList\").addEventListener('photo-deselect', photoDeselectHandler);\n" +
+    "    document.querySelector(\"#photoList\").addEventListener('photo-hard-select', photoHardSelectHandler);\n" +
+    "\n" +
+    "    document.querySelector(\"#photoList2\").model = photos;//shuffle(photos);\n" +
+    "    document.querySelector(\"#photoList2\").addEventListener('photo-select', photoSelectHandler);\n" +
+    "    document.querySelector(\"#photoList2\").addEventListener('photo-multiselect', photoMultiSelectHandler);\n" +
+    "    document.querySelector(\"#photoList2\").addEventListener('photo-deselect', photoDeselectHandler);\n" +
+    "    document.querySelector(\"#photoList2\").addEventListener('photo-hard-select', photoHardSelectHandler);\n" +
+    "\n" +
+    "};\n" +
+    "onLoadHandler();\n" +
+    "</script>\n" +
+    "");
+}]);
+
+angular.module("apps/dashboard/modules/photos/right-drawer.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("apps/dashboard/modules/photos/right-drawer.tpl.html",
+    "\n" +
+    "<!--\n" +
+    "  ~ This file is part of FamilyDAM Project.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is free software: you can redistribute it and/or modify\n" +
+    "  ~     it under the terms of the GNU General Public License as published by\n" +
+    "  ~     the Free Software Foundation, either version 3 of the License, or\n" +
+    "  ~     (at your option) any later version.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is distributed in the hope that it will be useful,\n" +
+    "  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+    "  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+    "  ~     GNU General Public License for more details.\n" +
+    "  ~\n" +
+    "  ~     You should have received a copy of the GNU General Public License\n" +
+    "  ~     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.\n" +
+    "  -->\n" +
+    "\n" +
+    "<div>\n" +
+    "\n" +
+    "\n" +
+    "    <div id=\"content\" style=\"background-color: #fff; position: absolute; width: 256px;\">\n" +
+    "        <dam-photo-lightbox id=\"photoLightbox\" style=\"display: none\"></dam-photo-lightbox>\n" +
+    "        <preview-photo id=\"photoPreview\" style=\"display: none\"></preview-photo>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
 }]);

@@ -15,28 +15,13 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Controller for the main application screen that controls the header and menu.
- * @param $scope
- * @param $window
- * @param $route
- * @param $location
- * @param cloverConfig
- * @param $dialog
- * @constructor
- */
-var HomeController = function ($scope, $rootScope, $window, $location, $state, $stateParams) {
+.photo{
+    background-color: #fff;
+    padding: 20px;
+    padding-bottom: 40px;
+    border: 1px solid #eeeeef;
+}
 
-
-    /************************************
-     *
-     *************************************/
-    $scope.toggleUploader = function () {
-        document.querySelector("#uploaderOverlay").toggle();
-    };
-
-
-};
-
-HomeController.$inject = ['$scope', '$rootScope', '$window', '$location', '$state', '$stateParams'];
-module.exports = HomeController;
+.selected{
+    border: 1px solid #3949ab;
+}

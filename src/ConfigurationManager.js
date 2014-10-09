@@ -51,7 +51,7 @@
         configWindow.loadUrl('file://' + __dirname + '/config/index.html');
         configWindow.webContents.on('did-finish-load', function()
         {
-            configWindow.webContents.send('settingConfig', settings);
+            configWindow.webContents.send("settingConfig", settings);
         });
         configWindow.show();
         configWindow.focus();
@@ -97,12 +97,15 @@
             console.log(data);
             settings = JSON.parse(data);
 
+            this.appRoot.loadMainApplication(settings);
+            /** todo put back in
             if( settings.state == "READY" && storageLocationInitialize() )
             {
                 this.appRoot.loadMainApplication(settings);
             }else{
                 loadConfigApplication();
             }
+             **/
         });
     };
 

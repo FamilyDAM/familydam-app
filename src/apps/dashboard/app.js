@@ -27,7 +27,8 @@ var App = angular.module('dashboard', [
     'ui.router',
     require('./modules/login/index').name,
     require('./modules/home/index').name,
-    require('./modules/files/index').name
+    require('./modules/files/index').name,
+    require('./modules/photos/index').name
 ])
 
     .service('appService', require('./services/AppService'))
@@ -116,6 +117,4 @@ Array.prototype.remove = function (from, to) {
     this.length = from < 0 ? this.length + from : from;
     return this.push.apply(this, rest);
 };
-
-
 

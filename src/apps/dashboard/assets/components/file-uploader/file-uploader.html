@@ -35,8 +35,12 @@
             <div id="copyFilesBody" >
                 <div horizontal layout center-justified style="border: 1px dashed darkgray; background-color: #d3d3d3; height:25%; padding: 10px;">
                     <div style="text-align: center;">
-                        Drag Files<br/>
-                        [Select files or folders]
+                        Drag Files Here<br/>
+                        <paper-button
+                                raised class="colored" role="button"
+                                label="Select Files & Folders"
+                                openfilebrowser
+                                onclick="this.fire('openFileBrowser');"></paper-button>
                     </div>
                 </div>
 

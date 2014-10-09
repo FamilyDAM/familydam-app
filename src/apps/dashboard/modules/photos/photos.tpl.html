@@ -1,0 +1,295 @@
+
+<div class=".photoTemplate">
+
+<!-- MAIN -->
+<div flex style="float:left; width: 100%">
+
+    <div class="folder">
+
+        <dam-photo-group id="photoList"
+                         label="January 2014"></dam-photo-group>
+
+        <hr/>
+
+        <dam-photo-group id="photoList2"
+                         label="Feb 2014"></dam-photo-group>
+
+    </div>
+</div>
+
+
+
+</div>
+</div>
+
+
+
+
+<script>
+var photos = [];
+var inDetailView = false;
+
+var shuffle = function (array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex)
+    {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+};
+
+var toolbarIconHelper = function(){
+    if( !inDetailView ){
+        window.location.href='index.html';
+    }else{
+        openLeftDrawer("leftDrawer");
+        closeRightDrawer("rightDrawer");
+        document.querySelector("#photoList").$.pages.selected = 0;
+
+        inDetailView = false;
+        document.querySelector("#primaryToolbarIcon").icon="home";
+    }
+}
+
+
+
+
+var toggleUploader = function () {
+    document.querySelector("#uploaderOverlay").toggle();
+};
+
+
+var photoSelectHandler = function (event) {
+    console.dir(event.detail);
+
+    openRightDrawer("rightDrawer");
+
+    document.querySelector("#photoPreview").style.display = "block";
+    document.querySelector("#photoLightbox").style.display = "none";
+};
+
+
+var photoMultiSelectHandler = function (event) {
+    console.dir(event.detail);
+
+    openRightDrawer("rightDrawer");
+
+    document.querySelector("#photoLightbox").addPhoto(event.detail);
+    if (document.querySelector("#photoLightbox").selectedItems.length == 1)
+    {
+        document.querySelector("#photoPreview").style.display = "block";
+        document.querySelector("#photoLightbox").style.display = "none";
+    } else
+    {
+        document.querySelector("#photoLightbox").style.display = "block";
+        document.querySelector("#photoPreview").style.display = "none";
+    }
+
+};
+
+var photoDeselectHandler = function (event) {
+    console.dir(event.detail);
+
+    closeRightDrawer("rightDrawer");
+    inDetailView = false;
+    document.querySelector("#primaryToolbarIcon").icon="home";
+};
+
+var photoHardSelectHandler = function (event) {
+    console.dir(event.detail);
+
+
+    openRightDrawer("rightDrawer");
+    closeLeftDrawer("leftDrawer");
+
+    inDetailView = true;
+    document.querySelector("#primaryToolbarIcon").icon="arrow-back";
+    //document.querySelector("#photoList").unselectOthers(event.detail);
+    //document.querySelector("#photoLightbox").removeOthers(event.detail);
+
+    //document.querySelector("#photoDetails").model = event.detail;
+    //document.querySelector("#photoDetailOverlay").toggle();
+}
+
+var onLoadHandler = function () {
+    photos = [
+        {
+            id: "001",
+            indx: 1,
+            name: "dsc0001.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/325x245",
+            width: 325,
+            height: 245
+        },
+        {
+            id: "012",
+            indx: 12,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "004",
+            indx: 4,
+            name: "dsc0001.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/325x245",
+            width: 325,
+            height: 245
+        },
+        {
+            id: "014",
+            indx: 14,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "013",
+            indx: 13,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "005",
+            indx: 5,
+            name: "dsc0001.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/325x245",
+            width: 325,
+            height: 245
+        },
+        {
+            id: "016",
+            indx: 16,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "009",
+            indx: 9,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "007",
+            indx: 7,
+            name: "dsc0001.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/325x245",
+            width: 325,
+            height: 245
+        },
+        {
+            id: "008",
+            indx: 8,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "010",
+            indx: 10,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "011",
+            indx: 11,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "002",
+            indx: 2,
+            name: "dsc0001.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/325x245",
+            width: 325,
+            height: 245
+        },
+        {
+            id: "015",
+            indx: 15,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+        {
+            id: "003",
+            indx: 3,
+            name: "dsc0001.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/325x245",
+            width: 325,
+            height: 245
+        },
+        {
+            id: "006",
+            indx: 6,
+            name: "dsc0001.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/325x245",
+            width: 325,
+            height: 245
+        },
+        {
+            id: "017",
+            indx: 17,
+            name: "dsc0002.jpg",
+            date: '01/21/2014',
+            src: "http://placehold.it/160x245",
+            width: 160,
+            height: 245
+        },
+    ];
+    document.querySelector("#photoList").model = photos;//shuffle(photos);
+    document.querySelector("#photoList").addEventListener('photo-select', photoSelectHandler);
+    document.querySelector("#photoList").addEventListener('photo-multiselect', photoMultiSelectHandler);
+    document.querySelector("#photoList").addEventListener('photo-deselect', photoDeselectHandler);
+    document.querySelector("#photoList").addEventListener('photo-hard-select', photoHardSelectHandler);
+
+    document.querySelector("#photoList2").model = photos;//shuffle(photos);
+    document.querySelector("#photoList2").addEventListener('photo-select', photoSelectHandler);
+    document.querySelector("#photoList2").addEventListener('photo-multiselect', photoMultiSelectHandler);
+    document.querySelector("#photoList2").addEventListener('photo-deselect', photoDeselectHandler);
+    document.querySelector("#photoList2").addEventListener('photo-hard-select', photoHardSelectHandler);
+
+};
+onLoadHandler();
+</script>

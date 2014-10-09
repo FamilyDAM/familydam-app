@@ -59,7 +59,7 @@ var LoginController = function($window, $scope, $rootScope, $location, loginServ
 
                 $rootScope.user = response.data;
                 //$location.path('/home');
-                $location.path('/files');
+                $location.path('/photos');
 
             }, function(reason){
                 // todo: error handler

@@ -216,7 +216,7 @@ module.exports = function (grunt) {
 
 		// js hint
 		jshint: {
-			files: ['gruntFile.js', '<%= src.js %>', '!src/components/**/*.js', '!src/apps/dashboard/assets/js/**/*.js', '!src/config/components/**/*.js'],
+			files: ['gruntFile.js', '<%= src.js %>', '!src/components/**/*.js', '!src/apps/dashboard/assets/js/**/*.js', '!src/config/components/**/*.js', '!src/**/*.min.js'],
 			options: {
 				curly:false,
 				eqeqeq:false,
