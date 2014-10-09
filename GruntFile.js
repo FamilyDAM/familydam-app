@@ -41,6 +41,7 @@ module.exports = function (grunt) {
 
 	// default task
 	grunt.registerTask('default', ['clean','copy','build-shared-libs','build']);
+	grunt.registerTask('default-quick', ['copy','build-quick']);
 	grunt.registerTask('default-deploy', ['default', 'deploy']);
 
 	// build tasks
@@ -48,6 +49,7 @@ module.exports = function (grunt) {
 	grunt.registerTask('build-css', ['compass:develop']);
 	grunt.registerTask('build-js', ['jshint','html2js','browserify2:dashboard']);
 	grunt.registerTask('build-shared-libs', ['browserify2:shared-libs']);
+	grunt.registerTask('build-quick', ['build-css', 'build-js']);
 	grunt.registerTask('deploy', ['slingPost']);
 
 	// server task

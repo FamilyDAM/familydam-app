@@ -26,8 +26,8 @@ module.exports = angular.module('dashboard.main', ['ui.router'])
                 // Do something
                 console.dir(scope);
 
-                //var ipc = require('ipc');
-                //console.log(ipc.sendSync('openFileAndFolderDialogRequest'));
+                var ipc = require('ipc');
+                console.log(ipc.sendSync('openFileAndFolderDialogRequest'));
             });
         };
     })
