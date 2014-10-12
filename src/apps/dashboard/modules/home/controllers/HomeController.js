@@ -28,14 +28,6 @@
 var HomeController = function ($scope, $rootScope, $window, $location, $state, $stateParams) {
 
 
-    /************************************
-     *
-     *************************************/
-    $scope.toggleUploader = function () {
-        document.querySelector("#uploaderOverlay").toggle();
-    };
-
-
 };
 
 HomeController.$inject = ['$scope', '$rootScope', '$window', '$location', '$state', '$stateParams'];

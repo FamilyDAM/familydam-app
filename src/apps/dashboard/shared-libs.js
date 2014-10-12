@@ -18,6 +18,7 @@
 /**
  * Define the required js libraries needed for this application. The compiler will merge them all into a single download
  */
+require('jquery');
 require('angular');
 require('angular-resource');
 require('angular-ui-router');

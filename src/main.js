@@ -171,7 +171,9 @@ app.sendClientMessage = function(_type, _message, _logToConsole)
 {
     if( _logToConsole )
     {
-        console.log(_type +":" +_message);
+        console.log("{sendCLientMessage}");
+        console.dir(type);
+        console.dir(message);
     }
     if (splashWindow !== undefined && splashWindow.webContents != null) splashWindow.webContents.send(_type, _message);
     if (mainWindow !== undefined && mainWindow.webContents != null) mainWindow.webContents.send(_type, _message);

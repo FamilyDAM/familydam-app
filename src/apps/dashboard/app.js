@@ -21,14 +21,14 @@
 require('dashboard-templates');
 
 
-
 // Define the required modules
 var App = angular.module('dashboard', [
     'ui.router',
     require('./modules/login/index').name,
     require('./modules/home/index').name,
     require('./modules/files/index').name,
-    require('./modules/photos/index').name
+    require('./modules/photos/index').name,
+    require('./modules/uploader/index').name
 ])
 
     .service('appService', require('./services/AppService'))
@@ -92,7 +92,8 @@ var App = angular.module('dashboard', [
 
 
 App.run(["$rootScope", '$state', 'appService',
-    function ($rootScope, $state, appService) {
+    function ($rootScope, $state, appService, $window) {
+
         $state.go('login');
         /***
         console.log("add run");
@@ -109,7 +110,7 @@ App.run(["$rootScope", '$state', 'appService',
 
 
 
-App.$inject = ['ui.router', '$rootScope', '$state', 'appService', 'authService'];
+App.$inject = ['ui.router', '$rootScope', '$state', '$location', 'appService', 'authService', '$window', '$document'];
 
 // Array Remove - By John Resig (MIT Licensed)
 Array.prototype.remove = function (from, to) {
@@ -117,4 +118,5 @@ Array.prototype.remove = function (from, to) {
     this.length = from < 0 ? this.length + from : from;
     return this.push.apply(this, rest);
 };
+
 

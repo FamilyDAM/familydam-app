@@ -15,10 +15,10 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var FilesController = function($window, $document, $scope, $rootScope, $location)
+var FilesController = function($window, $document, $scope, $rootScope)
 {
 
 };
 
-FilesController.$inject = ['$window', '$document', '$scope', '$rootScope', '$location'];
+FilesController.$inject = ['$window', '$document', '$scope', '$rootScope'];
 module.exports = FilesController;

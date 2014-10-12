@@ -1,4 +1,3 @@
-
 /*
  * This file is part of FamilyDAM Project.
  *
@@ -16,29 +15,19 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-(function() {
-    var app = require('app');
-    var fs = require('fs');
-    var ipc = require('ipc');
-    var http = require('http');
-    var dialog = require('dialog');
 
-    /******************************
-     * RECEIVED Messages
-     */
-    ipc.on('selectFileDialog', function(event) {
-        console.log("selectFileDialog:" +event);
-        console.dir(event);
-        dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]}, function(files){
-            console.log("selected files=" +files);
-            event.sender.send('selectFilesReply', files);
+module.exports = angular.module('dashboard.uploader', ['ui.bootstrap'])
+    .controller('UploaderController', require('./controllers/UploaderController'))
+
+    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+        $stateProvider.state('home.uploader', {
+            url: '^/uploader',
+            views: {
+                ".body": {
+                    templateUrl: "modules/uploader/uploader.tpl.html",
+                    controller: "UploaderController"
+                }
+            }
         });
-    });
 
-
-
-    // put public properties & methods here.
-    module.exports = {};
-
-    console.log("FileManager INIT()");
-}).call(this);
+    }]);

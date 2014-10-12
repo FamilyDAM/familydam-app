@@ -58,8 +58,8 @@ var LoginController = function($window, $scope, $rootScope, $location, loginServ
                 //$rootScope.username = $scope.loginForm.username;
 
                 $rootScope.user = response.data;
-                //$location.path('/home');
-                $location.path('/photos');
+                $location.path('/home');
+                //$location.path('/photos');
 
             }, function(reason){
                 // todo: error handler

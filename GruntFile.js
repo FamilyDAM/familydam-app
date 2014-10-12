@@ -42,7 +42,6 @@ module.exports = function (grunt) {
 	// default task
 	grunt.registerTask('default', ['clean','copy','build-shared-libs','build']);
 	grunt.registerTask('default-quick', ['copy','build-quick']);
-	grunt.registerTask('default-deploy', ['default', 'deploy']);
 
 	// build tasks
 	grunt.registerTask('build', ['build-css', 'build-js', 'build-atom-shell-app']);
@@ -50,7 +49,7 @@ module.exports = function (grunt) {
 	grunt.registerTask('build-js', ['jshint','html2js','browserify2:dashboard']);
 	grunt.registerTask('build-shared-libs', ['browserify2:shared-libs']);
 	grunt.registerTask('build-quick', ['build-css', 'build-js']);
-	grunt.registerTask('deploy', ['slingPost']);
+	//grunt.registerTask('deploy', ['slingPost']);
 
 	// server task
 	grunt.registerTask('server', ['clean','copy','build', 'build-shared-libs', 'server-start', 'open', 'watch']);
@@ -251,6 +250,7 @@ module.exports = function (grunt) {
 				debug: true,
 				options: {
 					expose: {
+                        jquery: './bower_components/jquery/dist/jquery.js',
                         angular: './bower_components/angular/angular.js',
                         'angular-ui-router': './bower_components/angular-ui-router/release/angular-ui-router.js',
                         'angular-resource': './bower_components/angular-resource/angular-resource.js',
@@ -268,11 +268,28 @@ module.exports = function (grunt) {
 				debug: true,
 				options: {
                     expose: {
-                        'dashboard-templates': './.temp/apps/dashboard/app-templates.js'
+                        'dashboard-templates': './.temp/apps/dashboard/app-templates.js',
+                        'ipc': './binaries/Atom.app/Contents/Resources/atom/renderer/api/lib/ipc.js',
+                        'remote': './binaries/Atom.app/Contents/Resources/atom/renderer/api/lib/remote.js',
+                        'callbacks-registry': './binaries/Atom.app/Contents/Resources/atom/common/api/lib/callbacks-registry.js',
+                        'dialog': './binaries/Atom.app/Contents/Resources/atom/browser/api/lib/dialog.js',
+                        'browser-window': './binaries/Atom.app/Contents/Resources/atom/browser/api/lib/browser-window.js',
+                        'web-contents': './binaries/Atom.app/Contents/Resources/atom/browser/api/lib/web-contents.js',
+                        'app': './binaries/Atom.app/Contents/Resources/atom/browser/api/lib/app.js',
+                        'menu': './binaries/Atom.app/Contents/Resources/atom/browser/api/lib/menu.js',
+                        'menu-item': './binaries/Atom.app/Contents/Resources/atom/browser/api/lib/menu-item.js',
+                        //'web-view': './binaries/Atom.app/Contents/Resources/atom/renderer/api/lib/remote.js',
+                        //'clipboard': './binaries/Atom.app/Contents/Resources/atom/common/api/lib/clipboard.js',
+                        //'crash-reporter': './binaries/Atom.app/Contents/Resources/atom/common/api/lib/crash-reporter.js',
+                        'id-weak-map': './binaries/Atom.app/Contents/Resources/atom/common/api/lib/id-weak-map.js'
+                        //'screen': './binaries/Atom.app/Contents/Resources/atom/common/api/lib/screen.js',
+                        //'shell': './binaries/Atom.app/Contents/Resources/atom/common/api/lib/shell.js'
+
                     }
                 }
 			}
 		},
+
 
 
 		// ========================================

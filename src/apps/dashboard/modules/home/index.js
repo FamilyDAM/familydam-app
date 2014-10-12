@@ -19,27 +19,22 @@ module.exports = angular.module('dashboard.main', ['ui.router'])
     .controller('HomeController', require('../home/controllers/HomeController'))
 
 
-    .directive('openfilebrowser', function() {
-        return function(scope, element, attrs) {
+    .directive('addFileBridge', function($location, $window) {
+        return {
+            link:function(scope, element, attrs){
+                var _scope = scope;
+                element.bind('selectFile', function(e){
+                    // switch to upload view
+                    $location.path('/uploader');
 
-            element.bind('openFileBrowser', function(e){
-                // Do something
-                console.dir(scope);
-
-                var ipc = require('ipc');
-                console.log(ipc.sendSync('openFileAndFolderDialogRequest'));
-            });
-        };
-    })
-
-    .directive('addfilebridge', function() {
-        return function(scope, element, attrs) {
-
-            element.bind('toggle', function(e){
-                // Do something
-                console.dir(scope);
-                document.querySelector("#uploaderOverlay").toggle();
-            });
+                    //call back to atom-shell to open native file picker dialog
+                    //ipc.sendSync('selectFileDialog');
+                    $window.openFilePicker(function(results){
+                        console.dir(results);
+                        _scope.selectFilesHandler(results);
+                    });
+                });
+            }
         };
     })
 

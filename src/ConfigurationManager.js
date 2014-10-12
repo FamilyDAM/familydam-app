@@ -51,7 +51,7 @@
         configWindow.loadUrl('file://' + __dirname + '/config/index.html');
         configWindow.webContents.on('did-finish-load', function()
         {
-            configWindow.webContents.send("settingConfig", settings);
+            configWindow.webContents.send('settingConfig', settings);
         });
         configWindow.show();
         configWindow.focus();

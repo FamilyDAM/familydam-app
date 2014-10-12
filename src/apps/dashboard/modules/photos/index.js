@@ -16,7 +16,7 @@
  */
 
 
-module.exports = angular.module('dashboard.files', ['ui.bootstrap'])
+module.exports = angular.module('dashboard.photos', ['ui.bootstrap'])
     .controller('PhotosController', require('./controllers/PhotosController'))
 
     .directive('filesEventBridge', function() {

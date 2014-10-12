@@ -1,4 +1,4 @@
-angular.module('dashboard.templates', ['apps/dashboard/modules/files/files.tpl.html', 'apps/dashboard/modules/home/home.tpl.html', 'apps/dashboard/modules/login/login.tpl.html', 'apps/dashboard/modules/photos/left-drawer.tpl.html', 'apps/dashboard/modules/photos/photos.tpl.html', 'apps/dashboard/modules/photos/right-drawer.tpl.html']);
+angular.module('dashboard.templates', ['apps/dashboard/modules/files/files.tpl.html', 'apps/dashboard/modules/home/home.tpl.html', 'apps/dashboard/modules/login/login.tpl.html', 'apps/dashboard/modules/photos/left-drawer.tpl.html', 'apps/dashboard/modules/photos/photos.tpl.html', 'apps/dashboard/modules/photos/right-drawer.tpl.html', 'apps/dashboard/modules/uploader/left-drawer.tpl.html', 'apps/dashboard/modules/uploader/right-drawer.tpl.html', 'apps/dashboard/modules/uploader/uploader.tpl.html']);
 
 angular.module("apps/dashboard/modules/files/files.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("apps/dashboard/modules/files/files.tpl.html",
@@ -417,8 +417,8 @@ angular.module("apps/dashboard/modules/home/home.tpl.html", []).run(["$templateC
     "            <div class=\"middle indent title\" style=\"margin-left: 100px;\">/photos/</div>\n" +
     "            <div class=\"bottom\">\n" +
     "                <paper-fab icon=\"add\"\n" +
-    "                           onclick=\"this.fire('toggle');\"\n" +
-    "                           addfilebridge\n" +
+    "                           onclick=\"this.fire('selectFile');\"\n" +
+    "                           add-file-bridge\n" +
     "                           style=\"z-index: 10\"></paper-fab>\n" +
     "            </div>\n" +
     "        </core-toolbar>\n" +
@@ -483,7 +483,6 @@ angular.module("apps/dashboard/modules/home/home.tpl.html", []).run(["$templateC
     "</div>\n" +
     "\n" +
     "\n" +
-    "<file-uploader id=\"uploaderOverlay\"></file-uploader>\n" +
     "\n" +
     "<script>\n" +
     "\n" +
@@ -828,176 +827,6 @@ angular.module("apps/dashboard/modules/photos/photos.tpl.html", []).run(["$templ
     "    //document.querySelector(\"#photoDetailOverlay\").toggle();\n" +
     "}\n" +
     "\n" +
-    "var onLoadHandler = function () {\n" +
-    "    photos = [\n" +
-    "        {\n" +
-    "            id: \"001\",\n" +
-    "            indx: 1,\n" +
-    "            name: \"dsc0001.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/325x245\",\n" +
-    "            width: 325,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"012\",\n" +
-    "            indx: 12,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"004\",\n" +
-    "            indx: 4,\n" +
-    "            name: \"dsc0001.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/325x245\",\n" +
-    "            width: 325,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"014\",\n" +
-    "            indx: 14,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"013\",\n" +
-    "            indx: 13,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"005\",\n" +
-    "            indx: 5,\n" +
-    "            name: \"dsc0001.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/325x245\",\n" +
-    "            width: 325,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"016\",\n" +
-    "            indx: 16,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"009\",\n" +
-    "            indx: 9,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"007\",\n" +
-    "            indx: 7,\n" +
-    "            name: \"dsc0001.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/325x245\",\n" +
-    "            width: 325,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"008\",\n" +
-    "            indx: 8,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"010\",\n" +
-    "            indx: 10,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"011\",\n" +
-    "            indx: 11,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"002\",\n" +
-    "            indx: 2,\n" +
-    "            name: \"dsc0001.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/325x245\",\n" +
-    "            width: 325,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"015\",\n" +
-    "            indx: 15,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"003\",\n" +
-    "            indx: 3,\n" +
-    "            name: \"dsc0001.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/325x245\",\n" +
-    "            width: 325,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"006\",\n" +
-    "            indx: 6,\n" +
-    "            name: \"dsc0001.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/325x245\",\n" +
-    "            width: 325,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "        {\n" +
-    "            id: \"017\",\n" +
-    "            indx: 17,\n" +
-    "            name: \"dsc0002.jpg\",\n" +
-    "            date: '01/21/2014',\n" +
-    "            src: \"http://placehold.it/160x245\",\n" +
-    "            width: 160,\n" +
-    "            height: 245\n" +
-    "        },\n" +
-    "    ];\n" +
-    "    document.querySelector(\"#photoList\").model = photos;//shuffle(photos);\n" +
-    "    document.querySelector(\"#photoList\").addEventListener('photo-select', photoSelectHandler);\n" +
-    "    document.querySelector(\"#photoList\").addEventListener('photo-multiselect', photoMultiSelectHandler);\n" +
-    "    document.querySelector(\"#photoList\").addEventListener('photo-deselect', photoDeselectHandler);\n" +
-    "    document.querySelector(\"#photoList\").addEventListener('photo-hard-select', photoHardSelectHandler);\n" +
-    "\n" +
-    "    document.querySelector(\"#photoList2\").model = photos;//shuffle(photos);\n" +
-    "    document.querySelector(\"#photoList2\").addEventListener('photo-select', photoSelectHandler);\n" +
-    "    document.querySelector(\"#photoList2\").addEventListener('photo-multiselect', photoMultiSelectHandler);\n" +
-    "    document.querySelector(\"#photoList2\").addEventListener('photo-deselect', photoDeselectHandler);\n" +
-    "    document.querySelector(\"#photoList2\").addEventListener('photo-hard-select', photoHardSelectHandler);\n" +
-    "\n" +
-    "};\n" +
-    "onLoadHandler();\n" +
     "</script>\n" +
     "");
 }]);
@@ -1031,4 +860,178 @@ angular.module("apps/dashboard/modules/photos/right-drawer.tpl.html", []).run(["
     "    </div>\n" +
     "\n" +
     "</div>");
+}]);
+
+angular.module("apps/dashboard/modules/uploader/left-drawer.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("apps/dashboard/modules/uploader/left-drawer.tpl.html",
+    "<!--\n" +
+    "  ~ This file is part of FamilyDAM Project.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is free software: you can redistribute it and/or modify\n" +
+    "  ~     it under the terms of the GNU General Public License as published by\n" +
+    "  ~     the Free Software Foundation, either version 3 of the License, or\n" +
+    "  ~     (at your option) any later version.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is distributed in the hope that it will be useful,\n" +
+    "  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+    "  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+    "  ~     GNU General Public License for more details.\n" +
+    "  ~\n" +
+    "  ~     You should have received a copy of the GNU General Public License\n" +
+    "  ~     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.\n" +
+    "  -->\n" +
+    "\n" +
+    "<!-- LEFT DRAWER -->\n" +
+    "<div>\n" +
+    "    TODO - Left Drawer\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("apps/dashboard/modules/uploader/right-drawer.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("apps/dashboard/modules/uploader/right-drawer.tpl.html",
+    "\n" +
+    "<!--\n" +
+    "  ~ This file is part of FamilyDAM Project.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is free software: you can redistribute it and/or modify\n" +
+    "  ~     it under the terms of the GNU General Public License as published by\n" +
+    "  ~     the Free Software Foundation, either version 3 of the License, or\n" +
+    "  ~     (at your option) any later version.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is distributed in the hope that it will be useful,\n" +
+    "  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+    "  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+    "  ~     GNU General Public License for more details.\n" +
+    "  ~\n" +
+    "  ~     You should have received a copy of the GNU General Public License\n" +
+    "  ~     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.\n" +
+    "  -->\n" +
+    "\n" +
+    "<div>\n" +
+    "    TODO - Right Drawer\n" +
+    "</div>");
+}]);
+
+angular.module("apps/dashboard/modules/uploader/uploader.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("apps/dashboard/modules/uploader/uploader.tpl.html",
+    "<!--\n" +
+    "  ~ This file is part of FamilyDAM Project.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is free software: you can redistribute it and/or modify\n" +
+    "  ~     it under the terms of the GNU General Public License as published by\n" +
+    "  ~     the Free Software Foundation, either version 3 of the License, or\n" +
+    "  ~     (at your option) any later version.\n" +
+    "  ~\n" +
+    "  ~     The FamilyDAM Project is distributed in the hope that it will be useful,\n" +
+    "  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+    "  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+    "  ~     GNU General Public License for more details.\n" +
+    "  ~\n" +
+    "  ~     You should have received a copy of the GNU General Public License\n" +
+    "  ~     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.\n" +
+    "  -->\n" +
+    "\n" +
+    "<div class=\".uploaderBody\">\n" +
+    "\n" +
+    "    <!-- MAIN -->\n" +
+    "    <div flex style=\"float:left; width: 100%\">\n" +
+    "\n" +
+    "        <div id=\"copyFilesBody\">\n" +
+    "            <div horizontal layout center-justified\n" +
+    "                 style=\"border: 1px dashed darkgray; background-color: #d3d3d3; height:200px; width:50%; padding: 10px;\">\n" +
+    "                <div style=\"text-align: center;\">\n" +
+    "                    Drag Files Here<br/>\n" +
+    "                    <input type=\"file\" value=\"Pick File\">\n" +
+    "                    <paper-button\n" +
+    "                            raised class=\"colored\" role=\"button\"\n" +
+    "                            label=\"Select Files & Folders\"\n" +
+    "                            on-click=\"this.clickHandler(event);\"></paper-button>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "\n" +
+    "            <h2>Folders:</h2>\n" +
+    "            <core-list>\n" +
+    "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
+    "                    <div>\n" +
+    "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
+    "                    </div>\n" +
+    "                    <div>\n" +
+    "                        <core-icon-button icon=\"backup\"></core-icon-button>\n" +
+    "                    </div>\n" +
+    "                    <div flex>\n" +
+    "                        /Users/mnimer/Pictures/2011<br/>\n" +
+    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\"></paper-progress>\n" +
+    "                    </div>\n" +
+    "                    <div>\n" +
+    "                        <core-field>\n" +
+    "                            <paper-toggle-button checked=\"true\"></paper-toggle-button>\n" +
+    "                            <label style=\"left:5px;position:relative;\">Recusive </label>\n" +
+    "                        </core-field>\n" +
+    "                        <core-field>\n" +
+    "                            <paper-toggle-button checked=\"true\"></paper-toggle-button>\n" +
+    "                            <label style=\"left:5px;position:relative;\">Maintain Folder Structure </label>\n" +
+    "                        </core-field>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "            </core-list>\n" +
+    "\n" +
+    "\n" +
+    "            <h2>Files:</h2>\n" +
+    "            <core-list>\n" +
+    "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
+    "                    <div>\n" +
+    "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
+    "                        <core-icon-button icon=\"backup\"></core-icon-button>\n" +
+    "                    </div>\n" +
+    "                    <div flex>\n" +
+    "                        file: XXXX.jpg<br/>\n" +
+    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\"></paper-progress>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
+    "                    <div>\n" +
+    "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
+    "                        <core-icon-button icon=\"backup\"></core-icon-button>\n" +
+    "                    </div>\n" +
+    "                    <div flex>\n" +
+    "                        file: XXXX.jpg<br/>\n" +
+    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\"></paper-progress>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
+    "                    <div>\n" +
+    "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
+    "                        <core-icon-button icon=\"backup\"></core-icon-button>\n" +
+    "                    </div>\n" +
+    "                    <div flex>\n" +
+    "                        file: XXXX.jpg<br/>\n" +
+    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\"></paper-progress>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </core-list>\n" +
+    "\n" +
+    "            <div id=\"testElementsToDelete\" style=\"display: none\">\n" +
+    "                <h2>Test Dialog</h2>\n" +
+    "                <input type=\"text\" id=\"file\">\n" +
+    "                <button on-click=\"{{openDialog}}\">Open Dialog Test</button>\n" +
+    "                <button on-click=\"{{chooseFile}}\">Choose File test</button>\n" +
+    "                <br/><br/>\n" +
+    "                <input id=\"fileDialog\" type=\"file\"/>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div></div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "");
 }]);

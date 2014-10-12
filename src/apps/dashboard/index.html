@@ -25,10 +25,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <!-- script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script -->
-
-    <script src="components/platform/platform.js"></script>
-
 
     <link rel="stylesheet" type="text/css" href="app.css"/>
 
@@ -52,7 +48,6 @@
     <link rel="import" href="components/multi-value-suggestbox/dist/multi-value-suggestbox.html">
     <link rel="import" href="components/paper-toggle-button/paper-toggle-button.html">
 
-    <link rel="import" href="assets/components/file-uploader/file-uploader.html">
     <link rel="import" href="assets/components/preview-photo/preview-photo.html">
     <link rel="import" href="assets/components/preview-album/preview-album.html">
     <link rel="import" href="assets/components/preview-video/preview-video.html">
@@ -63,11 +58,27 @@
 
     <link href="http://fonts.googleapis.com/css?family=Lato:100,300,400" rel="stylesheet" type="text/css">
 
+
 </head>
 
 <body ng-app="dashboard" unresolved>
     <div ui-view></div>
 </body>
+
+
+
+
+<!-- special methods that require the atom-shell libraries. We define them here and then they are available
+in the angular $window scope -->
+<script type="application/javascript">
+    var remote = require('remote');
+    this.openFilePicker = function(callback)
+    {
+        var dialog = remote.require('dialog');
+        dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}, callback);
+    }
+
+</script>
 
 <script type="application/javascript" src="shared-libs.js"></script>
 <script type="application/javascript" src="app.js"></script>
