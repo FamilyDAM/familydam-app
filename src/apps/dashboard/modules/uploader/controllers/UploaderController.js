@@ -19,6 +19,10 @@ var UploaderController = function($window, $document, $scope, $rootScope, $locat
 {
     $scope.fileList = [];
 
+    $scope.uploadFile = function(e){
+        console.log("upload file = " +e);
+    };
+
     // our directive can't see the local $scope, but if we store this in the root scope we are ok (bad hack, but it works)
     $rootScope.selectFilesHandler = function(data) {
         console.log("{UploaderController} root selectFiles");

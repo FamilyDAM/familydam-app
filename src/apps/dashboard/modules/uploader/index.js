@@ -19,6 +19,7 @@
 module.exports = angular.module('dashboard.uploader', ['ui.bootstrap'])
     .controller('UploaderController', require('./controllers/UploaderController'))
 
+
     .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
         $stateProvider.state('home.uploader', {
             url: '^/uploader',

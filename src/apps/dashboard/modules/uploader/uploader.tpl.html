@@ -21,18 +21,6 @@
     <div flex style="float:left; width: 100%">
 
         <div id="copyFilesBody">
-            <div horizontal layout center-justified
-                 style="border: 1px dashed darkgray; background-color: #d3d3d3; height:200px; width:50%; padding: 10px;">
-                <div style="text-align: center;">
-                    Drag Files Here<br/>
-                    <input type="file" value="Pick File">
-                    <paper-button
-                            raised class="colored" role="button"
-                            label="Select Files & Folders"
-                            on-click="this.clickHandler(event);"></paper-button>
-                </div>
-            </div>
-
 
             <!--
             <h2>Folders:</h2>
@@ -66,40 +54,18 @@
 
             <h2>Files:</h2>
             <core-list>
-                <div layout horizontal style="border-bottom: 1px solid #d3d3d3;">
+                <div layout horizontal center style="border-bottom: 1px solid #d3d3d3;"  ng-repeat='file in fileList'>
                     <div>
                         <core-icon-button icon="close"></core-icon-button>
-                        <core-icon-button icon="backup"></core-icon-button>
+                        <core-icon-button icon="upload"
+                                          ng-click="uploadFile(file)"
+                                          upload-file-button></core-icon-button>
                     </div>
-                    <div flex>
-                        file: XXXX.jpg<br/>
-                        <paper-progress value="23" secondaryProgesss="30"></paper-progress>
+                    <div flex self-center>
+                        <span class="fileUploadPath">{{file}}</span>
+                        <paper-progress value="23" secondaryProgesss="30" style="display:none"></paper-progress>
                     </div>
-
                 </div>
-                <div layout horizontal style="border-bottom: 1px solid #d3d3d3;">
-                    <div>
-                        <core-icon-button icon="close"></core-icon-button>
-                        <core-icon-button icon="backup"></core-icon-button>
-                    </div>
-                    <div flex>
-                        file: XXXX.jpg<br/>
-                        <paper-progress value="23" secondaryProgesss="30"></paper-progress>
-                    </div>
-
-                </div>
-                <div layout horizontal style="border-bottom: 1px solid #d3d3d3;">
-                    <div>
-                        <core-icon-button icon="close"></core-icon-button>
-                        <core-icon-button icon="backup"></core-icon-button>
-                    </div>
-                    <div flex>
-                        file: XXXX.jpg<br/>
-                        <paper-progress value="23" secondaryProgesss="30"></paper-progress>
-                    </div>
-
-                </div>
-
             </core-list>
 
             <div id="testElementsToDelete" style="display: none">

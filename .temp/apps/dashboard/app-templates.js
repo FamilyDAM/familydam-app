@@ -951,6 +951,7 @@ angular.module("apps/dashboard/modules/uploader/uploader.tpl.html", []).run(["$t
     "            </div>\n" +
     "\n" +
     "\n" +
+    "            <!--\n" +
     "            <h2>Folders:</h2>\n" +
     "            <core-list>\n" +
     "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
@@ -977,44 +978,23 @@ angular.module("apps/dashboard/modules/uploader/uploader.tpl.html", []).run(["$t
     "\n" +
     "                </div>\n" +
     "            </core-list>\n" +
+    "            -->\n" +
     "\n" +
     "\n" +
     "            <h2>Files:</h2>\n" +
     "            <core-list>\n" +
-    "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
+    "                <div layout horizontal center style=\"border-bottom: 1px solid #d3d3d3;\"  ng-repeat='file in fileList'>\n" +
     "                    <div>\n" +
     "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
-    "                        <core-icon-button icon=\"backup\"></core-icon-button>\n" +
+    "                        <core-icon-button icon=\"upload\"\n" +
+    "                                          ng-click=\"uploadFile(file)\"\n" +
+    "                                          upload-file-button></core-icon-button>\n" +
     "                    </div>\n" +
-    "                    <div flex>\n" +
-    "                        file: XXXX.jpg<br/>\n" +
-    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\"></paper-progress>\n" +
+    "                    <div flex self-center>\n" +
+    "                        <span class=\"fileUploadPath\">{{file}}</span>\n" +
+    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\" style=\"display:none\"></paper-progress>\n" +
     "                    </div>\n" +
-    "\n" +
     "                </div>\n" +
-    "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
-    "                    <div>\n" +
-    "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
-    "                        <core-icon-button icon=\"backup\"></core-icon-button>\n" +
-    "                    </div>\n" +
-    "                    <div flex>\n" +
-    "                        file: XXXX.jpg<br/>\n" +
-    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\"></paper-progress>\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                </div>\n" +
-    "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
-    "                    <div>\n" +
-    "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
-    "                        <core-icon-button icon=\"backup\"></core-icon-button>\n" +
-    "                    </div>\n" +
-    "                    <div flex>\n" +
-    "                        file: XXXX.jpg<br/>\n" +
-    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\"></paper-progress>\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                </div>\n" +
-    "\n" +
     "            </core-list>\n" +
     "\n" +
     "            <div id=\"testElementsToDelete\" style=\"display: none\">\n" +
