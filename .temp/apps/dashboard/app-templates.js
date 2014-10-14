@@ -417,7 +417,7 @@ angular.module("apps/dashboard/modules/home/home.tpl.html", []).run(["$templateC
     "            <div class=\"middle indent title\" style=\"margin-left: 100px;\">/photos/</div>\n" +
     "            <div class=\"bottom\">\n" +
     "                <paper-fab icon=\"add\"\n" +
-    "                           onclick=\"this.fire('selectFile');\"\n" +
+    "                           onclick=\"this.fire('addFiles');\"\n" +
     "                           add-file-bridge\n" +
     "                           style=\"z-index: 10\"></paper-fab>\n" +
     "            </div>\n" +
@@ -483,6 +483,7 @@ angular.module("apps/dashboard/modules/home/home.tpl.html", []).run(["$templateC
     "</div>\n" +
     "\n" +
     "\n" +
+    "<file-uploader id=\"uploaderOverlay\" openfilebrowser></file-uploader>\n" +
     "\n" +
     "<script>\n" +
     "\n" +
@@ -938,18 +939,6 @@ angular.module("apps/dashboard/modules/uploader/uploader.tpl.html", []).run(["$t
     "    <div flex style=\"float:left; width: 100%\">\n" +
     "\n" +
     "        <div id=\"copyFilesBody\">\n" +
-    "            <div horizontal layout center-justified\n" +
-    "                 style=\"border: 1px dashed darkgray; background-color: #d3d3d3; height:200px; width:50%; padding: 10px;\">\n" +
-    "                <div style=\"text-align: center;\">\n" +
-    "                    Drag Files Here<br/>\n" +
-    "                    <input type=\"file\" value=\"Pick File\">\n" +
-    "                    <paper-button\n" +
-    "                            raised class=\"colored\" role=\"button\"\n" +
-    "                            label=\"Select Files & Folders\"\n" +
-    "                            on-click=\"this.clickHandler(event);\"></paper-button>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "\n" +
     "\n" +
     "            <!--\n" +
     "            <h2>Folders:</h2>\n" +
@@ -984,15 +973,56 @@ angular.module("apps/dashboard/modules/uploader/uploader.tpl.html", []).run(["$t
     "            <h2>Files:</h2>\n" +
     "            <core-list>\n" +
     "                <div layout horizontal center style=\"border-bottom: 1px solid #d3d3d3;\"  ng-repeat='file in fileList'>\n" +
+    "                    <div ng-if=\"file.isDirectory\">\n" +
+    "                        <span class=\"fileType\">[DIR]</span>\n" +
+    "                    </div>\n" +
+    "                    <div ng-if=\"!file.isDirectory\">\n" +
+    "                        <div ng-switch on=\"file.extension\">\n" +
+    "                            <span ng-switch-when=\"jpg\">\n" +
+    "                                <img src=\"{{file.path}}\" style=\"max-width: 100px\"/>\n" +
+    "                            </span>\n" +
+    "                            <span ng-switch-when=\"gif\">\n" +
+    "                                <img src=\"{{file.path}}\" style=\"max-width: 100px\"/>\n" +
+    "                            </span>\n" +
+    "                            <span ng-switch-when=\"png\">\n" +
+    "                                <img src=\"{{file.path}}\" style=\"max-width: 100px\"/>\n" +
+    "                            </span>\n" +
+    "                            <span ng-switch-when=\"mp4\">\n" +
+    "                                <video controls style=\"min-height: 100px\">\n" +
+    "                                    <source src=\"{{file.path}}\" type=\"video/mp4\">\n" +
+    "                                    [VIDEO]\n" +
+    "                                </video>\n" +
+    "                            </span>\n" +
+    "                            <span ng-switch-when=\"mov\">\n" +
+    "                                <video controls style=\"max-width: 100px\">\n" +
+    "                                    <source src=\"{{file.path}}\" type=\"video/mp4\">\n" +
+    "                                    [VIDEO]\n" +
+    "                                </video>\n" +
+    "                            </span>\n" +
+    "                            <span ng-switch-when=\"mp3\">\n" +
+    "                                <audio controls>\n" +
+    "                                    <source src=\"{{file.path}}\" type=\"audio/mpeg\" style=\"max-width: 100px\">\n" +
+    "                                    [AUDIO]\n" +
+    "                                </audio>\n" +
+    "                            </span>\n" +
+    "                            <span ng-switch-default>[UNKNOWN]</span>\n" +
+    "                        </div>\n" +
+    "\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <div flex self-center style=\"padding-left:20px;\">\n" +
+    "                        <span class=\"fileUploadPath\">{{file.path}}</span>\n" +
+    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\" style=\"display:none\"></paper-progress>\n" +
+    "                    </div>\n" +
     "                    <div>\n" +
-    "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
+    "                        <span class=\"fileSize\">{{file.size/1000}}kb</span>\n" +
+    "                    </div>\n" +
+    "                    <div>\n" +
     "                        <core-icon-button icon=\"upload\"\n" +
     "                                          ng-click=\"uploadFile(file)\"\n" +
     "                                          upload-file-button></core-icon-button>\n" +
-    "                    </div>\n" +
-    "                    <div flex self-center>\n" +
-    "                        <span class=\"fileUploadPath\">{{file}}</span>\n" +
-    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\" style=\"display:none\"></paper-progress>\n" +
+    "                        <core-icon-button icon=\"close\"\n" +
+    "                                        ng-click=\"removeFile(file)\"></core-icon-button>\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "            </core-list>\n" +

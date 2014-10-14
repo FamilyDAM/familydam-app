@@ -55,15 +55,56 @@
             <h2>Files:</h2>
             <core-list>
                 <div layout horizontal center style="border-bottom: 1px solid #d3d3d3;"  ng-repeat='file in fileList'>
+                    <div ng-if="file.isDirectory">
+                        <span class="fileType">[DIR]</span>
+                    </div>
+                    <div ng-if="!file.isDirectory">
+                        <div ng-switch on="file.extension">
+                            <span ng-switch-when="jpg">
+                                <img src="{{file.path}}" style="max-width: 100px"/>
+                            </span>
+                            <span ng-switch-when="gif">
+                                <img src="{{file.path}}" style="max-width: 100px"/>
+                            </span>
+                            <span ng-switch-when="png">
+                                <img src="{{file.path}}" style="max-width: 100px"/>
+                            </span>
+                            <span ng-switch-when="mp4">
+                                <video controls style="min-height: 100px">
+                                    <source src="{{file.path}}" type="video/mp4">
+                                    [VIDEO]
+                                </video>
+                            </span>
+                            <span ng-switch-when="mov">
+                                <video controls style="max-width: 100px">
+                                    <source src="{{file.path}}" type="video/mp4">
+                                    [VIDEO]
+                                </video>
+                            </span>
+                            <span ng-switch-when="mp3">
+                                <audio controls>
+                                    <source src="{{file.path}}" type="audio/mpeg" style="max-width: 100px">
+                                    [AUDIO]
+                                </audio>
+                            </span>
+                            <span ng-switch-default>[UNKNOWN]</span>
+                        </div>
+
+                    </div>
+
+                    <div flex self-center style="padding-left:20px;">
+                        <span class="fileUploadPath">{{file.path}}</span>
+                        <paper-progress value="23" secondaryProgesss="30" style="display:none"></paper-progress>
+                    </div>
                     <div>
-                        <core-icon-button icon="close"></core-icon-button>
+                        <span class="fileSize">{{file.size/1000}}kb</span>
+                    </div>
+                    <div>
                         <core-icon-button icon="upload"
                                           ng-click="uploadFile(file)"
                                           upload-file-button></core-icon-button>
-                    </div>
-                    <div flex self-center>
-                        <span class="fileUploadPath">{{file}}</span>
-                        <paper-progress value="23" secondaryProgesss="30" style="display:none"></paper-progress>
+                        <core-icon-button icon="close"
+                                        ng-click="removeFile(file)"></core-icon-button>
                     </div>
                 </div>
             </core-list>

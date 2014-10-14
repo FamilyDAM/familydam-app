@@ -15,7 +15,7 @@
             <div class="middle indent title" style="margin-left: 100px;">/photos/</div>
             <div class="bottom">
                 <paper-fab icon="add"
-                           onclick="this.fire('selectFile');"
+                           onclick="this.fire('addFiles');"
                            add-file-bridge
                            style="z-index: 10"></paper-fab>
             </div>
@@ -81,6 +81,7 @@
 </div>
 
 
+<file-uploader id="uploaderOverlay" openfilebrowser></file-uploader>
 
 <script>
 

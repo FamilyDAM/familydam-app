@@ -22,23 +22,76 @@
     var ipc = require('ipc');
     var http = require('http');
     var dialog = require('dialog');
+    var File = require('File');
 
     /******************************
      * RECEIVED Messages
      */
-    ipc.on('selectFileDialog', function(event) {
+    ipc.on('openFileDialog', function(event) {
         console.log("selectFileDialog:" +event);
-        console.dir(event);
+        //console.dir(event);
         dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]}, function(files){
-            console.log("selected files=" +files);
-            event.sender.send('selectFilesReply', files);
+            //console.dir(files);
+            var fileInfo = [];
+            for (var i = 0; i < files.length; i++)
+            {
+                var file = files[i];
+                try {
+                    // Query the entry
+                    var stats = fs.statSync(file);
+                    //console.log("******");
+                    //console.dir(file);
+                    //console.dir(stats);
+
+
+                    var fObj = {};
+                    fObj.path = file;
+                    fObj.extension = "";
+                    if( file.substr(file.lastIndexOf('.') > 0)){
+                        fObj.extension = file.substr(file.lastIndexOf('.')+1).toLowerCase();
+                    }
+                    fObj.size = stats.size;
+                    fObj.isDirectory = false;
+                    if (stats.isDirectory()) {
+                        // Is it a directory?
+                        fObj.isDirectory = true;
+                    }
+                    fileInfo.push(fObj);
+                }
+                catch (e) {
+                    // ...
+                }
+            }
+
+            console.dir(fileInfo);
+            //event.returnValue = files;
+            event.sender.send('openFileDialogReply', fileInfo);
         });
+    });
+
+    var multipart = require("multipart");
+
+
+    ipc.on('uploadFile', function(event, path) {
+        console.log("{node} upload file:" +path);
+        //console.dir(event);
+        //console.dir(path);
+
+        var _file = new File(path);
+        // request.get(href || pathname, query, body, options).when(callback)
+        request.post("http://localhost:8080/~/photos/mnimer", null, {
+            message: 'Hello World',
+            attachment: _file
+        }).when(function (err, ahr, data) {
+            console.log('\n\nGot Response\n');
+            console.log(data.toString());
+        });
+
     });
 
 
 
     // put public properties & methods here.
     module.exports = {};
-
     console.log("FileManager INIT()");
 }).call(this);

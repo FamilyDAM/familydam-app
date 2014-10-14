@@ -72,12 +72,23 @@
 in the angular $window scope -->
 <script type="application/javascript">
     var remote = require('remote');
+    var ipc = require('ipc');
     this.openFilePicker = function(callback)
     {
         var dialog = remote.require('dialog');
         dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}, callback);
     }
 
+    this.openFilePicker2 = function(callback)
+    {
+        ipc.on('openFileDialogReply', callback);
+        ipc.send('openFileDialog');
+    }
+
+    this.uploadFile = function(path)
+    {
+        ipc.send('uploadFile', path);
+    }
 </script>
 
 <script type="application/javascript" src="shared-libs.js"></script>

@@ -21,13 +21,30 @@ var UploaderController = function($window, $document, $scope, $rootScope, $locat
 
     $scope.uploadFile = function(e){
         console.log("upload file = " +e);
+        $window.uploadFile(e.path);
+    };
+
+
+    $scope.removeFile = function(e){
+        console.dir("remove file = " + e.path);
+
+        var pos = $scope.fileList.indexOf(e);
+        if( pos > -1){
+            $scope.fileList.splice(pos, 1);
+        }
     };
 
     // our directive can't see the local $scope, but if we store this in the root scope we are ok (bad hack, but it works)
     $rootScope.selectFilesHandler = function(data) {
         console.log("{UploaderController} root selectFiles");
         console.dir(data);
-        $scope.fileList = data;
+        for (var i = 0; i < data.length; i++)
+        {
+            var obj = data[i];
+            if ($scope.fileList.indexOf(obj) == -1){
+                $scope.fileList.push(obj);
+            }
+        }
     };
 
 };

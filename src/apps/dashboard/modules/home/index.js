@@ -23,13 +23,14 @@ module.exports = angular.module('dashboard.main', ['ui.router'])
         return {
             link:function(scope, element, attrs){
                 var _scope = scope;
-                element.bind('selectFile', function(e){
+                element.bind('addFiles', function(e){
                     // switch to upload view
                     $location.path('/uploader');
 
                     //call back to atom-shell to open native file picker dialog
                     //ipc.sendSync('selectFileDialog');
-                    $window.openFilePicker(function(results){
+                    $window.openFilePicker2(function(results){
+                        //_scope should always be UploaderController
                         console.dir(results);
                         _scope.selectFilesHandler(results);
                     });
@@ -74,6 +75,7 @@ module.exports = angular.module('dashboard.main', ['ui.router'])
             });
         };
     })
+
     .directive('rightDrawerBridge', function() {
         this.openRightDrawer = function () {
             document.querySelector("#rightDrawer").style.width = "350px";
