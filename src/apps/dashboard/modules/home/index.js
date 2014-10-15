@@ -29,7 +29,7 @@ module.exports = angular.module('dashboard.main', ['ui.router'])
 
                     //call back to atom-shell to open native file picker dialog
                     //ipc.sendSync('selectFileDialog');
-                    $window.openFilePicker2(function(results){
+                    $window.openFilePicker(function(results){
                         //_scope should always be UploaderController
                         console.dir(results);
                         _scope.selectFilesHandler(results);

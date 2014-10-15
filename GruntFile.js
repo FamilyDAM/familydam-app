@@ -217,7 +217,7 @@ module.exports = function (grunt) {
 
 		// js hint
 		jshint: {
-			files: ['gruntFile.js', '<%= src.js %>', '!src/components/**/*.js', '!src/apps/dashboard/assets/js/**/*.js', '!src/config/components/**/*.js', '!src/**/*.min.js'],
+			files: ['gruntFile.js', '<%= src.js %>', '!src/node_modules/**/*.js', '!src/components/**/*.js', '!src/apps/dashboard/assets/js/**/*.js', '!src/config/components/**/*.js', '!src/**/*.min.js'],
 			options: {
 				curly:false,
 				eqeqeq:false,
@@ -399,7 +399,7 @@ module.exports = function (grunt) {
         },
 
         'download-atom-shell': {
-            version: '0.15.6',
+            version: '0.17.2',
             outputDir: 'binaries'
         },
 
@@ -410,7 +410,7 @@ module.exports = function (grunt) {
                 app_dir:"dist",
                 cache_dir:"binaries",
                 build_dir:"binary-dist",
-                atom_shell_version: 'v0.15.6'
+                atom_shell_version: 'v0.17.2'
             }
         }
 

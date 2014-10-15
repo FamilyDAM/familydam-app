@@ -38,6 +38,9 @@ var LoginService = function($http, AuthService)
                 AuthService.isAuthenticated = true;
                 AuthService.username = username_;
                 AuthService.password = password_;
+
+                $http.defaults.headers.common['Authorization'] = AuthService.getToken();
+
                 return result;
             },function(responseError){
                 return responseError;

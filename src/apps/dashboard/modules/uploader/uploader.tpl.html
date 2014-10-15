@@ -22,36 +22,6 @@
 
         <div id="copyFilesBody">
 
-            <!--
-            <h2>Folders:</h2>
-            <core-list>
-                <div layout horizontal style="border-bottom: 1px solid #d3d3d3;">
-                    <div>
-                        <core-icon-button icon="close"></core-icon-button>
-                    </div>
-                    <div>
-                        <core-icon-button icon="backup"></core-icon-button>
-                    </div>
-                    <div flex>
-                        /Users/mnimer/Pictures/2011<br/>
-                        <paper-progress value="23" secondaryProgesss="30"></paper-progress>
-                    </div>
-                    <div>
-                        <core-field>
-                            <paper-toggle-button checked="true"></paper-toggle-button>
-                            <label style="left:5px;position:relative;">Recusive </label>
-                        </core-field>
-                        <core-field>
-                            <paper-toggle-button checked="true"></paper-toggle-button>
-                            <label style="left:5px;position:relative;">Maintain Folder Structure </label>
-                        </core-field>
-                    </div>
-
-                </div>
-            </core-list>
-            -->
-
-
             <h2>Files:</h2>
             <core-list>
                 <div layout horizontal center style="border-bottom: 1px solid #d3d3d3;"  ng-repeat='file in fileList'>
@@ -101,7 +71,7 @@
                     </div>
                     <div>
                         <core-icon-button icon="upload"
-                                          ng-click="uploadFile(file)"
+                                          ng-click="copyFile(file.path)"
                                           upload-file-button></core-icon-button>
                         <core-icon-button icon="close"
                                         ng-click="removeFile(file)"></core-icon-button>

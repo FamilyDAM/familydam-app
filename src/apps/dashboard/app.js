@@ -32,13 +32,9 @@ var App = angular.module('dashboard', [
 ])
 
     .service('appService', require('./services/AppService'))
-    .service('fileService', require('./services/FileService'))
-    .service('loginService', require('./services/LoginService'))
-    .service('photoService', require('./services/PhotoService'))
-    .service('metadataService', require('./services/MetadataService'))
-    .service('userService', require('./services/UserService'))
-    .service('searchService', require('./services/SearchService'))
     .service('authService', require('./services/AuthService'))
+    .service('loginService', require('./services/LoginService'))
+    .service('importService', require('./services/ImportService'))
 
     .constant('USER_ROLES', {
         all: '*',

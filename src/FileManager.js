@@ -22,7 +22,8 @@
     var ipc = require('ipc');
     var http = require('http');
     var dialog = require('dialog');
-    var File = require('File');
+    var request = require('request');
+    var path = require('path');
 
     /******************************
      * RECEIVED Messages
@@ -72,21 +73,61 @@
     var multipart = require("multipart");
 
 
-    ipc.on('uploadFile', function(event, path) {
+    ipc.on('uploadFile', function(event, dir, path) {
         console.log("{node} upload file:" +path);
         //console.dir(event);
         //console.dir(path);
+        //var name = path.basename(path);
+        var data = fs.readFileSync(path);
 
-        var _file = new File(path);
-        // request.get(href || pathname, query, body, options).when(callback)
-        request.post("http://localhost:8080/~/photos/mnimer", null, {
-            message: 'Hello World',
-            attachment: _file
-        }).when(function (err, ahr, data) {
-            console.log('\n\nGot Response\n');
-            console.log(data.toString());
+
+
+        /* As per http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html */
+        var crlf = "\r\n";
+        var boundary = "---------------------------10102754414578508781458777923"; // Boundary: "--" + up to 70 ASCII chars + "\r\n"
+        var delimiter = crlf + "--" + boundary;
+        var preamble = ""; // ignored. a good place for non-standard mime info
+        var epilogue = ""; // ignored. a good place to place a checksum, etc
+        var headers = [
+                "Content-Disposition: form-data; name=\"fileToUpload\"; filename=\"testname.jpg\"" + crlf
+            ];
+        var bodyPart = headers.join('') + crlf + data.toString();
+        var encapsulation = delimiter + crlf + bodyPart;
+        var closeDelimiter = delimiter + "--";
+        var multipartBody; // = preamble + encapsulation + closeDelimiter + epilogue + crlf /* node doesn't add this */;
+
+
+        multipartBody = Buffer.concat([
+            new Buffer(preamble + delimiter + crlf + headers.join('') + crlf),
+            data,
+            new Buffer(closeDelimiter + epilogue)
+        ]);
+        console.log("multipart len=" +multipartBody.length);
+
+
+        var request = http.request({
+            hostname: 'localhost',
+            port: 8080,
+            path: '/~/photos/mnimer',
+            method: 'POST',
+            auth: 'admin:admin',
+            headers: {
+                "Content-Disposition": "form-data; name='fileToUpload'; filename='testname.jpg'",
+                "User-Agent": "FamilyDAM",
+                "Accept-Encoding": "gzip,deflate",
+                "Content-Type": "multipart/form-data; boundary=" + boundary,
+                "Content-Length": multipartBody.length
+            }
+
         });
 
+        request.on('error', function(e) {
+            console.log('problem with request: ' + e.message);
+        });
+
+        // write data to request body
+        request.write(multipartBody);
+        request.end();
     });
 
 

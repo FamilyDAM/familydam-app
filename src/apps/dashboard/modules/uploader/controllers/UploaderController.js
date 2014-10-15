@@ -15,15 +15,42 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var UploaderController = function($window, $document, $scope, $rootScope, $location)
+var UploaderController = function($window, $document, $scope, $rootScope, $location, importService)
 {
+    $scope.selectedDir = "/photos/admin";
     $scope.fileList = [];
 
-    $scope.uploadFile = function(e){
-        console.log("upload file = " +e);
-        $window.uploadFile(e.path);
+    $scope.copyFile = function(path_){
+        console.log("upload file = " +path_);
+
+        var request = importService.copyFile($scope.selectedDir, path_);
+        request.then(function(response) {
+            if( response.status == 201 ) {
+                $scope.removeFileByPath(path_);
+            }else{
+                // Our server side copy failed, so let's try to do an old fashion form post (through the nodejs shell)
+                $window.uploadFile($scope.selectedDir, e.path);
+            }
+
+        }, function(a1,a2,a3,a4) {
+            alert('Failed: ' + a1);
+
+            // Our server side copy failed, so let's try to do an old fashion form post (through the nodejs shell)
+            $window.uploadFile($scope.selectedDir, e.path);
+        });
     };
 
+
+    $scope.removeFileByPath = function(path){
+        for (var i = 0; i < $scope.fileList.length; i++)
+        {
+            var file = $scope.fileList[i];
+            if( file.path == path ){
+                $scope.removeFile(file);
+                break;
+            }
+        }
+    };
 
     $scope.removeFile = function(e){
         console.dir("remove file = " + e.path);
@@ -49,5 +76,5 @@ var UploaderController = function($window, $document, $scope, $rootScope, $locat
 
 };
 
-UploaderController.$inject = ['$window', '$document', '$scope', '$rootScope', '$location'];
+UploaderController.$inject = ['$window', '$document', '$scope', '$rootScope', '$location', 'importService'];
 module.exports = UploaderController;

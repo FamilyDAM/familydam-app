@@ -940,36 +940,6 @@ angular.module("apps/dashboard/modules/uploader/uploader.tpl.html", []).run(["$t
     "\n" +
     "        <div id=\"copyFilesBody\">\n" +
     "\n" +
-    "            <!--\n" +
-    "            <h2>Folders:</h2>\n" +
-    "            <core-list>\n" +
-    "                <div layout horizontal style=\"border-bottom: 1px solid #d3d3d3;\">\n" +
-    "                    <div>\n" +
-    "                        <core-icon-button icon=\"close\"></core-icon-button>\n" +
-    "                    </div>\n" +
-    "                    <div>\n" +
-    "                        <core-icon-button icon=\"backup\"></core-icon-button>\n" +
-    "                    </div>\n" +
-    "                    <div flex>\n" +
-    "                        /Users/mnimer/Pictures/2011<br/>\n" +
-    "                        <paper-progress value=\"23\" secondaryProgesss=\"30\"></paper-progress>\n" +
-    "                    </div>\n" +
-    "                    <div>\n" +
-    "                        <core-field>\n" +
-    "                            <paper-toggle-button checked=\"true\"></paper-toggle-button>\n" +
-    "                            <label style=\"left:5px;position:relative;\">Recusive </label>\n" +
-    "                        </core-field>\n" +
-    "                        <core-field>\n" +
-    "                            <paper-toggle-button checked=\"true\"></paper-toggle-button>\n" +
-    "                            <label style=\"left:5px;position:relative;\">Maintain Folder Structure </label>\n" +
-    "                        </core-field>\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                </div>\n" +
-    "            </core-list>\n" +
-    "            -->\n" +
-    "\n" +
-    "\n" +
     "            <h2>Files:</h2>\n" +
     "            <core-list>\n" +
     "                <div layout horizontal center style=\"border-bottom: 1px solid #d3d3d3;\"  ng-repeat='file in fileList'>\n" +
@@ -1019,7 +989,7 @@ angular.module("apps/dashboard/modules/uploader/uploader.tpl.html", []).run(["$t
     "                    </div>\n" +
     "                    <div>\n" +
     "                        <core-icon-button icon=\"upload\"\n" +
-    "                                          ng-click=\"uploadFile(file)\"\n" +
+    "                                          ng-click=\"copyFile(file.path)\"\n" +
     "                                          upload-file-button></core-icon-button>\n" +
     "                        <core-icon-button icon=\"close\"\n" +
     "                                        ng-click=\"removeFile(file)\"></core-icon-button>\n" +
