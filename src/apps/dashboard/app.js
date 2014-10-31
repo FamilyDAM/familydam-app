@@ -35,6 +35,7 @@ var App = angular.module('dashboard', [
     .service('authService', require('./services/AuthService'))
     .service('loginService', require('./services/LoginService'))
     .service('importService', require('./services/ImportService'))
+    .service('directoryService', require('./services/DirectoryService'))
 
     .constant('USER_ROLES', {
         all: '*',

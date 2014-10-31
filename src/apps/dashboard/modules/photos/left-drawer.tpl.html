@@ -107,37 +107,35 @@
         <div id="fileTree" class="sidebar">
 
             <ul style="margin-left: -20px;list-style: none;">
-                <li>
-                    <core-icon icon="folder"></core-icon>
-                    2014
-                </li>
-                <li>
-                    <core-icon icon="folder"></core-icon>
-                    2013
-                </li>
-                <li>
-                    <core-icon icon="folder"></core-icon>
-                    2012
-                </li>
-                <li>
-                    <core-icon icon="folder"></core-icon>
-                    2011
-                </li>
-                <li>
-                    <core-icon icon="folder"></core-icon>
-                    Social
-                    <ul style="margin-left: -20px;list-style: none;">
-                        <li>
-                            <core-icon icon="folder"></core-icon>
-                            Facebook
-                        </li>
-                        <li>
-                            <core-icon icon="folder"></core-icon>
-                            Flickr
-                        </li>
-                    </ul>
+                <li ng-repeat="dir in directories">
+                    <core-icon icon="folder"></core-icon>{{dir.name}}
                 </li>
             </ul>
+
+            <core-menu id="leftDrawerMenu" selected="0">
+
+                <core-submenu icon="settings" label="Topics">
+
+                    <core-item icon="folder" label="Topic 1"></core-item>
+                    <core-item icon="folder" label="Topic 2"></core-item>
+
+                </core-submenu>
+
+                <core-submenu icon="settings" label="Favorites">
+
+                    <core-item label="Favorite 1"></core-item>
+                    <core-item label="Favorite 2"></core-item>
+                    <core-item label="Favorite 3"></core-item>
+
+                </core-submenu>
+
+            </core-menu>
+
+            <style>
+                core-item.core-selected {
+                    color: red;
+                }
+            </style>
         </div>
 
 

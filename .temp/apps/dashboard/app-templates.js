@@ -631,37 +631,35 @@ angular.module("apps/dashboard/modules/photos/left-drawer.tpl.html", []).run(["$
     "        <div id=\"fileTree\" class=\"sidebar\">\n" +
     "\n" +
     "            <ul style=\"margin-left: -20px;list-style: none;\">\n" +
-    "                <li>\n" +
-    "                    <core-icon icon=\"folder\"></core-icon>\n" +
-    "                    2014\n" +
-    "                </li>\n" +
-    "                <li>\n" +
-    "                    <core-icon icon=\"folder\"></core-icon>\n" +
-    "                    2013\n" +
-    "                </li>\n" +
-    "                <li>\n" +
-    "                    <core-icon icon=\"folder\"></core-icon>\n" +
-    "                    2012\n" +
-    "                </li>\n" +
-    "                <li>\n" +
-    "                    <core-icon icon=\"folder\"></core-icon>\n" +
-    "                    2011\n" +
-    "                </li>\n" +
-    "                <li>\n" +
-    "                    <core-icon icon=\"folder\"></core-icon>\n" +
-    "                    Social\n" +
-    "                    <ul style=\"margin-left: -20px;list-style: none;\">\n" +
-    "                        <li>\n" +
-    "                            <core-icon icon=\"folder\"></core-icon>\n" +
-    "                            Facebook\n" +
-    "                        </li>\n" +
-    "                        <li>\n" +
-    "                            <core-icon icon=\"folder\"></core-icon>\n" +
-    "                            Flickr\n" +
-    "                        </li>\n" +
-    "                    </ul>\n" +
+    "                <li ng-repeat=\"dir in directories\">\n" +
+    "                    <core-icon icon=\"folder\"></core-icon>{{dir.name}}\n" +
     "                </li>\n" +
     "            </ul>\n" +
+    "\n" +
+    "            <core-menu id=\"leftDrawerMenu\" selected=\"0\">\n" +
+    "\n" +
+    "                <core-submenu icon=\"settings\" label=\"Topics\">\n" +
+    "\n" +
+    "                    <core-item icon=\"folder\" label=\"Topic 1\"></core-item>\n" +
+    "                    <core-item icon=\"folder\" label=\"Topic 2\"></core-item>\n" +
+    "\n" +
+    "                </core-submenu>\n" +
+    "\n" +
+    "                <core-submenu icon=\"settings\" label=\"Favorites\">\n" +
+    "\n" +
+    "                    <core-item label=\"Favorite 1\"></core-item>\n" +
+    "                    <core-item label=\"Favorite 2\"></core-item>\n" +
+    "                    <core-item label=\"Favorite 3\"></core-item>\n" +
+    "\n" +
+    "                </core-submenu>\n" +
+    "\n" +
+    "            </core-menu>\n" +
+    "\n" +
+    "            <style>\n" +
+    "                core-item.core-selected {\n" +
+    "                    color: red;\n" +
+    "                }\n" +
+    "            </style>\n" +
     "        </div>\n" +
     "\n" +
     "\n" +

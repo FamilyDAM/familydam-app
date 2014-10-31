@@ -15,19 +15,17 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var PhotosController = function($window, $document, $scope, $rootScope, $location, directoryService)
+var DirectoryService = function($http)
 {
-    $scope.directories = [];
 
-
-    var init = function(){
-        var method = directoryService.listDirectories();
-        method.then(function(result){
-            $scope.directories = result.data;
-        });
+    this.listDirectories = function(dir, path)
+    {
+        //todo: make url/port dynamic
+        var method = $http.get('http://localhost:8080/api/directory/');
+        return method;
     };
-    init();
+
 };
 
-PhotosController.$inject = ['$window', '$document', '$scope', '$rootScope', '$location', 'directoryService'];
-module.exports = PhotosController;
+DirectoryService.$inject = ['$http'];
+module.exports = DirectoryService;
