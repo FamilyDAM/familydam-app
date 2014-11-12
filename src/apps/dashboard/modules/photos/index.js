@@ -14,6 +14,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
 document.querySelector("#leftDrawerMenu").addEventListener("core-select", function(e, detail) {
 
     console.log("core-item selected");
@@ -27,7 +29,7 @@ document.querySelector("#leftDrawerMenu").addEventListener("on-core-select", fun
     console.dir(detail);
 
 });
-
+**/
 
 module.exports = angular.module('dashboard.photos', ['ui.bootstrap'])
     .controller('PhotosController', require('./controllers/PhotosController'))
