@@ -1,0 +1,56 @@
+.signupView.center.row {
+    height: 350px;
+    border: 1px solid #eee;
+    margin-top:100px;
+    padding: 20px;
+}
+
+/* Styles for signup panels */
+.signupView .auth-plain {
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-top: 0px;
+}
+
+.signupView .left-solid {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.signupView .signup-panel {
+    border-radius: 5px;
+    padding: 15px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    background: #fff;
+}
+
+.signupView .signup-panel a{
+    color: #fff;
+}
+
+.signupView .signup-panel i {
+    font-size: 30px;
+    line-height: 50px;
+    color: #999;
+}
+.signupView .signup-panel form input, .signup-panel form span {
+    height: 50px;
+}
+.signupView .signup-panel .welcome {
+    font-size: 26px;
+    text-align: center;
+    margin-left: 0;
+}
+.signupView .signup-panel p {
+    font-size: 13px;
+    font-weight: 200;
+    text-align: center;
+}
+.signupView .signup-panel .button {
+    margin-left: 35%;
+}
+
+.signupView .newusers {
+    background: #fff;
+}
