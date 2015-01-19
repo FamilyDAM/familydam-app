@@ -1,0 +1,103 @@
+/*
+ * This file is part of FamilyDAM Project.
+ *
+ *     The FamilyDAM Project is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     The FamilyDAM Project is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import "./bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap-sprockets";
+@import "./bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
+
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.eot');
+  src: url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix')
+       format('embedded-opentype'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.woff') format('woff'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.ttf') format('truetype'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+}
+
+
+@font-face
+{
+    font-family: 'Roboto';
+    font-style:  normal;
+    src:         url('assets/fonts/RobotoTTF/Roboto-Regular.ttf');
+}
+
+@font-face
+{
+    font-family: 'Roboto Light';
+    font-style:  normal;
+    src:         url('assets/fonts/RobotoTTF/Roboto-Light.ttf');
+}
+
+html, body
+{
+    height: 100%;
+    font-size: 62.5%;
+    margin:0px;
+}
+
+body
+{
+    font-family:       'Roboto Light', 'Roboto', Helvetica, Arial, sans-serif;
+    -webkit-transform: translateZ(0);
+    transform:         translateZ(0);
+    font-size:         14px;
+    font-size:         1.4rem;
+    font-weight: 300;
+    color:             rgba(0, 0, 0, 0.87);
+    margin:            0;
+    background-color:   #fff;
+}
+
+
+/***************************
+** Utils
+***************************/
+
+.valign-middle {
+  display: table;
+
+  > .columns {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  > .columns, > [class*="column"] + [class*="column"]:last-child {
+    float: none;
+  }
+}
+
+
+@import "components/clock/clock";
+@import "components/folderTree/folderTree";
+@import "modules/login/login";
+@import "modules/signup/signup";
+@import "modules/dashboard/dashboard";
+@import "modules/files/files";
+@import "modules/photos/photos";
+@import "modules/photoDetails/photoDetails";
+@import "modules/photoEdit/photoEdit";
+@import "modules/uploads/uploads";
+/**
+// features
+@import "directives/dirTree/dirTree";
+@import "directives/fileCard/fileCard";
+@import "modules/login/login";
+@import "modules/home/home";
+@import "modules/files/files";
+@import "modules/photos/photos";
+@import "modules/photos-details/photodetails";
+@import "modules/uploader/uploader";
+**/

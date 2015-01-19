@@ -5,6 +5,7 @@
     var todoCounter = 0,
         localStorageKey = "todos";
 
+    /**
     function getItemByKey(list,itemKey){
         return _.find(list, function(item) {
             return item.key === itemKey;
@@ -81,5 +82,6 @@
             return this.list;
         }
     });
+    **/
 
 })(window.Reflux, window.TodoActions, window);

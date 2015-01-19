@@ -3,60 +3,26 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ReactJS + RefluxJS • TodoMVC</title>
 
     <script src="//localhost:35729/livereload.js"></script>
 
     <link href='http://fonts.googleapis.com/css?family=Roboto:500,300,400' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="bower_components/foundation/css/normalize.css">
-    <link rel="stylesheet" href="bower_components/foundation/css/foundation.css">
+    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css">
+    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/material.css">
     <!-- CSS overrides - remove if you don't need it -->
     <link rel="stylesheet" href="app.css">
-    <link rel="stylesheet" href="modules/login/login.css">
-    <link rel="stylesheet" href="modules/signup/signup.css">
 </head>
 <body>
-    <section id="todoapp">
-        <!-- Bootstrap code will add components here -->
-    </section>
-    <MaterialTestButton></MaterialTestButton>
 
-    <!-- Scripts here. Don't remove this ↓ -->
-    <!-- <script src="bower_components/todomvc-common/base.js"></script> -->
+
+    <!-- react friendly js components -->
+    <script src="shared-lib.js"></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/foundation/js/foundation.js"></script>
-
-    <!--
-    <script src="bower_components/reflux/dist/reflux.js"></script>
-    <script src="bower_components/react/react-with-addons.js"></script>
-    <script src="bower_components/react-router/dist/react-router.js"></script>
-    <script src="bower_components/react/JSXTransformer.js"></script>
-    <script src="bower_components/lodash/dist/lodash.js"></script>
-
-
-
-    <script type="text/jsx" src="modules/login/LoginView.jsx"></script>
-    <script type="text/jsx" src="modules/signup/SignupView.jsx"></script>
-
-    <script src="stores/actions.js"></script>
-    <script src="stores/store.js"></script>
-
-    <script type="text/jsx" src="app.jsx"></script>
-    -->
-
+    <script src="bower_components/bootstrap-material-design/dist/js/ripples.js"></script>
+    <script src="bower_components/bootstrap-material-design/dist/js/material.js"></script>
+    <script src="bower_components/react-bootstrap/react-bootstrap.js"></script>
     <script src="app.js"></script>
-
-    <script>
-        //Needed for onTouchTap
-        //Can go away when react 1.0 release
-        //Check this repo:
-        //https://github.com/zilverline/react-tap-event-plugin
-
-        //var injectTapEventPlugin = require("react-tap-event-plugin");
-        //injectTapEventPlugin();
-
-        //
-        $(document).foundation();
-    </script>
 </body>
 </html>

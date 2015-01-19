@@ -5,9 +5,9 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build', 'watch']);//, 'connect'
 
     grunt.registerTask('build', [
-        'clean:dist',  'build-css', 'build-js', 'copy:dist'
+        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
     ]);
-    grunt.registerTask('build-js', ['jshint', 'react', 'browserify2']);
+    grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
     grunt.registerTask('build-css', ['compass']);
 
 
@@ -39,29 +39,36 @@ module.exports = function(grunt) {
 
         watch: {
             compass: {
-                files: ['<%= options.app %>/scss/{,*/}*.{scss,sass}'],
-                tasks: ['compass:server', 'autoprefixer'],
+                files: ['<%= options.app %>/apps/dashboard/{,*/}*.{scss,sass}'],
+                tasks: ['compass:dashboard', 'autoprefixer'],
                 options: {
                     livereload: true
                 }
             },
             styles: {
-                files: ['<%= options.app %>/styles/{,*/}*.css'],
-                tasks: ['newer:copy:styles', 'autoprefixer'],
+                files: ['<%= options.app %>/apps/dashboard/**/*.scss'],
+                tasks: ['compass:dashboard', 'autoprefixer', 'newer:copy:dashboard', 'autoprefixer'],
+                options: {
+                    livereload: true
+                }
+            },
+            css: {
+                files: ['<%= options.app %>/apps/dashboard/**/*.css'],
+                tasks: ['copy:dashboard'],
                 options: {
                     livereload: true
                 }
             },
             html: {
-                files: ['<%= options.app %>/*.html'],
-                tasks: ['newer:copy'],
+                files: ['<%= options.app %>/apps/dashboard/*.html'],
+                tasks: ['newer:copy:dashboard'],
                 options: {
                     livereload: true
                 }
             },
             react: {
-                files: '<%= options.app %>/**/*.jsx',
-                tasks: ['build-js'],
+                files: '<%= options.app %>/apps/dashboard/**/*.jsx',
+                tasks: ['build-js-dashboard'],
                 options: {
                     livereload: true
                 }
@@ -89,93 +96,89 @@ module.exports = function(grunt) {
                 reporter: require('jshint-stylish')
             },
             all: [
-                '<%= options.app %>/scripts/{,*/}*.js',
-                '!<%= options.app %>/bower_components/*'
+                '<%= options.app %>/apps/dashboard/{,*/}*.js',
+                '!<%= options.app %>/apps/dashboard/bower_components/*',
+                '!<%= options.app %>/apps/dashboard/stores/*.js',
+                '!<%= options.app %>/apps/dashboard/shared-lib.js'
             ]
         },
 
+
+        // ========================================
+        // COMPASS
+        // ========================================
+
         compass: {
-            options: {
-                sassDir: '<%= options.app %>/scss',
-                cssDir: '.tmp/styles',
-                generatedImagesDir: '.tmp/images/generated',
-                imagesDir: '<%= options.app %>/images',
-                javascriptsDir: '<%= options.app %>/scripts',
-                fontsDir: '<%= options.app %>/styles/fonts',
-                importPath: '<%= options.app %>/bower_components/foundation/scss',
-                httpImagesPath: '/images',
-                httpGeneratedImagesPath: '/images/generated',
-                httpFontsPath: '/styles/fonts',
-                relativeAssets: false,
-                assetCacheBuster: false
-            },
-            dist: {
+            dashboard: {
                 options: {
-                    generatedImagesDir: '<%= options.dist %>/images/generated'
-                }
-            },
-            server: {
-                options: {
-                    debugInfo: true
+                    sassDir: '<%= options.app %>',
+                    cssDir: '<%= options.dist %>',
+                    debugInfo: true,
+                    fontsDir: '<%= options.app %>/apps/dashboard/assets/fonts',
+                    httpFontsPath: '<%= options.app %>/apps/dashboard/assets/fonts',
+                    relativeAssets: false,
+                    assetCacheBuster: false,
+                    specify: [
+                        '<%= options.app %>/apps/dashboard/*.scss',
+                        '<%= options.app %>/apps/dashboard/modules/**/*.scss'
+                    ]
                 }
             }
         },
 
         copy: {
-            dist: {
+            app: {
                 files: [{
                     expand: true,
                     dot: true,
                     cwd: '<%= options.app %>',
                     dest: '<%= options.dist %>',
                     src: [
-                        '*.{html,ico,png,txt}',
-                        '**/*.css',
-                        'bower_components/**/*.*',
-                        '.htaccess'
+                        '*.js',
+                        'apps/splash/**'
                     ]
                 }]
             },
-            styles: {
-                expand: true,
-                dot: true,
-                cwd: '<%= options.app %>/styles',
-                dest: '.tmp/styles/',
-                src: '{,*/}*.css'
+            dashboard: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= options.app %>/apps/dashboard',
+                    dest: '<%= options.dist %>/apps/dashboard',
+                    src: [
+                        '*.{html,ico,png,txt}',
+                        '**/*.css',
+                        'assets/**/*',
+                        'bower_components/**/*',
+                        '.htaccess'
+                    ]
+                }]
             }
         },
 
-        modernizr: {
-            devFile: '<%= options.app %>/bower_components/modernizr/modernizr.js',
-            outputFile: '<%= options.dist %>/bower_components/modernizr/modernizr.js',
-            files: [
-                '<%= options.dist %>/scripts/{,*/}*.js',
-                '<%= options.dist %>/styles/{,*/}*.css',
-                '!<%= options.dist %>/scripts/vendor/*'
-            ],
-            uglify: true
-        },
-
         react: {
-            jsx2: {
+            dashboard: {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= options.app %>',
-                        src: ['**/*.jsx'],
-                        dest: '<%= options.tmp %>',
+                        cwd: '<%= options.app %>/apps/dashboard',
+                        src: ['**/*.jsx', 'stores/*.js'],
+                        dest: '<%= options.tmp %>/apps/dashboard',
                         ext: '.js'
                     }
                 ]
             }
         },
 
-
-        // browserify
         browserify2: {
-            'jsx': {
-                entry: './<%= options.tmp %>/app.js',
-                compile: './<%= options.dist %>/app.js',
+            'dashboard': {
+                entry: './<%= options.tmp %>/apps/dashboard/app.js',
+                compile: './<%= options.dist %>/apps/dashboard/app.js',
+                debug: true
+            },
+            'shared-lib': {
+                entry: './<%= options.app %>/apps/dashboard/shared-lib.js',
+                compile: './<%= options.dist %>/apps/dashboard/shared-lib.js',
                 debug: true
             }
         }
