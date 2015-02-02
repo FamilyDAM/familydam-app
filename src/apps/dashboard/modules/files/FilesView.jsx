@@ -32,45 +32,72 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
 var FolderTree = require('../../components/folderTree/FolderTree');
 
+var DirectoryActions = require('./../../actions/DirectoryActions');
+
+var PreferenceStore = require('./../../stores/PreferenceStore');
+var UserStore = require('./../../stores/UserStore');
+var CurrentSearchStore = require('./../../stores/CurrentSearch');
+
+var DirectoryServices = require('./../../services/DirectoryServices');
+
 var FilesView = React.createClass({
     mixins : [Navigation],
 
-    getDefaultProps: function()
-    {
-        return {files:[
-            {'id':'001', 'name':'0001.jpg'},
-            {'id':'002', 'name':'0002.jpg'},
-            {'id':'003', 'name':'0003.jpg'},
-            {'id':'004', 'name':'0004.jpg'},
-            {'id':'005', 'name':'0005.jpg'},
-            {'id':'006', 'name':'0006.jpg'},
-            {'id':'007', 'name':'0007.jpg'},
-            {'id':'008', 'name':'0008.jpg'},
-            {'id':'009', 'name':'0009.jpg'},
-            {'id':'010', 'name':'0010.jpg'},
-            {'id':'011', 'name':'0011.jpg'},
-            {'id':'012', 'name':'0012.jpg'},
-            {'id':'013', 'name':'0013.jpg'},
-            {'id':'014', 'name':'0014.jpg'},
-            {'id':'015', 'name':'0015.jpg'}
-        ]};
-    },
 
     getInitialState: function(){
-        return { selectedItem: undefined };
+        return {
+            files:[],
+            selectedItem: undefined };
     },
+
+
+
+    componentWillMount:function(){
+        //todo: make path dynamic
+        var _this = this;
+        var _path = "/~/";
+
+        if( this.props.query && this.props.query.path ){
+            _path = this.props.query.path;
+        }
+
+        _this.loadData(_path, 100, 0); //start with root directory
+    },
+
+    componentWillReceiveProps:function(nextProps)
+    {
+        this.loadData(nextProps.query.path, 100, 0);
+    },
+
+
+    loadData:function(folder_, limit_, offset_){
+        //todo: make path dynamic
+        var _this = this;
+        DirectoryServices.listFilesInDirectory(folder_).subscribe(function(results){
+            _this.setState({'files': results});
+            CurrentSearchStore.setResults(results);
+        });
+    },
+
+
 
     handleRowClick: function(event, component)
     {
-        $(".active").removeClass();
-        $(event.currentTarget).addClass("active");
-        var _id = $( "[data-reactid='" +component +"']" ).attr("data-id");
-        this.setState({selectedItem:_id});
+        if( $(event.target).attr('type') != "button" )
+        {
+            $(".active").removeClass();
+            $(event.currentTarget).addClass("active");
+            var _id = $("[data-reactid='" + component + "']").attr("data-id");
+            this.setState({selectedItem: _id});
+        }
 
         // IF DBL CLick
         //var _id = $( "[data-reactid='" +component +"']" ).attr("data-id");
         //transitionTo('photoDetails', {'photoId': _id});
     },
+
+
+
     render: function() {
 
         var _this = this;
@@ -79,6 +106,7 @@ var FilesView = React.createClass({
         var previewWidget = <span>
                                 [preview panel = {this.state.selectedItem}]
                             </span>;
+
         if( this.state.selectedItem !== undefined )
         {
             tableClass = "col-sm-12 col-md-6";
@@ -86,17 +114,19 @@ var FilesView = React.createClass({
         };
 
 
-        var rows = this.props.files.map( function(_file){
-            return <tr onClick={_this.handleRowClick}   data-id={_file.id}>
+        var rows = this.state.files.map( function(_file){
+            return <tr key={_file.id} onClick={_this.handleRowClick}   data-id={_file.id}>
                         <td>
-                            <img src="http://lorempixel.com/50/50/abstract/" style={{'width':'50px', 'height':'50px'}}/>
+                            <img src={PreferenceStore.getBaseUrl() +_file.path +"?rendition=thumbnail.200&token=" +UserStore.getUser().token} style={{'width':'50px', 'height':'50px'}}/>
                         </td>
                         <td className="fileName">{_file.name}</td>
                         <td>
+                            { _file.fileType == 'image' ?
                             <ButtonGroup  bsSize="small">
-                                <ButtonLink to="photoDetails" params={{photoId: _file.id}} >[v]</ButtonLink>
-                                <ButtonLink to="photoEdit" params={{photoId: _file.id}} >[e]</ButtonLink>
+                                <ButtonLink to="photoDetails" params={{'id': _file.id}} >[v]</ButtonLink>
+                                <ButtonLink to="photoEdit" params={{id: _file.id}} >[e]</ButtonLink>
                             </ButtonGroup>
+                            :''}
                         </td>
                     </tr>
 
@@ -104,7 +134,7 @@ var FilesView = React.createClass({
 
 
         return (
-            <div className="filesView container-fluid">
+            <div className="filesView container-fluid" >
                 <div  className="row">
                     <aside className="col-sm-2" >
                         <FolderTree/>

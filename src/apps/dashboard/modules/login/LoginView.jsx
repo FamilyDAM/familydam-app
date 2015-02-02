@@ -5,44 +5,46 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
-
 var LoginCard = require('./LoginCard');
 var Clock = require('./../../components/clock/Clock');
 
+var AuthServices = require('./../../services/AuthServices');
+
 var LoginView = React.createClass({
 
-    getDefaultProps: function(){
-        return{ users : [
-                {id:01, firstName:"Mike", username:"mnimer"},
-                {id:02, firstName:"Angela", username:"angie"},
-                {id:03, firstName:"Kayden", username:"k5n5"},
-                {id:04, firstName:"Hailey", username:"hailey0124"}
-            ]};
-    },
 
 
     getInitialState: function(){
-        return { activeUser: undefined };
+        return { users : [], activeUser: undefined };
     },
+
+
+
+    componentWillMount: function(){
+
+        var _this = this;
+        var stream = AuthServices.listUsers().subscribe(function(results){
+            _this.setState({'users': results});
+        });
+    },
+
 
     handleCardSelection: function(user){
-        console.log("handleCardSelection");
-        console.dir(user);
-        //console.dir(event.target);
-
         this.setState({activeUser:user});
-
     },
+
     handleCancelCardSelection: function(event){
         this.setState({activeUser:undefined});
     },
+
+
 
     render: function() {
 
         var _this = this;
         var childNodes;
         if (this.state.activeUser === undefined ) {
-            childNodes = this.props.users.map(function(user, index) {
+            childNodes = this.state.users.map(function(user, index) {
                 return <li key={index}>
                         <LoginCard user={user}
                             mode="inactive"
@@ -61,7 +63,7 @@ var LoginView = React.createClass({
         }
 
         return (
-            <div className="loginView container-fluid">
+            <div className="loginView container-fluid" style={{'background-color':'#000'}}>
                 <div className="row logins">
                     <ul className="col-sm-8 col-sm-offset-2 login-grid">
                     {childNodes}

@@ -21,6 +21,8 @@
 var React = require('react');
 var Navigation = require('react-router').Navigation;
 
+var AuthServices = require('./../../services/AuthServices');
+var UserStore = require('./../../stores/UserStore');
 
 var LoginCard = React.createClass({
 
@@ -35,21 +37,31 @@ var LoginCard = React.createClass({
     getDefaultProps: function() {
         return {
             user: {
-                "firstName":"mike",
-                "lastName":"nimer",
-                "email":"mnimer@gmail.com"
+                "firstName":"",
+                "lastName":"",
+                "email":""
             },
             mode: "inactive"
         };
     },
 
 
+
     /**
      * Submit form, on success redirect to the dashboard.
      * @param event
      */
-    handleSubmit: function(event){
-        this.transitionTo("dashboard", this.props.user);
+    handleSubmit: function(event)
+    {
+        var _this = this;
+        //todo: remove hard coded login and use form values
+        var stream = AuthServices.login("admin", "admin").subscribe(function(authenticatedUser_){
+            // cache the user in a global store
+            UserStore.setUser(authenticatedUser_);
+
+            // redirect to dashboard
+            _this.transitionTo("dashboard");
+        });
     },
 
     /**
@@ -57,8 +69,6 @@ var LoginCard = React.createClass({
      * @param event
      */
     handleSelect: function(event){
-        console.log("select");
-
         //event.target = this.getDOMNode();
         this.props.onSelect(this.props.user);
     },
@@ -70,6 +80,8 @@ var LoginCard = React.createClass({
     handleCancel: function(event){
         this.props.onCancel(this.props.user);
     },
+
+
 
     render: function() {
 

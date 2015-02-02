@@ -15,25 +15,18 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.folderTree
-{
-  .header{
-    border-bottom: 1px solid #eee;
-  }
+'use strict';
 
-  .folderItem, .addFolderField{
-    padding-top:5px;
-    padding-bottom:5px;
 
-    &.active{
-      background-color: #eee;
+/**
+ * @mixin StreamManagerMixin
+ */
+var StreamManagerMixin = {
+    static: {
+        namedStreams: {}
     }
 
-    input{
-      width: 100px;
-    }
-  }
 
+};
 
-
-}
+module.exports = StreamManagerMixin;

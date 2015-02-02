@@ -15,25 +15,40 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.folderTree
-{
-  .header{
-    border-bottom: 1px solid #eee;
-  }
+'use strict';
 
-  .folderItem, .addFolderField{
-    padding-top:5px;
-    padding-bottom:5px;
+var Rx = require('rx');
+//di              = require('di');
 
-    &.active{
-      background-color: #eee;
+// Logged in user
+
+
+
+module.exports = {
+
+    _user : {"token" : "Basic YWRtaW46YWRtaW4="},
+    _basicAuthToken : "Basic YWRtaW46YWRtaW4=",
+
+    getUser: function () {
+        return this._user;
+    },
+
+    setUser: function (user_) {
+        this._user = user_;
+    },
+
+
+
+    getBasicAuthToken: function () {
+        return this._basicAuthToken;
+    },
+
+    setBasicAuthToken: function (token_) {
+        this._basicAuthToken = token_;
     }
 
-    input{
-      width: 100px;
-    }
-  }
+};
+
+//di.annotate(AuthActions, new di.Inject());
 
 
-
-}

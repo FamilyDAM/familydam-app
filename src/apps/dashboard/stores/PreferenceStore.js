@@ -15,25 +15,26 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.folderTree
-{
-  .header{
-    border-bottom: 1px solid #eee;
-  }
+'use strict';
 
-  .folderItem, .addFolderField{
-    padding-top:5px;
-    padding-bottom:5px;
+var Rx = require('rx');
+//di              = require('di');
 
-    &.active{
-      background-color: #eee;
+
+module.exports = {
+    // Logged in user
+    _baseUrl : "http://localhost:9000",
+
+    getBaseUrl: function () {
+        return this._baseUrl;
+    },
+
+    setBaseUrl: function (token_) {
+        this._baseUrl = token_;
     }
 
-    input{
-      width: 100px;
-    }
-  }
+};
+
+//di.annotate(AuthActions, new di.Inject());
 
 
-
-}

@@ -15,25 +15,15 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.folderTree
-{
-  .header{
-    border-bottom: 1px solid #eee;
-  }
+var Rx = require('rx');
+//di              = require('di');
 
-  .folderItem, .addFolderField{
-    padding-top:5px;
-    padding-bottom:5px;
+module.exports = {
 
-    &.active{
-      background-color: #eee;
-    }
+    selectFolder: new Rx.Subject()
 
-    input{
-      width: 100px;
-    }
-  }
+};
+
+//di.annotate(AuthActions, new di.Inject());
 
 
-
-}

@@ -38,16 +38,10 @@ module.exports = function(grunt) {
         },
 
         watch: {
-            compass: {
-                files: ['<%= options.app %>/apps/dashboard/{,*/}*.{scss,sass}'],
-                tasks: ['compass:dashboard', 'autoprefixer'],
-                options: {
-                    livereload: true
-                }
-            },
+
             styles: {
                 files: ['<%= options.app %>/apps/dashboard/**/*.scss'],
-                tasks: ['compass:dashboard', 'autoprefixer', 'newer:copy:dashboard', 'autoprefixer'],
+                tasks: ['compass:dashboard', 'newer:copy:dashboard' ],
                 options: {
                     livereload: true
                 }
@@ -55,6 +49,13 @@ module.exports = function(grunt) {
             css: {
                 files: ['<%= options.app %>/apps/dashboard/**/*.css'],
                 tasks: ['copy:dashboard'],
+                options: {
+                    livereload: true
+                }
+            },
+            js: {
+                files: ['<%= options.app %>/apps/dashboard/**/*.js'],
+                tasks: ['build-js-dashboard'],
                 options: {
                     livereload: true
                 }
@@ -99,6 +100,7 @@ module.exports = function(grunt) {
                 '<%= options.app %>/apps/dashboard/{,*/}*.js',
                 '!<%= options.app %>/apps/dashboard/bower_components/*',
                 '!<%= options.app %>/apps/dashboard/stores/*.js',
+                '!<%= options.app %>/apps/dashboard/actions/*.js',
                 '!<%= options.app %>/apps/dashboard/shared-lib.js'
             ]
         },
@@ -157,16 +159,25 @@ module.exports = function(grunt) {
         },
 
         react: {
+            options:{
+                'options.harmony': true
+            },
             dashboard: {
                 files: [
                     {
                         expand: true,
                         cwd: '<%= options.app %>/apps/dashboard',
-                        src: ['**/*.jsx', 'stores/*.js'],
+                        src: ['**/*.jsx', 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
                         dest: '<%= options.tmp %>/apps/dashboard',
                         ext: '.js'
                     }
                 ]
+            }
+        },
+
+        "6to5": {
+            options: {
+                sourceMap: true
             }
         },
 

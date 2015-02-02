@@ -15,25 +15,10 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.folderTree
+.ExifDataComponent
 {
-  .header{
-    border-bottom: 1px solid #eee;
+  h6{
+    margin-top: 2px;
+    margin-bottom: 2px;
   }
-
-  .folderItem, .addFolderField{
-    padding-top:5px;
-    padding-bottom:5px;
-
-    &.active{
-      background-color: #eee;
-    }
-
-    input{
-      width: 100px;
-    }
-  }
-
-
-
 }

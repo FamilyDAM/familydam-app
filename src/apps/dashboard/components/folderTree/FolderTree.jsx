@@ -19,66 +19,108 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
+var Router = require('react-router');
+var Route = Router.Route;
 var moment = require('moment');
 
 var ListGroup = require('react-bootstrap').ListGroup;
 var ListGroupItem = require('react-bootstrap').ListGroupItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
-var Clock = React.createClass({
+var DirectoryActions = require('./../../actions/DirectoryActions');
+
+var DirectoryServices = require('./../../services/DirectoryServices');
+
+var FolderTree = React.createClass({
+    mixins: [ Router.Navigation ],
 
     getInitialState: function(){
         return {
-            timestamp:new Date().getTime()
+            mode:'browse',
+            folders:[],
+            activeFolder: {'path':'/~/', 'children':[]}
         }
     },
 
     componentDidMount: function(){
-        this.timer = setInterval(this.tick, 1000);
+        var _this = this;
+        DirectoryServices.listDirectories("/~/").subscribe(function(results){
+            _this.setState({'folders': results});
+        });
     },
 
     componentWillUnmount: function(){
-        clearInterval(this.timer);
+
     },
 
-    tick: function(){
-        this.setState({timestamp: new Date().getTime()});
+    handleSelectDir: function(folder_){
+        console.dir(folder_);
+        this.setState( {'activeFolder': folder_} );
+
+        // send event that has will be picked up by the FilesView
+        //DirectoryActions.selectFolder.onNext(folder_);
+        this.transitionTo('files', {}, {'path':folder_.path});
+    },
+
+    handleAddFolder: function(){
+        var _af = this.state.activeFolder;
+        //_af.children.push("NEW_ITEM");
+        this.setState({"activeFolder":_af, 'mode':'add_item'});
     },
 
     render: function() {
 
+        var _this = this;
+        var _boundClick = _this.handleSelectDir.bind(this, {'path':'/~/'});
+
+        var listItems = function(_folders)
+        {
+            return _folders.map(function(_f)  {
+                var boundClick = _this.handleSelectDir.bind(_this, _f);
+
+                return <ListGroupItem key={_f.path}>
+                    <div className="folderItem"
+                        style={{'cursor': 'pointer'}}
+                        className={_this.state.activeFolder == _f ? 'folderItem active' : 'folderItem'}
+                        onClick={boundClick}>
+                        <Glyphicon glyph="chevron-right"/>
+                        <strong style={{'paddingLeft': '3px'}}>{_f.name}</strong>
+                    </div>
+                    <ListGroup>{listItems(_f.children)}</ListGroup>
+                </ListGroupItem>
+
+            })
+
+        };
+
         return (
             <div className="folderTree">
                 <div className="header">
-                    <h3>Folders <Glyphicon glyph="plus" className="pull-right"/></h3>
+                    <h3>Folders <Glyphicon glyph="plus"
+                                    className="pull-right"
+                                    style={{color:'#ccc'}}
+                                    onClick={this.handleAddFolder}/></h3>
                 </div><br/>
+
                 <ListGroup>
-                    <ListGroupItem><Glyphicon glyph="chevron-down" style={{'padding-right': '5px;'}}/> <strong>Documents</strong></ListGroupItem>
-                    <ListGroupItem>
+                    <ListGroupItem key="home">
+                        <div className={_this.state.activeFolder.path=="/~/"?'folderItem active':'folderItem'}
+                            style={{'cursor':'pointer'}}
+                            onClick={_boundClick}>
+                            <Glyphicon glyph="chevron-right"/>
+                            <strong style={{'paddingLeft':'3px'}}>Home</strong>
+                        </div>
                         <ListGroup>
-                            <ListGroupItem><Glyphicon glyph="chevron-down" style={{'padding-right': '5px;'}}/> <strong>Mike</strong></ListGroupItem>
-                            <ListGroupItem>
-                                <ListGroup>
-                                    <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> <strong>2014</strong></ListGroupItem>
-                                    <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> 2013</ListGroupItem>
-                                    <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> 2012</ListGroupItem>
-                                    <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> 2011</ListGroupItem>
-                                </ListGroup>
-                            </ListGroupItem>
-                            <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> Angie</ListGroupItem>
-                            <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> Kayden</ListGroupItem>
-                            <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> Hailey</ListGroupItem>
+                            {listItems(this.state.folders)}
                         </ListGroup>
                     </ListGroupItem>
-                    <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> Photos</ListGroupItem>
-                    <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> Music</ListGroupItem>
-                    <ListGroupItem><Glyphicon glyph="chevron-right" style={{'padding-right': '5px;'}}/> Movies</ListGroupItem>
 
                 </ListGroup>
+
             </div>
         );
     }
 
 });
 
-module.exports = Clock;
+module.exports = FolderTree;

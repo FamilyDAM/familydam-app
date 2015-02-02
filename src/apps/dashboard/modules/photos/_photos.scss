@@ -1,22 +1,24 @@
-/*
- * This file is part of FamilyDAM Project.
- *
- *     The FamilyDAM Project is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     The FamilyDAM Project is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 .photosView
 {
-  
 
+  .thumbnailCard
+  {
+    float:left;
+    border: 1px solid $gray-lighter;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    min-width: 175px;
+
+    &.active{
+      border: 1px solid $gray;
+      box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    img{
+      width:auto;
+      height:150px;
+    }
+  }
 }

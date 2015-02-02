@@ -22,137 +22,370 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
+var Keymaster = require('keymaster');
+
+var TabbedArea = require('react-bootstrap').TabbedArea;
+var TabPane = require('react-bootstrap').TabPane;
+var Carousel = require('react-bootstrap').Carousel;
+var CarouselItem = require('react-bootstrap').CarouselItem;
+var Glyphicon = require('react-bootstrap').Glyphicon;
+var Tags = require('./../../components/tags/Tags');
+var ExifMap = require('./../../components/exifMap/ExifMap');
+var ExifData = require('./../../components/exifData/ExifData');
+
 var FolderTree = require('../../components/folderTree/FolderTree');
+var UserStore = require('./../../stores/UserStore');
+var CurrentSearchStore = require('./../../stores/CurrentSearch');
+var PreferenceStore = require('./../../stores/PreferenceStore');
+var ContentServices = require('./../../services/ContentServices');
 
-var PhotoDetailsView = React.createClass({
+
+module.exports = React.createClass({
+
+    mixins: [Router.State, Router.Navigation],
+
+    getInitialState: function () {
+        return {'photo': {}, prevId:undefined, nextId:undefined};
+    },
+
+    /**
+     * Load the images in the root folder
+     */
+    componentWillMount: function () {
+        var _this = this;
+        this.load(this.props.params.id);
 
 
-    render: function() {
+        Keymaster("left", function(e_){
+            //console.log("left");
+            e_.stopImmediatePropagation();
+            if( _this.state.prevId )
+            {
+                _this.transitionTo('photoDetails', {'id': _this.state.prevId});
+            }
+        });
+        Keymaster("right", function(e_){
+            //console.log("right");
+            e_.stopImmediatePropagation();
+            if( _this.state.nextId )
+            {
+                _this.transitionTo('photoDetails', {'id': _this.state.nextId});
+            }
+        });
+    },
+
+
+    componentWillReceiveProps: function (nextProps) {
+        this.load(nextProps.params.id);
+    },
+
+
+    load: function(id_) {
+
+        var _this = this;
+        ContentServices.getNodeById(id_).subscribe(function (results) {
+            // set defaults for missing props
+            if (results['dam:tags'] == undefined)
+            {
+                results['dam:tags'] = ['t1', 't2'];
+            }
+            if (results['dam:note'] == undefined)
+            {
+                results['dam:note'] = "tick tock";
+            }
+
+            // set some local props for easier rendering
+            var imagePath = PreferenceStore.getBaseUrl() + results['jcr:path'] + "?token=" + UserStore.getUser().token + "&rendition=web.1024";
+            var rating = results['dam:rating'] ? results['dam:rating'] : 0;
+            var datetaken = results['jcr:created'];
+
+            var datetaken = "";
+            if (results['dam:metadata'] != undefined
+                && results['dam:metadata']['Exif IFD0'] != undefined
+                && results['dam:metadata']['Exif IFD0']['Date_Time'] != undefined)
+            {
+                var datetaken = results['dam:metadata']['Exif IFD0']['Date_Time'].description;
+            }
+
+            var gps = undefined;
+            if (results['dam:metadata'] != undefined
+                && results['dam:metadata']['GPS'] != undefined)
+            {
+                var gps = results['dam:metadata']['GPS'];
+            }
+
+
+            // Find the NEXT and PREV image
+            var currentSearchResults = CurrentSearchStore.getResults();
+            // find index, previous item, and next item
+            var _prevId = undefined;
+            var _nextId = undefined;
+            var index = -1;
+            for (var i = 0; i < currentSearchResults.length; i++)
+            {
+                var obj = currentSearchResults[i];
+                if( obj.id == results['jcr:uuid']){
+                    index = i;
+
+                    if( i > 0 ){
+                        _prevId = currentSearchResults[i-1].id;
+                    }
+                    if( i < (currentSearchResults.length-1) ){
+                        _nextId = currentSearchResults[i+1].id;
+                    }
+
+                    break;
+                }
+            }
+
+
+
+            _this.setState({
+                'photo': results,
+                'imagePath': imagePath,
+                'rating': rating,
+                'datetaken': datetaken,
+                'gps': gps,
+                'prevId':_prevId,
+                'nextId':_nextId
+            });
+
+        }, function (error) {
+            console.dir(error);
+        });
+
+    },
+
+
+    save: function () {
+        console.log("something changed: SAVE");
+        console.dir(this.state.photo);
+    },
+
+
+    handleOnNoteChange: function (event_) {
+        this.state.photo['dam:note'] = event_.target.value;
+        this.setState({'photo': this.state.photo});
+    },
+
+    handleOnNoteBlur: function (event_) {
+        this.state.photo['dam:note'] = event_.target.value;
+        this.save();
+    },
+
+    handleOnTagAdd: function (tag_) {
+        var pos = this.state.photo['dam:tags'].indexOf(tag_);
+        if (pos == -1)
+        {
+            this.state.photo['dam:tags'].push(tag_);
+            this.save();
+        }
+    },
+    handleOnTagRemove: function (tag_) {
+
+        var pos = this.state.photo['dam:tags'].indexOf(tag_);
+        if (pos > -1)
+        {
+            this.state.photo['dam:tags'].splice(pos, 1);
+            this.save();
+        }
+
+    },
+
+
+    render: function () {
 
         return (
-            <div className="photoDetailsView container-fluid">
-                <div  className="row">
-                    <aside className="col-sm-2" >
-                        <FolderTree/>
-                    </aside>
+            <div className="photoDetailsView container">
 
-                    <section className="col-sm-10" style={{'borderLeft':'1px solid #eee'}}>
-                        <div className="container">
+                <div className="row">
+                    <section className="col-sm-12">
+                        <div className="container-fluid">
                             <div className="row">
+                                <div className="col-sm-1">
+                                    {this.state.prevId?
+                                    <Link to="photoDetails" params={{'id': this.state.prevId}} >
+                                        <Glyphicon glyph="chevron-left" style={{'font-size':'48px', 'color':'#eee', 'top':'200px'}}/>
+                                    </Link>
+                                    :''}
+                                </div>
                                 <div className="col-sm-10">
-                                    <img src="http://lorempixel.com/500/500/abstract/" className="center-block" />
+                                    <img src={this.state.imagePath}
+                                        style={{'height': '500px'}}
+                                        className="center-block" />
+                                </div>
+                                <div className="col-sm-1">
+                                    {this.state.nextId?
+                                    <Link to="photoDetails" params={{'id': this.state.nextId}} >
+                                        <Glyphicon glyph="chevron-right" style={{'font-size':'48px', 'color':'#eee', 'top':'200px'}}/>
+                                    </Link>
+                                    :''}
                                 </div>
                             </div>
 
 
                             <div className="row">
                                 <br/>
-                                <hr style={{'width':'100%'}}/>
-                                <br/>
+                                <hr style={{'width': '100%'}}/>
                             </div>
 
 
-                            <div className="row">
-                                <div className="col-sm-6" style={{'border':'1px solid #ccc'}}>
-                                    Notes:
-                                    <textarea style={{'width':'300px', 'height': '150px'}}/>
-
-
-                                    <div style={{'padding':'5px'}}>
-                                        <a href="http://"
-                                            style={{'padding':'10px', 'fontSize':'12px', 'textDecoration':'none', 'color': '#87A800'}}>Landscape</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px', 'fontSize':'12px', 'textDecoration':'none', 'color': '#87A800'}}>kids</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px;', 'fontSize':'19px;', 'textDecoration':'none', 'color': '#87A800'}}>Hailey</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px', 'fontSize':'16px', 'textDecoration':'none', 'color': '#039FAF'}}>Kayden</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px', 'fontSize':'14px', 'textDecoration':'none', 'color': '#039FAF'}}>mike</a><br/>
-                                        <a href="http://"
-                                            style={{'padding':'10px', 'fontSize':'16px', 'textDecoration':'none', 'color': '#DE2159;'}}>Angie</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px','fontSize':'12px','textDecoration':'none', 'color': '#DE2159'}}>Vacation</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px','fontSize':'12px','textDecoration':'none', 'color': '#87A800;'}}>Work</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px','fontSize':'16px','textDecoration':'none', 'color': '#FF7600'}}>Baseball</a><br/>
-                                        <a href="http://"
-                                            style={{'padding':'10px','fontSize':'19px','textDecoration':'none', 'color': '#87A800'}}>Birthday</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px','fontSize':'16px','textDecoration':'none', 'color': '#039FAF'}}>School</a>
-                                        <a href="http://"
-                                            style={{'padding':'10px','fontSize':'14px','textDecoration':'none', 'color':'#039FAF'}}>B&W</a>
-                                    </div>
+                            <div className="row" >
+                                <div className="col-sm-6">
+                                    <img src="assets/icons/ic_file_download_24px.svg" style={{
+                                        'width': '36px',
+                                        'height': '36px'
+                                    }}/>
+                                    <img src="assets/icons/ic_mode_edit_24px.svg" style={{
+                                        'width': '36px',
+                                        'height': '36px'
+                                    }}/>
+                                    <img src="assets/icons/ic_delete_24px.svg" style={{
+                                        'width': '36px',
+                                        'height': '36px'
+                                    }}/>
+                                    <img src="assets/icons/ic_share_24px.svg" style={{
+                                        'width': '36px',
+                                        'height': '36px'
+                                    }}/>
                                 </div>
-
 
                                 <div className="col-sm-6">
+                                    <span style={{'font-size': '24px'}}>{this.state.datetaken}</span>
 
-                                    <div>
-                                        <img src="https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284"
-                                            style={{'width':'300px'}}/>
-                                        <br/>
+                                    <br/>
 
-                                        Naperville, IL<br/>
-                                        48.12314 / -123.1235123
-                                    </div>
-
-                                    <hr style={{'margin-top': '15px', 'margin-bottom': '15px'}}/>
-
-                                    <table >
-                                        <tr>
-                                            <td style={{'width': '50px'}}>
-                                                <img src="assets/icons/ic_photo_camera_48px.svg"
-                                                    style={{'width': '48px', 'height': '48px'}}/>
-                                            </td>
-                                            <td colspan="3" style={{'width':'100%'}}>
-                                                Nikon D90<br/>
-                                                10mm - 200mm<br/>
-                                                f/3.5-5.6 IS
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                    <table >
-                                        <tr>
-                                            <td colspan="2" style={{'width':'50%'}}>
-                                                <img src="assets/icons/ic_photo_camera_48px.svg"
-                                                    style={{'width': '12px', 'height': '12px'}}/>
-                                                    f/4.0
-                                            </td>
-                                            <td colspan="2" style={{'width':'50%'}}>
-                                                <img src="assets/icons/ic_photo_camera_48px.svg"
-                                                    style={{'width': '12px', 'height': '12px'}}/>
-                                                    50mm
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2">
-                                                <img src="assets/icons/ic_photo_camera_48px.svg"
-                                                    style={{'width': '12px', 'height': '12px'}}/>
-                                                    1/400
-                                            </td>
-                                            <td colspan="2">
-
-                                                <img src="assets/icons/ic_photo_camera_48px.svg"
-                                                    style={{'width': '12px', 'height': '12px'}}/>
-                                                    200ISO
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2">
-                                                <img src="assets/icons/ic_photo_camera_48px.svg"
-                                                    style={{'width': '12px', 'height': '12px'}}/>
-                                                    Flash:OFF
-                                            </td>
-                                            <td colspan="2">
-
-                                            </td>
-                                        </tr>
-                                    </table>
+                                    <img src="assets/icons/ic_star_24px.svg"
+                                        style={{'width': '24px', 'height': '24px'}}/>
+                                    <img src="assets/icons/ic_star_24px.svg"
+                                        style={{'width': '24px', 'height': '24px'}}/>
+                                    <img src="assets/icons/ic_star_24px.svg"
+                                        style={{'width': '24px', 'height': '24px'}}/>
+                                    <img src="assets/icons/ic_star_24px.svg"
+                                        style={{'width': '24px', 'height': '24px'}}/>
+                                    <img src="assets/icons/ic_star_outline_24px.svg"
+                                        style={{'width': '24px', 'height': '24px'}}/>
+                                    <span style={{'font-size': '16px'}}>{this.state.rating}</span>
                                 </div>
                             </div>
+
+
+                            <div className="row">
+                                <hr style={{'width': '100%'}}/>
+                                <br/>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-sm-6">
+                                    <h5>Notes:</h5>
+                                    <textarea
+                                        value={this.state.photo['dam:note']}
+                                        onChange={this.handleOnNoteChange}
+                                        onBlur={this.handleOnNoteBlur}
+                                        style={{'width': '100%', 'min-height': '100px', 'height': 'auto'}}></textarea>
+
+
+                                    <div style={{'padding': '5px'}}>
+                                        <Tags
+                                            tags={this.state.photo['dam:tags']}
+                                            onAdd={this.handleOnTagAdd}
+                                            onRemove={this.handleOnTagRemove}/>
+                                    </div>
+                                </div>
+
+
+                                <div className="col-sm-12 col-md-6">
+
+                                {this.state.gps != undefined ?
+                                    <div>
+                                        <ExifMap gps={this.state.gps} />
+                                        <hr style={{'margin-top': '15px', 'margin-bottom': '15px'}}/>
+                                    </div>
+                                    : ''}
+
+                                    <ExifData exif={this.state.photo['dam:metadata']}/>
+
+                                </div>
+                            </div>
+
+
+                            <div className="row" style={{'margin-top': '30px', 'min-height': '400px'}}>
+                                <TabbedArea defaultActiveKey={1} animation={false}>
+                                    <TabPane eventKey={1} tab="Similar or Duplicate">
+                                        <div style={{
+                                            'border-right': '1px solid #eee',
+                                            'border-left': '1px solid #eee'
+                                        }}>
+                                            <div style={{
+                                                'min-width': '150px',
+                                                'min-height': '150px',
+                                                'float': 'left',
+                                                'padding': '10px'
+                                            }}>
+                                                <img src="http://loremflickr.com/150/150/dog" style={{'margin': 'auto'}}/>
+                                            </div>
+                                            <div style={{
+                                                'min-width': '150px',
+                                                'min-height': '150px',
+                                                'float': 'left',
+                                                'padding': '10px'
+                                            }}>
+                                                <img src="http://loremflickr.com/150/150/cat" style={{'margin': 'auto'}}/>
+                                            </div>
+                                            <div style={{
+                                                'min-width': '150px',
+                                                'min-height': '150px',
+                                                'float': 'left',
+                                                'padding': '10px'
+                                            }}>
+                                                <img src="http://loremflickr.com/150/150/abstract" style={{'margin': 'auto'}}/>
+                                            </div>
+                                            <div style={{
+                                                'min-width': '150px',
+                                                'min-height': '150px',
+                                                'float': 'left',
+                                                'padding': '10px'
+                                            }}>
+                                                <img src="http://loremflickr.com/150/150/paris?random=1" style={{'margin': 'auto'}}/>
+                                            </div>
+                                            <div style={{
+                                                'min-width': '150px',
+                                                'min-height': '150px',
+                                                'float': 'left',
+                                                'padding': '10px'
+                                            }}>
+                                                <img src="http://loremflickr.com/150/150/paris?random=2" style={{'margin': 'auto'}}/>
+                                            </div>
+                                            <div style={{
+                                                'min-width': '150px',
+                                                'min-height': '150px',
+                                                'float': 'left',
+                                                'padding': '10px'
+                                            }}>
+                                                <img src="http://loremflickr.com/150/150/paris?random=3" style={{'margin': 'auto'}}/>
+                                            </div>
+                                        </div>
+                                    </TabPane>
+                                    <TabPane eventKey={2} tab="Renditions">
+                                        <div style={{
+                                            'border-right': '1px solid #eee',
+                                            'border-left': '1px solid #eee'
+                                        }}>
+                                            <div style={{
+                                                'min-width': '150px',
+                                                'min-height': '150px',
+                                                'float': 'left',
+                                                'padding': '10px'
+                                            }}>
+                                                <img src="http://lorempixel.com/g/150/150/nature" style={{'margin': 'auto'}}/>
+                                            </div>
+                                        </div>
+                                    </TabPane>
+                                    <TabPane eventKey={3} tab="Albums">[List of albums]</TabPane>
+                                </TabbedArea>
+
+                            </div>
+
 
                         </div>
                     </section>
@@ -165,4 +398,5 @@ var PhotoDetailsView = React.createClass({
 
 });
 
-module.exports = PhotoDetailsView;
+
+

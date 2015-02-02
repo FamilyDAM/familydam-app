@@ -15,25 +15,9 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.folderTree
+.TagComponent
 {
-  .header{
-    border-bottom: 1px solid #eee;
+  .form-control{
+    height: auto !important;
   }
-
-  .folderItem, .addFolderField{
-    padding-top:5px;
-    padding-bottom:5px;
-
-    &.active{
-      background-color: #eee;
-    }
-
-    input{
-      width: 100px;
-    }
-  }
-
-
-
 }

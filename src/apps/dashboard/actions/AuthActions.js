@@ -15,25 +15,22 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.folderTree
-{
-  .header{
-    border-bottom: 1px solid #eee;
-  }
+var Rx = require('rx');
+//di              = require('di');
 
-  .folderItem, .addFolderField{
-    padding-top:5px;
-    padding-bottom:5px;
+module.exports = {
 
-    &.active{
-      background-color: #eee;
+    /**
+     * Clear Auth cache & redirect a user back to login, from anywhere in the code.
+     * @param observer
+     * @returns {*}
+     */
+    loginRedirect: function () {
+        //todo
     }
 
-    input{
-      width: 100px;
-    }
-  }
+};
+
+//di.annotate(AuthActions, new di.Inject());
 
 
-
-}
