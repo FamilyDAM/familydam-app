@@ -21,13 +21,12 @@ var Rx = require('rx');
 //di              = require('di');
 
 // Logged in user
-
+var PreferenceStore = require("./PreferenceStore");
 
 
 module.exports = {
 
     _user : {"token" : "Basic YWRtaW46YWRtaW4="},
-    _basicAuthToken : "Basic YWRtaW46YWRtaW4=",
 
     getUser: function () {
         return this._user;
@@ -38,14 +37,42 @@ module.exports = {
     },
 
 
+    /**
+     * Login a single user
+     * @param _username
+     * @param _password
+     * @returns {*}
+     */
+    login: function (_username, _password) {
 
-    getBasicAuthToken: function () {
-        return this._basicAuthToken;
+        return Rx.Observable.defer(function ()
+        {
+            var _salt = new Date().getTime();
+            return $.post(PreferenceStore.getBaseUrl() +'/api/users/login',
+                {'username':_username, 'password':_password, 'salt':_salt});
+        });
     },
 
-    setBasicAuthToken: function (token_) {
-        this._basicAuthToken = token_;
-    }
+    /**
+     * Get a list of all users, for the login screen
+     * @returns {*}
+     */
+    listUsers: function () {
+
+        var listUserObservable = Rx.Observable.defer(function () {
+            return $.get(PreferenceStore.getBaseUrl() +'/api/users', {cache: false});
+        }).map(function(results){
+            var list = [];
+            results.map(function(item){
+                item.firstName = item.username;
+                list.push(item);
+            });
+            return list.sort(function (a, b) { return b.username - a.username; });
+        });
+        return listUserObservable;
+
+    },
+
 
 };
 

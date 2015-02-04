@@ -36,9 +36,8 @@ var DirectoryActions = require('./../../actions/DirectoryActions');
 
 var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
-var CurrentSearchStore = require('./../../stores/CurrentSearch');
-
-var DirectoryServices = require('./../../services/DirectoryServices');
+var SearchStore = require('./../../stores/SearchStore');
+var DirectoryStore = require('./../../stores/DirectoryStore');
 
 var FilesView = React.createClass({
     mixins : [Navigation],
@@ -73,9 +72,8 @@ var FilesView = React.createClass({
     loadData:function(folder_, limit_, offset_){
         //todo: make path dynamic
         var _this = this;
-        DirectoryServices.listFilesInDirectory(folder_).subscribe(function(results){
+        DirectoryStore.listFilesInDirectory(folder_).subscribe(function(results){
             _this.setState({'files': results});
-            CurrentSearchStore.setResults(results);
         });
     },
 

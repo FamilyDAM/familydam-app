@@ -28,7 +28,7 @@ var InfiniteScrollMixin = require('react-infinite-scroll-mixin');
 var FolderTree = require('../../components/folderTree/FolderTree');
 var PhotoThumbnail = require('./PhotoThumbnail');
 
-var SearchServices = require('./../../services/SearchServices');
+var SearchStore = require('./../../stores/SearchStore');
 
 
 var PhotosView = React.createClass({
@@ -56,7 +56,7 @@ var PhotosView = React.createClass({
     loadData:function(folder_, limit_, offset_){
         //todo: make path dynamic
         var _this = this;
-        SearchServices.searchImages("/~/").subscribe(function(results){
+        SearchStore.searchImages("/~/").subscribe(function(results){
             _this.setState({'files': results});
         });
     },

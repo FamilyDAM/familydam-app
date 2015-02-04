@@ -35,9 +35,9 @@ var ExifData = require('./../../components/exifData/ExifData');
 
 var FolderTree = require('../../components/folderTree/FolderTree');
 var UserStore = require('./../../stores/UserStore');
-var CurrentSearchStore = require('./../../stores/CurrentSearch');
+var SearchStore = require('./../../stores/SearchStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
-var ContentServices = require('./../../services/ContentServices');
+var ContentStore = require('./../../stores/ContentStore');
 
 
 module.exports = React.createClass({
@@ -83,7 +83,7 @@ module.exports = React.createClass({
     load: function(id_) {
 
         var _this = this;
-        ContentServices.getNodeById(id_).subscribe(function (results) {
+        ContentStore.getNodeById(id_).subscribe(function (results) {
             // set defaults for missing props
             if (results['dam:tags'] == undefined)
             {
@@ -116,7 +116,7 @@ module.exports = React.createClass({
 
 
             // Find the NEXT and PREV image
-            var currentSearchResults = CurrentSearchStore.getResults();
+            var currentSearchResults = SearchStore.getResults();
             // find index, previous item, and next item
             var _prevId = undefined;
             var _nextId = undefined;

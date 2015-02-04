@@ -8,22 +8,19 @@ var Link = Router.Link;
 var LoginCard = require('./LoginCard');
 var Clock = require('./../../components/clock/Clock');
 
-var AuthServices = require('./../../services/AuthServices');
+var UserStore = require('./../../stores/UserStore');
 
 var LoginView = React.createClass({
-
-
 
     getInitialState: function(){
         return { users : [], activeUser: undefined };
     },
 
 
-
     componentWillMount: function(){
 
         var _this = this;
-        var stream = AuthServices.listUsers().subscribe(function(results){
+        var stream = UserStore.listUsers().subscribe(function(results){
             _this.setState({'users': results});
         });
     },

@@ -22,14 +22,36 @@ var React = require('react');
 var Router = require('react-router');
 var Route = Router.Route;
 var moment = require('moment');
-
 var ListGroup = require('react-bootstrap').ListGroup;
 var ListGroupItem = require('react-bootstrap').ListGroupItem;
+var Button = require('react-bootstrap').Button;
+var ButtonGroup = require('react-bootstrap').ButtonGroup;
+var Modal = require('react-bootstrap').Modal;
+var ModalTrigger = require('react-bootstrap').ModalTrigger;
 var Glyphicon = require('react-bootstrap').Glyphicon;
-
 var DirectoryActions = require('./../../actions/DirectoryActions');
+var DirectoryStore = require('./../../stores/DirectoryStore');
 
-var DirectoryServices = require('./../../services/DirectoryServices');
+
+var AddFolderModal = React.createClass({
+    render: function() {
+        return (
+            <Modal {...this.props} title="Add Folder" animation={false}>
+                <div className="modal-body">
+                    <h4>Text in a modal</h4>
+                    <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
+                </div>
+                <div className="modal-footer">
+                    <ButtonGroup>
+                        <Button onClick={this.props.onRequestHide}>Close</Button>
+                        <Button >Create</Button>
+                    </ButtonGroup>
+                </div>
+            </Modal>
+        );
+    }
+});
+
 
 var FolderTree = React.createClass({
     mixins: [ Router.Navigation ],
@@ -44,7 +66,7 @@ var FolderTree = React.createClass({
 
     componentDidMount: function(){
         var _this = this;
-        DirectoryServices.listDirectories("/~/").subscribe(function(results){
+        DirectoryStore.listDirectories("/~/").subscribe(function(results){
             _this.setState({'folders': results});
         });
     },
@@ -96,10 +118,13 @@ var FolderTree = React.createClass({
         return (
             <div className="folderTree">
                 <div className="header">
-                    <h3>Folders <Glyphicon glyph="plus"
+                    <h3>Folders
+                        <ModalTrigger modal={<AddFolderModal />}>
+                            <Glyphicon glyph="plus"
                                     className="pull-right"
-                                    style={{color:'#ccc'}}
-                                    onClick={this.handleAddFolder}/></h3>
+                                    onClick={this.handleAddFolder}/>
+                        </ModalTrigger>
+                    </h3>
                 </div><br/>
 
                 <ListGroup>

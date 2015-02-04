@@ -18,42 +18,48 @@
 'use strict';
 
 var Rx = require('rx');
-var UserStore = require('../stores/UserStore');
-var PreferenceStore = require('../stores/PreferenceStore');
-
+var UserStore = require('./UserStore');
+var SearchStore = require('./SearchStore');
+var PreferenceStore = require('./PreferenceStore');
 //di              = require('di');
 
 module.exports = {
 
 
     /**
-     * Search all files with limit/offset paging support, used by the grid view.
-     * @param path
-     * @param successCallback
-     * @param errorCallback
-     * @returns {*|Array|Object|Mixed|promise|HTMLElement}
+     * List all directories visible to a user
+     * @returns {*}
      */
-    searchImages : function(limit, offset, filterPath, filterTags, filterDateFrom, filterDateTo )
+    listDirectories: function(rootPath_)
     {
-        //todo: add support for these
-        console.log(filterPath);
-        console.log(filterTags);
-        console.log(filterDateFrom);
-        console.log(filterDateTo);
-
         return Rx.Observable.defer(function () {
-            $.ajax({
-                method: "post",
-                url: PreferenceStore.getBaseUrl() +"/api/search/images",
-                data: {
-                    "limit":limit,
-                    "offset":offset,
-                    "orderBy": "jcr:lastModified"
-                },
+            return $.ajax({
+                method: "get",
+                url: PreferenceStore.getBaseUrl() +"/api/directory/tree",
+                data: {'path':rootPath_},
                 headers: {
-                    "Authorization":  UserStore.getBasicAuthToken()
+                    "Authorization":  UserStore.getUser().token
                 }
             });
+        });
+    },
+
+
+    listFilesInDirectory: function(path_)
+    {
+
+        return Rx.Observable.defer(function () {
+            return $.ajax({
+                method: "post",
+                url: PreferenceStore.getBaseUrl() +"/api/directory/",
+                data: {'path':path_},
+                headers: {
+                    "Authorization":  UserStore.getUser().token
+                }
+            });
+        }).map(function(results_){
+            SearchStore.setResults(results_);
+            return results_;
         });
     }
 

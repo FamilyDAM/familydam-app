@@ -19,6 +19,8 @@
 
 var Rx = require('rx');
 //di              = require('di');
+var PreferenceStore = require('./PreferenceStore');
+var UserStore = require('./UserStore');
 
 // Logged in user
 
@@ -26,17 +28,28 @@ var Rx = require('rx');
 
 module.exports = {
 
-    _results : [],
+    /**
+     * Return all of the data for a single node
+     * @param path
+     * @param successCallback
+     * @param errorCallback
+     * @returns Object
+     */
+    getNodeById: function( id )
+    {
+        var _searchPath = "/api/data/" +id;
 
-    getResults: function () {
-        return this._results;
-    },
-
-    setResults: function (results_) {
-        this._results = results_;
+        return Rx.Observable.defer(function () {
+            return $.ajax({
+                method: "get",
+                url: PreferenceStore.getBaseUrl() +_searchPath,
+                data: {},
+                headers: {
+                    "Authorization":  UserStore.getUser().token
+                }
+            });
+        });
     }
-
-
 };
 
 //di.annotate(AuthActions, new di.Inject());

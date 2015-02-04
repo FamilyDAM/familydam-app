@@ -36,7 +36,6 @@ var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 
 var DashboardView = React.createClass({
 
-
     render: function () {
 
         var clear_style = {clear: "left"};
@@ -92,7 +91,6 @@ var DashboardView = React.createClass({
                 <br/>
                 <RouteHandler {...this.props}/>
             </div>
-
 
         );
     }

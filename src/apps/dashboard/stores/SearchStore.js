@@ -18,47 +18,55 @@
 'use strict';
 
 var Rx = require('rx');
-var UserStore = require('../stores/UserStore');
-var PreferenceStore = require('../stores/PreferenceStore');
 //di              = require('di');
+
+// Logged in user
+
+var PreferenceStore = require("./PreferenceStore");
 
 module.exports = {
 
+    _results : [],
 
-    /**
-     * List all directories visible to a user
-     * @returns {*}
-     */
-    listDirectories: function(rootPath_)
-    {
-        return Rx.Observable.defer(function () {
-            return $.ajax({
-                method: "get",
-                url: PreferenceStore.getBaseUrl() +"/api/directory/tree",
-                data: {'path':rootPath_},
-                headers: {
-                    "Authorization":  UserStore.getBasicAuthToken()
-                }
-            });
-        });
+
+    getResults : function() {
+        return this._results;
+    },
+    setResults : function(val_) {
+        this._results = val_;
     },
 
 
-    listFilesInDirectory: function(path_)
+    /**
+     * Search all files with limit/offset paging support, used by the grid view.
+     * @param path
+     * @param successCallback
+     * @param errorCallback
+     * @returns {*|Array|Object|Mixed|promise|HTMLElement}
+     */
+    searchImages : function(limit, offset, filterPath, filterTags, filterDateFrom, filterDateTo )
     {
+        //todo: add support for these
+        console.log(filterPath);
+        console.log(filterTags);
+        console.log(filterDateFrom);
+        console.log(filterDateTo);
 
         return Rx.Observable.defer(function () {
-            return $.ajax({
+            $.ajax({
                 method: "post",
-                url: PreferenceStore.getBaseUrl() +"/api/directory/",
-                data: {'path':path_},
+                url: PreferenceStore.getBaseUrl() +"/api/search/images",
+                data: {
+                    "limit":limit,
+                    "offset":offset,
+                    "orderBy": "jcr:lastModified"
+                },
                 headers: {
-                    "Authorization":  UserStore.getBasicAuthToken()
+                    "Authorization":  UserStore.getUser().token
                 }
             });
         });
     }
-
 
 };
 
