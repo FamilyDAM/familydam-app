@@ -77,6 +77,14 @@ module.exports = function(grunt) {
                     livereload: true
                 }
             }
+,
+            dist: {
+                files: '<%= options.dist %>/**',
+                tasks: ['copy:dist'],
+                options: {
+                    livereload: true
+                }
+            }
 
         },
 
@@ -160,7 +168,17 @@ module.exports = function(grunt) {
                         '.htaccess'
                     ]
                 }]
-            }
+            },
+            'dist': {
+                files: [
+                    {
+                        cwd: './dist/',
+                        src: '**',
+                        dest: './binary-dist/darwin/atom-shell/Atom.app/Contents/Resources/app/',
+                        expand: true
+                    }
+                ]
+            },
         },
 
         react: {

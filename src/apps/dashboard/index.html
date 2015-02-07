@@ -18,11 +18,14 @@
 </head>
 <body>
     <!-- react friendly js components -->
-    <script src="shared-lib.js"></script>
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/bootstrap-material-design/dist/js/ripples.js"></script>
-    <script src="bower_components/bootstrap-material-design/dist/js/material.js"></script>
-    <script src="bower_components/react-bootstrap/react-bootstrap.js"></script>
-    <script src="app.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script>
+        jQuery.getScript('bower_components/bootstrap-material-design/dist/js/ripples.js');
+        jQuery.getScript('bower_components/bootstrap-material-design/dist/js/material.js');
+        jQuery.getScript('bower_components/react-bootstrap/react-bootstrap.js');
+        jQuery.getScript('app.js');
+    </script>
 </body>
 </html>
