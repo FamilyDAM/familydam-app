@@ -14,23 +14,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 'use strict';
 
 var Rx = require('rx');
-var DirectoryStore = require("../stores/DirectoryStore");
-//di              = require('di');
+var DirectoryActions = require('./../actions/DirectoryActions');
+var UserStore = require('./UserStore');
+var SearchStore = require('./SearchStore');
+var PreferenceStore = require('./PreferenceStore');
+//di = require('di');
 
 module.exports = {
 
-    
-    /**
-     * Store selectedFolder as a simple property (subject) in the store.
-     * TODO, figure out how to subscribe to this subject from inside the store, pull instead of push
-     */
-    selectFolder: new Rx.Subject(),//.filter(function(d_){return true;}).subscribe(DirectoryStore.getLastSelectedFolder),
+    getFilesInDirectory: function(path_)
+    {
+        return Rx.Observable.defer(function () {
+            return $.ajax({
+                method: "get",
+                url: PreferenceStore.getBaseUrl() +"/api/files/",
+                data: {'path':path_},
+                headers: {
+                    "Authorization":  UserStore.getUser().token
+                }
+            });
+        }).map(function(results_){
+            SearchStore.setResults(results_);
+            return results_;
+        });
+    }
 
-
-    refreshDirectories: new Rx.Subject()
 
 };
 

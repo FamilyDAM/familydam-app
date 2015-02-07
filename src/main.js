@@ -17,9 +17,9 @@
 
 var app = require('app');  // Module to control application life.
 var ipc = require('ipc');
+var BrowserWindow = require('browser-window');  // Module to create native browser window.
 var serverManager = require('./ServerManager');
 var configurationManager = require('./ConfigurationManager');
-var BrowserWindow = require('browser-window');  // Module to create native browser window.
 var fileManager = require('./FileManager');  // Module to create native browser window.
 
 // Report crashes to our server.
@@ -137,7 +137,7 @@ app.on('ready', function() {
     var timer = setInterval(function(){
         clearTimeout(timer);
         configurationManager.initializeServer(app, configWindow);
-    }, 20000);
+    }, 2000);
 
 
     // Start the embedded Sling Server

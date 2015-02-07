@@ -82,7 +82,6 @@ var DashboardView = React.createClass({
                                 </button>
                             </div>
                             <ul className="dropdown-menu dropdown-menu-right" role="menu">
-
                             </ul>
                         </div>
                     </div>

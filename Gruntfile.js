@@ -5,10 +5,13 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build', 'watch']);//, 'connect'
 
     grunt.registerTask('build', [
-        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
+        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard', 'build-atom-shell-app'
     ]);
+
     grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
     grunt.registerTask('build-css', ['compass']);
+
+
 
 
     var options = {
@@ -83,6 +86,7 @@ module.exports = function(grunt) {
                     dot: true,
                     src: [
                         '.tmp',
+                        'binary-dist',
                         '<%= options.dist %>/*',
                         '!<%= options.dist %>/.git*'
                     ]
@@ -137,6 +141,7 @@ module.exports = function(grunt) {
                     dest: '<%= options.dist %>',
                     src: [
                         '*.js',
+                        '**/*.json',
                         'apps/splash/**'
                     ]
                 }]
@@ -192,7 +197,25 @@ module.exports = function(grunt) {
                 compile: './<%= options.dist %>/apps/dashboard/shared-lib.js',
                 debug: true
             }
+        },
+
+
+        'download-atom-shell': {
+            version: '0.20.2',
+            outputDir: '.tmp/binaries'
+        },
+
+        /** platforms: ["darwin", "win32", "linux"], **/
+        'build-atom-shell-app': {
+            options: {
+                platforms: ["darwin"],
+                app_dir:"dist",
+                cache_dir:".tmp/binaries",
+                build_dir:"binary-dist",
+                atom_shell_version: 'v0.20.2'
+            }
         }
+
     });
 
 };

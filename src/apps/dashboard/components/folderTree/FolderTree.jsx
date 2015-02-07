@@ -34,17 +34,49 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 
 
 var AddFolderModal = React.createClass({
+
+    activeDir: "/~/",
+
+    
+    handleCreateFolder:function(event_){
+        var _this = this;
+
+        DirectoryStore.createFolder(
+            _this.activeDir,
+            _this.refs.folderName.getDOMNode().value
+        ).subscribe(function(results_){
+            _this.props.onRequestHide();
+            DirectoryActions.refreshDirectories.onNext(true);
+        }, function(error_){
+            alert(error_.statusText);
+        })
+
+    },
+
+
     render: function() {
+
+
+        if( this.props.dir != undefined ){
+            this.activeDir = this.props.dir;
+            if( this.activeDir.substr(this.activeDir.length-1) != "/" )
+            {
+                this.activeDir += "/";
+            }
+        };
+
+        var activeVisibleDir = this.activeDir.replace("/~/", "/");
+        
         return (
             <Modal {...this.props} title="Add Folder" animation={false}>
                 <div className="modal-body">
-                    <h4>Text in a modal</h4>
-                    <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
+                    <h4>Create a new sub folder</h4>
+                    {activeVisibleDir} <input type="text" ref="folderName" label="Folder Name"/>
                 </div>
                 <div className="modal-footer">
                     <ButtonGroup>
                         <Button onClick={this.props.onRequestHide}>Close</Button>
-                        <Button >Create</Button>
+                        <Button onClick={this.handleCreateFolder}>Create</Button>
                     </ButtonGroup>
                 </div>
             </Modal>
@@ -64,10 +96,20 @@ var FolderTree = React.createClass({
         }
     },
 
+
     componentDidMount: function(){
         var _this = this;
-        DirectoryStore.listDirectories("/~/").subscribe(function(results){
+        
+        DirectoryStore.getDirectories("/~/").subscribe(function(results){
             _this.setState({'folders': results});
+        });
+
+        
+        // When we get a refresh dir event (after new folder is created) reload the dir tree
+        DirectoryActions.refreshDirectories.subscribe(function(data_){
+            DirectoryStore.getDirectories("/~/").subscribe(function(results){
+                _this.setState({'folders': results});
+            });
         });
     },
 
@@ -76,11 +118,11 @@ var FolderTree = React.createClass({
     },
 
     handleSelectDir: function(folder_){
-        console.dir(folder_);
+        //console.dir(folder_);
         this.setState( {'activeFolder': folder_} );
 
         // send event that has will be picked up by the FilesView
-        //DirectoryActions.selectFolder.onNext(folder_);
+        DirectoryActions.selectFolder.onNext(folder_);
         this.transitionTo('files', {}, {'path':folder_.path});
     },
 
@@ -119,7 +161,7 @@ var FolderTree = React.createClass({
             <div className="folderTree">
                 <div className="header">
                     <h3>Folders
-                        <ModalTrigger modal={<AddFolderModal />}>
+                        <ModalTrigger modal={<AddFolderModal dir={this.state.activeFolder.path} />}>
                             <Glyphicon glyph="plus"
                                     className="pull-right"
                                     onClick={this.handleAddFolder}/>

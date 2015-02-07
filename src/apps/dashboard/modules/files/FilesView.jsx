@@ -20,6 +20,7 @@
 // Used in TodoApp
 var React = require('react');
 var Router = require('react-router');
+var IS = require('is_js');
 var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 
@@ -38,6 +39,7 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');
 var DirectoryStore = require('./../../stores/DirectoryStore');
+var FileStore = require('./../../stores/FileStore');
 
 var FilesView = React.createClass({
     mixins : [Navigation],
@@ -61,6 +63,10 @@ var FilesView = React.createClass({
         }
 
         _this.loadData(_path, 100, 0); //start with root directory
+
+        DirectoryActions.refreshDirectories.subscribe(function(data_){
+            _this.loadData(_path, 100, 0);
+        });
     },
 
     componentWillReceiveProps:function(nextProps)
@@ -72,13 +78,26 @@ var FilesView = React.createClass({
     loadData:function(folder_, limit_, offset_){
         //todo: make path dynamic
         var _this = this;
-        DirectoryStore.listFilesInDirectory(folder_).subscribe(function(results){
-            _this.setState({'files': results});
+        _this.is = IS;
+
+        FileStore.getFilesInDirectory(folder_).subscribe(function(results_) {
+            if (_this.is.array(results_)) {
+                _this.setState({'files': results_});
+            }
         });
     },
 
 
 
+    handleDirClick: function(event, component)
+    {
+        var _path =  $("[data-reactid='" + component + "']").attr("data-path");
+        DirectoryActions.selectFolder.onNext(_path);
+
+        this.transitionTo('files', {}, {'path':_path})
+    },
+    
+    
     handleRowClick: function(event, component)
     {
         if( $(event.target).attr('type') != "button" )
@@ -94,6 +113,17 @@ var FilesView = React.createClass({
         //transitionTo('photoDetails', {'photoId': _id});
     },
 
+
+    handleNodeDelete: function(event, component)
+    {
+        var _id = $("[data-reactid='" + component + "']").attr("data-id");
+        var _path = $("[data-reactid='" + component + "']").attr("data-path");
+
+        DirectoryStore.deleteFolder(_path).subscribe(function(results_){
+            console.dir(results_);
+            DirectoryActions.refreshDirectories.onNext(true);
+        });
+    },
 
 
     render: function() {
@@ -112,19 +142,58 @@ var FilesView = React.createClass({
         };
 
 
-        var rows = this.state.files.map( function(_file){
-            return <tr key={_file.id} onClick={_this.handleRowClick}   data-id={_file.id}>
+        var folders = this.state.files
+            .filter( function(_file){
+                return _file.type == "folder"
+            } )
+            .map( function(_file){
+                return <tr key={_file.id} onClick={_this.handleDirClick}  data-id={_file.id}  data-path={_file.path}>
+                        <td>
+                            <img src="assets/icons/ic_folder_48px.svg" style={{'width':'48px', 'height':'48px', 'margin':'auto'}}/>
+
+                        </td>
+                        <td className="fileName" style={{'verticalAlign':'middle'}}>{_file.name}</td>
+                        <td >
+                            <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
+                                <Button onClick={_this.handleNodeDelete} data-id={_file.id} data-path={_file.path}  style={{'padding':'5px 10px', 'margin':0}}>
+                                    <Glyphicon glyph="remove"/> delete
+                                </Button>
+                            </ButtonGroup>
+                        </td>
+                    </tr>
+
+        });
+
+        var files = this.state.files
+            .filter( function(_file){
+                return _file.type != "folder"
+            } )
+            .map( function(_file){
+                return <tr key={_file.id} onClick={_this.handleRowClick}   data-id={_file.id}>
                         <td>
                             <img src={PreferenceStore.getBaseUrl() +_file.path +"?rendition=thumbnail.200&token=" +UserStore.getUser().token} style={{'width':'50px', 'height':'50px'}}/>
                         </td>
                         <td className="fileName">{_file.name}</td>
-                        <td>
+                        <td >
                             { _file.fileType == 'image' ?
-                            <ButtonGroup  bsSize="small">
-                                <ButtonLink to="photoDetails" params={{'id': _file.id}} >[v]</ButtonLink>
-                                <ButtonLink to="photoEdit" params={{id: _file.id}} >[e]</ButtonLink>
+                            <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
+                                <ButtonLink to="photoDetails" params={{'id': _file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
+                                    <Glyphicon glyph="eye-open"/> view
+                                </ButtonLink>
+                                <ButtonLink to="photoEdit" params={{id: _file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
+                                    <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
+                                </ButtonLink>
+                                <Button onClick={_this.handleNodeDelete} data-id={_file.id} data-path={_file.path}  style={{'padding':'5px 10px', 'margin':0}}>
+                                    <Glyphicon glyph="remove"/> delete
+                                </Button>
                             </ButtonGroup>
-                            :''}
+                            :
+                            <ButtonGroup  bsSize="small">
+                                <Button onClick={_this.handleNodeDelete} data-id={_file.id} data-path={_file.path}>
+                                    <Glyphicon glyph="remove"/> delete
+                                </Button>
+                            </ButtonGroup>
+                            }
                         </td>
                     </tr>
 
@@ -148,7 +217,9 @@ var FilesView = React.createClass({
                                 </tr>
                             </thead>
                             <tbody>
-                                {rows}
+                                {folders}
+                                
+                                {files}
                             </tbody>
                         </Table>
                     </section>

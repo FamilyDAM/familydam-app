@@ -18,24 +18,70 @@
 'use strict';
 
 var Rx = require('rx');
+var DirectoryActions = require('./../actions/DirectoryActions');
 var UserStore = require('./UserStore');
 var SearchStore = require('./SearchStore');
 var PreferenceStore = require('./PreferenceStore');
-//di              = require('di');
+//di = require('di');
 
 module.exports = {
 
+    root: "/~/",
 
+    /**
+     * the last folder selected by a user in the sidebar folder tree.
+     * A simple property, stored in a behavior subject.
+     * Note: the value is pushed from the DirectoryAction
+     */
+    getLastSelectedFolder: new Rx.BehaviorSubject( {'path':"/~/"} ),
+
+
+    createFolder:function(dir_, name_){
+        return Rx.Observable.defer(function () {
+            //todo
+            return $.ajax({
+                method: "post",
+                url: PreferenceStore.getBaseUrl() +"/api/directory/",
+                data: {'path':dir_, 'name':name_},
+                headers: {
+                    "Authorization":  UserStore.getUser().token
+                }
+            });
+        });
+    },
+
+
+    deleteFolder:function(dir_){
+        return Rx.Observable.defer(function () {
+            //todo
+            return $.ajax({
+                method: "delete",
+                url: PreferenceStore.getBaseUrl() +"/api/directory/",
+                data: {'path':dir_},
+                headers: {
+                    "Authorization":  UserStore.getUser().token
+                }
+            });
+        });
+    },
+
+    
     /**
      * List all directories visible to a user
      * @returns {*}
      */
-    listDirectories: function(rootPath_)
+    getDirectories: function(rootPath_)
     {
+        if( rootPath_ == undefined ){
+            rootPath_ = this.root;
+
+        }
+
+
         return Rx.Observable.defer(function () {
             return $.ajax({
                 method: "get",
-                url: PreferenceStore.getBaseUrl() +"/api/directory/tree",
+                url: PreferenceStore.getBaseUrl() +"/api/directory/",
                 data: {'path':rootPath_},
                 headers: {
                     "Authorization":  UserStore.getUser().token
@@ -45,13 +91,12 @@ module.exports = {
     },
 
 
-    listFilesInDirectory: function(path_)
+    getFilesInDirectory: function(path_)
     {
-
         return Rx.Observable.defer(function () {
             return $.ajax({
-                method: "post",
-                url: PreferenceStore.getBaseUrl() +"/api/directory/",
+                method: "get",
+                url: PreferenceStore.getBaseUrl() +"/api/files",
                 data: {'path':path_},
                 headers: {
                     "Authorization":  UserStore.getUser().token
