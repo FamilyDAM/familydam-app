@@ -1,0 +1,37 @@
+/*
+ * This file is part of FamilyDAM Project.
+ *
+ *     The FamilyDAM Project is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     The FamilyDAM Project is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+$blue-50: #e3f2fd;
+$blue-100: #bbdefb;
+$blue-200: #90caf9;
+$blue-300: #64b5f6;
+$blue-400: #42a5f5;
+$blue-500: #2196f3;
+$blue-600: #1e88e5;
+$blue-700: #1976d2;
+$blue-800: #1565c0;
+$blue-900: #0d47a1;
+$blue-A100: #82b1ff;
+$blue-A200: #448aff;
+$blue-A400: #2979ff;
+$blue-A700: #2962ff;
+
+
+/** in theme-material-blue include **/
+$brand-primary:         $blue-500;
+$navbar-default-bg:     $brand-primary;

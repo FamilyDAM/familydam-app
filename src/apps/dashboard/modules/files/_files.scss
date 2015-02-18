@@ -1,0 +1,24 @@
+
+.filesView
+{
+  background-color: #fff;
+
+  tr{
+
+    :hover
+    {
+
+        font-weight: bold;
+
+    }
+  }
+
+  .active
+  {
+      background-color: #eee;
+  }
+
+  .list-group{
+    margin-bottom: 3px;
+  }
+}
