@@ -51,20 +51,6 @@ module.exports = {
     },
 
 
-    deleteFolder:function(dir_){
-        return Rx.Observable.defer(function () {
-            //todo
-            return $.ajax({
-                method: "delete",
-                url: PreferenceStore.getBaseUrl() +"/api/directory/",
-                data: {'path':dir_},
-                headers: {
-                    "Authorization":  UserStore.getUser().token
-                }
-            });
-        });
-    },
-
     
     /**
      * List all directories visible to a user

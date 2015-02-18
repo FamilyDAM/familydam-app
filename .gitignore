@@ -102,3 +102,4 @@ bower_components
 .tmp/apps/dashboard/modules/uploads/UploadsView.js
 .tmp/apps/dashboard/stores/actions.js
 .tmp/apps/dashboard/stores/store.js
+npm-debug.log

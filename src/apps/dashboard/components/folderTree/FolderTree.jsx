@@ -88,10 +88,16 @@ var AddFolderModal = React.createClass({
 var FolderTree = React.createClass({
     mixins: [ Router.Navigation ],
 
+    getDefaultProps: function(){
+        return {
+            'section':'files',
+            navigateToFiles:true};
+    },
+    
     getInitialState: function(){
         return {
+            'folders':[],
             mode:'browse',
-            folders:[],
             activeFolder: {'path':'/~/', 'children':[]}
         }
     },
@@ -99,16 +105,20 @@ var FolderTree = React.createClass({
 
     componentDidMount: function(){
         var _this = this;
-        
-        DirectoryStore.getDirectories("/~/").subscribe(function(results){
-            _this.setState({'folders': results});
+
+        DirectoryStore.getDirectories("/~/").subscribe(function(results_){
+            console.log("get directories subscription");
+            _this.setState({'folders': results_});
+            //_this.forceUpdate();
         });
 
-        
+
         // When we get a refresh dir event (after new folder is created) reload the dir tree
         DirectoryActions.refreshDirectories.subscribe(function(data_){
-            DirectoryStore.getDirectories("/~/").subscribe(function(results){
-                _this.setState({'folders': results});
+            DirectoryStore.getDirectories("/~/").subscribe(function(results_){
+                console.log("refresh directories subscription");
+                _this.setState({'folders': results_});
+                //_this.forceUpdate();
             });
         });
     },
@@ -123,7 +133,11 @@ var FolderTree = React.createClass({
 
         // send event that has will be picked up by the FilesView
         DirectoryActions.selectFolder.onNext(folder_);
-        this.transitionTo('files', {}, {'path':folder_.path});
+        
+        if( this.props.navigateToFiles )
+        {
+            this.transitionTo(this.props.section, {}, {'path': folder_.path});
+        }
     },
 
     handleAddFolder: function(){

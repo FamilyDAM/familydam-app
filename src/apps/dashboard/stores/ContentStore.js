@@ -49,7 +49,23 @@ module.exports = {
                 }
             });
         });
-    }
+    },
+
+
+
+    deleteNodeById:function(id_){
+        return Rx.Observable.defer(function () {
+            //todo
+            return $.ajax({
+                method: "delete",
+                url: PreferenceStore.getBaseUrl() +"/api/data/" +id_,
+                headers: {
+                    "Authorization":  UserStore.getUser().token
+                }
+            });
+        });
+    },
+
 };
 
 //di.annotate(AuthActions, new di.Inject());

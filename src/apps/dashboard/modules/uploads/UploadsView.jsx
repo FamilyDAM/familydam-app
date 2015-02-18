@@ -22,19 +22,38 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
-var PhotosView = React.createClass({
+var FolderTree = require('../../components/folderTree/FolderTree');
+var FileUploadView = require('../../components/fileUpload/FileUploadView')
+var UploadActions = require('../../actions/UploadActions')
 
+var UploadsView = React.createClass({
+    
+    componentWillMount: function(){
+        var _this = this;
+        
+        UploadActions.fileStatusAction.subscribe(function(d_){
+            console.log("** fileStatusAction ** ")
+            _this.forceUpdate();
+        });
+    },
 
     render: function() {
 
         return (
             <div className="container-fluid">
-                Uploads!
-            </div>
+                <div className="row">
+                    <aside className="col-sm-3" >
+                        <FolderTree title="Upload Folder" navigateToFiles={false}/>
+                    </aside>
 
+                    <section className="col-sm-9" style={{'borderLeft':'1px solid #eee'}}>
+                        <FileUploadView />
+                    </section>
+                </div>
+            </div>
         );
     }
 
 });
 
-module.exports = PhotosView;
+module.exports = UploadsView;

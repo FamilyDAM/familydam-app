@@ -207,7 +207,7 @@ var PhotosView = React.createClass({
             <div className="photosView container-fluid"
                 onKeyDown={_this.handleKeyDown} onKeyUp={_this.handleKeyUp}>
                 <aside className="col-sm-2" >
-                    <FolderTree/>
+                    <FolderTree section="photos" navigateToFiles={true}/>
                 </aside>
 
                 <section className={_this.tableClass} style={{'borderLeft':'1px solid #eee'}}>

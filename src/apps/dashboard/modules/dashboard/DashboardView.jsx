@@ -46,7 +46,7 @@ var DashboardView = React.createClass({
                 <div className="row">
                     <Navbar>
                         <Nav className="navbar-left">
-                            <NavItem>FamilyD.A.M</NavItem>
+                            <NavItem >FamilyD.A.M</NavItem>
                         </Nav>
                         <Nav className="navbar-right">
                             <NavItemLink eventKey={1} to="files">Files</NavItemLink>

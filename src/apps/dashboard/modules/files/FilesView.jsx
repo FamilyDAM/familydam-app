@@ -39,6 +39,7 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');
 var DirectoryStore = require('./../../stores/DirectoryStore');
+var ContentStore = require('./../../stores/ContentStore');
 var FileStore = require('./../../stores/FileStore');
 
 var FilesView = React.createClass({
@@ -116,12 +117,29 @@ var FilesView = React.createClass({
 
     handleNodeDelete: function(event, component)
     {
+        var _this = this;
+        event.nativeEvent.stopImmediatePropagation();
+        
         var _id = $("[data-reactid='" + component + "']").attr("data-id");
         var _path = $("[data-reactid='" + component + "']").attr("data-path");
 
-        DirectoryStore.deleteFolder(_path).subscribe(function(results_){
+        ContentStore.deleteNodeById(_id).subscribe(function(results_){
+            console.log("** delete by by id **** ")
             console.dir(results_);
-            DirectoryActions.refreshDirectories.onNext(true);
+
+            for (var i = 0; i < _this.state.files.length; i++)
+            {
+                var obj = _this[i];
+                var _id = _this.state.files[i].id;
+                if( _id == results_ )
+                {
+                    _this.state.files.splice(i, 1);
+                    _this.forceUpdate();
+                    break;
+                }
+            }
+            
+            //DirectoryActions.refreshDirectories.onNext(true);
         });
     },
 
@@ -129,7 +147,7 @@ var FilesView = React.createClass({
     render: function() {
 
         var _this = this;
-        var tableClass = "col-sm-12 col-md-10";
+        var tableClass = "col-sm-9 col-md-9";
         var asideClass = "hidden col-md-3";
         var previewWidget = <span>
                                 [preview panel = {this.state.selectedItem}]
@@ -137,9 +155,11 @@ var FilesView = React.createClass({
 
         if( this.state.selectedItem !== undefined )
         {
-            tableClass = "col-sm-12 col-md-6";
+            tableClass = "col-sm-9 col-md-6";
             asideClass = "col-md-3";
         };
+
+
 
 
         var folders = this.state.files
@@ -169,11 +189,13 @@ var FilesView = React.createClass({
                 return _file.type != "folder"
             } )
             .map( function(_file){
-                return <tr key={_file.id} onClick={_this.handleRowClick}   data-id={_file.id}>
+                return <tr key={_file.id}  data-id={_file.id}>
                         <td>
-                            <img src={PreferenceStore.getBaseUrl() +_file.path +"?rendition=thumbnail.200&token=" +UserStore.getUser().token} style={{'width':'50px', 'height':'50px'}}/>
+                            <img src={PreferenceStore.getBaseUrl() +_file.path +"?rendition=thumbnail.200&token=" +UserStore.getUser().token} 
+                                 style={{'width':'50px', 'height':'50px'}}
+                                 onClick={_this.handleRowClick}/>
                         </td>
-                        <td className="fileName">{_file.name}</td>
+                        <td className="fileName"><span onClick={_this.handleRowClick}>{_file.name}</span></td>
                         <td >
                             { _file.fileType == 'image' ?
                             <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
@@ -203,8 +225,8 @@ var FilesView = React.createClass({
         return (
             <div className="filesView container-fluid" >
                 <div  className="row">
-                    <aside className="col-sm-2" >
-                        <FolderTree/>
+                    <aside className="col-sm-3" >
+                        <FolderTree section="files" navigateToFiles={true}/>
                     </aside>
 
                     <section className={tableClass} style={{'borderLeft':'1px solid #eee'}}>
