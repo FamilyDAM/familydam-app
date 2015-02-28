@@ -164,12 +164,13 @@ var FolderTree = React.createClass({
                         <Glyphicon glyph="chevron-right"/>
                         <strong style={{'paddingLeft': '3px'}}>{_f.name}</strong>
                     </div>
-                    <ListGroup>{listItems(_f.children)}</ListGroup>
+                    
                 </ListGroupItem>
 
             })
 
         };
+        //<ListGroup>{listItems(_f.children)}</ListGroup>
 
         return (
             <div className="folderTree">

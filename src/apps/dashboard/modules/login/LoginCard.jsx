@@ -89,7 +89,7 @@ var LoginCard = React.createClass({
         var activeView;
         if (this.props.mode !== "active") {
             activeView = <div
-                            className="loginCard panel"
+                            className="loginCard panel center-block"
                             onClick={this.handleSelect}>
                             <div className="box">&nbsp;</div>
                             <h2>{this.props.user.firstName}</h2>
@@ -97,7 +97,7 @@ var LoginCard = React.createClass({
         } else {
             overrideStyle = {width:"100%"};
 
-            activeView= <div className="loginCardForm container-fluid">
+            activeView= <div className="loginCardForm center-block container-fluid">
                             <div className="row">
                                 <div className="loginCard  col-sm-4">
                                     <div className="box">&nbsp;</div>

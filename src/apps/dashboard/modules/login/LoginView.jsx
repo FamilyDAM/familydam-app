@@ -42,29 +42,29 @@ var LoginView = React.createClass({
         var childNodes;
         if (this.state.activeUser === undefined ) {
             childNodes = this.state.users.map(function(user, index) {
-                return <li key={index}>
-                        <LoginCard user={user}
+                return <div key={index}>
+                        <LoginCard  user={user}
                             mode="inactive"
                             onSelect={_this.handleCardSelection} />
-                        </li>
+                        </div>
             });
         }else{
             var overrideStyle = {width:"100%"};
-            childNodes =  <li key="0" style={overrideStyle}>
-                                <LoginCard user={this.state.activeUser}
+            childNodes =  <div key="0" style={overrideStyle}>
+                                <LoginCard  user={this.state.activeUser}
                                     mode="active"
                                     onSelect={_this.handleCardSelection}
                                     onCancel={_this.handleCancelCardSelection}/>
-                            </li>
+                            </div>
 
         }
 
         return (
             <div className="loginView container-fluid" style={{'background-color':'#000'}}>
                 <div className="row logins">
-                    <ul className="col-sm-8 col-sm-offset-2 login-grid">
+                    <div className="col-sm-8 col-sm-offset-2 login-grid">
                     {childNodes}
-                    </ul>
+                    </div>
                 </div>
 
                 <div className="row timeClock">

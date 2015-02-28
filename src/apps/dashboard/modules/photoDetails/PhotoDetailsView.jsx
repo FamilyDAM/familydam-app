@@ -308,8 +308,9 @@ module.exports = React.createClass({
                                 </div>
                             </div>
 
-
-                            <div className="row" style={{'margin-top': '30px', 'min-height': '400px'}}>
+                            <br/><br/><br/><br/>
+                            <div className="row" style={{'margin-top': '30px', 'min-height': '400px', 'display':'none'}}>
+                                /***
                                 <TabbedArea defaultActiveKey={1} animation={false}>
                                     <TabPane eventKey={1} tab="Similar or Duplicate">
                                         <div style={{

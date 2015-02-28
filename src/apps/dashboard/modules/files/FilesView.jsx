@@ -164,7 +164,7 @@ var FilesView = React.createClass({
 
         var folders = this.state.files
             .filter( function(_file){
-                return _file.type == "folder"
+                return _file._class == "com.familydam.core.models.Directory";
             } )
             .map( function(_file){
                 return <tr key={_file.id} onClick={_this.handleDirClick}  data-id={_file.id}  data-path={_file.path}>
@@ -175,9 +175,11 @@ var FilesView = React.createClass({
                         <td className="fileName" style={{'verticalAlign':'middle'}}>{_file.name}</td>
                         <td >
                             <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
+                                {_file.mixins.indexOf("dam:userfolder")>-1?
                                 <Button onClick={_this.handleNodeDelete} data-id={_file.id} data-path={_file.path}  style={{'padding':'5px 10px', 'margin':0}}>
                                     <Glyphicon glyph="remove"/> delete
                                 </Button>
+                                :""}
                             </ButtonGroup>
                         </td>
                     </tr>
@@ -185,19 +187,19 @@ var FilesView = React.createClass({
         });
 
         var files = this.state.files
-            .filter( function(_file){
-                return _file.type != "folder"
+            .filter( function(file_){
+                return file_._class == "com.familydam.core.models.File";
             } )
             .map( function(_file){
                 return <tr key={_file.id}  data-id={_file.id}>
                         <td>
-                            <img src={PreferenceStore.getBaseUrl() +_file.path +"?rendition=thumbnail.200&token=" +UserStore.getUser().token} 
+                            <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:content", "~") +"?rendition=thumbnail.200&token=" +UserStore.getUser().token}
                                  style={{'width':'50px', 'height':'50px'}}
                                  onClick={_this.handleRowClick}/>
                         </td>
                         <td className="fileName"><span onClick={_this.handleRowClick}>{_file.name}</span></td>
                         <td >
-                            { _file.fileType == 'image' ?
+                            { _file.mixins.indexOf("dam:image") > -1 ?
                             <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
                                 <ButtonLink to="photoDetails" params={{'id': _file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
                                     <Glyphicon glyph="eye-open"/> view
