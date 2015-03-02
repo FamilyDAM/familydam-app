@@ -19,6 +19,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
+var addons = require('react-addons');
+
 var Router = require('react-router');
 var Route = Router.Route;
 var moment = require('moment');
@@ -35,7 +37,8 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 
 var AddFolderModal = React.createClass({
 
-    activeDir: "/~/",
+    
+    activeDir: "/dam:files/",
 
     
     handleCreateFolder:function(event_){
@@ -65,7 +68,7 @@ var AddFolderModal = React.createClass({
             }
         };
 
-        var activeVisibleDir = this.activeDir.replace("/~/", "/");
+        var activeVisibleDir = this.activeDir;
         
         return (
             <Modal {...this.props} title="Add Folder" animation={false}>
@@ -88,17 +91,27 @@ var AddFolderModal = React.createClass({
 var FolderTree = React.createClass({
     mixins: [ Router.Navigation ],
 
+    
+    propTypes: {
+        title: React.PropTypes.string,
+        baseDir: React.PropTypes.string,
+        showAddFolder: React.PropTypes.bool
+    },
+
     getDefaultProps: function(){
         return {
             'section':'files',
+            'baseDir':null,
+            'showAddFolder':false,
+            renderDepth:2,
             navigateToFiles:true};
     },
-    
+
     getInitialState: function(){
         return {
             'folders':[],
             mode:'browse',
-            activeFolder: {'path':'/~/', 'children':[]}
+            activeFolder: {}
         }
     },
 
@@ -106,73 +119,111 @@ var FolderTree = React.createClass({
     componentDidMount: function(){
         var _this = this;
 
-        DirectoryStore.getDirectories("/~/").subscribe(function(results_){
-            console.log("get directories subscription");
-            _this.setState({'folders': results_});
-            //_this.forceUpdate();
-        });
-
-
-        // When we get a refresh dir event (after new folder is created) reload the dir tree
-        DirectoryActions.refreshDirectories.subscribe(function(data_){
-            DirectoryStore.getDirectories("/~/").subscribe(function(results_){
-                console.log("refresh directories subscription");
+        if( this.props.baseDir != null )
+        {
+            DirectoryStore.getDirectories(_this.props.baseDir).subscribe(function (results_) {
+                console.log("get directories subscription");
                 _this.setState({'folders': results_});
                 //_this.forceUpdate();
             });
-        });
+
+
+            // When we get a refresh dir event (after new folder is created) reload the dir tree
+            DirectoryActions.refreshDirectories.subscribe(function (data_) {
+                DirectoryStore.getDirectories(_this.props.baseDir).subscribe(function (results_) {
+                    console.log("refresh directories subscription");
+                    _this.setState({'folders': results_});
+                    //_this.forceUpdate();
+                });
+            });
+        }
     },
 
     componentWillUnmount: function(){
 
     },
 
-    handleSelectDir: function(folder_){
+    handleSelectDir: function(folder_, a1_, a2_){
+        //console.log("{handle select dir}");
         //console.dir(folder_);
         this.setState( {'activeFolder': folder_} );
 
-        if (children.is(":visible")) children.hide('fast');
-        else children.show('fast');
-        
         
         // send event that has will be picked up by the FilesView
         DirectoryActions.selectFolder.onNext(folder_);
         
         if( this.props.navigateToFiles )
         {
-            this.transitionTo(this.props.section, {}, {'path': folder_.path});
+            //this.transitionTo(this.props.section, {}, {'path': folder_.path});
         }
     },
+    
 
     handleAddFolder: function(){
         var _af = this.state.activeFolder;
         //_af.children.push("NEW_ITEM");
         this.setState({"activeFolder":_af, 'mode':'add_item'});
     },
+    
+    
+    isParentPath: function(path_, activePath_){
+        var _isParentPath = false;
+        if( activePath_ !== undefined ) {
+            var pathSections = path_.split("/");
+            var activeSections = activePath_.split("/");
+            for (var i = 0; i < activeSections.length; i++)
+            {
+                var sec = pathSections[i];
+                if( sec == activeSections[i] ){
+                    _isParentPath = true;
+                }else if( sec != activeSections[i] ){
+                    _isParentPath = false;
+                    break;
+                }
+
+                if( Math.abs(pathSections.length - activeSections.length) > 1 ){
+                    _isParentPath = false;
+                    break;
+                }
+            }
+        }
+        return _isParentPath;
+    },
 
     render: function() {
 
         var _this = this;
-        var _boundClick = _this.handleSelectDir.bind(this, {'path':'/~/'});
-
-        var listItems = function(_folders)
+        var _depth = 0;
+        var _boundClick = _this.handleSelectDir.bind(this, {'path':this.props.baseDir});
+ 
+        var listItems = function(_folders, expand_)
         {
             return _folders.map(function(_f)  {
-                var boundClick = _this.handleSelectDir.bind(_this, _f);
 
-                return <ListGroupItem key={_f.path}>
-                            <div className="folderItem"
-                                style={{'cursor': 'pointer'}}
-                                className={_this.state.activeFolder == _f ? 'folderItem active' : 'folderItem'}
-                                onClick={boundClick}>
-                                <Glyphicon glyph="chevron-right"/>
-                                <strong style={{'paddingLeft': '3px'}}>{_f.name}</strong>
-                            </div>
-                            <ListGroup>
-                                {listItems(_f.children)}
-                            </ListGroup>
-                            
-                        </ListGroupItem>
+                var _isParentPath = _this.isParentPath(_f.path, _this.state.activeFolder.path)
+                
+                var classes = addons.classSet({
+                    'has-children': ( (_f.children && _f.children.length > 0) ? true : false),
+                    'open': ( (expand_ || _isParentPath) ? true : false),
+                    'closed': ( (expand_ || _isParentPath) ? false : true),
+                    'selected': false /*todo*/
+                });
+
+                var _boundClick = _this.handleSelectDir.bind(_this, _f);
+
+                    return <ListGroupItem key={_f.path} className={classes}>
+                        <div className="folderItem"
+                             style={{'cursor': 'pointer'}}
+                             className={_this.state.activeFolder == _f ? 'folderItem active' : 'folderItem'}
+                             onClick={_boundClick}>
+                            <Glyphicon glyph="chevron-right"/>
+                            <strong style={{'paddingLeft': '3px'}}>{_f.name}</strong>
+                        </div>
+                        <ListGroup>
+                            {listItems(_f.children, false  )}
+                        </ListGroup>
+
+                    </ListGroupItem>
 
             })
 
@@ -182,28 +233,31 @@ var FolderTree = React.createClass({
         return (
             <div className="folderTree">
                 <div className="header">
-                    <h3>Files
+                    <h3>{this.props.title}
+                        {this.props.showAddFolder==true ?
                         <ModalTrigger modal={<AddFolderModal dir={this.state.activeFolder.path} />}>
                             <Glyphicon glyph="plus"
                                     className="pull-right"
                                     onClick={this.handleAddFolder}/>
                         </ModalTrigger>
+                        :""}
                     </h3>
                 </div><br/>
 
                 <ListGroup>
+                    {this.props.baseDir?
                     <ListGroupItem key="home">
-                        <div className={_this.state.activeFolder.path=="/~/"?'folderItem active':'folderItem'}
+                        <div
                             style={{'cursor':'pointer'}}
                             onClick={_boundClick}>
                             <Glyphicon glyph="chevron-right"/>
                             <strong style={{'paddingLeft':'3px'}}>Home</strong>
                         </div>
                         <ListGroup>
-                            {listItems(this.state.folders)}
+                            {listItems(this.state.folders, true)}
                         </ListGroup>
-                    </ListGroupItem>
-
+                    </ListGroupItem> 
+                    :""}
                 </ListGroup>
 
             </div>

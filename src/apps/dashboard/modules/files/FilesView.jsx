@@ -31,7 +31,7 @@ var ListGroup = require('react-bootstrap').ListGroup;
 var ListGroupItem = require('react-bootstrap').ListGroupItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
-var FolderTree = require('../../components/folderTree/FolderTree');
+var SectionTree = require('../../components/folderTree/SectionTree');
 
 var DirectoryActions = require('./../../actions/DirectoryActions');
 
@@ -67,6 +67,13 @@ var FilesView = React.createClass({
 
         DirectoryActions.refreshDirectories.subscribe(function(data_){
             _this.loadData(_path, 100, 0);
+        });
+        DirectoryActions.selectFolder.subscribe(function(data_){
+            if(  typeof data_ === "string" ){
+                _this.loadData(data_, 100, 0);
+            }else{
+                _this.loadData(data_.path, 100, 0);
+            }
         });
     },
 
@@ -169,10 +176,11 @@ var FilesView = React.createClass({
             .map( function(_file){
                 return <tr key={_file.id} onClick={_this.handleDirClick}  data-id={_file.id}  data-path={_file.path}>
                         <td>
-                            <img src="assets/icons/ic_folder_48px.svg" style={{'width':'48px', 'height':'48px', 'margin':'auto'}}/>
-
+                            <img src="assets/icons/ic_folder_48px.svg"
+                                 style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
                         </td>
-                        <td className="fileName" style={{'verticalAlign':'middle'}}>{_file.name}</td>
+                        <td className="fileName" 
+                            style={{'verticalAlign':'middle', 'cursor': 'pointer'}}>{_file.name}</td>
                         <td >
                             <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
                                 {_file.mixins.indexOf("dam:userfolder")>-1?
@@ -193,7 +201,7 @@ var FilesView = React.createClass({
             .map( function(_file){
                 return <tr key={_file.id}  data-id={_file.id}>
                         <td>
-                            <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:content", "~") +"?rendition=thumbnail.200&token=" +UserStore.getUser().token}
+                            <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.getUser().token}
                                  style={{'width':'50px', 'height':'50px'}}
                                  onClick={_this.handleRowClick}/>
                         </td>
@@ -228,7 +236,12 @@ var FilesView = React.createClass({
             <div className="filesView container-fluid" >
                 <div  className="row">
                     <aside className="col-sm-3" >
-                        <FolderTree section="files" navigateToFiles={true}/>
+                        <SectionTree title="Files" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
+                        <SectionTree title="Photos"/>
+                        <SectionTree title="Music"/>
+                        <SectionTree title="Movies"/>
+                        <SectionTree title="Email Archive"/>
+                        <SectionTree title="Web Archive"/>
                     </aside>
 
                     <section className={tableClass} style={{'borderLeft':'1px solid #eee'}}>
