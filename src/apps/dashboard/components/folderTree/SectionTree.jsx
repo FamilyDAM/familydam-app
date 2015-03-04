@@ -95,6 +95,7 @@ var FolderTree = React.createClass({
     propTypes: {
         title: React.PropTypes.string,
         baseDir: React.PropTypes.string,
+        disabled: React.PropTypes.bool,
         showAddFolder: React.PropTypes.bool
     },
 
@@ -104,6 +105,7 @@ var FolderTree = React.createClass({
             'baseDir':null,
             'showAddFolder':false,
             renderDepth:2,
+            disabled:false,
             navigateToFiles:true};
     },
 
@@ -230,8 +232,13 @@ var FolderTree = React.createClass({
         };
         //<ListGroup>{listItems(_f.children)}</ListGroup>
 
+        var rootClassSet = addons.classSet({
+            'folderTree': true,
+            'disabled': this.props.disabled? true:false
+        });
+        
         return (
-            <div className="folderTree">
+            <div className={rootClassSet}>
                 <div className="header">
                     <h3>{this.props.title}
                         {this.props.showAddFolder==true ?

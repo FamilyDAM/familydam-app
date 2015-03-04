@@ -238,10 +238,10 @@ var FilesView = React.createClass({
                     <aside className="col-sm-3" >
                         <SectionTree title="Files" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
                         <SectionTree title="Photos"/>
-                        <SectionTree title="Music"/>
-                        <SectionTree title="Movies"/>
-                        <SectionTree title="Email Archive"/>
-                        <SectionTree title="Web Archive"/>
+                        <SectionTree title="Music" disabled={true}/>
+                        <SectionTree title="Movies" disabled={true}/>
+                        <SectionTree title="Email Archive" disabled={true}/>
+                        <SectionTree title="Web Archive" disabled={true}/>
                     </aside>
 
                     <section className={tableClass} style={{'borderLeft':'1px solid #eee'}}>
