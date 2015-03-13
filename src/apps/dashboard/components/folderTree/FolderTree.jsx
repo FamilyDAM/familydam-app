@@ -35,7 +35,7 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 
 var AddFolderModal = React.createClass({
 
-    activeDir: "/~/",
+    activeDir: "/dam:files/",
 
     
     handleCreateFolder:function(event_){
@@ -65,13 +65,11 @@ var AddFolderModal = React.createClass({
             }
         };
 
-        var activeVisibleDir = this.activeDir.replace("/~/", "/");
-        
         return (
             <Modal {...this.props} title="Add Folder" animation={false}>
                 <div className="modal-body">
                     <h4>Create a new sub folder</h4>
-                    {activeVisibleDir} <input type="text" ref="folderName" label="Folder Name"/>
+                    {activeDir} <input type="text" ref="folderName" label="Folder Name"/>
                 </div>
                 <div className="modal-footer">
                     <ButtonGroup>
@@ -98,7 +96,7 @@ var FolderTree = React.createClass({
         return {
             'folders':[],
             mode:'browse',
-            activeFolder: {'path':'/~/', 'children':[]}
+            activeFolder: {'path':'/dam:files/', 'children':[]}
         }
     },
 
@@ -106,7 +104,7 @@ var FolderTree = React.createClass({
     componentDidMount: function(){
         var _this = this;
 
-        DirectoryStore.getDirectories("/~/").subscribe(function(results_){
+        DirectoryStore.getDirectories("/dam:files/").subscribe(function(results_){
             console.log("get directories subscription");
             _this.setState({'folders': results_});
             //_this.forceUpdate();
@@ -115,7 +113,7 @@ var FolderTree = React.createClass({
 
         // When we get a refresh dir event (after new folder is created) reload the dir tree
         DirectoryActions.refreshDirectories.subscribe(function(data_){
-            DirectoryStore.getDirectories("/~/").subscribe(function(results_){
+            DirectoryStore.getDirectories("/dam:files/").subscribe(function(results_){
                 console.log("refresh directories subscription");
                 _this.setState({'folders': results_});
                 //_this.forceUpdate();
@@ -153,7 +151,7 @@ var FolderTree = React.createClass({
     render: function() {
 
         var _this = this;
-        var _boundClick = _this.handleSelectDir.bind(this, {'path':'/~/'});
+        var _boundClick = _this.handleSelectDir.bind(this, {'path':'/dam:files/'});
 
         var listItems = function(_folders)
         {
@@ -193,7 +191,7 @@ var FolderTree = React.createClass({
 
                 <ListGroup>
                     <ListGroupItem key="home">
-                        <div className={_this.state.activeFolder.path=="/~/"?'folderItem active':'folderItem'}
+                        <div className={_this.state.activeFolder.path=="/dam:files/"?'folderItem active':'folderItem'}
                             style={{'cursor':'pointer'}}
                             onClick={_boundClick}>
                             <Glyphicon glyph="chevron-right"/>

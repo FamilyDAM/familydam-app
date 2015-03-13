@@ -49,14 +49,14 @@ var PhotosView = React.createClass({
      * Load the images in the root folder
      */
     componentWillMount:function(){
-        //this.loadData("/~/", 10, 0);
+        //this.loadData("/dam:files/", 10, 0);
     },
 
 
     loadData:function(folder_, limit_, offset_){
         //todo: make path dynamic
         var _this = this;
-        SearchStore.searchImages("/~/").subscribe(function(results){
+        SearchStore.searchImages("/dam:files/").subscribe(function(results){
             _this.setState({'files': results});
         });
     },

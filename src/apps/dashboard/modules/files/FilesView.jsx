@@ -57,7 +57,7 @@ var FilesView = React.createClass({
     componentWillMount:function(){
         //todo: make path dynamic
         var _this = this;
-        var _path = "/~/";
+        var _path = "/dam:files/";
 
         if( this.props.query && this.props.query.path ){
             _path = this.props.query.path;

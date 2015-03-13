@@ -26,14 +26,14 @@ var PreferenceStore = require('./PreferenceStore');
 
 module.exports = {
 
-    root: "/~/",
+    root: "/dam:files/",
 
     /**
      * the last folder selected by a user in the sidebar folder tree.
      * A simple property, stored in a behavior subject.
      * Note: the value is pushed from the DirectoryAction
      */
-    getLastSelectedFolder: new Rx.BehaviorSubject( {'path':"/~/"} ),
+    getLastSelectedFolder: new Rx.BehaviorSubject( {'path':"/dam:files/"} ),
 
 
     createFolder:function(dir_, name_){

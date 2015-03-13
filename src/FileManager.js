@@ -111,7 +111,7 @@
         var request = http.request({
             hostname: 'localhost',
             port: 8080,
-            path: '/~/photos/mnimer',
+            path: '/dam:files/documents/mnimer',
             method: 'POST',
             auth: 'admin:admin',
             headers: {

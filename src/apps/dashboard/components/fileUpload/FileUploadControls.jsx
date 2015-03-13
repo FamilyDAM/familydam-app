@@ -46,7 +46,7 @@ var FileUploadControls = React.createClass({
         var _this = this;
         DirectoryActions.selectFolder.subscribe(function(d_){
             _this.setState( {"uploadPath": d_.path} );
-            _this.setState( {"uploadPathFriendly": d_.path.replace('/~/', '/')} );
+            _this.setState( {"uploadPathFriendly": d_.path.replace('/dam:files/', '/')} );
         });
         
         
