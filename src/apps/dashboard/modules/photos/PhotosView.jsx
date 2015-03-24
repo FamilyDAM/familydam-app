@@ -57,7 +57,7 @@ var PhotosView = React.createClass({
         //todo: make path dynamic
         var _this = this;
         SearchStore.searchImages("/dam:files/").subscribe(function(results){
-            _this.setState({'files': results});
+            if( _this.isMounted() ) _this.setState({'files': results});
         });
     },
 
@@ -153,7 +153,11 @@ var PhotosView = React.createClass({
                 _selectedItems.push(_file);
             }
         }
-        this.setState({'selectedItems':_selectedItems});
+
+        if( this.isMounted() )
+        {
+            this.setState({'selectedItems': _selectedItems});
+        }
 
 
         this.forceUpdate();

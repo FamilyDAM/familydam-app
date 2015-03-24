@@ -47,4 +47,22 @@
     
   }
 
+  &.disabled
+  {
+    color: #eeeeee;
+  }
+
+  a{
+    color:black
+  }
+
+  &.h3
+  {
+    color:black;
+
+    &:hover{
+      text-decoration: none;
+    }
+  }
+
 }

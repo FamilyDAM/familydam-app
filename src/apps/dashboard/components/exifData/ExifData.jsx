@@ -86,7 +86,7 @@ var ExifData = React.createClass({
                     </tr>
                 </table>
                 <br/>
-                <table style={{'width':'300px', 'border-spacing':'0px', 'padding':'0px'}}>
+                <table style={{'width':'300px', 'borderSpacing':'0px', 'padding':'0px'}}>
                     <tr>
                         <td colspan="2" style={{'width':'50%'}}>
                             <h6><img src="assets/icons/ic_photo_camera_48px.svg"

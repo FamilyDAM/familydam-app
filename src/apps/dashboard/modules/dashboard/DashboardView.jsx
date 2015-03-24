@@ -34,6 +34,10 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var NavItemLink = require('react-router-bootstrap').NavItemLink;
 var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 
+var Breadcrumb = require('../../components/breadcrumb/Breadcrumb');
+var SectionTree = require('../../components/folderTree/SectionTree');
+
+
 var DashboardView = React.createClass({
 
     render: function () {
@@ -50,21 +54,12 @@ var DashboardView = React.createClass({
                         </Nav>
                         <Nav className="navbar-right">
                             <NavItemLink eventKey={1} to="files">Files</NavItemLink>
-                            <NavItemLink eventKey={2} to="photos">Photos</NavItemLink>
                             <DropdownButton eventKey={3} title="">
                                 <MenuItemLink eventKey="1" to="login">Logout</MenuItemLink>
                             </DropdownButton>
                         </Nav>
                         <Nav style={clear_style}>
-                            <ol className="breadcrumb">
-                                <li>
-                                    <Link to="dashboard">Home</Link>
-                                </li>
-                                <li>
-                                    <Link to="files">Files</Link>
-                                </li>
-                                <li className="active">DCS-0001.jpg</li>
-                            </ol>
+                            <Breadcrumb/>
                         </Nav>
                     </Navbar>
 
@@ -88,7 +83,9 @@ var DashboardView = React.createClass({
                 </div>
 
                 <br/>
-                <RouteHandler {...this.props}/>
+                <div className="row">
+                    <RouteHandler {...this.props}/>
+                </div>
             </div>
 
         );

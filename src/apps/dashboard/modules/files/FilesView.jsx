@@ -42,6 +42,8 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 var ContentStore = require('./../../stores/ContentStore');
 var FileStore = require('./../../stores/FileStore');
 
+var NavigationActions = require('../../actions/NavigationActions');
+
 var FilesView = React.createClass({
     mixins : [Navigation],
 
@@ -59,12 +61,16 @@ var FilesView = React.createClass({
         var _this = this;
         var _path = "/dam:files/";
 
-        if( this.props.query && this.props.query.path ){
+        if( this.props.query && this.props.query.path )
+        {
             _path = this.props.query.path;
         }
 
+        // load the files in the path.
         _this.loadData(_path, 100, 0); //start with root directory
 
+
+        // rx callbacks
         DirectoryActions.refreshDirectories.subscribe(function(data_){
             _this.loadData(_path, 100, 0);
         });
@@ -76,6 +82,15 @@ var FilesView = React.createClass({
             }
         });
     },
+
+
+    componentDidMount: function()
+    {
+        // update the breadcrumb
+        var _pathData = {'label':'Files', 'navigateTo':"files", 'params':{}, 'level':1};
+        NavigationActions.currentPath.onNext( _pathData );
+    },
+
 
     componentWillReceiveProps:function(nextProps)
     {
@@ -89,7 +104,7 @@ var FilesView = React.createClass({
         _this.is = IS;
 
         FileStore.getFilesInDirectory(folder_).subscribe(function(results_) {
-            if (_this.is.array(results_)) {
+            if ( _this.isMounted() && _this.is.array(results_)) {
                 _this.setState({'files': results_});
             }
         });
@@ -113,7 +128,7 @@ var FilesView = React.createClass({
             $(".active").removeClass();
             $(event.currentTarget).addClass("active");
             var _id = $("[data-reactid='" + component + "']").attr("data-id");
-            this.setState({selectedItem: _id});
+            if( this.isMounted() ) this.setState({selectedItem: _id});
         }
 
         // IF DBL CLick
@@ -201,11 +216,11 @@ var FilesView = React.createClass({
             .map( function(_file){
                 return <tr key={_file.id}  data-id={_file.id}>
                         <td>
+                            <Link to="photoDetails" params={{'id': _file.id}}>
                             <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.getUser().token}
-                                 style={{'width':'50px', 'height':'50px'}}
-                                 onClick={_this.handleRowClick}/>
+                                 style={{'width':'50px', 'height':'50px'}}/></Link>
                         </td>
-                        <td className="fileName"><span onClick={_this.handleRowClick}>{_file.name}</span></td>
+                        <td className="fileName"><Link to="photoDetails" params={{'id': _file.id}}>{_file.name}</Link></td>
                         <td >
                             { _file.mixins.indexOf("dam:image") > -1 ?
                             <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
@@ -237,7 +252,7 @@ var FilesView = React.createClass({
                 <div  className="row">
                     <aside className="col-sm-3" >
                         <SectionTree title="Files" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
-                        <SectionTree title="Photos"/>
+                        <SectionTree title="Photos" disabled={true}/>
                         <SectionTree title="Music" disabled={true}/>
                         <SectionTree title="Movies" disabled={true}/>
                         <SectionTree title="Email Archive" disabled={true}/>

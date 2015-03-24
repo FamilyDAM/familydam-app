@@ -35,7 +35,7 @@ var FileUploadControls = React.createClass({
     },
 
     getInitialState: function(){
-        return {"uploadPath":"/"}
+        return {"uploadPath":"/", "uploadPathFriendly":"< SELECT FOLDER ON LEFT >"}
     },
 
     componentWillMount: function(){
@@ -45,8 +45,8 @@ var FileUploadControls = React.createClass({
     componentDidMount: function(){
         var _this = this;
         DirectoryActions.selectFolder.subscribe(function(d_){
-            _this.setState( {"uploadPath": d_.path} );
-            _this.setState( {"uploadPathFriendly": d_.path.replace('/dam:files/', '/')} );
+            if( _this.isMounted() ) _this.setState( {"uploadPath": d_.path} );
+            if( _this.isMounted() ) _this.setState( {"uploadPathFriendly": d_.path.replace('/dam:files/', '/')} );
         });
         
         
@@ -112,6 +112,16 @@ var FileUploadControls = React.createClass({
 
         return (
             <div className="FileUploadControls container" >
+
+                <div className="row">
+                    <div className="col-sm-12">
+                        <p>
+                            <h3>Copy files into your FamilyD.A.M.</h3>
+
+                            <span>Copy location: <strong>{this.state.uploadPathFriendly}</strong></span>
+                        </p>
+                    </div>
+                </div>
                 <div className="row">
                     <div className="col-sm-4">
                         <div className="background">
@@ -119,14 +129,11 @@ var FileUploadControls = React.createClass({
                     </div>
                     <div className="col-sm-8">
                         <div className="">
-                            <p>
-                                <span>Select one or more files to copy into your FamilyD.A.M.</span>
-                            </p>
                             <div className="file-wrapper" onClick={this.clickFileInputField} style={{'width':'100%'}}>
                                 <input type="file"
                                     ref="fileInputField"
                                     onChange={this.handleFileChange}
-                                    multiple="true"/>
+                                    multiple="true" disabled="false"/>
                                 <span className={_selectFileBtnClass} style={{'width':'360px'}}>Select Files</span>
                             </div>
                             <br/>
@@ -138,9 +145,7 @@ var FileUploadControls = React.createClass({
                                 <span className={_removeBtnClass}>Remove All Files</span>
                             </div>
 
-                            <p>
-                                <span>Files will be copied into: <strong>{this.state.uploadPathFriendly}</strong></span>
-                            </p>
+
                         </div>
                     </div>
                 </div>

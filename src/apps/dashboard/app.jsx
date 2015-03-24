@@ -21,6 +21,7 @@ window.Navigation = Navigation;
 
 
 //load compiled jsx
+var Home = require('./modules/home/Home');
 var LoginView = require('./modules/login/LoginView');
 var SignupView = require('./modules/signup/SignupView');
 var DashboardView = require('./modules/dashboard/DashboardView');
@@ -51,6 +52,8 @@ var routes = [
         <Route name="signup" handler={LoginView}/>
     </Route>,
     <Route name="dashboard" handler={DashboardView}>
+        <DefaultRoute handler={Home}/>
+        <Route name="home" handler={Home}/>
         <Route name="files" handler={FilesView}/>
         <Route name="upload" handler={UploadsView}/>
         <Route name="photos" path="photos" handler={PhotosView}/>

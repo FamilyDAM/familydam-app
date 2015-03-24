@@ -140,15 +140,18 @@ module.exports = React.createClass({
 
 
 
-            _this.setState({
-                'photo': results,
-                'imagePath': imagePath,
-                'rating': rating,
-                'datetaken': datetaken,
-                'gps': gps,
-                'prevId':_prevId,
-                'nextId':_nextId
-            });
+            if( _this.isMounted() )
+            {
+                _this.setState({
+                    'photo': results,
+                    'imagePath': imagePath,
+                    'rating': rating,
+                    'datetaken': datetaken,
+                    'gps': gps,
+                    'prevId': _prevId,
+                    'nextId': _nextId
+                });
+            }
 
         }, function (error) {
             console.dir(error);
@@ -165,7 +168,7 @@ module.exports = React.createClass({
 
     handleOnNoteChange: function (event_) {
         this.state.photo['dam:note'] = event_.target.value;
-        this.setState({'photo': this.state.photo});
+        if( this.isMounted() ) this.setState({'photo': this.state.photo});
     },
 
     handleOnNoteBlur: function (event_) {
@@ -205,7 +208,7 @@ module.exports = React.createClass({
                                 <div className="col-sm-1">
                                     {this.state.prevId?
                                     <Link to="photoDetails" params={{'id': this.state.prevId}} >
-                                        <Glyphicon glyph="chevron-left" style={{'font-size':'48px', 'color':'#eee', 'top':'200px'}}/>
+                                        <Glyphicon glyph="chevron-left" style={{'fontSize':'48px', 'color':'#eee', 'top':'200px'}}/>
                                     </Link>
                                     :''}
                                 </div>
@@ -217,7 +220,7 @@ module.exports = React.createClass({
                                 <div className="col-sm-1">
                                     {this.state.nextId?
                                     <Link to="photoDetails" params={{'id': this.state.nextId}} >
-                                        <Glyphicon glyph="chevron-right" style={{'font-size':'48px', 'color':'#eee', 'top':'200px'}}/>
+                                        <Glyphicon glyph="chevron-right" style={{'fontSize':'48px', 'color':'#eee', 'top':'200px'}}/>
                                     </Link>
                                     :''}
                                 </div>
@@ -251,7 +254,7 @@ module.exports = React.createClass({
                                 </div>
 
                                 <div className="col-sm-6">
-                                    <span style={{'font-size': '24px'}}>{this.state.datetaken}</span>
+                                    <span style={{'fontSize': '24px'}}>{this.state.datetaken}</span>
 
                                     <br/>
 
@@ -265,7 +268,7 @@ module.exports = React.createClass({
                                         style={{'width': '24px', 'height': '24px'}}/>
                                     <img src="assets/icons/ic_star_outline_24px.svg"
                                         style={{'width': '24px', 'height': '24px'}}/>
-                                    <span style={{'font-size': '16px'}}>{this.state.rating}</span>
+                                    <span style={{'fontSize': '16px'}}>{this.state.rating}</span>
                                 </div>
                             </div>
 
@@ -282,7 +285,7 @@ module.exports = React.createClass({
                                         value={this.state.photo['dam:note']}
                                         onChange={this.handleOnNoteChange}
                                         onBlur={this.handleOnNoteBlur}
-                                        style={{'width': '100%', 'min-height': '100px', 'height': 'auto'}}></textarea>
+                                        style={{'width': '100%', 'minHeight': '100px', 'height': 'auto'}}></textarea>
 
 
                                     <div style={{'padding': '5px'}}>
@@ -299,7 +302,7 @@ module.exports = React.createClass({
                                 {this.state.gps != undefined ?
                                     <div>
                                         <ExifMap gps={this.state.gps} />
-                                        <hr style={{'margin-top': '15px', 'margin-bottom': '15px'}}/>
+                                        <hr style={{'marginTop': '15px', 'marginBottom': '15px'}}/>
                                     </div>
                                     : ''}
 
@@ -309,57 +312,57 @@ module.exports = React.createClass({
                             </div>
 
                             <br/><br/><br/><br/>
-                            <div className="row" style={{'margin-top': '30px', 'min-height': '400px', 'display':'none'}}>
-                                /***
-                                <TabbedArea defaultActiveKey={1} animation={false}>
+                            <div className="row" style={{'marginTop': '30px', 'minHeight': '400px', 'display':'none'}}>
+
+                                <TabbedArea defaultActiveKey={1} animation={false}  style={{'display':'none'}}>
                                     <TabPane eventKey={1} tab="Similar or Duplicate">
                                         <div style={{
-                                            'border-right': '1px solid #eee',
-                                            'border-left': '1px solid #eee'
+                                            'borderRight': '1px solid #eee',
+                                            'borderLeft': '1px solid #eee'
                                         }}>
                                             <div style={{
-                                                'min-width': '150px',
-                                                'min-height': '150px',
+                                                'minWidth': '150px',
+                                                'minHeight': '150px',
                                                 'float': 'left',
                                                 'padding': '10px'
                                             }}>
                                                 <img src="http://loremflickr.com/150/150/dog" style={{'margin': 'auto'}}/>
                                             </div>
                                             <div style={{
-                                                'min-width': '150px',
-                                                'min-height': '150px',
+                                                'minWidth': '150px',
+                                                'minHeight': '150px',
                                                 'float': 'left',
                                                 'padding': '10px'
                                             }}>
                                                 <img src="http://loremflickr.com/150/150/cat" style={{'margin': 'auto'}}/>
                                             </div>
                                             <div style={{
-                                                'min-width': '150px',
-                                                'min-height': '150px',
+                                                'minWidth': '150px',
+                                                'minHeight': '150px',
                                                 'float': 'left',
                                                 'padding': '10px'
                                             }}>
                                                 <img src="http://loremflickr.com/150/150/abstract" style={{'margin': 'auto'}}/>
                                             </div>
                                             <div style={{
-                                                'min-width': '150px',
-                                                'min-height': '150px',
+                                                'minWidth': '150px',
+                                                'minHeight': '150px',
                                                 'float': 'left',
                                                 'padding': '10px'
                                             }}>
                                                 <img src="http://loremflickr.com/150/150/paris?random=1" style={{'margin': 'auto'}}/>
                                             </div>
                                             <div style={{
-                                                'min-width': '150px',
-                                                'min-height': '150px',
+                                                'minWidth': '150px',
+                                                'minHeight': '150px',
                                                 'float': 'left',
                                                 'padding': '10px'
                                             }}>
                                                 <img src="http://loremflickr.com/150/150/paris?random=2" style={{'margin': 'auto'}}/>
                                             </div>
                                             <div style={{
-                                                'min-width': '150px',
-                                                'min-height': '150px',
+                                                'minWidth': '150px',
+                                                'minHeight': '150px',
                                                 'float': 'left',
                                                 'padding': '10px'
                                             }}>
@@ -369,12 +372,12 @@ module.exports = React.createClass({
                                     </TabPane>
                                     <TabPane eventKey={2} tab="Renditions">
                                         <div style={{
-                                            'border-right': '1px solid #eee',
-                                            'border-left': '1px solid #eee'
+                                            'borderRight': '1px solid #eee',
+                                            'borderLeft': '1px solid #eee'
                                         }}>
                                             <div style={{
-                                                'min-width': '150px',
-                                                'min-height': '150px',
+                                                'minWidth': '150px',
+                                                'minHeight': '150px',
                                                 'float': 'left',
                                                 'padding': '10px'
                                             }}>

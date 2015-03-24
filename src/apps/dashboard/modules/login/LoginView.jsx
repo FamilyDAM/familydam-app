@@ -21,17 +21,17 @@ var LoginView = React.createClass({
 
         var _this = this;
         var stream = UserStore.listUsers().subscribe(function(results){
-            _this.setState({'users': results});
+            if( _this.isMounted() )  _this.setState({'users': results});
         });
     },
 
 
     handleCardSelection: function(user){
-        this.setState({activeUser:user});
+        if( this.isMounted() ) this.setState({activeUser:user});
     },
 
     handleCancelCardSelection: function(event){
-        this.setState({activeUser:undefined});
+        if( this.isMounted() ) this.setState({activeUser:undefined});
     },
 
 

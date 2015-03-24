@@ -21,8 +21,11 @@
 var React = require('react');
 var addons = require('react-addons');
 
+
 var Router = require('react-router');
 var Route = Router.Route;
+var Link = Router.Link;
+
 var moment = require('moment');
 var ListGroup = require('react-bootstrap').ListGroup;
 var ListGroupItem = require('react-bootstrap').ListGroupItem;
@@ -40,11 +43,16 @@ var AddFolderModal = React.createClass({
     
     activeDir: "/dam:files/",
 
-    
+
+    componentWillUnmount: function(){
+        if(this.directoryStore !== undefined ) this.directoryStore.dispose();
+    },
+
+
     handleCreateFolder:function(event_){
         var _this = this;
 
-        DirectoryStore.createFolder(
+        this.directoryStore = DirectoryStore.createFolder(
             _this.activeDir,
             _this.refs.folderName.getDOMNode().value
         ).subscribe(function(results_){
@@ -88,6 +96,8 @@ var AddFolderModal = React.createClass({
 });
 
 
+
+
 var FolderTree = React.createClass({
     mixins: [ Router.Navigation ],
 
@@ -96,7 +106,8 @@ var FolderTree = React.createClass({
         title: React.PropTypes.string,
         baseDir: React.PropTypes.string,
         disabled: React.PropTypes.bool,
-        showAddFolder: React.PropTypes.bool
+        showAddFolder: React.PropTypes.bool,
+        sectionNavigateTo: React.PropTypes.string
     },
 
     getDefaultProps: function(){
@@ -106,7 +117,8 @@ var FolderTree = React.createClass({
             'showAddFolder':false,
             renderDepth:2,
             disabled:false,
-            navigateToFiles:true};
+            navigateToFiles:true,
+            sectionNavigateTo:undefined};
     },
 
     getInitialState: function(){
@@ -123,18 +135,24 @@ var FolderTree = React.createClass({
 
         if( this.props.baseDir != null )
         {
-            DirectoryStore.getDirectories(_this.props.baseDir).subscribe(function (results_) {
+            this.directoryStore = DirectoryStore.getDirectories(_this.props.baseDir).subscribe(function (results_) {
                 console.log("get directories subscription");
-                _this.setState({'folders': results_});
+                if (_this.isMounted()){
+                    _this.setState({'folders': results_});
+                }
                 //_this.forceUpdate();
             });
 
 
             // When we get a refresh dir event (after new folder is created) reload the dir tree
-            DirectoryActions.refreshDirectories.subscribe(function (data_) {
+            this.directoryActions = DirectoryActions.refreshDirectories.subscribe(function (data_) {
                 DirectoryStore.getDirectories(_this.props.baseDir).subscribe(function (results_) {
-                    console.log("refresh directories subscription");
-                    _this.setState({'folders': results_});
+                    console.log("refresh directories subscription - ");
+                    console.dir(_this);
+                    console.dir(_this.isMounted());
+                    if (_this.isMounted()){
+                        _this.setState({'folders': results_});
+                    }
                     //_this.forceUpdate();
                 });
             });
@@ -142,13 +160,14 @@ var FolderTree = React.createClass({
     },
 
     componentWillUnmount: function(){
-
+        if( this.directoryStore !== undefined )this.directoryStore.dispose();
+        if( this.directoryActions !== undefined )this.directoryActions.dispose();
     },
 
     handleSelectDir: function(folder_, a1_, a2_){
         //console.log("{handle select dir}");
         //console.dir(folder_);
-        this.setState( {'activeFolder': folder_} );
+        if( this.isMounted() ) this.setState( {'activeFolder': folder_} );
 
         
         // send event that has will be picked up by the FilesView
@@ -164,7 +183,7 @@ var FolderTree = React.createClass({
     handleAddFolder: function(){
         var _af = this.state.activeFolder;
         //_af.children.push("NEW_ITEM");
-        this.setState({"activeFolder":_af, 'mode':'add_item'});
+        if( this.isMounted() ) this.setState({"activeFolder":_af, 'mode':'add_item'});
     },
     
     
@@ -240,7 +259,10 @@ var FolderTree = React.createClass({
         return (
             <div className={rootClassSet}>
                 <div className="header">
-                    <h3>{this.props.title}
+                    <h3>
+                        {this.props.sectionNavigateTo!==undefined ?
+                            <Link to={this.props.sectionNavigateTo}>{this.props.title}</Link>
+                            :this.props.title}
                         {this.props.showAddFolder==true ?
                         <ModalTrigger modal={<AddFolderModal dir={this.state.activeFolder.path} />}>
                             <Glyphicon glyph="plus"

@@ -39,7 +39,7 @@ var Clock = React.createClass({
     },
 
     tick: function(){
-        this.setState({timestamp: new Date().getTime()});
+        if( this.isMounted() ) this.setState({timestamp: new Date().getTime()});
     },
 
     render: function() {

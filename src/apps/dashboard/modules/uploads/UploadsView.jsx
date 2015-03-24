@@ -33,7 +33,10 @@ var UploadsView = React.createClass({
         
         UploadActions.fileStatusAction.subscribe(function(d_){
             console.log("** fileStatusAction ** ")
-            _this.forceUpdate();
+            if( _this.isMounted() )
+            {
+                _this.forceUpdate();
+            }
         });
     },
 

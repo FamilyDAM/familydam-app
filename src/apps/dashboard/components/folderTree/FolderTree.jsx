@@ -104,34 +104,38 @@ var FolderTree = React.createClass({
     componentDidMount: function(){
         var _this = this;
 
-        DirectoryStore.getDirectories("/dam:files/").subscribe(function(results_){
+        this.directoryStore = DirectoryStore.getDirectories("/dam:files/").subscribe(function(results_){
             console.log("get directories subscription");
-            _this.setState({'folders': results_});
+            if (_this.isMounted())
+            {
+                _this.setState({'folders': results_});
+            }
             //_this.forceUpdate();
         });
 
 
         // When we get a refresh dir event (after new folder is created) reload the dir tree
-        DirectoryActions.refreshDirectories.subscribe(function(data_){
+        this.directoryAction = DirectoryActions.refreshDirectories.subscribe(function(data_){
             DirectoryStore.getDirectories("/dam:files/").subscribe(function(results_){
                 console.log("refresh directories subscription");
-                _this.setState({'folders': results_});
+                if (_this.isMounted())
+                {
+                    _this.setState({'folders': results_});
+                }
                 //_this.forceUpdate();
             });
         });
     },
 
     componentWillUnmount: function(){
-
+        if(this.directoryStore !== undefined ) this.directoryStore.dispose();
+        if(this.directoryAction !== undefined ) this.directoryAction.dispose();
     },
 
     handleSelectDir: function(folder_){
         //console.dir(folder_);
-        this.setState( {'activeFolder': folder_} );
+        if( this.isMounted() ) this.setState( {'activeFolder': folder_} );
 
-        if (children.is(":visible")) children.hide('fast');
-        else children.show('fast');
-        
         
         // send event that has will be picked up by the FilesView
         DirectoryActions.selectFolder.onNext(folder_);
@@ -140,12 +144,21 @@ var FolderTree = React.createClass({
         {
             this.transitionTo(this.props.section, {}, {'path': folder_.path});
         }
+
+
+        /**
+        if ( children !== undefined )
+        {
+            if (children.is(":visible")) children.hide('fast');
+            else children.show('fast');
+        } **/
+
     },
 
     handleAddFolder: function(){
         var _af = this.state.activeFolder;
         //_af.children.push("NEW_ITEM");
-        this.setState({"activeFolder":_af, 'mode':'add_item'});
+        if( this.isMounted() ) this.setState({"activeFolder":_af, 'mode':'add_item'});
     },
 
     render: function() {

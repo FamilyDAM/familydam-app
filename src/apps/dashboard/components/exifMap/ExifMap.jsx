@@ -61,10 +61,13 @@ var ExifMap = React.createClass({
                 var lat = this.props.gps['GPS_Latitude'].description + " " + this.props.gps['GPS_Latitude_Ref'].description;
                 var lon = this.props.gps['GPS_Longitude'].description + " " + this.props.gps['GPS_Longitude_Ref'].description;
 
-                this.setState({
-                    'latitude': parseFloat(GeoPoint.getLatDec(lat)).toFixed(6),
-                    'longitude': parseFloat(GeoPoint.getLonDec(lon)).toFixed(6)
-                });
+                if( this.isMounted() )
+                {
+                    this.setState({
+                        'latitude': parseFloat(GeoPoint.getLatDec(lat)).toFixed(6),
+                        'longitude': parseFloat(GeoPoint.getLonDec(lon)).toFixed(6)
+                    });
+                }
             } catch (err) {
                 console.dir(err);
             }
