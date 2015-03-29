@@ -17,11 +17,13 @@ var LoginView = React.createClass({
     },
 
 
-    componentWillMount: function(){
+    componentDidMount: function(){
 
         var _this = this;
-        var stream = UserStore.listUsers().subscribe(function(results){
-            if( _this.isMounted() )  _this.setState({'users': results});
+        var stream = UserStore.listUsers().subscribe(function (results) {
+            if (_this.isMounted())  _this.setState({'users': results});
+        }, function(err_){
+            console.dir(err_);
         });
     },
 
@@ -60,7 +62,7 @@ var LoginView = React.createClass({
         }
 
         return (
-            <div className="loginView container-fluid" style={{'background-color':'#000'}}>
+            <div className="loginView container-fluid" style={{'backgroundColor':'#000'}}>
                 <div className="row logins">
                     <div className="col-sm-8 col-sm-offset-2 login-grid">
                     {childNodes}

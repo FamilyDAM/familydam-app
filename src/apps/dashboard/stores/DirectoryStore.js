@@ -44,8 +44,14 @@ module.exports = {
                 url: PreferenceStore.getBaseUrl() +"/api/directory/",
                 data: {'path':dir_, 'name':name_},
                 headers: {
-                    "Authorization":  UserStore.getUser().token
+                    "X-Auth-Token":  UserStore.getToken()
                 }
+            }).then(function(data_, status_, xhr_){
+                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                if( _token != null && _token !== undefined ){
+                    UserStore.setToken(_token);
+                }
+                return data_;
             });
         });
     },
@@ -70,8 +76,14 @@ module.exports = {
                 url: PreferenceStore.getBaseUrl() +"/api/directory/",
                 data: {'path':rootPath_},
                 headers: {
-                    "Authorization":  UserStore.getUser().token
+                    "X-Auth-Token":  UserStore.getToken()
                 }
+            }).then(function(data_, status_, xhr_){
+                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                if( _token != null && _token !== undefined ){
+                    UserStore.setToken(_token);
+                }
+                return data_;
             });
         });
     },
@@ -85,8 +97,14 @@ module.exports = {
                 url: PreferenceStore.getBaseUrl() +"/api/files",
                 data: {'path':path_},
                 headers: {
-                    "Authorization":  UserStore.getUser().token
+                    "x-auth-token":  UserStore.getToken()
                 }
+            }).then(function(data_, status_, xhr_){
+                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                if( _token != null && _token !== undefined ){
+                    UserStore.setToken(_token);
+                }
+                return data_;
             });
         }).map(function(results_){
             SearchStore.setResults(results_);

@@ -30,8 +30,9 @@ module.exports = {
     selectFolder: new Rx.Subject(),//.filter(function(d_){return true;}).subscribe(DirectoryStore.getLastSelectedFolder),
 
 
-    refreshDirectories: new Rx.Subject()
+    refreshDirectories: new Rx.Subject(),
 
+    uploadCompleteFileAction: new Rx.Subject()
 };
 
 //di.annotate(AuthActions, new di.Inject());

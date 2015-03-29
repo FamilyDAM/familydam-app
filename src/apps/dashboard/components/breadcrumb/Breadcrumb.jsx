@@ -53,7 +53,10 @@ var Breadcrumb = React.createClass({
                 _paths[_paths.length] = path_;
                 //console.dir(_paths);
                 _this.state.paths = _paths;
-                _this.forceUpdate();
+                if( _this.isMounted() )
+                {
+                    _this.forceUpdate();
+                }
             }
         );
 

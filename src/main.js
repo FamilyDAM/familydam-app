@@ -98,8 +98,8 @@ app.on('ready', function() {
 
 
     // and load the index.html of the app.
-    console.log('open:' +'file://' + __dirname + '/splash/index.html');
-    splashWindow.loadUrl('file://' + __dirname + '/splash/index.html');
+    //console.log('open:' +'file://' + __dirname + '/splash/index.html');
+    splashWindow.loadUrl('file://' + __dirname + '/apps/splash/index.html');
     splashWindow.focus();
     //splashWindow.loadUrl('http://localhost:8080');
 

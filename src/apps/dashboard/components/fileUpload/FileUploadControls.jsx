@@ -88,7 +88,7 @@ var FileUploadControls = React.createClass({
 
     
     clickFileInputField:function(){
-        this.refs.fileInputField.getDOMNode().click();
+        $(this.refs.fileInputField.getDOMNode()).click();
     },
     
 
@@ -133,7 +133,7 @@ var FileUploadControls = React.createClass({
                                 <input type="file"
                                     ref="fileInputField"
                                     onChange={this.handleFileChange}
-                                    multiple="true" disabled="false"/>
+                                    multiple="true"/>
                                 <span className={_selectFileBtnClass} style={{'width':'360px'}}>Select Files</span>
                             </div>
                             <br/>

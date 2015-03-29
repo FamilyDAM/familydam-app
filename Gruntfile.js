@@ -219,7 +219,7 @@ module.exports = function(grunt) {
 
 
         'download-atom-shell': {
-            version: '0.20.2',
+            version: '0.22.2',
             outputDir: '.tmp/binaries'
         },
 
@@ -230,7 +230,7 @@ module.exports = function(grunt) {
                 app_dir:"dist",
                 cache_dir:".tmp/binaries",
                 build_dir:"binary-dist",
-                atom_shell_version: 'v0.20.2'
+                atom_shell_version: 'v0.22.2'
             }
         }
 

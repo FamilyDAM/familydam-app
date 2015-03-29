@@ -48,7 +48,7 @@ var DashboardView = React.createClass({
         return (
             <div className="dashboardView container-fluid">
                 <div className="row">
-                    <Navbar>
+                    <Navbar fluid={true}>
                         <Nav className="navbar-left">
                             <NavItem >FamilyD.A.M</NavItem>
                         </Nav>

@@ -26,7 +26,15 @@ var PreferenceStore = require("./PreferenceStore");
 
 module.exports = {
 
-    _user : {"token" : "Basic YWRtaW46YWRtaW4="},
+    _token : undefined,
+    _user : {"token" : ""},
+
+    getToken: function () {
+        return this._token;
+    },
+    setToken: function (token_) {
+        this._token = token_;
+    },
 
     getUser: function () {
         return this._user;
@@ -44,12 +52,20 @@ module.exports = {
      * @returns {*}
      */
     login: function (_username, _password) {
+        var _this = this;
 
         return Rx.Observable.defer(function ()
         {
             var _salt = new Date().getTime();
             return $.post(PreferenceStore.getBaseUrl() +'/api/users/login',
-                {'username':_username, 'password':_password, 'salt':_salt});
+                {'username':_username, 'password':_password, 'salt':_salt}).then(function(data_, status_, xhr_){
+
+                    var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                    _this.setToken(_token);
+
+                    _this.setUser(data_);
+                    return data_;
+                });
         });
     },
 
@@ -71,8 +87,7 @@ module.exports = {
         });
         return listUserObservable;
 
-    },
-
+    }
 
 };
 

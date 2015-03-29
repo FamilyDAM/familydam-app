@@ -162,8 +162,14 @@ module.exports = {
                 url: PreferenceStore.getBaseUrl() + "/api/import/info/",
                 data: {'dir': dir_, 'path': path_},
                 headers: {
-                    "Authorization": UserStore.getUser().token
+                    "X-Auth-Token":  UserStore.getToken()
                 }
+            }).then(function(data_, status_, xhr_){
+                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                if( _token != null && _token !== undefined ){
+                    UserStore.setToken(_token);
+                }
+                return data_;
             });
         });
 
@@ -183,8 +189,14 @@ module.exports = {
                 url: PreferenceStore.getBaseUrl() + "/api/import/copy/",
                 data: {'dir': dir_, 'path': path_, 'recursive': true},
                 headers: {
-                    "Authorization": UserStore.getUser().token
+                    "X-Auth-Token":  UserStore.getToken()
                 }
+            }).then(function(data_, status_, xhr_){
+                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                if( _token != null && _token !== undefined ){
+                    UserStore.setToken(_token);
+                }
+                return data_;
             });
         });
     },
@@ -211,9 +223,15 @@ module.exports = {
                 processData: false, // Don't process the files
                 contentType: false, // Set content type to false as jQuery will tell the server its a query string request
                 headers: {
-                    "Authorization": UserStore.getUser().token,
+                    "X-Auth-Token":  UserStore.getToken(),
                     Accept : "application/json; charset=utf-8"
                 }
+            }).then(function(data_, status_, xhr_){
+                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                if( _token != null && _token !== undefined ){
+                    UserStore.setToken(_token);
+                }
+                return data_;
             });
         });
     }

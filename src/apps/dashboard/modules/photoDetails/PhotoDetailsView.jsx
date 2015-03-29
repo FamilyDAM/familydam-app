@@ -171,10 +171,12 @@ module.exports = React.createClass({
         if( this.isMounted() ) this.setState({'photo': this.state.photo});
     },
 
+
     handleOnNoteBlur: function (event_) {
         this.state.photo['dam:note'] = event_.target.value;
         this.save();
     },
+
 
     handleOnTagAdd: function (tag_) {
         var pos = this.state.photo['dam:tags'].indexOf(tag_);
@@ -184,6 +186,8 @@ module.exports = React.createClass({
             this.save();
         }
     },
+
+
     handleOnTagRemove: function (tag_) {
 
         var pos = this.state.photo['dam:tags'].indexOf(tag_);
@@ -192,6 +196,10 @@ module.exports = React.createClass({
             this.state.photo['dam:tags'].splice(pos, 1);
             this.save();
         }
+    },
+
+
+    handleDownloadOriginal:function(){
 
     },
 
@@ -235,21 +243,27 @@ module.exports = React.createClass({
 
                             <div className="row" >
                                 <div className="col-sm-6">
+
                                     <img src="assets/icons/ic_file_download_24px.svg" style={{
                                         'width': '36px',
                                         'height': '36px'
-                                    }}/>
-                                    <img src="assets/icons/ic_mode_edit_24px.svg" style={{
-                                        'width': '36px',
-                                        'height': '36px'
-                                    }}/>
+                                    }} onClick={this.handleDownloadOriginal}/>
+
+                                    <Link to="photoEdit" params={{id: '123'}}>
+                                        <img src="assets/icons/ic_mode_edit_24px.svg" style={{
+                                            'width': '36px',
+                                            'height': '36px'
+                                        }}/>
+                                    </Link>
                                     <img src="assets/icons/ic_delete_24px.svg" style={{
                                         'width': '36px',
                                         'height': '36px'
                                     }}/>
+
                                     <img src="assets/icons/ic_share_24px.svg" style={{
                                         'width': '36px',
-                                        'height': '36px'
+                                        'height': '36px',
+                                        'display':'none'
                                     }}/>
                                 </div>
 

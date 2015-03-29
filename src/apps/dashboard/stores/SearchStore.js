@@ -62,8 +62,14 @@ module.exports = {
                     "orderBy": "jcr:lastModified"
                 },
                 headers: {
-                    "Authorization":  UserStore.getUser().token
+                    "X-Auth-Token":  UserStore.getToken()
                 }
+            }).then(function(data_, status_, xhr_){
+                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                if( _token != null && _token !== undefined ){
+                    UserStore.setToken(_token);
+                }
+                return data_;
             });
         });
     }
