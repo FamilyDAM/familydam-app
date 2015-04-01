@@ -97,7 +97,7 @@ module.exports = {
                 url: PreferenceStore.getBaseUrl() +"/api/files",
                 data: {'path':path_},
                 headers: {
-                    "x-auth-token":  UserStore.getToken()
+                    "X-Auth-Token":  UserStore.getToken()
                 }
             }).then(function(data_, status_, xhr_){
                 var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");

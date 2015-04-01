@@ -217,7 +217,7 @@ var FilesView = React.createClass({
                 return <tr key={_file.id}  data-id={_file.id}>
                         <td>
                             <Link to="photoDetails" params={{'id': _file.id}}>
-                            <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.getUser().token}
+                            <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.getToken()}
                                  style={{'width':'50px', 'height':'50px'}}/></Link>
                         </td>
                         <td className="fileName"><Link to="photoDetails" params={{'id': _file.id}}>{_file.name}</Link></td>

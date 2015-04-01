@@ -95,7 +95,7 @@ module.exports = React.createClass({
             }
 
             // set some local props for easier rendering
-            var imagePath = PreferenceStore.getBaseUrl() + results['jcr:path'] + "?token=" + UserStore.getUser().token + "&rendition=web.1024";
+            var imagePath = PreferenceStore.getBaseUrl() + results['jcr:path'] + "?token=" + UserStore.getToken() + "&rendition=web.1024";
             var rating = results['dam:rating'] ? results['dam:rating'] : 0;
             var datetaken = results['jcr:created'];
 
