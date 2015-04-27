@@ -98,10 +98,8 @@ app.on('ready', function() {
 
 
     // and load the index.html of the app.
-    //console.log('open:' +'file://' + __dirname + '/splash/index.html');
     splashWindow.loadUrl('file://' + __dirname + '/apps/splash/index.html');
     splashWindow.focus();
-    //splashWindow.loadUrl('http://localhost:8080');
 
     // Emitted when the window is closed.
     splashWindow.on('closed', function() {
@@ -134,8 +132,10 @@ app.on('ready', function() {
 
 
     // Check the settings configuration before opening up the main app.
+    var _this = this;
     var timer = setInterval(function(){
         clearTimeout(timer);
+        _this.splashWindow = null;
         configurationManager.initializeServer(app, configWindow);
     }, 2000);
 
@@ -149,6 +149,23 @@ app.on('ready', function() {
 /******************************
  * App level functions
  */
+
+/**
+ * Launch the main application
+ * @param _settings
+ */
+app.loadConfigApplication = function(_settings) {
+    //start jar
+    //console.log("{loadMainApplication}" +_settings);
+    //serverManager.startServer(_settings, app, splashWindow, mainWindow);
+
+    splashWindow.hide();
+    mainWindow.hide();
+    configWindow.show();
+
+    configWindow.loadUrl('file://' + __dirname  +'/apps/config/index.html');
+};
+
 
 /**
  * Launch the main application

@@ -48,7 +48,7 @@ module.exports = {
                     "X-Auth-Token":  UserStore.getToken()
                 }
             }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                var _token = xhr_.getResponseHeader("X-Auth-Token");
                 if( _token != null && _token !== undefined ){
                     UserStore.setToken(_token);
                 }
@@ -57,6 +57,36 @@ module.exports = {
         });
     },
 
+
+
+    updateNodeById:function(id_, data_){
+
+        var _data = JSON.stringify(data_);
+
+        return Rx.Observable.defer(function () {
+
+            return $.ajax({
+                method: "post",
+                data: _data,
+                processData: false,
+                url: PreferenceStore.getBaseUrl() +"/api/data/" +id_,
+                type: 'json',
+                contentType: "application/json",
+                headers: {
+                    "X-Auth-Token":  UserStore.getToken()
+                }
+            }).then(function(data_, status_, xhr_){
+                // update the token in memory (incase expire date changes)
+                var _token = xhr_.getResponseHeader("X-Auth-Token");
+                if( _token != null && _token !== undefined ){
+                    UserStore.setToken(_token);
+                }
+                return data_;
+            });
+
+
+        });
+    },
 
 
     deleteNodeById:function(id_){
@@ -69,7 +99,7 @@ module.exports = {
                     "X-Auth-Token":  UserStore.getToken()
                 }
             }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                var _token = xhr_.getResponseHeader("X-Auth-Token");
                 if( _token != null && _token !== undefined ){
                     UserStore.setToken(_token);
                 }

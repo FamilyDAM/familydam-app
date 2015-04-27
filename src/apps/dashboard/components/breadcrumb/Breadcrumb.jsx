@@ -29,7 +29,7 @@ var Breadcrumb = React.createClass({
     
     getInitialState: function(){
         return {'paths':[
-            {'label':'Home', 'navigateTo':"/", 'params':{}, level:0}
+            {'label':'Home', 'navigateTo':"/dashboard", 'params':{}, level:0}
         ]}
     },
     

@@ -5,8 +5,8 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build', 'watch']);//, 'connect'
 
     grunt.registerTask('build', [
-        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard', 'build-atom-shell-app'
-    ]);
+        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
+    ]); /*, 'build-atom-shell-app'*/
 
     grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
     grunt.registerTask('build-css', ['compass']);
@@ -150,7 +150,8 @@ module.exports = function(grunt) {
                     src: [
                         '*.js',
                         '**/*.json',
-                        'apps/splash/**'
+                        'apps/splash/**',
+                        'apps/setup/**'
                     ]
                 }]
             },

@@ -30,10 +30,16 @@ module.exports = {
     _user : {"token" : ""},
 
     getToken: function () {
-        return this._token;
+        if( this._token !== undefined )
+        {
+            return this._token;
+        }else{
+            return localStorage.getItem("token");
+        }
     },
     setToken: function (token_) {
         this._token = token_;
+        localStorage.setItem("token", token_);
     },
 
     getUser: function () {
@@ -60,7 +66,7 @@ module.exports = {
             return $.post(PreferenceStore.getBaseUrl() +'/api/users/login',
                 {'username':_username, 'password':_password, 'salt':_salt}).then(function(data_, status_, xhr_){
 
-                    var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                    var _token = xhr_.getResponseHeader("X-Auth-Token");
                     _this.setToken(_token);
 
                     _this.setUser(data_);

@@ -76,7 +76,7 @@ var ExifData = React.createClass({
                         <td style={{'width': '60px'}}>
                             <img src="assets/icons/ic_photo_camera_48px.svg" style={{'width': '48px', 'height': '48px'}}/>
                         </td>
-                        <td colspan="3" >
+                        <td colSpan="3" >
                             <h6>
                                 {this.props.exif['Exif IFD0']['Make'].description} {this.props.exif['Exif IFD0']['Model'].description}<br/>
                                  {this.props.exif['Exif SubIFD']['Focal_Length'].description}<br/>
@@ -88,36 +88,36 @@ var ExifData = React.createClass({
                 <br/>
                 <table style={{'width':'300px', 'borderSpacing':'0px', 'padding':'0px'}}>
                     <tr>
-                        <td colspan="2" style={{'width':'50%'}}>
+                        <td colSpan="2" style={{'width':'50%'}}>
                             <h6><img src="assets/icons/ic_photo_camera_48px.svg"
                                 style={{'width': '18px', 'height': '18px'}}/>
                             &nbsp;{this.props.exif['Exif SubIFD']['F-Number'].description}</h6>
                         </td>
-                        <td colspan="2" style={{'width':'50%'}}>
+                        <td colSpan="2" style={{'width':'50%'}}>
                             <h6><img src="assets/icons/ic_photo_camera_48px.svg"
                                 style={{'width': '18px', 'height': '18px'}}/>
                             &nbsp;{this.props.exif['Exif SubIFD']['Focal_Length'].description}</h6>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
+                        <td colSpan="2">
                             <h6><img src="assets/icons/ic_photo_camera_48px.svg"
                                 style={{'width': '18px', 'height': '18px'}}/>
                             &nbsp;{this.props.exif['Exif SubIFD']['Shutter_Speed_Value'].description}</h6>
                         </td>
-                        <td colspan="2">
+                        <td colSpan="2">
                             <h6><img src="assets/icons/ic_photo_camera_48px.svg"
                                 style={{'width': '18px', 'height': '18px'}}/>
                             &nbsp;{this.props.exif['Exif SubIFD']['ISO_Speed_Ratings'].description} ISO</h6>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
+                        <td colSpan="2">
                             <h6><img src="assets/icons/ic_photo_camera_48px.svg"
                                 style={{'width': '18px', 'height': '18px'}}/>
                             &nbsp;Flash: {this.props.exif['Exif SubIFD']['Flash'].description}</h6>
                         </td>
-                        <td colspan="2">
+                        <td colSpan="2">
 
                         </td>
                     </tr>

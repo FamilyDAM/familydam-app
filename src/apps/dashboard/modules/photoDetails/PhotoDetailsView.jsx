@@ -23,6 +23,7 @@ var Router = require('react-router');
 var Link = Router.Link;
 
 var Keymaster = require('keymaster');
+var moment = require('moment');
 
 var TabbedArea = require('react-bootstrap').TabbedArea;
 var TabPane = require('react-bootstrap').TabPane;
@@ -45,7 +46,12 @@ module.exports = React.createClass({
     mixins: [Router.State, Router.Navigation],
 
     getInitialState: function () {
-        return {'photo': {}, prevId:undefined, nextId:undefined};
+        return {
+            'photo': {}
+            , location: ""
+            , prevId:undefined
+            , nextId:undefined
+        };
     },
 
     /**
@@ -142,8 +148,12 @@ module.exports = React.createClass({
 
             if( _this.isMounted() )
             {
+                var _location = PreferenceStore.getBaseUrl() +"/api/files/" +results['jcr:uuid'] +"?token=" +UserStore.getToken()
+
+
                 _this.setState({
                     'photo': results,
+                    'location': _location,
                     'imagePath': imagePath,
                     'rating': rating,
                     'datetaken': datetaken,
@@ -161,8 +171,16 @@ module.exports = React.createClass({
 
 
     save: function () {
-        console.log("something changed: SAVE");
-        console.dir(this.state.photo);
+
+        var _id = this.state.photo['jcr:uuid']
+        ContentStore.updateNodeById(_id, this.state.photo).subscribe(
+            function (results) {
+                //reload the updated object
+                this.load(id_);
+            }, function(err_){
+                alert(err_.status +":" +err_.statusText +"\n" +err_.responseText);
+            });
+
     },
 
 
@@ -200,11 +218,18 @@ module.exports = React.createClass({
 
 
     handleDownloadOriginal:function(){
+        window.open(this.state.location);//, "_blank");
+    },
+
+
+    handleDelete:function(){
 
     },
 
 
     render: function () {
+
+        var _dtStamp = moment(this.state.datetaken, "YYYYMMDD HH:mm:ss").format("LLL");
 
         return (
             <div className="photoDetailsView container">
@@ -255,20 +280,16 @@ module.exports = React.createClass({
                                             'height': '36px'
                                         }}/>
                                     </Link>
+
                                     <img src="assets/icons/ic_delete_24px.svg" style={{
                                         'width': '36px',
                                         'height': '36px'
-                                    }}/>
+                                    }} onClick={this.handleDelete}/>
 
-                                    <img src="assets/icons/ic_share_24px.svg" style={{
-                                        'width': '36px',
-                                        'height': '36px',
-                                        'display':'none'
-                                    }}/>
                                 </div>
 
                                 <div className="col-sm-6">
-                                    <span style={{'fontSize': '24px'}}>{this.state.datetaken}</span>
+                                    <span style={{'fontSize': '24px'}}>{_dtStamp}</span>
 
                                     <br/>
 

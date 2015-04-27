@@ -165,7 +165,7 @@ module.exports = {
                     "X-Auth-Token":  UserStore.getToken()
                 }
             }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                var _token = xhr_.getResponseHeader("X-Auth-Token");
                 if( _token != null && _token !== undefined ){
                     UserStore.setToken(_token);
                 }
@@ -192,7 +192,7 @@ module.exports = {
                     "X-Auth-Token":  UserStore.getToken()
                 }
             }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                var _token = xhr_.getResponseHeader("X-Auth-Token");
                 if( _token != null && _token !== undefined ){
                     UserStore.setToken(_token);
                 }
@@ -227,7 +227,7 @@ module.exports = {
                     Accept : "application/json; charset=utf-8"
                 }
             }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token-Refresh");
+                var _token = xhr_.getResponseHeader("X-Auth-Token");
                 if( _token != null && _token !== undefined ){
                     UserStore.setToken(_token);
                 }

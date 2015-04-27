@@ -38,24 +38,23 @@
     };
 
 
-
     /**
      * Once the embedded java server is running load the application from the server.
      */
     var loadConfigApplication = function()
     {
-        console.log("Load internal configuration window (" +new Date() +")");
+        //console.log("Load internal configuration window (" +new Date() +")");
 
         var configWindow = new BrowserWindow({width:900, height:600, center:true, frame:true, show:false, title:'FamilyDAM Configuration Wizard'});
 
-        configWindow.loadUrl('file://' + __dirname + '/config/index.html');
+        configWindow.loadUrl('file://' + __dirname + '/apps/setup/index.html');
         configWindow.webContents.on('did-finish-load', function()
-        {
-            configWindow.webContents.send('settingConfig', settings);
-        });
+            {
+                configWindow.webContents.send('settingConfig', settings);
+            });
         configWindow.show();
         configWindow.focus();
-        //app.dock.bounce("informational");
+        app.dock.bounce("informational");
 
 
         // Call back handler which invoked from the webpage when all of the fields have been filled out.
@@ -71,6 +70,7 @@
             fs.writeFile( __dirname +'/resources/systemprops.json',  encodedSettings, {'encoding':'utf8'}, function (err, data)
             {
                 storageLocationInitialize();
+                splashwindow = null;
                 configWindow.hide();
                 this.appRoot.loadMainApplication(settings);
             });
@@ -97,15 +97,14 @@
             console.log(data);
             settings = JSON.parse(data);
 
-            this.appRoot.loadMainApplication(settings);
-            /** todo put back in
-            if( settings.state == "READY" && storageLocationInitialize() )
+
+            if( true || settings.state == "READY" && storageLocationInitialize() )
             {
                 this.appRoot.loadMainApplication(settings);
             }else{
                 loadConfigApplication();
             }
-             **/
+
         });
     };
 
