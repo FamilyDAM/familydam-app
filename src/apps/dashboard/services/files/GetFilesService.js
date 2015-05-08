@@ -17,6 +17,7 @@
 
 var Rx = require('rx');
 var PreferenceStore = require('../../stores/PreferenceStore');
+var UserStore = require('../../stores/UserStore');
 var AuthActions = require('../../actions/AuthActions');
 
 
@@ -33,7 +34,7 @@ module.exports = {
     subscribe : function(action_){
         console.log("{GetFiles Service} subscribe");
         this.sink = action_.sink;
-        action_.source.subscribe(this.getFilesInDirectory.bind(this));
+        action_.source.subscribe(this.getFiles.bind(this));
     },
 
     /**
@@ -41,27 +42,36 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    getFilesInDirectory: function(path_)
+    getFiles: function(path_)
     {
+        console.log("{GetFiles Service} getFiles()" );
+        console.dir(path_);
         var _this = this;
         var _url = PreferenceStore.getBaseUrl() +"/api/files/";
 
+        console.dir(UserStore.token.value);
         return $.ajax({
-                    method: "get",
-                    url: _url,
-                    data: {'path':path_},
-                    headers: {
-                        "X-Auth-Token":  UserStore.token.getValue()
+                    'method': "get",
+                    'url': _url,
+                    'data': {'path':path_},
+                    'headers': {
+                        'X-Auth-Token':  UserStore.token.value
                     }
 
                 }).then(function(data_, status_, xhr_){
+
+                    console.log("{GetFiles Service} getFiles() success" );
+
+                    _this.sink.onNext(data_);
                     var _token = xhr_.getResponseHeader("X-Auth-Token");
                     if( _token != null && _token !== undefined ){
                         AuthActions.saveToken.onNext(_token);
                     }
 
                 }, function(xhr_, textStatus_, errorThrown) {
-                    _this.sink.setError(_token);
+
+                    console.log("{GetFiles Service} getFiles() error" );
+                    _this.sink.setError(xhr_);
                 });
 
     }

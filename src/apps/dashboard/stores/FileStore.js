@@ -29,11 +29,11 @@ module.exports = {
         console.log("{FileStore} init()");
         this.files = new Rx.BehaviorSubject([]);
 
-        FileActions.getFiles.sink.subscribe(this.setFiles);
+        FileActions.getFiles.sink.subscribe(this.setFiles.bind(this));
     },
 
     setFiles: function(data_){
-        this.files = data_;
+        this.files.onNext(data_);
     }
 
 

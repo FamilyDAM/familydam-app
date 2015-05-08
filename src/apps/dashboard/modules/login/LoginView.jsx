@@ -24,7 +24,6 @@ var LoginView = React.createClass({
 
         UserActions.getUsers.source.onNext(true);
 
-
         var stream = UserStore.users.subscribe(function (results) {
             _this.state.users = results;
             if (_this.isMounted())  _this.forceUpdate();

@@ -53,33 +53,36 @@ var FilesView = React.createClass({
     },
 
 
-/***
+
     componentWillMount:function(){
+        console.log("{FilesView} componentWillMount");
+        console.dir( DirectoryActions.selectFolder );
+        console.dir( FileActions.getFiles );
+        console.dir( this.state );
+
         //todo: make path dynamic
         var _this = this;
-        var _path = "/dam:files/";
+        this.state.path = "/dam:files/";
 
         if( this.props.query && this.props.query.path )
         {
-            _path = this.props.query.path;
+            this.state.path = this.props.query.path;
         }
 
-        // load files at root
-        this.state.path = _path;
         // save current dir
-        DirectoryActions.selectFolder.onNext(_path);
+        //DirectoryActions.selectFolder.onNext(this.state.path);
         // load files
-        FileActions.getFiles.source.onNext(_path);
+        FileActions.getFiles.source.onNext(this.state.path);
 
 
         // rx callbacks
         FileStore.files.subscribe(function(data_){
-            _this.state.files = results_;
+            _this.state.files = data_;
             if (_this.isMounted())  _this.forceUpdate();
         });
     },
 
-
+/**
     componentDidMount: function()
     {
         // update the breadcrumb
