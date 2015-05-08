@@ -18,14 +18,26 @@
 'use strict';
 
 var Rx = require('rx');
-var DirectoryActions = require('./../actions/DirectoryActions');
-var UserStore = require('./UserStore');
-var SearchStore = require('./SearchStore');
-var PreferenceStore = require('./PreferenceStore');
-//di = require('di');
+var FileActions = require('./../actions/FileActions');
+
 
 module.exports = {
 
+    files: undefined,
+
+    init: function(){
+        console.log("{FileStore} init()");
+        this.files = new Rx.BehaviorSubject([]);
+
+        FileActions.getFiles.sink.subscribe(this.setFiles);
+    },
+
+    setFiles: function(data_){
+        this.files = data_;
+    }
+
+
+    /* deprectated
     getFilesInDirectory: function(path_)
     {
         return Rx.Observable.defer(function () {
@@ -47,11 +59,10 @@ module.exports = {
             SearchStore.setResults(results_);
             return results_;
         });
-    }
+    }*/
 
 
 };
 
-//di.annotate(AuthActions, new di.Inject());
 
 

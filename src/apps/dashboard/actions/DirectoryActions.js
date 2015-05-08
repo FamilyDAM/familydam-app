@@ -15,12 +15,12 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-
 var Rx = require('rx');
-var DirectoryStore = require("../stores/DirectoryStore");
-//di              = require('di');
 
 module.exports = {
+
+
+    getDirectories: {'source':new Rx.Subject(),'sink':new Rx.Subject()},
 
     
     /**
@@ -30,8 +30,7 @@ module.exports = {
     selectFolder: new Rx.Subject(),//.filter(function(d_){return true;}).subscribe(DirectoryStore.getLastSelectedFolder),
 
 
-    refreshDirectories: new Rx.Subject(),
-
+    //todo move
     uploadCompleteFileAction: new Rx.Subject()
 };
 

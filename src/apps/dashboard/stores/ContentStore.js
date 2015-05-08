@@ -28,13 +28,24 @@ var UserStore = require('./UserStore');
 
 module.exports = {
 
+    currentNode:undefined,
+
+
+    init: function()
+    {
+        console.log("{ContentStore}.init()");
+
+        this.currentNode = new Rx.BehaviorSubject({});
+
+    }
+
     /**
      * Return all of the data for a single node
      * @param path
      * @param successCallback
      * @param errorCallback
      * @returns Object
-     */
+
     getNodeById: function( id )
     {
         var _searchPath = "/api/data/" +id;
@@ -55,10 +66,10 @@ module.exports = {
                 return data_;
             });
         });
-    },
+    },  */
 
 
-
+/**
     updateNodeById:function(id_, data_){
 
         var _data = JSON.stringify(data_);
@@ -87,8 +98,9 @@ module.exports = {
 
         });
     },
+**/
 
-
+    /**
     deleteNodeById:function(id_){
         return Rx.Observable.defer(function () {
             //todo
@@ -109,7 +121,7 @@ module.exports = {
 
         });
     },
-
+    **/
 };
 
 //di.annotate(AuthActions, new di.Inject());

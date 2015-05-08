@@ -28,6 +28,11 @@ module.exports = {
 
     _results : [],
 
+    init: function() {
+        console.log("{SearchStore}.init()");
+
+    },
+
 
     getResults : function() {
         return this._results;
@@ -44,6 +49,7 @@ module.exports = {
      * @param errorCallback
      * @returns {*|Array|Object|Mixed|promise|HTMLElement}
      */
+    /* deprectated */
     searchImages : function(limit, offset, filterPath, filterTags, filterDateFrom, filterDateTo )
     {
         //todo: add support for these

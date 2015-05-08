@@ -28,14 +28,24 @@ module.exports = {
 
     root: "/dam:files/",
 
+
     /**
      * the last folder selected by a user in the sidebar folder tree.
      * A simple property, stored in a behavior subject.
      * Note: the value is pushed from the DirectoryAction
      */
-    getLastSelectedFolder: new Rx.BehaviorSubject( {'path':"/dam:files/"} ),
+    getLastSelectedFolder: undefined,
 
 
+
+    init: function() {
+        console.log("{DirectoryStore}.init()");
+
+        this.getLastSelectedFolder = new Rx.BehaviorSubject( {'path':"/dam:files/"} );
+    }
+
+
+    /* deprectated
     createFolder:function(dir_, name_){
         return Rx.Observable.defer(function () {
             //todo
@@ -54,7 +64,7 @@ module.exports = {
                 return data_;
             });
         });
-    },
+    },*/
 
 
     
@@ -62,6 +72,7 @@ module.exports = {
      * List all directories visible to a user
      * @returns {*}
      */
+    /* deprectated
     getDirectories: function(rootPath_)
     {
         if( rootPath_ == undefined ){
@@ -86,9 +97,10 @@ module.exports = {
                 return data_;
             });
         });
-    },
+    }, */
 
 
+    /* deprectated
     getFilesInDirectory: function(path_)
     {
         return Rx.Observable.defer(function () {
@@ -111,7 +123,7 @@ module.exports = {
             return results_;
         });
     }
-
+     */
 
 };
 

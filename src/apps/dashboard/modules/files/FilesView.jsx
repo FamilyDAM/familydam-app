@@ -33,16 +33,14 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
 var SectionTree = require('../../components/folderTree/SectionTree');
 
-var DirectoryActions = require('./../../actions/DirectoryActions');
 
-var PreferenceStore = require('./../../stores/PreferenceStore');
-var UserStore = require('./../../stores/UserStore');
-var SearchStore = require('./../../stores/SearchStore');
-var DirectoryStore = require('./../../stores/DirectoryStore');
-var ContentStore = require('./../../stores/ContentStore');
+var NodeActions = require('../../actions/NodeActions');
+var FileActions = require('../../actions/FileActions');
+var DirectoryActions = require('../../actions/DirectoryActions');
+var NavigationActions = require('../../actions/NavigationActions');
+
 var FileStore = require('./../../stores/FileStore');
 
-var NavigationActions = require('../../actions/NavigationActions');
 
 var FilesView = React.createClass({
     mixins : [Navigation],
@@ -55,7 +53,7 @@ var FilesView = React.createClass({
     },
 
 
-
+/***
     componentWillMount:function(){
         //todo: make path dynamic
         var _this = this;
@@ -66,20 +64,18 @@ var FilesView = React.createClass({
             _path = this.props.query.path;
         }
 
-        // load the files in the path.
-        _this.loadData(_path, 100, 0); //start with root directory
+        // load files at root
+        this.state.path = _path;
+        // save current dir
+        DirectoryActions.selectFolder.onNext(_path);
+        // load files
+        FileActions.getFiles.source.onNext(_path);
 
 
         // rx callbacks
-        DirectoryActions.refreshDirectories.subscribe(function(data_){
-            _this.loadData(_path, 100, 0);
-        });
-        DirectoryActions.selectFolder.subscribe(function(data_){
-            if(  typeof data_ === "string" ){
-                _this.loadData(data_, 100, 0);
-            }else{
-                _this.loadData(data_.path, 100, 0);
-            }
+        FileStore.files.subscribe(function(data_){
+            _this.state.files = results_;
+            if (_this.isMounted())  _this.forceUpdate();
         });
     },
 
@@ -94,30 +90,24 @@ var FilesView = React.createClass({
 
     componentWillReceiveProps:function(nextProps)
     {
-        this.loadData(nextProps.query.path, 100, 0);
+        this.state.path = nextProps.query.path;
+        // save current dir
+        DirectoryActions.selectFolder.onNext(_path);
+        // load files
+        FileActions.getFiles.source.onNext(nextProps.query.path);
     },
-
-
-    loadData:function(folder_, limit_, offset_){
-        //todo: make path dynamic
-        var _this = this;
-        _this.is = IS;
-
-        FileStore.getFilesInDirectory(folder_).subscribe(function(results_) {
-            if ( _this.isMounted() && _this.is.array(results_)) {
-                _this.setState({'files': results_});
-            }
-        });
-    },
-
-
+**/
 
     handleDirClick: function(event, component)
     {
         var _path =  $("[data-reactid='" + component + "']").attr("data-path");
-        DirectoryActions.selectFolder.onNext(_path);
 
-        this.transitionTo('files', {}, {'path':_path})
+        // save current dir
+        //DirectoryActions.selectFolder.onNext(_path);
+        // load files
+        //FileActions.getFiles.source.onNext(nextProps.query.path);
+
+        //this.transitionTo('files', {}, {'path':_path})
     },
     
     
@@ -145,7 +135,11 @@ var FilesView = React.createClass({
         var _id = $("[data-reactid='" + component + "']").attr("data-id");
         var _path = $("[data-reactid='" + component + "']").attr("data-path");
 
-        ContentStore.deleteNodeById(_id).subscribe(function(results_){
+        //NodeActions.deleteNode.source.onNext(_id);
+
+        //register as a listener so we can cut out the file that was deleted
+        /** deprecated?
+        NodeActions.deleteNode.sink.subscribe(function(results_){
             console.log("** delete by by id **** ")
             console.dir(results_);
 
@@ -160,9 +154,8 @@ var FilesView = React.createClass({
                     break;
                 }
             }
-            
-            //DirectoryActions.refreshDirectories.onNext(true);
         });
+         **/
     },
 
 

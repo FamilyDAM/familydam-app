@@ -29,6 +29,11 @@ module.exports = {
     _folders: [],
 
 
+    init: function() {
+        console.log("{UploadStore}.init()");
+    },
+
+
     addFile: function (file_) {
         console.dir(file_);
         file_.status == "PENDING";
@@ -154,6 +159,7 @@ module.exports = {
      * @param path
      * @returns {HttpPromise}
      */
+    /* deprectated */
     checkAccess: function (dir_, path_) {
         return Rx.Observable.defer(function () {
             //todo
@@ -181,6 +187,7 @@ module.exports = {
      * @param dir
      * @param path
      */
+    /* deprectated */
     copyLocalFile: function (dir, path_) {
         return Rx.Observable.defer(function () {
             //todo
@@ -208,6 +215,7 @@ module.exports = {
      * @param dir
      * @param path
      */
+    /* deprectated */
     uploadFile: function (dir_, file_) {
         return Rx.Observable.defer(function () {
 

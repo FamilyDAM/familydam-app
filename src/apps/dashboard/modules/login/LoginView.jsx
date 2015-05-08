@@ -8,6 +8,8 @@ var Link = Router.Link;
 var LoginCard = require('./LoginCard');
 var Clock = require('./../../components/clock/Clock');
 
+var AuthActions = require('./../../actions/AuthActions');
+var UserActions = require('./../../actions/UserActions');
 var UserStore = require('./../../stores/UserStore');
 
 var LoginView = React.createClass({
@@ -18,22 +20,25 @@ var LoginView = React.createClass({
 
 
     componentDidMount: function(){
-
         var _this = this;
-        var stream = UserStore.listUsers().subscribe(function (results) {
-            if (_this.isMounted())  _this.setState({'users': results});
-        }, function(err_){
-            console.dir(err_);
+
+        UserActions.getUsers.source.onNext(true);
+
+
+        var stream = UserStore.users.subscribe(function (results) {
+            _this.state.users = results;
+            if (_this.isMounted())  _this.forceUpdate();
         });
     },
 
 
     handleCardSelection: function(user){
-        if( this.isMounted() ) this.setState({activeUser:user});
+        this.setState({activeUser:user});
     },
 
+
     handleCancelCardSelection: function(event){
-        if( this.isMounted() ) this.setState({activeUser:undefined});
+        this.setState({activeUser:undefined});
     },
 
 

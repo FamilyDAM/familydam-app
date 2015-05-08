@@ -20,6 +20,28 @@ window.Route = Route;
 window.Navigation = Navigation;
 
 
+
+var AuthActions = require('./actions/AuthActions');
+var NodeActions = require('./actions/NodeActions');
+var UserActions = require('./actions/UserActions');
+
+var DirectoryActions = require('./actions/DirectoryActions');
+var NavigationActions = require('./actions/NavigationActions');
+var UploadActions = require('./actions/UploadActions');
+
+var GetUsersService = require('./services/users/GetUsersService').subscribe(UserActions.getUsers);
+var LoginService = require('./services/users/LoginService').subscribe(AuthActions.login);
+var NodeCrudService = require('./services/content/NodeCrudService').subscribe(NodeActions.getNode, NodeActions.createNode, NodeActions.updateNode, NodeActions.deleteNode);
+
+var ContentStore = require('./stores/ContentStore').init();
+var PreferenceStore = require('./stores/PreferenceStore').init();
+var DirectoryStore = require('./stores/DirectoryStore').init();
+var FileStore = require('./stores/FileStore').init();
+var SearchStore = require('./stores/SearchStore').init();
+var UploadStore = require('./stores/UploadStore').init();
+var UserStore = require('./stores/UserStore').init();
+
+
 //load compiled jsx
 var Home = require('./modules/home/Home');
 var LoginView = require('./modules/login/LoginView');
@@ -32,6 +54,8 @@ var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
 var PhotoEditView = require('./modules/photoEdit/PhotoEditView');
 var UploadsView = require('./modules/uploads/UploadsView');
 
+
+
 //@Deprecated
 var App = React.createClass({
     render: function () {
@@ -42,8 +66,6 @@ var App = React.createClass({
         );
     }
 });
-
-
 
 
 var routes = [

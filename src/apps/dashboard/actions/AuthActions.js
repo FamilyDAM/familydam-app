@@ -20,14 +20,18 @@ var Rx = require('rx');
 
 module.exports = {
 
+    saveToken: new Rx.Subject(),
+
+    login: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+
+
     /**
      * Clear Auth cache & redirect a user back to login, from anywhere in the code.
      * @param observer
      * @returns {*}
      */
-    loginRedirect: function () {
-        //todo
-    }
+    loginRedirect: new Rx.Subject()
+
 
 };
 

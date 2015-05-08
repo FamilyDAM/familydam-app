@@ -22,6 +22,12 @@ var Rx = require('rx');
 
 
 module.exports = {
+
+    init: function() {
+        console.log("{PreferenceStore}.init()");
+    },
+
+
     // Logged in user
     _baseUrl : "http://localhost:9000",
 

@@ -334,12 +334,11 @@ module.exports = React.createClass({
 
                                 <div className="col-sm-12 col-md-6">
 
-                                {this.state.gps != undefined ?
                                     <div>
                                         <ExifMap gps={this.state.gps} />
                                         <hr style={{'marginTop': '15px', 'marginBottom': '15px'}}/>
                                     </div>
-                                    : ''}
+
 
                                     <ExifData exif={this.state.photo['dam:metadata']}/>
 

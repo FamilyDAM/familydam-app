@@ -21,35 +21,41 @@ var Rx = require('rx');
 //di              = require('di');
 
 // Logged in user
-var PreferenceStore = require("./PreferenceStore");
+var UserActions = require("./../actions/UserActions");
+var AuthActions = require("./../actions/AuthActions");
+var PreferenceStore = require("./../stores/PreferenceStore");
 
 
 module.exports = {
 
-    _token : undefined,
-    _user : {"token" : ""},
+    token: undefined,
+    users: undefined,
+    currentUser: undefined,
 
-    getToken: function () {
-        if( this._token !== undefined )
-        {
-            return this._token;
-        }else{
-            return localStorage.getItem("token");
-        }
-    },
-    setToken: function (token_) {
-        this._token = token_;
-        localStorage.setItem("token", token_);
-    },
+    init: function () {
+        console.log("{UserStore}.init()");
 
-    getUser: function () {
-        return this._user;
+        this.users = new Rx.BehaviorSubject({});
+        this.currentUser = new Rx.BehaviorSubject(undefined);
+        this.token = new Rx.BehaviorSubject(window.localStorage.getItem("token"));
+
+        UserActions.getUsers.sink.subscribe(this.setUsers.bind(this));
+        AuthActions.login.sink.subscribe(this.setCurrentUser.bind(this));
+        AuthActions.saveToken.subscribe(this.setToken.bind(this));
     },
 
-    setUser: function (user_) {
-        this._user = user_;
+    setToken: function (data_) {
+        this.token.onNext(data_);
+        localStorage.setItem("token", data_);
     },
 
+    setUsers: function (data_) {
+        this.users.onNext(data_);
+    },
+
+    setCurrentUser: function (data_) {
+        this.currentUser.onNext(data_);
+    },
 
     /**
      * Login a single user
@@ -57,6 +63,7 @@ module.exports = {
      * @param _password
      * @returns {*}
      */
+    /* deprectated */
     login: function (_username, _password) {
         var _this = this;
 
@@ -79,6 +86,7 @@ module.exports = {
      * Get a list of all users, for the login screen
      * @returns {*}
      */
+    /* deprectated */
     listUsers: function () {
 
         var listUserObservable = Rx.Observable.defer(function () {

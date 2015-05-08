@@ -16,24 +16,14 @@
  */
 
 'use strict';
+
 var Rx = require('rx');
 
 module.exports = {
 
-    /**
-     * TODO, figure out how to subscribe to this subject from inside the store, pull instead of push
-     */
-    // called after a user selects a file to upload    
-    addFileAction: new Rx.Subject(),
-    
-    // called when file is removed from upload list
-    removeFileAction: new Rx.Subject(),
-
-    // called when file has completed uploading
-    uploadCompleteFileAction: new Rx.Subject(),
-
-    // while a file is uploading it will throw multiple status messages during the process
-    fileStatusAction: new Rx.Subject()
+    getFiles: {'source':new Rx.Subject(),'sink':new Rx.Subject()}
 
 };
+
+
 

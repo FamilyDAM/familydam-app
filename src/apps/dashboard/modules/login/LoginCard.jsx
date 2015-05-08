@@ -21,6 +21,7 @@
 var React = require('react');
 var Navigation = require('react-router').Navigation;
 
+var AuthActions = require('./../../actions/AuthActions');
 var UserStore = require('./../../stores/UserStore');
 
 var LoginCard = React.createClass({
@@ -53,14 +54,19 @@ var LoginCard = React.createClass({
     handleSubmit: function(event)
     {
         var _this = this;
-        //todo: remove hard coded login and use form values
-        var stream = UserStore.login("admin", "admin").subscribe(function(authenticatedUser_){
-            // cache the user in a global store
-            UserStore.setUser(authenticatedUser_);
+        var _username = "admin";
+        var _password = "admin";
 
+        AuthActions.login.source.onNext({'username':_username, 'password':_password});
+
+        UserStore.currentUser.subscribe(function(data_){
             // redirect to dashboard
-            _this.transitionTo("dashboard");
+            if( data_ !== undefined )
+            {
+                _this.transitionTo("dashboard");
+            }
         });
+
     },
 
     /**
