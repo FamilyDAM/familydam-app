@@ -40,8 +40,11 @@ var DirectoryActions = require('../../actions/DirectoryActions');
 var NavigationActions = require('../../actions/NavigationActions');
 
 var FileStore = require('./../../stores/FileStore');
+var DirectoryStore = require('./../../stores/DirectoryStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
+
+
 
 
 var FilesView = React.createClass({
@@ -51,18 +54,15 @@ var FilesView = React.createClass({
     getInitialState: function(){
         return {
             files:[],
-            selectedItem: undefined };
+            selectedItem: undefined
+        };
     },
 
 
 
     componentWillMount:function(){
         //console.log("{FilesView} componentWillMount");
-        console.dir( DirectoryActions.selectFolder );
-        console.dir( FileActions.getFiles );
-        console.dir( this.state );
 
-        //todo: make path dynamic
         var _this = this;
         this.state.path = "/dam:files/";
 
@@ -83,8 +83,22 @@ var FilesView = React.createClass({
 
         // rx callbacks
         FileStore.files.subscribe(function(data_){
+            debugger;
             _this.state.files = data_;
             if (_this.isMounted())  _this.forceUpdate();
+        });
+
+
+        // listen for trigger to reload for files in directory
+        FileActions.refreshFiles.subscribe(function(data_){
+            debugger;
+            FileActions.getFiles.source.onNext( undefined );
+            FileActions.getFiles.source.onNext( _this.state.path );
+        });
+
+        // Refresh the file list when someone changes the directory
+        DirectoryActions.selectFolder.subscribe(function(data_){
+            FileActions.getFiles.source.onNext(data_.path);
         });
     },
 
@@ -99,7 +113,7 @@ var FilesView = React.createClass({
         this.setState({'path':_path, 'files':[]});
 
         // save current dir
-        DirectoryActions.selectFolder.onNext(_path);
+        DirectoryActions.selectFolder.onNext({'path':_path});
         // load files
         FileActions.getFiles.source.onNext(_path);
     },
@@ -110,14 +124,11 @@ var FilesView = React.createClass({
         // get path from element in the list
         var _path =  $("[data-reactid='" + component + "']").attr("data-path");
 
-        this.transitionTo('files', {}, {'path':_path})
-        // upload local state, and reset list to prepare for new files
-        //this.setState({'path':_path, 'files':[]});
+        if( _path !== undefined )
+        {
+            this.transitionTo('files', {}, {'path': _path})
+        }
 
-        // save current dir
-        //DirectoryActions.selectFolder.onNext(_path);
-        // load files
-        //FileActions.getFiles.source.onNext(_path);
     },
     
     
@@ -140,38 +151,15 @@ var FilesView = React.createClass({
     handleNodeDelete: function(event, component)
     {
         var _this = this;
+        event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
         
         var _id = $("[data-reactid='" + component + "']").attr("data-id");
         var _path = $("[data-reactid='" + component + "']").attr("data-path");
 
-        //NodeActions.deleteNode.source.onNext(_id);
+        NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
 
-        //register as a listener so we can cut out the file that was deleted
-        /** deprecated?
-        NodeActions.deleteNode.sink.subscribe(function(results_){
-            console.log("** delete by by id **** ")
-            console.dir(results_);
-
-            for (var i = 0; i < _this.state.files.length; i++)
-            {
-                var obj = _this[i];
-                var _id = _this.state.files[i].id;
-                if( _id == results_ )
-                {
-                    _this.state.files.splice(i, 1);
-                    _this.forceUpdate();
-                    break;
-                }
-            }
-        });
-         **/
     },
-
-    back: function(){
-        history.go("-1");
-    },
-
 
     render: function() {
 
@@ -254,17 +242,6 @@ var FilesView = React.createClass({
         });
 
 
-        var _firstFile = [_this.state.files[0]];
-        var backFolder =  <tr key="up" onClick={this.back}>
-                            <td>
-                                <img src="assets/icons/ic_folder_48px.svg"
-                                     style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
-                            </td>
-                            <td className="fileName"
-                                style={{'verticalAlign':'middle', 'cursor': 'pointer'}}>...
-                            </td>
-                        </tr>;
-
 
 
 
@@ -290,7 +267,7 @@ var FilesView = React.createClass({
                                 </tr>
                             </thead>
                             <tbody>
-                                {backFolder}
+                                <BackButton/>
 
                                 {folders}
 
@@ -311,3 +288,26 @@ var FilesView = React.createClass({
 });
 
 module.exports = FilesView;
+
+
+
+
+var BackButton = React.createClass({
+
+    back: function(){
+        history.go("-1");
+    },
+
+    render:function(){
+        return <tr key="up" onClick={this.back}>
+            <td>
+                <img src="assets/icons/ic_folder_48px.svg"
+                     style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
+            </td>
+            <td className="fileName"
+                style={{'verticalAlign':'middle', 'cursor': 'pointer'}}>...
+            </td>
+        </tr>;
+    }
+
+});

@@ -23,11 +23,10 @@ var FileActions = require('./../actions/FileActions');
 
 module.exports = {
 
-    files: undefined,
+    files: new Rx.BehaviorSubject([]),
 
     init: function(){
         console.log("{FileStore} init()");
-        this.files = new Rx.BehaviorSubject([]);
 
         FileActions.getFiles.sink.subscribe(this.setFiles.bind(this));
     },
@@ -35,31 +34,6 @@ module.exports = {
     setFiles: function(data_){
         this.files.onNext(data_);
     }
-
-
-    /* deprectated
-    getFilesInDirectory: function(path_)
-    {
-        return Rx.Observable.defer(function () {
-            return $.ajax({
-                method: "get",
-                url: PreferenceStore.getBaseUrl() +"/api/files/",
-                data: {'path':path_},
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-        }).map(function(results_){
-            SearchStore.setResults(results_);
-            return results_;
-        });
-    }*/
 
 
 };

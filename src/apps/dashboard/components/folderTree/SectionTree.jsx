@@ -40,43 +40,46 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 
 var AddFolderModal = React.createClass({
 
-    
-    activeDir: "/dam:files/",
-
-
-    componentWillUnmount: function(){
-        if(this.directoryStore !== undefined ) this.directoryStore.dispose();
+    getInitialState: function(){
+        return {
+            'parent':"/dam:files/"
+        }
     },
+
+    componentWillMount: function(){
+        var _this = this;
+
+
+        // listen for the selected dir.
+        DirectoryStore.currentFolder.subscribe(function(data_){
+            _this.state.parent = data_;
+            if( _this.isMounted() ) _this.forceUpdate();
+        });
+
+
+        // listen for save complete, then hide
+        DirectoryActions.createFolder.sink.subscribe(function(data_){
+            _this.props.onRequestHide();
+        }, function(error_){
+            alert(error_.statusText);
+        });
+    },
+
 
 
     handleCreateFolder:function(event_){
         var _this = this;
 
-        this.directoryStore = DirectoryStore.createFolder(
-            _this.activeDir,
-            _this.refs.folderName.getDOMNode().value
-        ).subscribe(function(results_){
-            _this.props.onRequestHide();
-            DirectoryActions.refreshDirectories.onNext(true);
-        }, function(error_){
-            alert(error_.statusText);
-        })
+        var _parent = this.state.parent;
+        var _name = _this.refs.folderName.getDOMNode().value;
+        DirectoryActions.createFolder.source.onNext({'parent': _parent, 'name': _name})
 
     },
 
 
     render: function() {
 
-
-        if( this.props.dir != undefined ){
-            this.activeDir = this.props.dir;
-            if( this.activeDir.substr(this.activeDir.length-1) != "/" )
-            {
-                this.activeDir += "/";
-            }
-        };
-
-        var activeVisibleDir = this.activeDir;
+        var activeVisibleDir = this.state.parent.path;
         
         return (
             <Modal {...this.props} title="Add Folder" animation={false}>
@@ -118,8 +121,10 @@ var FolderTree = React.createClass({
             renderDepth:2,
             disabled:false,
             navigateToFiles:true,
-            sectionNavigateTo:undefined};
+            sectionNavigateTo:undefined
+        };
     },
+
 
     getInitialState: function(){
         return {
@@ -131,59 +136,49 @@ var FolderTree = React.createClass({
 
 
     componentDidMount: function(){
-        var _this = this;
-
         if( this.props.baseDir != null )
         {
-            this.directoryStore = DirectoryStore.getDirectories(_this.props.baseDir).subscribe(function (results_) {
-                console.log("get directories subscription");
-                if (_this.isMounted()){
-                    _this.setState({'folders': results_});
-                }
-                //_this.forceUpdate();
-            });
-
-
-            // When we get a refresh dir event (after new folder is created) reload the dir tree
-            this.directoryActions = DirectoryActions.refreshDirectories.subscribe(function (data_) {
-                DirectoryStore.getDirectories(_this.props.baseDir).subscribe(function (results_) {
-                    console.log("refresh directories subscription - ");
-                    console.dir(_this);
-                    console.dir(_this.isMounted());
-                    if (_this.isMounted()){
-                        _this.setState({'folders': results_});
-                    }
-                    //_this.forceUpdate();
-                });
-            });
+            this.refreshDirecories(this);
         }
     },
 
-    componentWillUnmount: function(){
-        if( this.directoryStore !== undefined )this.directoryStore.dispose();
-        if( this.directoryActions !== undefined )this.directoryActions.dispose();
+
+
+    refreshDirecories: function() {
+        var _this = this;
+
+        // trigger a directory reload
+        this.directoryStore = DirectoryActions.getDirectories.source.onNext(_this.props.baseDir);
+
+        // listen for trigger to reload for files in directory
+        DirectoryActions.refreshDirectories.subscribe(function(data_){
+            debugger;
+            DirectoryActions.getDirectories.source.onNext( undefined );
+            DirectoryActions.getDirectories.source.onNext( _this.props.baseDir );
+        });
+
+        //Listen for directory changes
+        DirectoryStore.directories.subscribe(function (data_) {
+            _this.state.folders = data_;
+            if (_this.isMounted()) _this.forceUpdate();
+        });
     },
+
 
     handleSelectDir: function(folder_, a1_, a2_){
         //console.log("{handle select dir}");
-        //console.dir(folder_);
+        console.dir(folder_);
         if( this.isMounted() ) this.setState( {'activeFolder': folder_} );
 
         
         // send event that has will be picked up by the FilesView
         DirectoryActions.selectFolder.onNext(folder_);
-        
-        if( this.props.navigateToFiles )
-        {
-            //this.transitionTo(this.props.section, {}, {'path': folder_.path});
-        }
+
     },
     
 
     handleAddFolder: function(){
-        var _af = this.state.activeFolder;
-        //_af.children.push("NEW_ITEM");
-        if( this.isMounted() ) this.setState({"activeFolder":_af, 'mode':'add_item'});
+
     },
     
     
@@ -221,30 +216,30 @@ var FolderTree = React.createClass({
         {
             return _folders.map(function(_f)  {
 
-                var _isParentPath = _this.isParentPath(_f.path, _this.state.activeFolder.path)
-                
-                var classes = addons.classSet({
-                    'has-children': ( (_f.children && _f.children.length > 0) ? true : false),
-                    'open': ( (expand_ || _isParentPath) ? true : false),
-                    'closed': ( (expand_ || _isParentPath) ? false : true),
-                    'selected': false /*todo*/
-                });
+                    var _isParentPath = _this.isParentPath(_f.path, _this.state.activeFolder.path)
 
-                var _boundClick = _this.handleSelectDir.bind(_this, _f);
+                    var classes = addons.classSet({
+                        'has-children': ( (_f.children && _f.children.length > 0) ? true : false),
+                        'open': ( (expand_ || _isParentPath) ? true : false),
+                        'closed': ( (expand_ || _isParentPath) ? false : true),
+                        'selected': false /*todo*/
+                    });
+
+                    var _boundClick = _this.handleSelectDir.bind(_this, _f);
 
                     return <ListGroupItem key={_f.path} className={classes}>
-                        <div className="folderItem"
-                             style={{'cursor': 'pointer'}}
-                             className={_this.state.activeFolder == _f ? 'folderItem active' : 'folderItem'}
-                             onClick={_boundClick}>
-                            <Glyphicon glyph="chevron-right"/>
-                            <strong style={{'paddingLeft': '3px'}}>{_f.name}</strong>
-                        </div>
-                        <ListGroup>
-                            {listItems(_f.children, false  )}
-                        </ListGroup>
+                                <div className="folderItem"
+                                     style={{'cursor': 'pointer'}}
+                                     className={_this.state.activeFolder == _f ? 'folderItem active' : 'folderItem'}
+                                     onClick={_boundClick}>
+                                    <Glyphicon glyph="chevron-right"/>
+                                    <strong style={{'paddingLeft': '3px'}}>{_f.name}</strong>
+                                </div>
+                                <ListGroup>
+                                    {listItems(_f.children, false  )}
+                                </ListGroup>
 
-                    </ListGroupItem>
+                            </ListGroupItem>
 
             })
 

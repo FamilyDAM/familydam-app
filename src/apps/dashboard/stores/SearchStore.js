@@ -26,19 +26,14 @@ var PreferenceStore = require("./PreferenceStore");
 
 module.exports = {
 
-    _results : [],
+    results : new Rx.BehaviorSubject([]),
 
     init: function() {
         console.log("{SearchStore}.init()");
-
     },
 
-
-    getResults : function() {
-        return this._results;
-    },
     setResults : function(val_) {
-        this._results = val_;
+        this.results.onNext(val_);
     },
 
 

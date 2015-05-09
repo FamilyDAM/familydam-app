@@ -17,6 +17,8 @@
 
 var Rx = require('rx');
 var AuthActions = require('../../actions/AuthActions');
+var FileActions = require('../../actions/FileActions');
+var DirectoryActions = require('../../actions/DirectoryActions');
 var UserStore = require('../../stores/UserStore');
 var PreferenceStore = require('../../stores/PreferenceStore');
 
@@ -101,6 +103,11 @@ module.exports = {
 
             _this.createSink.onNext(data_);
 
+            // refresh the overall directories list
+            DirectoryActions.refreshDirectories.onNext(true);
+            FileActions.refreshFiles.onNext(true);
+
+
             // update the token in memory (incase expire date changes)
             var _token = xhr_.getResponseHeader("X-Auth-Token");
             if( _token != null && _token !== undefined ){
@@ -138,6 +145,11 @@ module.exports = {
 
                 _this.updateSink.onNext(data_);
 
+                // refresh the overall directories list
+                DirectoryActions.refreshDirectories.onNext(true);
+                FileActions.refreshFiles.onNext(true);
+
+
                 // update the token in memory (incase expire date changes)
                 var _token = xhr_.getResponseHeader("X-Auth-Token");
                 if( _token != null && _token !== undefined ){
@@ -165,21 +177,25 @@ module.exports = {
             method: "delete",
             url: _url,
             headers: {
-                "X-Auth-Token":  UserStore.token.getValue()
+                "X-Auth-Token":  UserStore.token.value
             }
         }).then(function(data_, status_, xhr_){
 
-
             _this.deleteSink.onNext(data_);
+
+            //trigger refresh
+            FileActions.refreshFiles.onNext(true);
+            DirectoryActions.refreshDirectories.onNext(true);
 
             // update the token in memory (incase expire date changes)
             var _token = xhr_.getResponseHeader("X-Auth-Token");
             if( _token != null && _token !== undefined ){
                 AuthActions.saveToken.onNext(_token);
             }
-            return data_;
+
 
         }, function (xhr_, status_, errorThrown_){
+
             //send the error to the store (through the sink observer
             var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
             _this.sink.onError(_error);

@@ -23,21 +23,28 @@ var Rx = require('rx');
 
 module.exports = {
 
+    // Logged in user
+    _baseUrl : "http://localhost:9000",
+    _rootDirectory : "/dam:files/",
+    _documentRootDirectory : "/documents/",
+
+
     init: function() {
         console.log("{PreferenceStore}.init()");
     },
-
-
-    // Logged in user
-    _baseUrl : "http://localhost:9000",
 
     getBaseUrl: function () {
         return this._baseUrl;
     },
 
-    setBaseUrl: function (token_) {
-        this._baseUrl = token_;
-    }
+    getRootDirectory: function () {
+        return this._rootDirectory;
+    },
+
+    getDocumentRootDirectory: function () {
+        return this._rootDirectory +this._documentRootDirectory;
+    },
+
 
 };
 

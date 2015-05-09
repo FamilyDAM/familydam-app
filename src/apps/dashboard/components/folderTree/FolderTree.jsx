@@ -133,11 +133,12 @@ var FolderTree = React.createClass({
     },
 
     handleSelectDir: function(folder_){
-        //console.dir(folder_);
+        console.dir(folder_);
         if( this.isMounted() ) this.setState( {'activeFolder': folder_} );
 
         
         // send event that has will be picked up by the FilesView
+        debugger;
         DirectoryActions.selectFolder.onNext(folder_);
         
         if( this.props.navigateToFiles )

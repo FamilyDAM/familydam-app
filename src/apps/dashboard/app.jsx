@@ -20,21 +20,26 @@ window.Route = Route;
 window.Navigation = Navigation;
 
 
-
+// register the different Actions
 var AuthActions = require('./actions/AuthActions');
 var NodeActions = require('./actions/NodeActions');
 var UserActions = require('./actions/UserActions');
 var FileActions = require('./actions/FileActions');
-
 var DirectoryActions = require('./actions/DirectoryActions');
 var NavigationActions = require('./actions/NavigationActions');
 var UploadActions = require('./actions/UploadActions');
 
+
+// register the different services
 var GetUsersService = require('./services/users/GetUsersService').subscribe(UserActions.getUsers);
 var LoginService = require('./services/users/LoginService').subscribe(AuthActions.login);
 var NodeCrudService = require('./services/content/NodeCrudService').subscribe(NodeActions.getNode, NodeActions.createNode, NodeActions.updateNode, NodeActions.deleteNode);
 var GetFilesService = require('./services/files/GetFilesService').subscribe(FileActions.getFiles);
+var GetDirectoriesService = require('./services/files/GetDirectoriesService').subscribe(DirectoryActions.getDirectories);
+var CreateDirectoriesService = require('./services/files/CreateDirectoryService').subscribe(DirectoryActions.createFolder);
 
+
+// Initialize the stores
 var ContentStore = require('./stores/ContentStore').init();
 var PreferenceStore = require('./stores/PreferenceStore').init();
 var DirectoryStore = require('./stores/DirectoryStore').init();
@@ -44,7 +49,7 @@ var UploadStore = require('./stores/UploadStore').init();
 var UserStore = require('./stores/UserStore').init();
 
 
-//load compiled jsx
+//load compiled jsx views
 var Home = require('./modules/home/Home');
 var LoginView = require('./modules/login/LoginView');
 var SignupView = require('./modules/signup/SignupView');
@@ -59,6 +64,7 @@ var UploadsView = require('./modules/uploads/UploadsView');
 
 
 //@Deprecated
+/**
 var App = React.createClass({
     render: function () {
         return (
@@ -68,6 +74,7 @@ var App = React.createClass({
         );
     }
 });
+**/
 
 
 var routes = [

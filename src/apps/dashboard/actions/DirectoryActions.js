@@ -20,17 +20,30 @@ var Rx = require('rx');
 module.exports = {
 
 
+    /**
+     * Get all of the directories under a root
+     */
     getDirectories: {'source':new Rx.Subject(),'sink':new Rx.Subject()},
 
     
     /**
-     * Store selectedFolder as a simple property (subject) in the store.
-     * TODO, figure out how to subscribe to this subject from inside the store, pull instead of push
+     * Tell views to reload the directories they are watching
      */
-    selectFolder: new Rx.Subject(),//.filter(function(d_){return true;}).subscribe(DirectoryStore.getLastSelectedFolder),
+    refreshDirectories: new Rx.Subject(),
+
+    /**
+     * Store selectedFolder as a simple property (subject) in the store.
+     */
+    selectFolder: new Rx.Subject(),
 
 
-    //todo move
+    /**
+     * Create new folder
+     */
+    createFolder: {'source':new Rx.Subject(), 'sink': new Rx.Subject()},
+
+
+    //todo: what's this?
     uploadCompleteFileAction: new Rx.Subject()
 };
 

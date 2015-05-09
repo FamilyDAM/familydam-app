@@ -16,10 +16,8 @@
  */
 
 var Rx = require('rx');
-
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserStore = require('../../stores/UserStore');
-
 var AuthActions = require('../../actions/AuthActions');
 
 
@@ -36,7 +34,7 @@ module.exports = {
     subscribe : function(action_){
         console.log("{GetFiles Service} subscribe");
         this.sink = action_.sink;
-        action_.source.distinctUntilChanged().subscribe(this.getFiles.bind(this));
+        action_.source.distinctUntilChanged().subscribe(this.getDirectories.bind(this));
     },
 
     /**
@@ -44,40 +42,39 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    getFiles: function(path_)
+    getDirectories: function(path_)
     {
-        if( path_ !== undefined )
-        {
-            console.log("{GetFiles Service} getFiles()");
+        console.log("{GetDirectoryService} getDirectories()" );
 
-            var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/api/files/";
+        var _this = this;
+        var _url = PreferenceStore.getBaseUrl() +"/api/directory/";
 
-            return $.ajax({
-                'method': "get",
-                'url': _url,
-                'data': {'path': path_},
-                'headers': {
-                    'X-Auth-Token': UserStore.token.value
-                }
+        console.dir(UserStore.token.value);
 
-            }).then(function (data_, status_, xhr_) {
+        return $.ajax({
+            method: "get",
+            url: PreferenceStore.getBaseUrl() +"/api/directory/",
+            data: {'path':path_},
+            headers: {
+                "X-Auth-Token":  UserStore.token.value
+            }
+        }).then(function(data_, status_, xhr_){
 
-                console.log("{GetFiles Service} getFiles() success");
+            console.log("{GetDirectoriesService} getDirectories() success" );
 
-                _this.sink.onNext(data_);
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if (_token != null && _token !== undefined)
-                {
-                    AuthActions.saveToken.onNext(_token);
-                }
+            _this.sink.onNext(data_);
 
-            }, function (xhr_, textStatus_, errorThrown) {
+            var _token = xhr_.getResponseHeader("X-Auth-Token");
+            if( _token != null && _token !== undefined ){
+                AuthActions.saveToken.onNext(_token);
+            }
 
-                console.log("{GetFiles Service} getFiles() error");
-                _this.sink.setError(xhr_);
-            });
-        }
+        }, function(xhr_, textStatus_, errorThrown) {
+
+            console.log("{GetFiles Service} getFiles() error" );
+            _this.sink.setError(xhr_);
+        });
+
 
     }
 

@@ -28,14 +28,12 @@ var UserStore = require('./UserStore');
 
 module.exports = {
 
-    currentNode:undefined,
+    currentNode:new Rx.BehaviorSubject({}),
 
 
     init: function()
     {
         console.log("{ContentStore}.init()");
-
-        this.currentNode = new Rx.BehaviorSubject({});
 
     }
 

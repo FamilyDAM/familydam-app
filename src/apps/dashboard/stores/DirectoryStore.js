@@ -19,114 +19,41 @@
 
 var Rx = require('rx');
 var DirectoryActions = require('./../actions/DirectoryActions');
-var UserStore = require('./UserStore');
-var SearchStore = require('./SearchStore');
-var PreferenceStore = require('./PreferenceStore');
-//di = require('di');
 
 module.exports = {
 
     root: "/dam:files/",
 
+    /**
+     * List of directories
+     */
+    directories: new Rx.BehaviorSubject([]),
 
     /**
      * the last folder selected by a user in the sidebar folder tree.
      * A simple property, stored in a behavior subject.
      * Note: the value is pushed from the DirectoryAction
      */
-    getLastSelectedFolder: undefined,
-
+    currentFolder: new Rx.BehaviorSubject( {'path':"/dam:files/"} ),
 
 
     init: function() {
         console.log("{DirectoryStore}.init()");
 
-        this.getLastSelectedFolder = new Rx.BehaviorSubject( {'path':"/dam:files/"} );
+        DirectoryActions.selectFolder.subscribe( this.setCurrentFolder.bind(this) );
+        DirectoryActions.getDirectories.sink.subscribe( this.setDirectories.bind(this) );
+    },
+
+
+    setCurrentFolder: function(data_){
+        this.currentFolder.onNext(data_);
+    },
+
+    setDirectories: function(data_){
+        this.directories.onNext(data_);
     }
 
-
-    /* deprectated
-    createFolder:function(dir_, name_){
-        return Rx.Observable.defer(function () {
-            //todo
-            return $.ajax({
-                method: "post",
-                url: PreferenceStore.getBaseUrl() +"/api/directory/",
-                data: {'path':dir_, 'name':name_},
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-        });
-    },*/
-
-
-    
-    /**
-     * List all directories visible to a user
-     * @returns {*}
-     */
-    /* deprectated
-    getDirectories: function(rootPath_)
-    {
-        if( rootPath_ == undefined ){
-            rootPath_ = this.root;
-
-        }
-
-
-        return Rx.Observable.defer(function () {
-            return $.ajax({
-                method: "get",
-                url: PreferenceStore.getBaseUrl() +"/api/directory/",
-                data: {'path':rootPath_},
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-        });
-    }, */
-
-
-    /* deprectated
-    getFilesInDirectory: function(path_)
-    {
-        return Rx.Observable.defer(function () {
-            return $.ajax({
-                method: "get",
-                url: PreferenceStore.getBaseUrl() +"/api/files",
-                data: {'path':path_},
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-        }).map(function(results_){
-            SearchStore.setResults(results_);
-            return results_;
-        });
-    }
-     */
 
 };
-
-//di.annotate(AuthActions, new di.Inject());
 
 
