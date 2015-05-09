@@ -40,6 +40,8 @@ var DirectoryActions = require('../../actions/DirectoryActions');
 var NavigationActions = require('../../actions/NavigationActions');
 
 var FileStore = require('./../../stores/FileStore');
+var PreferenceStore = require('./../../stores/PreferenceStore');
+var UserStore = require('./../../stores/UserStore');
 
 
 var FilesView = React.createClass({
@@ -55,7 +57,7 @@ var FilesView = React.createClass({
 
 
     componentWillMount:function(){
-        console.log("{FilesView} componentWillMount");
+        //console.log("{FilesView} componentWillMount");
         console.dir( DirectoryActions.selectFolder );
         console.dir( FileActions.getFiles );
         console.dir( this.state );
@@ -74,6 +76,10 @@ var FilesView = React.createClass({
         // load files
         FileActions.getFiles.source.onNext(this.state.path);
 
+        // update the breadcrumb
+        var _pathData = {'label':'Files', 'navigateTo':"files", 'params':{}, 'level':1};
+        NavigationActions.currentPath.onNext( _pathData );
+
 
         // rx callbacks
         FileStore.files.subscribe(function(data_){
@@ -82,35 +88,36 @@ var FilesView = React.createClass({
         });
     },
 
-/**
-    componentDidMount: function()
-    {
-        // update the breadcrumb
-        var _pathData = {'label':'Files', 'navigateTo':"files", 'params':{}, 'level':1};
-        NavigationActions.currentPath.onNext( _pathData );
-    },
-
 
     componentWillReceiveProps:function(nextProps)
     {
-        this.state.path = nextProps.query.path;
+        //console.log("{FilesView} componentWillReceiveProps");
+
+        var _path = nextProps.query.path;
+
+        // upload local state, and reset list to prepare for new files
+        this.setState({'path':_path, 'files':[]});
+
         // save current dir
         DirectoryActions.selectFolder.onNext(_path);
         // load files
-        FileActions.getFiles.source.onNext(nextProps.query.path);
+        FileActions.getFiles.source.onNext(_path);
     },
-**/
+
 
     handleDirClick: function(event, component)
     {
+        // get path from element in the list
         var _path =  $("[data-reactid='" + component + "']").attr("data-path");
+
+        this.transitionTo('files', {}, {'path':_path})
+        // upload local state, and reset list to prepare for new files
+        //this.setState({'path':_path, 'files':[]});
 
         // save current dir
         //DirectoryActions.selectFolder.onNext(_path);
         // load files
-        //FileActions.getFiles.source.onNext(nextProps.query.path);
-
-        //this.transitionTo('files', {}, {'path':_path})
+        //FileActions.getFiles.source.onNext(_path);
     },
     
     
@@ -161,6 +168,10 @@ var FilesView = React.createClass({
          **/
     },
 
+    back: function(){
+        history.go("-1");
+    },
+
 
     render: function() {
 
@@ -178,8 +189,6 @@ var FilesView = React.createClass({
         };
 
 
-
-
         var folders = this.state.files
             .filter( function(_file){
                 return _file._class == "com.familydam.core.models.Directory";
@@ -190,7 +199,7 @@ var FilesView = React.createClass({
                             <img src="assets/icons/ic_folder_48px.svg"
                                  style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
                         </td>
-                        <td className="fileName" 
+                        <td className="fileName"
                             style={{'verticalAlign':'middle', 'cursor': 'pointer'}}>{_file.name}</td>
                         <td >
                             <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
@@ -205,6 +214,8 @@ var FilesView = React.createClass({
 
         });
 
+
+
         var files = this.state.files
             .filter( function(file_){
                 return file_._class == "com.familydam.core.models.File";
@@ -213,7 +224,7 @@ var FilesView = React.createClass({
                 return <tr key={_file.id}  data-id={_file.id}>
                         <td>
                             <Link to="photoDetails" params={{'id': _file.id}}>
-                            <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.getToken()}
+                            <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.token.value}
                                  style={{'width':'50px', 'height':'50px'}}/></Link>
                         </td>
                         <td className="fileName"><Link to="photoDetails" params={{'id': _file.id}}>{_file.name}</Link></td>
@@ -243,6 +254,20 @@ var FilesView = React.createClass({
         });
 
 
+        var _firstFile = [_this.state.files[0]];
+        var backFolder =  <tr key="up" onClick={this.back}>
+                            <td>
+                                <img src="assets/icons/ic_folder_48px.svg"
+                                     style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
+                            </td>
+                            <td className="fileName"
+                                style={{'verticalAlign':'middle', 'cursor': 'pointer'}}>...
+                            </td>
+                        </tr>;
+
+
+
+
         return (
             <div className="filesView container-fluid" >
                 <div  className="row">
@@ -259,14 +284,16 @@ var FilesView = React.createClass({
                         <Table responsive>
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th style={{width:"90%"}}>Name</th>
+                                    <th style={{'width':"64px"}}></th>
+                                    <th style={{'width':"90%"}}>Name</th>
                                     <th style={{"minWidth":"100px"}}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {backFolder}
+
                                 {folders}
-                                
+
                                 {files}
                             </tbody>
                         </Table>
