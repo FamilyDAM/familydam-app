@@ -54,17 +54,17 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    getNode: function(path_)
+    getNode: function(id_)
     {
         var _this = this;
-        var _url = PreferenceStore.getBaseUrl() +path_;
+        var _url = PreferenceStore.getBaseUrl() +"/api/data/" +id_;
 
 
         return $.ajax({
             method: "get",
             url: _url,
             headers: {
-                "X-Auth-Token":  UserStore.token.getValue()
+                "X-Auth-Token":  UserStore.token.value
             }
         }).then(function(data_, status_, xhr_){
 
@@ -97,7 +97,7 @@ module.exports = {
             type: 'json',
             contentType: "application/json",
             headers: {
-                "X-Auth-Token":  UserStore.token.getValue()
+                "X-Auth-Token":  UserStore.token.value
             }
         }).then(function(data_, status_, xhr_){
 
@@ -138,7 +138,7 @@ module.exports = {
                 type: 'json',
                 contentType: "application/json",
                 headers: {
-                    "X-Auth-Token":  UserStore.token.getValue()
+                    "X-Auth-Token":  UserStore.token.value
                 }
             }).then(function(data_, status_, xhr_){
 

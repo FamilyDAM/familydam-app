@@ -16,7 +16,6 @@
  */
 
 /** @jsx React.DOM */
-// Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
 var Router = require('react-router');
@@ -35,10 +34,12 @@ var ExifMap = require('./../../components/exifMap/ExifMap');
 var ExifData = require('./../../components/exifData/ExifData');
 
 var FolderTree = require('../../components/folderTree/FolderTree');
+
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
-var ContentStore = require('./../../stores/ContentStore');
+
+var NodeActions = require('./../../actions/NodeActions');
 
 
 module.exports = React.createClass({
@@ -89,7 +90,13 @@ module.exports = React.createClass({
     load: function(id_) {
 
         var _this = this;
-        ContentStore.getNodeById(id_).subscribe(function (results) {
+
+        //load the data
+        NodeActions.getNode.source.onNext(id_);
+
+        // list for results
+        NodeActions.getNode.sink.subscribe(function (results) {
+            debugger;
             // set defaults for missing props
             if (results['dam:tags'] == undefined)
             {
@@ -101,7 +108,7 @@ module.exports = React.createClass({
             }
 
             // set some local props for easier rendering
-            var imagePath = PreferenceStore.getBaseUrl() + results['jcr:path'] + "?token=" + UserStore.getToken() + "&rendition=web.1024";
+            var imagePath = PreferenceStore.getBaseUrl() + results['jcr:path'] + "?token=" + UserStore.token.value + "&rendition=web.1024";
             var rating = results['dam:rating'] ? results['dam:rating'] : 0;
             var datetaken = results['jcr:created'];
 
@@ -122,7 +129,7 @@ module.exports = React.createClass({
 
 
             // Find the NEXT and PREV image
-            var currentSearchResults = SearchStore.getResults();
+            var currentSearchResults = SearchStore.results.value;
             // find index, previous item, and next item
             var _prevId = undefined;
             var _nextId = undefined;
@@ -148,7 +155,7 @@ module.exports = React.createClass({
 
             if( _this.isMounted() )
             {
-                var _location = PreferenceStore.getBaseUrl() +"/api/files/" +results['jcr:uuid'] +"?token=" +UserStore.getToken()
+                var _location = PreferenceStore.getBaseUrl() +"/api/files/" +results['jcr:uuid'] +"?token=" +UserStore.token.value;
 
 
                 _this.setState({
@@ -172,7 +179,10 @@ module.exports = React.createClass({
 
     save: function () {
 
-        var _id = this.state.photo['jcr:uuid']
+        var _id = this.state.photo['jcr:uuid'];
+
+        NodeActions.updateNode.source.onNext(_id);
+        /**
         ContentStore.updateNodeById(_id, this.state.photo).subscribe(
             function (results) {
                 //reload the updated object
@@ -180,7 +190,7 @@ module.exports = React.createClass({
             }, function(err_){
                 alert(err_.status +":" +err_.statusText +"\n" +err_.responseText);
             });
-
+        **/
     },
 
 
