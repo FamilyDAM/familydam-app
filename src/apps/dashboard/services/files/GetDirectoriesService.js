@@ -19,6 +19,7 @@ var Rx = require('rx');
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserStore = require('../../stores/UserStore');
 var AuthActions = require('../../actions/AuthActions');
+var DirectoryActions = require('../../actions/DirectoryActions');
 
 
 
@@ -31,10 +32,10 @@ module.exports = {
 
     sink:undefined,
 
-    subscribe : function(action_){
+    subscribe : function(){
         console.log("{GetFiles Service} subscribe");
-        this.sink = action_.sink;
-        action_.source.distinctUntilChanged().subscribe(this.getDirectories.bind(this));
+        this.sink = DirectoryActions.getDirectories.sink;
+        DirectoryActions.getDirectories.source.distinctUntilChanged().subscribe(this.getDirectories.bind(this));
     },
 
     /**

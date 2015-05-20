@@ -18,7 +18,6 @@
 'use strict';
 
 var Rx = require('rx');
-//di              = require('di');
 
 // Logged in user
 var UserActions = require("./../actions/UserActions");
@@ -32,8 +31,8 @@ module.exports = {
     users: undefined,
     currentUser: undefined,
 
-    init: function () {
-        console.log("{UserStore}.init()");
+    subscribe: function () {
+        console.log("{UserStore}.subscribe()");
 
         this.users = new Rx.BehaviorSubject({});
         this.currentUser = new Rx.BehaviorSubject(undefined);
@@ -63,7 +62,7 @@ module.exports = {
      * @param _password
      * @returns {*}
      */
-    /* deprectated */
+    /* deprectated
     login: function (_username, _password) {
         var _this = this;
 
@@ -80,13 +79,13 @@ module.exports = {
                     return data_;
                 });
         });
-    },
+    }, */
 
     /**
      * Get a list of all users, for the login screen
      * @returns {*}
      */
-    /* deprectated */
+    /* deprectated
     listUsers: function () {
 
         var listUserObservable = Rx.Observable.defer(function () {
@@ -101,10 +100,7 @@ module.exports = {
         });
         return listUserObservable;
 
-    }
+    }*/
 
 };
-
-//di.annotate(AuthActions, new di.Inject());
-
 

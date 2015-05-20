@@ -31,22 +31,23 @@ var UploadActions = require('./actions/UploadActions');
 
 
 // register the different services
-var GetUsersService = require('./services/users/GetUsersService').subscribe(UserActions.getUsers);
-var LoginService = require('./services/users/LoginService').subscribe(AuthActions.login);
-var NodeCrudService = require('./services/content/NodeCrudService').subscribe(NodeActions.getNode, NodeActions.createNode, NodeActions.updateNode, NodeActions.deleteNode);
-var GetFilesService = require('./services/files/GetFilesService').subscribe(FileActions.getFiles);
-var GetDirectoriesService = require('./services/files/GetDirectoriesService').subscribe(DirectoryActions.getDirectories);
-var CreateDirectoriesService = require('./services/files/CreateDirectoryService').subscribe(DirectoryActions.createFolder);
+var GetUsersService = require('./services/users/GetUsersService').subscribe();
+var LoginService = require('./services/users/LoginService').subscribe();
+var NodeCrudService = require('./services/content/NodeCrudService').subscribe();
+var GetFilesService = require('./services/files/GetFilesService').subscribe();
+var GetDirectoriesService = require('./services/files/GetDirectoriesService').subscribe();
+var CreateDirectoriesService = require('./services/files/CreateDirectoryService').subscribe();
+var UploadFileService = require('./services/upload/UploadFileService').subscribe();
 
 
 // Initialize the stores
-var ContentStore = require('./stores/ContentStore').init();
-var PreferenceStore = require('./stores/PreferenceStore').init();
-var DirectoryStore = require('./stores/DirectoryStore').init();
-var FileStore = require('./stores/FileStore').init();
-var SearchStore = require('./stores/SearchStore').init();
-var UploadStore = require('./stores/UploadStore').init();
-var UserStore = require('./stores/UserStore').init();
+var ContentStore = require('./stores/ContentStore').subscribe();
+var PreferenceStore = require('./stores/PreferenceStore').subscribe();
+var DirectoryStore = require('./stores/DirectoryStore').subscribe();
+var FileStore = require('./stores/FileStore').subscribe();
+var SearchStore = require('./stores/SearchStore').subscribe();
+var UploadStore = require('./stores/UploadStore').subscribe();
+var UserStore = require('./stores/UserStore').subscribe();
 
 
 //load compiled jsx views
@@ -62,19 +63,6 @@ var PhotoEditView = require('./modules/photoEdit/PhotoEditView');
 var UploadsView = require('./modules/uploads/UploadsView');
 
 
-
-//@Deprecated
-/**
-var App = React.createClass({
-    render: function () {
-        return (
-            <div className="container-fluid">
-                <RouteHandler {...this.props}/>
-            </div>
-        );
-    }
-});
-**/
 
 
 var routes = [

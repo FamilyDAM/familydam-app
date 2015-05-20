@@ -49,6 +49,7 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {
             'photo': {}
+            , datetaken: 'Date Unknown'
             , location: ""
             , prevId:undefined
             , nextId:undefined
@@ -96,7 +97,6 @@ module.exports = React.createClass({
 
         // list for results
         NodeActions.getNode.sink.subscribe(function (results) {
-            debugger;
             // set defaults for missing props
             if (results['dam:tags'] == undefined)
             {
@@ -153,22 +153,26 @@ module.exports = React.createClass({
 
 
 
-            if( _this.isMounted() )
-            {
+
                 var _location = PreferenceStore.getBaseUrl() +"/api/files/" +results['jcr:uuid'] +"?token=" +UserStore.token.value;
 
+                var _datetaken = moment(datetaken, "YYYYMMDD HH:mm:ss").format("LLL");
+                if( _datetaken == "Invalid date" ){
+                    _datetaken = datetaken;
+                }
 
-                _this.setState({
+                _this.state = {
                     'photo': results,
                     'location': _location,
                     'imagePath': imagePath,
                     'rating': rating,
-                    'datetaken': datetaken,
+                    'datetaken': _datetaken,
                     'gps': gps,
                     'prevId': _prevId,
                     'nextId': _nextId
-                });
-            }
+                };
+
+            if( _this.isMounted() ) _this.forceUpdate();
 
         }, function (error) {
             console.dir(error);
@@ -239,8 +243,6 @@ module.exports = React.createClass({
 
     render: function () {
 
-        var _dtStamp = moment(this.state.datetaken, "YYYYMMDD HH:mm:ss").format("LLL");
-
         return (
             <div className="photoDetailsView container">
 
@@ -299,7 +301,7 @@ module.exports = React.createClass({
                                 </div>
 
                                 <div className="col-sm-6">
-                                    <span style={{'fontSize': '24px'}}>{_dtStamp}</span>
+                                    <span style={{'fontSize': '24px'}}> {this.state.datetaken} </span>
 
                                     <br/>
 

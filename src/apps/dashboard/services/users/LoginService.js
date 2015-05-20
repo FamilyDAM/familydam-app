@@ -47,10 +47,10 @@ module.exports = {
 
     sink:undefined,
 
-    subscribe : function(action_){
+    subscribe : function(){
         console.log("{Login Service} subscribe");
-        this.sink = action_.sink;
-        action_.source.subscribe(this.login.bind(this));
+        this.sink = AuthActions.login.sink;
+        AuthActions.login.source.subscribe(this.login.bind(this));
     },
 
     /**

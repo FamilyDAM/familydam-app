@@ -138,7 +138,6 @@ var FolderTree = React.createClass({
 
         
         // send event that has will be picked up by the FilesView
-        debugger;
         DirectoryActions.selectFolder.onNext(folder_);
         
         if( this.props.navigateToFiles )

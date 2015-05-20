@@ -19,6 +19,7 @@ var Rx = require('rx');
 var AuthActions = require('../../actions/AuthActions');
 var FileActions = require('../../actions/FileActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
+var NodeActions = require('../../actions/NodeActions');
 var UserStore = require('../../stores/UserStore');
 var PreferenceStore = require('../../stores/PreferenceStore');
 
@@ -36,17 +37,18 @@ module.exports = {
     updateSink:undefined,
     deleteSink:undefined,
 
-    subscribe : function(getAction_, createAction_, updateAction_, deleteAction_){
+    subscribe : function(){
         console.log("{Node CRUD Service} subscribe");
-        this.getSink = getAction_.sink;
-        this.createSink = createAction_.sink;
-        this.updateSink = updateAction_.sink;
-        this.deleteSink = deleteAction_.sink;
 
-        getAction_.source.subscribe(this.getNode.bind(this));
-        createAction_.source.subscribe(this.createNode.bind(this));
-        updateAction_.source.subscribe(this.updateNode.bind(this));
-        deleteAction_.source.subscribe(this.deleteNode.bind(this));
+        this.getSink = NodeActions.getNode.sink;
+        this.createSink = NodeActions.createNode.sink;
+        this.updateSink = NodeActions.updateNode.sink;
+        this.deleteSink = NodeActions.deleteNode.sink;
+
+        NodeActions.getNode.source.subscribe(this.getNode.bind(this));
+        NodeActions.createNode.source.subscribe(this.createNode.bind(this));
+        NodeActions.updateNode.source.subscribe(this.updateNode.bind(this));
+        NodeActions.deleteNode.source.subscribe(this.deleteNode.bind(this));
     },
 
     /**

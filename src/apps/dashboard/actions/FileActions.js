@@ -21,13 +21,19 @@ var Rx = require('rx');
 
 module.exports = {
 
-    getFiles: {'source':new Rx.Subject(),'sink':new Rx.Subject()},
-
 
     /**
      * Tell views to reload the files they are watching
      */
-    refreshFiles: new Rx.Subject()
+    refreshFiles: new Rx.Subject(),
+
+
+    /**
+     * Call the server to load the file list
+     */
+    getFiles: {'source':new Rx.Subject(),'sink':new Rx.Subject()}
+
+
 };
 
 

@@ -83,7 +83,7 @@ var FilesView = React.createClass({
 
         // rx callbacks
         FileStore.files.subscribe(function(data_){
-            debugger;
+
             _this.state.files = data_;
             if (_this.isMounted())  _this.forceUpdate();
         });
@@ -91,7 +91,6 @@ var FilesView = React.createClass({
 
         // listen for trigger to reload for files in directory
         FileActions.refreshFiles.subscribe(function(data_){
-            debugger;
             FileActions.getFiles.source.onNext( undefined );
             FileActions.getFiles.source.onNext( _this.state.path );
         });

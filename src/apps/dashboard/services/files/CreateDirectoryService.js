@@ -33,10 +33,10 @@ module.exports = {
 
     sink:undefined,
 
-    subscribe : function(action_){
+    subscribe : function(){
         console.log("{GetFiles Service} subscribe");
-        this.sink = action_.sink;
-        action_.source.distinctUntilChanged().subscribe(this.createDirectory.bind(this));
+        this.sink = DirectoryActions.createFolder.sink;
+        DirectoryActions.createFolder.source.distinctUntilChanged().subscribe(this.createDirectory.bind(this));
     },
 
     /**

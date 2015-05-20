@@ -16,25 +16,26 @@
  */
 
 var Rx = require('rx');
-//di              = require('di');
 
 module.exports = {
 
     saveToken: new Rx.Subject(),
-
-    login: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
-
 
     /**
      * Clear Auth cache & redirect a user back to login, from anywhere in the code.
      * @param observer
      * @returns {*}
      */
-    loginRedirect: new Rx.Subject()
+    loginRedirect: new Rx.Subject(),
+
+
+    /**
+     * Call service to login the user
+     */
+    login: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
+
 
 
 };
-
-//di.annotate(AuthActions, new di.Inject());
 
 

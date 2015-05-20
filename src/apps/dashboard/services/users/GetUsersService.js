@@ -17,6 +17,7 @@
 
 var Rx = require('rx');
 var PreferenceStore = require('../../stores/PreferenceStore');
+var UserActions = require('../../actions/UserActions');
 
 
 
@@ -29,10 +30,10 @@ module.exports = {
 
     sink:undefined,
 
-    subscribe : function(action_){
+    subscribe : function(){
         console.log("{GetUsers Service} subscribe");
-        this.sink = action_.sink;
-        action_.source.subscribe(this.getUsers.bind(this));
+        this.sink = UserActions.getUsers.sink;
+        UserActions.getUsers.source.subscribe(this.getUsers.bind(this));
     },
 
     /**

@@ -37,7 +37,7 @@ module.exports = {
     currentFolder: new Rx.BehaviorSubject( {'path':"/dam:files/"} ),
 
 
-    init: function() {
+    subscribe: function() {
         console.log("{DirectoryStore}.init()");
 
         DirectoryActions.selectFolder.subscribe( this.setCurrentFolder.bind(this) );

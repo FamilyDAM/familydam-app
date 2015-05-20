@@ -20,12 +20,7 @@ var Rx = require('rx');
 module.exports = {
 
 
-    /**
-     * Get all of the directories under a root
-     */
-    getDirectories: {'source':new Rx.Subject(),'sink':new Rx.Subject()},
 
-    
     /**
      * Tell views to reload the directories they are watching
      */
@@ -37,14 +32,21 @@ module.exports = {
     selectFolder: new Rx.Subject(),
 
 
+    //todo:document or remove
+    uploadCompleteFileAction: new Rx.Subject(),
+
+
+    /**
+     * Get all of the directories under a root
+     */
+    getDirectories: {'source':new Rx.Subject(),'sink':new Rx.Subject()},
+
+
     /**
      * Create new folder
      */
-    createFolder: {'source':new Rx.Subject(), 'sink': new Rx.Subject()},
+    createFolder: {'source':new Rx.Subject(), 'sink': new Rx.Subject()}
 
-
-    //todo: what's this?
-    uploadCompleteFileAction: new Rx.Subject()
 };
 
 //di.annotate(AuthActions, new di.Inject());

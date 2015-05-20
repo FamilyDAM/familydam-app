@@ -42,17 +42,12 @@ var FileUploadView = React.createClass({
 
     componentWillMount: function () {
         var _this = this;
-        UploadActions.addFileAction.subscribe(function (data_) {
-            if( _this.isMounted() )
-            {
-                _this.forceUpdate();
-            }
+
+        this.addFileSubscription = UploadActions.addFileAction.subscribe(function (data_) {
+            if( _this.isMounted() ) _this.forceUpdate();
         });
-        UploadActions.removeFileAction.subscribe(function (data_) {
-            if( _this.isMounted() )
-            {
-                _this.forceUpdate();
-            }
+        this.removeFileSubscription = UploadActions.removeFileAction.subscribe(function (data_) {
+            if( _this.isMounted() ) _this.forceUpdate();
         });
     },
 
@@ -61,18 +56,26 @@ var FileUploadView = React.createClass({
         //this.refs.folderInputField.getDOMNode().setAttribute("webkitdirectory", "");
         //this.refs.folderInputField.getDOMNode().setAttribute("directory", "");
     },
+    componentWillUnmount: function () {
+        if( this.addFileSubscription !== undefined ){
+            this.addFileSubscription.dispose();
+        }
+        if( this.removeFileSubscription !== undefined ){
+            this.removeFileSubscription.dispose();
+        }
+    },
 
 
     handleRemoveFile: function(item_, event_, component_){
         //console.dir(item_);
-        var _file = UploadStore.removeFile(item_);
-        this.forceUpdate();
+        UploadActions.removeFileAction.onNext(item_);
+
     },
     
     
-    handleUploadSingleFile: function(item_, event_, component_){
+    handleUploadSingleFile: function(file_, event_, component_){
         //console.dir(item_);
-        UploadStore.uploadSingleFile(item_);
+        UploadActions.uploadFileAction.source.onNext(file_);
     },
 
 

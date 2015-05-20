@@ -25,7 +25,7 @@ module.exports = {
 
     files: new Rx.BehaviorSubject([]),
 
-    init: function(){
+    subscribe: function(){
         console.log("{FileStore} init()");
 
         FileActions.getFiles.sink.subscribe(this.setFiles.bind(this));

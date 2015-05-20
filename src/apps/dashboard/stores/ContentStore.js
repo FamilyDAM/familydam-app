@@ -31,95 +31,13 @@ module.exports = {
     currentNode:new Rx.BehaviorSubject({}),
 
 
-    init: function()
+    subscribe: function()
     {
         console.log("{ContentStore}.init()");
 
     }
 
-    /**
-     * Return all of the data for a single node
-     * @param path
-     * @param successCallback
-     * @param errorCallback
-     * @returns Object
 
-    getNodeById: function( id )
-    {
-        var _searchPath = "/api/data/" +id;
-
-        return Rx.Observable.defer(function () {
-            return $.ajax({
-                method: "get",
-                url: PreferenceStore.getBaseUrl() +_searchPath,
-                data: {},
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-        });
-    },  */
-
-
-/**
-    updateNodeById:function(id_, data_){
-
-        var _data = JSON.stringify(data_);
-
-        return Rx.Observable.defer(function () {
-
-            return $.ajax({
-                method: "post",
-                data: _data,
-                processData: false,
-                url: PreferenceStore.getBaseUrl() +"/api/data/" +id_,
-                type: 'json',
-                contentType: "application/json",
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                // update the token in memory (incase expire date changes)
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-
-
-        });
-    },
-**/
-
-    /**
-    deleteNodeById:function(id_){
-        return Rx.Observable.defer(function () {
-            //todo
-            return $.ajax({
-                method: "delete",
-                url: PreferenceStore.getBaseUrl() +"/api/data/" +id_,
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-
-
-        });
-    },
-    **/
 };
 
 //di.annotate(AuthActions, new di.Inject());

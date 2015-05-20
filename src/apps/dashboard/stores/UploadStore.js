@@ -26,55 +26,19 @@ var UploadActions = require("./../actions/UploadActions");
 module.exports = {
 
     _files: [],
-    _folders: [],
+    folders: [],
 
 
-    init: function() {
+    subscribe: function() {
         console.log("{UploadStore}.init()");
+
+        UploadActions.addFileAction.subscribe(this.addFile.bind(this));
+        UploadActions.removeFileAction.subscribe(this.removeFile.bind(this));
+        UploadActions.removeAllFilesAction.subscribe(this.removeAllFiles.bind(this));
+        UploadActions.uploadAllFilesAction.subscribe(this.uploadAllFiles.bind(this));
+        UploadActions.uploadFileAction.sink.subscribe(this.handleFileUpload.bind(this), this.handleFileUploadError.bind(this));
     },
 
-
-    addFile: function (file_) {
-        console.dir(file_);
-        file_.status == "PENDING";
-
-        this._files.push(file_);
-        UploadActions.addFileAction.onNext(file_);
-    },
-
-
-    removeFile: function (file_) {
-        var _pos = this._files.indexOf(file_);
-        if (_pos > -1)
-        {
-            this._files.splice(_pos, 1);
-            UploadActions.removeFileAction.onNext(file_);
-        }
-        return file_;
-    },
-
-
-    addFolder: function (folder_) {
-        this._folders.push(folder_);
-    },
-
-
-    removeFolder: function (folder_) {
-        var _pos = this._folders.indexOf(folder_);
-        if (_pos > -1)
-        {
-            this._folders.splice(_pos, 1);
-        }
-    },
-
-
-    removeAll: function () {
-        console.log("{remove all}");
-        this._files = [];
-
-        //send no since it's not for a specific file
-        UploadActions.removeFileAction.onNext(null);
-    },
 
 
     getFiles: function () {
@@ -87,60 +51,28 @@ module.exports = {
     },
 
 
-    uploadSingleFile: function (dir_, file_) {
-        console.log("{upload single file}");
+    addFile: function (file_) {
         console.dir(file_);
+        file_.status == "PENDING";
 
-        var _this = this;
-        var _dir = dir_;
-        var _currentFile = file_;
-
-        //flip start flag
-        _currentFile.status = "UPLOADING";
-        UploadActions.fileStatusAction.onNext(file_);
-
-        // start upload
-        var _hasAccess = false;
-        var _checkAccess = _this.checkAccess(dir_, _currentFile.name)
-            .subscribe(function (result_) {
-                _hasAccess = result_.visible;
-
-                if (!_hasAccess)
-                {
-                    _this.uploadFile(_dir, file_).subscribe(
-                        function (uploadResult_) {
-
-                            for (var i = 0; i < _this._files.length; i++)
-                            {
-                                var obj = _this._files[i];
-                                if (obj.id == _currentFile.id)
-                                {
-                                    _this._files.splice(i, 1);
-                                    break;
-                                }
-                            }
-
-                            console.log("in subscribe");
-                            console.dir(uploadResult_)
-
-                            _currentFile.status = "COMPLETE";
-                            UploadActions.fileStatusAction.onNext(_currentFile);
-
-                            return uploadResult_;
-                        }, function (uploadError_) {
-                            _currentFile.status = "ERROR";
-                            UploadActions.fileStatusAction.onNext(_currentFile);
-
-                            console.log("in subscribe error");
-                            console.dir(uploadError_)
-
-                            return uploadError_;
-                        });
-                }
-            });
-
-
+        this._files.push(file_);
     },
+
+
+    removeFile: function (file_) {
+        var _pos = this._files.indexOf(file_);
+        if (_pos > -1)
+        {
+            this._files.splice(_pos, 1);
+        }
+        return file_;
+    },
+
+
+    removeAllFiles: function (file_) {
+        this._files = [];
+    },
+
 
 
     uploadAllFiles: function (dir_) {
@@ -148,104 +80,22 @@ module.exports = {
         console.log("{upload all}");
 
         this._files.forEach(function (file_) {
-            _this.uploadSingleFile(dir_, file_);
+            //_this.uploadSingleFile(dir_, file_);
+            UploadActions.uploadFileAction.source.onNext(file_);
         });
     },
 
 
-    /**
-     * Check to see if the file is accessible to the embedded server, so we can do a quick copy. Instead of upload.
-     * @param dir - passthrough for the next step in the sequence
-     * @param path
-     * @returns {HttpPromise}
-     */
-    /* deprectated */
-    checkAccess: function (dir_, path_) {
-        return Rx.Observable.defer(function () {
-            //todo
-            return $.ajax({
-                method: "post",
-                url: PreferenceStore.getBaseUrl() + "/api/import/info/",
-                data: {'dir': dir_, 'path': path_},
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-        });
-
+    handleFileUpload: function(file_){
+        UploadActions.removeFileAction.onNext(file_);
     },
 
-
-    /**
-     * Tell the embedded server to copy a local file, by path.
-     * @param dir
-     * @param path
-     */
-    /* deprectated */
-    copyLocalFile: function (dir, path_) {
-        return Rx.Observable.defer(function () {
-            //todo
-            return $.ajax({
-                method: "post",
-                url: PreferenceStore.getBaseUrl() + "/api/import/copy/",
-                data: {'dir': dir_, 'path': path_, 'recursive': true},
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken()
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-        });
-    },
-
-
-    /**
-     * The server can't access the file locally, or we are in a browser.
-     * So this method will do a regular AJAX file upload
-     * @param dir
-     * @param path
-     */
-    /* deprectated */
-    uploadFile: function (dir_, file_) {
-        return Rx.Observable.defer(function () {
-
-            var data = new FormData();
-            data.append("path", dir_);
-            data.append("file", file_);
-
-            return $.ajax({
-                url: PreferenceStore.getBaseUrl() + "/api/import/file/upload/?format=json",
-                type: 'POST',
-                data: data,
-                cache: false,
-                processData: false, // Don't process the files
-                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-                headers: {
-                    "X-Auth-Token":  UserStore.getToken(),
-                    Accept : "application/json; charset=utf-8"
-                }
-            }).then(function(data_, status_, xhr_){
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserStore.setToken(_token);
-                }
-                return data_;
-            });
-        });
+    handleFileUploadError: function(err_){
+        debugger;
     }
+
 
 };
 
-//di.annotate(AuthActions, new di.Inject());
 
 

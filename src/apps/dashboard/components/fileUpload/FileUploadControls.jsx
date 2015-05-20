@@ -20,6 +20,8 @@
 // Used in TodoApp
 var Rx = require('rx');
 var React = require('react');
+var UUID = require('uuid-js');
+var UploadActions = require("../../actions/UploadActions");
 var UploadStore = require("../../stores/UploadStore");
 var DirectoryStore = require("../../stores/DirectoryStore");
 var DirectoryActions = require("../../actions/DirectoryActions");
@@ -39,37 +41,40 @@ var FileUploadControls = React.createClass({
     },
 
     componentWillMount: function(){
-        
+        var _this = this;
+
+        this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(d_){
+            _this.state.uploadPath = d_.path;
+            _this.state.uploadPathFriendly = d_.path.replace("/dam:files/", "/home/");
+            if( _this.isMounted() ) _this.forceUpdate();
+        });
     },
     
     componentDidMount: function(){
         var _this = this;
-        DirectoryActions.selectFolder.subscribe(function(d_){
-            if( _this.isMounted() ) _this.setState( {"uploadPath": d_.path} );
-            if( _this.isMounted() ) _this.setState( {"uploadPathFriendly": d_.path.replace('/dam:files/', '/')} );
-        });
-        
-        
-        DirectoryActions.uploadCompleteFileAction.subscribe(function(file_){
-            console.log("** upload complete file action **");
-            console.dir(file_);
-            _this.forceUpdate();
-        });
-        
+
         //$(this.refs.fileInputField.getDOMNode()).fileinput(_options);
         //this.refs.folderInputField.getDOMNode().setAttribute("webkitdirectory", "");
         //this.refs.folderInputField.getDOMNode().setAttribute("directory", "");
     },
 
+    componentWillUnmount: function(){
+        if( this.currentFolderSubscription !== undefined ){
+            this.currentFolderSubscription.dispose();
+        }
+    },
+
     handleFileChange: function(event_){
-        console.dir(event_);
+        //console.dir(event_);
         var _files = event_.currentTarget.files;
-        console.dir(_files);
+        //console.dir(_files);
         
         var _this = this;
 
         Rx.Observable.from(_files).forEach(function(item_){
-            UploadStore.addFile(item_);
+            item_.uploadPath = _this.state.uploadPath;
+            item_.id = UUID.create().toString();
+            UploadActions.addFileAction.onNext(item_);
         })
         
         //save for later, dir check
@@ -78,26 +83,28 @@ var FileUploadControls = React.createClass({
     },
 
     handleUploadAllFiles:function(){
-        UploadStore.uploadAllFiles(this.state.uploadPath);
+        UploadActions.uploadAllFilesAction.onNext(true);
     },
 
 
     handleRemoveAll:function(){
-        UploadStore.removeAll();
+        UploadActions.removeAllFilesAction.onNext(true);
     },
 
-    
+
+    /**
+     * Use jquery to click a hiddle file input field
+     */
     clickFileInputField:function(){
         $(this.refs.fileInputField.getDOMNode()).click();
     },
-    
 
 
     render: function() {
         var _this = this;
 
-        var _fileList = UploadStore.getFiles();
-        var _uploadFolders = "/home/photos/mike/2015/02-12-2015";//DirectoryStore.getLastSelectedFolder().subscribe(function(d_){return d_;});
+        var _fileList = [];
+        var _uploadFolders = "--";//DirectoryStore.getLastSelectedFolder().subscribe(function(d_){return d_;});
 
         
         var _selectFileBtnClass = "btn btn-primary btn-raised";

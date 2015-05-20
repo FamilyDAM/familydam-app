@@ -18,8 +18,6 @@
 'use strict';
 
 var Rx = require('rx');
-//di              = require('di');
-
 
 module.exports = {
 
@@ -29,7 +27,7 @@ module.exports = {
     _documentRootDirectory : "/documents/",
 
 
-    init: function() {
+    subscribe: function() {
         console.log("{PreferenceStore}.init()");
     },
 
@@ -47,7 +45,3 @@ module.exports = {
 
 
 };
-
-//di.annotate(AuthActions, new di.Inject());
-
-

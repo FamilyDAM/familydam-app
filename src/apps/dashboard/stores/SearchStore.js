@@ -28,7 +28,7 @@ module.exports = {
 
     results : new Rx.BehaviorSubject([]),
 
-    init: function() {
+    subscribe: function() {
         console.log("{SearchStore}.init()");
     },
 
