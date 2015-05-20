@@ -44,7 +44,9 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 
-
+var FileRow = require("./FileRow");
+var DirectoryRow = require("./DirectoryRow");
+var BackFolder = require("./BackFolder");
 
 
 var FilesView = React.createClass({
@@ -82,7 +84,7 @@ var FilesView = React.createClass({
 
 
         // rx callbacks
-        FileStore.files.subscribe(function(data_){
+        this.fileStoreSubscription = FileStore.files.subscribe(function(data_){
 
             _this.state.files = data_;
             if (_this.isMounted())  _this.forceUpdate();
@@ -90,13 +92,13 @@ var FilesView = React.createClass({
 
 
         // listen for trigger to reload for files in directory
-        FileActions.refreshFiles.subscribe(function(data_){
+        this.refreshFilesSubscription = FileActions.refreshFiles.subscribe(function(data_){
             FileActions.getFiles.source.onNext( undefined );
             FileActions.getFiles.source.onNext( _this.state.path );
         });
 
         // Refresh the file list when someone changes the directory
-        DirectoryActions.selectFolder.subscribe(function(data_){
+        this.selectFolderSubscription = this.fileStoreSubscription = DirectoryActions.selectFolder.subscribe(function(data_){
             FileActions.getFiles.source.onNext(data_.path);
         });
     },
@@ -111,54 +113,25 @@ var FilesView = React.createClass({
         // upload local state, and reset list to prepare for new files
         this.setState({'path':_path, 'files':[]});
 
-        // save current dir
-        DirectoryActions.selectFolder.onNext({'path':_path});
         // load files
         FileActions.getFiles.source.onNext(_path);
     },
 
-
-    handleDirClick: function(event, component)
-    {
-        // get path from element in the list
-        var _path =  $("[data-reactid='" + component + "']").attr("data-path");
-
-        if( _path !== undefined )
+    componentWillUnmount: function() {
+        if (this.fileStoreSubscription !== undefined)
         {
-            this.transitionTo('files', {}, {'path': _path})
+            this.fileStoreSubscription.dispose();
         }
-
-    },
-    
-    
-    handleRowClick: function(event, component)
-    {
-        if( $(event.target).attr('type') != "button" )
+        if (this.refreshFilesSubscription !== undefined)
         {
-            $(".active").removeClass();
-            $(event.currentTarget).addClass("active");
-            var _id = $("[data-reactid='" + component + "']").attr("data-id");
-            if( this.isMounted() ) this.setState({selectedItem: _id});
+            this.refreshFilesSubscription.dispose();
         }
-
-        // IF DBL CLick
-        //var _id = $( "[data-reactid='" +component +"']" ).attr("data-id");
-        //transitionTo('photoDetails', {'photoId': _id});
+        if (this.selectFolderSubscription !== undefined)
+        {
+            this.selectFolderSubscription.dispose();
+        }
     },
 
-
-    handleNodeDelete: function(event, component)
-    {
-        var _this = this;
-        event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
-        
-        var _id = $("[data-reactid='" + component + "']").attr("data-id");
-        var _path = $("[data-reactid='" + component + "']").attr("data-path");
-
-        NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
-
-    },
 
     render: function() {
 
@@ -176,71 +149,22 @@ var FilesView = React.createClass({
         };
 
 
-        var folders = this.state.files
-            .filter( function(_file){
-                return _file._class == "com.familydam.core.models.Directory";
-            } )
-            .map( function(_file){
-                return <tr key={_file.id} onClick={_this.handleDirClick}  data-id={_file.id}  data-path={_file.path}>
-                        <td>
-                            <img src="assets/icons/ic_folder_48px.svg"
-                                 style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
-                        </td>
-                        <td className="fileName"
-                            style={{'verticalAlign':'middle', 'cursor': 'pointer'}}>{_file.name}</td>
-                        <td >
-                            <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                {_file.mixins.indexOf("dam:userfolder")>-1?
-                                <Button onClick={_this.handleNodeDelete} data-id={_file.id} data-path={_file.path}  style={{'padding':'5px 10px', 'margin':0}}>
-                                    <Glyphicon glyph="remove"/> delete
-                                </Button>
-                                :""}
-                            </ButtonGroup>
-                        </td>
-                    </tr>
-
-        });
 
 
+        var folderRows = this.state.files
+            .filter( function(dir_){
+                return dir_._class == "com.familydam.core.models.Directory";
+            }).map( function(dir_){
+                return <DirectoryRow dir={dir_}/>
+            });
 
-        var files = this.state.files
+
+        var fileRows = this.state.files
             .filter( function(file_){
                 return file_._class == "com.familydam.core.models.File";
-            } )
-            .map( function(_file){
-                return <tr key={_file.id}  data-id={_file.id}>
-                        <td>
-                            <Link to="photoDetails" params={{'id': _file.id}}>
-                            <img src={PreferenceStore.getBaseUrl() +_file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.token.value}
-                                 style={{'width':'50px', 'height':'50px'}}/></Link>
-                        </td>
-                        <td className="fileName"><Link to="photoDetails" params={{'id': _file.id}}>{_file.name}</Link></td>
-                        <td >
-                            { _file.mixins.indexOf("dam:image") > -1 ?
-                            <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                <ButtonLink to="photoDetails" params={{'id': _file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
-                                    <Glyphicon glyph="eye-open"/> view
-                                </ButtonLink>
-                                <ButtonLink to="photoEdit" params={{id: _file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
-                                    <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
-                                </ButtonLink>
-                                <Button onClick={_this.handleNodeDelete} data-id={_file.id} data-path={_file.path}  style={{'padding':'5px 10px', 'margin':0}}>
-                                    <Glyphicon glyph="remove"/> delete
-                                </Button>
-                            </ButtonGroup>
-                            :
-                            <ButtonGroup  bsSize="small">
-                                <Button onClick={_this.handleNodeDelete} data-id={_file.id} data-path={_file.path}>
-                                    <Glyphicon glyph="remove"/> delete
-                                </Button>
-                            </ButtonGroup>
-                            }
-                        </td>
-                    </tr>
-
-        });
-
-
+            }).map( function(file_){
+                return <FileRow file={file_}/>
+            });
 
 
 
@@ -257,22 +181,20 @@ var FilesView = React.createClass({
                     </aside>
 
                     <section className={tableClass} style={{'borderLeft':'1px solid #eee'}}>
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th style={{'width':"64px"}}></th>
-                                    <th style={{'width':"90%"}}>Name</th>
-                                    <th style={{"minWidth":"100px"}}>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <BackButton/>
+                        <div className="container-fluid fileRows">
+                            <div className="row" style={{'borderBottom':'1px solid #000'}}>
+                                <div className="col-xs-2 col-sm-1"></div>
+                                <div className="col-xs-10 col-sm-11">Name</div>
+                            </div>
 
-                                {folders}
+                            <BackFolder/>
 
-                                {files}
-                            </tbody>
-                        </Table>
+                            {folderRows}
+
+                            {fileRows}
+
+                        </div>
+
                     </section>
 
                     <aside className={asideClass}>
@@ -289,24 +211,3 @@ var FilesView = React.createClass({
 module.exports = FilesView;
 
 
-
-
-var BackButton = React.createClass({
-
-    back: function(){
-        history.go("-1");
-    },
-
-    render:function(){
-        return <tr key="up" onClick={this.back}>
-            <td>
-                <img src="assets/icons/ic_folder_48px.svg"
-                     style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
-            </td>
-            <td className="fileName"
-                style={{'verticalAlign':'middle', 'cursor': 'pointer'}}>...
-            </td>
-        </tr>;
-    }
-
-});

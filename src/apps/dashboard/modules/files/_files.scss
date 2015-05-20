@@ -27,4 +27,10 @@
   .list-group{
     margin-bottom: 3px;
   }
+
+  .fileRows {
+    .row:hover{
+      background-color: #eee;
+    }
+  }
 }
