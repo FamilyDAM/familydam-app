@@ -66,8 +66,34 @@ var ExifData = React.createClass({
     render: function() {
         var _this = this;
 
+        if( this.props.exif['Exif IFD0']['Make'].description == undefined ){
+            this.props.exif['Exif IFD0']['Make'].description = "";
+        }
+        if( this.props.exif['Exif IFD0']['Focal_Length'].description == undefined ){
+            this.props.exif['Exif IFD0']['Focal_Length'].description = "";
+        }
+        if( this.props.exif['Exif IFD0']['Lens_Specification'].description == undefined ){
+            this.props.exif['Exif IFD0']['Lens_Specification'].description = "";
+        }
+        if( this.props.exif['Exif IFD0']['F-Number'].description == undefined ){
+            this.props.exif['Exif IFD0']['F-Number'].description = "";
+        }
+        if( this.props.exif['Exif IFD0']['Focal_Length'].description == undefined ){
+            this.props.exif['Exif IFD0']['Focal_Length'].description = "";
+        }
+        if( this.props.exif['Exif IFD0']['Shutter_Speed_Value'].description == undefined ){
+            this.props.exif['Exif IFD0']['Shutter_Speed_Value'].description = "";
+        }
+        if( this.props.exif['Exif IFD0']['ISO_Speed_Ratings'].description == undefined ){
+            this.props.exif['Exif IFD0']['ISO_Speed_Ratings'].description = "";
+        }
+        if( this.props.exif['Exif SubIFD']['Flash'].description == undefined ){
+            this.props.exif['Exif SubIFD']['Flash'].description = "";
+        }
+
 
         return (
+
             <div className="ExifDataComponent" >
 
                 <h5>Camera Settings:</h5>

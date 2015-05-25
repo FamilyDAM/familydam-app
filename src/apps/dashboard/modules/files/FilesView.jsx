@@ -47,6 +47,7 @@ var UserStore = require('./../../stores/UserStore');
 var FileRow = require("./FileRow");
 var DirectoryRow = require("./DirectoryRow");
 var BackFolder = require("./BackFolder");
+var PreviewSidebar = require("./../previews/PreviewSidebar");
 
 
 var FilesView = React.createClass({
@@ -98,8 +99,14 @@ var FilesView = React.createClass({
         });
 
         // Refresh the file list when someone changes the directory
-        this.selectFolderSubscription = this.fileStoreSubscription = DirectoryActions.selectFolder.subscribe(function(data_){
+        this.selectFolderSubscription = DirectoryActions.selectFolder.subscribe(function(data_){
             FileActions.getFiles.source.onNext(data_.path);
+        });
+
+        // Refresh the file list when someone changes the directory
+        this.selectedFileSubscription = FileActions.selectFile.subscribe(function(data_){
+            _this.state.selectedItem = data_;
+            if (_this.isMounted())  _this.forceUpdate();
         });
     },
 
@@ -130,24 +137,24 @@ var FilesView = React.createClass({
         {
             this.selectFolderSubscription.dispose();
         }
+        if (this.selectedFileSubscription !== undefined)
+        {
+            this.selectedFileSubscription.dispose();
+        }
     },
 
 
     render: function() {
 
         var _this = this;
-        var tableClass = "col-sm-9 col-md-9";
+        var tableClass = "col-xs-8 col-sm-9 col-md-9";
         var asideClass = "hidden col-md-3";
-        var previewWidget = <span>
-                                [preview panel = {this.state.selectedItem}]
-                            </span>;
 
         if( this.state.selectedItem !== undefined )
         {
-            tableClass = "col-sm-9 col-md-6";
-            asideClass = "col-md-3";
+            tableClass = "col-xs-8 col-sm-9 col-md-6";
+            asideClass = "hidden-xs hidden-sm col-md-3";
         };
-
 
 
 
@@ -171,7 +178,7 @@ var FilesView = React.createClass({
         return (
             <div className="filesView container-fluid" >
                 <div  className="row">
-                    <aside className="col-sm-3" >
+                    <aside className="col-xs-4 col-sm-3" >
                         <SectionTree title="Files" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
                         <SectionTree title="Photos" disabled={true}/>
                         <SectionTree title="Music" disabled={true}/>
@@ -198,7 +205,7 @@ var FilesView = React.createClass({
                     </section>
 
                     <aside className={asideClass}>
-                    {previewWidget}
+                        <PreviewSidebar file={this.state.selectedItem}/>
                     </aside>
                 </div>
             </div>

@@ -33,7 +33,7 @@ module.exports = {
     subscribe : function(){
         console.log("{GetUsers Service} subscribe");
         this.sink = UserActions.getUsers.sink;
-        UserActions.getUsers.source.subscribe(this.getUsers.bind(this));
+        UserActions.getUsers.source.distinctUntilChanged().subscribe(this.getUsers.bind(this));
     },
 
     /**

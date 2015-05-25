@@ -86,7 +86,12 @@ var DashboardView = React.createClass({
                 <div className="row">
                     <RouteHandler {...this.props}/>
                 </div>
+                <div className="device-xs visible-xs"></div>
+                <div className="device-sm visible-sm"></div>
+                <div className="device-md visible-md"></div>
+                <div className="device-lg visible-lg"></div>
             </div>
+
 
         );
     }

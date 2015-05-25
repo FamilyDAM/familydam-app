@@ -45,10 +45,10 @@ module.exports = {
         this.updateSink = NodeActions.updateNode.sink;
         this.deleteSink = NodeActions.deleteNode.sink;
 
-        NodeActions.getNode.source.subscribe(this.getNode.bind(this));
-        NodeActions.createNode.source.subscribe(this.createNode.bind(this));
-        NodeActions.updateNode.source.subscribe(this.updateNode.bind(this));
-        NodeActions.deleteNode.source.subscribe(this.deleteNode.bind(this));
+        NodeActions.getNode.source.distinctUntilChanged().subscribe(this.getNode.bind(this));
+        NodeActions.createNode.source.distinctUntilChanged().subscribe(this.createNode.bind(this));
+        NodeActions.updateNode.source.distinctUntilChanged().subscribe(this.updateNode.bind(this));
+        NodeActions.deleteNode.source.distinctUntilChanged().subscribe(this.deleteNode.bind(this));
     },
 
     /**

@@ -15,7 +15,7 @@ module.exports = {
      */
     subscribe:function(){
         this.sink = UploadActions.uploadFileAction.sink;
-        UploadActions.uploadFileAction.source.subscribe( this.execute.bind(this) );
+        UploadActions.uploadFileAction.source.distinctUntilChanged().subscribe( this.execute.bind(this) );
     },
 
 

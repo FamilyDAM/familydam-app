@@ -38,6 +38,7 @@ var FolderTree = require('../../components/folderTree/FolderTree');
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
+var ContentStore = require('./../../stores/ContentStore');
 
 var NodeActions = require('./../../actions/NodeActions');
 
@@ -61,8 +62,9 @@ module.exports = React.createClass({
      */
     componentWillMount: function () {
         var _this = this;
-        this.load(this.props.params.id);
+        NodeActions.getNode.source.onNext(this.props.params.id);
 
+        this.registerListeners();
 
         Keymaster("left", function(e_){
             //console.log("left");
@@ -84,27 +86,34 @@ module.exports = React.createClass({
 
 
     componentWillReceiveProps: function (nextProps) {
-        this.load(nextProps.params.id);
+
+        NodeActions.getNode.source.onNext(nextProps.params.id);
+
     },
 
 
-    load: function(id_) {
+    componentWillUnmount: function (nextProps) {
+        if( this.currentNodeSubscription !== undefined ){
+            this.currentNodeSubscription.dispose();
+        }
+    },
+
+
+    registerListeners: function(id_) {
 
         var _this = this;
 
-        //load the data
-        NodeActions.getNode.source.onNext(id_);
 
         // list for results
-        NodeActions.getNode.sink.subscribe(function (results) {
+        this.currentNodeSubscription = ContentStore.currentNode.subscribe(function (results) {
             // set defaults for missing props
             if (results['dam:tags'] == undefined)
             {
-                results['dam:tags'] = ['t1', 't2'];
+                results['dam:tags'] = [];
             }
             if (results['dam:note'] == undefined)
             {
-                results['dam:note'] = "tick tock";
+                results['dam:note'] = "";
             }
 
             // set some local props for easier rendering
@@ -115,10 +124,11 @@ module.exports = React.createClass({
             var datetaken = "";
             if (results['dam:metadata'] != undefined
                 && results['dam:metadata']['Exif IFD0'] != undefined
-                && results['dam:metadata']['Exif IFD0']['Date_Time'] != undefined)
+                && results['dam:metadata']['Exif IFD0']['Date_Time'] != undefined
+                && results['dam:metadata']['Exif IFD0']['Date_Time']['description'] != undefined )
             {
-                var datetaken = results['dam:metadata']['Exif IFD0']['Date_Time'].description;
-            }
+                var datetaken = results['dam:metadata']['Exif IFD0']['Date_Time']['description'];
+            };
 
             var gps = undefined;
             if (results['dam:metadata'] != undefined
@@ -126,6 +136,15 @@ module.exports = React.createClass({
             {
                 var gps = results['dam:metadata']['GPS'];
             }
+
+
+            var _location = PreferenceStore.getBaseUrl() +"/api/files/" +results['jcr:uuid'] +"?token=" +UserStore.token.value;
+
+            var _datetaken = moment(datetaken, "YYYYMMDD HH:mm:ss").format("LLL");
+            if( _datetaken == "Invalid date" ){
+                _datetaken = datetaken;
+            }
+
 
 
             // Find the NEXT and PREV image
@@ -152,14 +171,6 @@ module.exports = React.createClass({
             }
 
 
-
-
-                var _location = PreferenceStore.getBaseUrl() +"/api/files/" +results['jcr:uuid'] +"?token=" +UserStore.token.value;
-
-                var _datetaken = moment(datetaken, "YYYYMMDD HH:mm:ss").format("LLL");
-                if( _datetaken == "Invalid date" ){
-                    _datetaken = datetaken;
-                }
 
                 _this.state = {
                     'photo': results,

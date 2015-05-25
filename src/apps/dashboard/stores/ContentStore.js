@@ -21,6 +21,7 @@ var Rx = require('rx');
 //di              = require('di');
 var PreferenceStore = require('./PreferenceStore');
 var UserStore = require('./UserStore');
+var NodeActions = require('./../actions/NodeActions');
 
 // Logged in user
 
@@ -35,6 +36,11 @@ module.exports = {
     {
         console.log("{ContentStore}.init()");
 
+        NodeActions.getNode.sink.subscribe(this.setCurrentNode.bind(this));
+    },
+
+    setCurrentNode: function(data_){
+        this.currentNode.onNext( data_ );
     }
 
 

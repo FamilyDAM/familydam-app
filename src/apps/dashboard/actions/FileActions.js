@@ -28,6 +28,13 @@ module.exports = {
     refreshFiles: new Rx.Subject(),
 
 
+
+    /**
+     * Tell views to reload the files they are watching
+     */
+    selectFile: new Rx.Subject(),
+
+
     /**
      * Call the server to load the file list
      */

@@ -27,6 +27,7 @@ var ButtonLink = require('react-router-bootstrap').ButtonLink;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
+var FileActions = require('../../actions/FileActions');
 var NodeActions = require('../../actions/NodeActions');
 var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
@@ -35,6 +36,9 @@ var BackFolder = React.createClass({
     mixins : [Navigation],
 
     back: function(){
+
+        FileActions.selectFile.onNext(undefined);
+
         history.go("-1");
     },
 
@@ -47,13 +51,13 @@ var BackFolder = React.createClass({
                      style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'50px', 'cursor': 'pointer'}}
                      onClick={this.back}>
 
-                    <div className="col-xs-2 col-sm-1">
+                    <div style={{'display': 'table-cell', 'width': '50px;'}}>
                         <img src="assets/icons/ic_folder_48px.svg"
                              style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
                     </div>
-                    <div className="col-xs-10 col-sm-11">
+                    <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
-                            <div className="col-sm-12" style={{'verticalAlign':'middle', 'cursor': 'pointer', 'minHeight':'50px'}}>...</div>
+                            <div className="col-sm-12" style={{'verticalAlign':'middle', 'cursor': 'pointer'}}><span style={{'marginTop': '15px;'}}>...</span></div>
                         </div>
                     </div>
                 </div>

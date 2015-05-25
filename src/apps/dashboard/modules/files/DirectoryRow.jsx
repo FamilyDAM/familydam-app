@@ -27,6 +27,7 @@ var ButtonLink = require('react-router-bootstrap').ButtonLink;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
+var FileActions = require('../../actions/FileActions');
 var NodeActions = require('../../actions/NodeActions');
 var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
@@ -36,6 +37,8 @@ var DirectoryRow = React.createClass({
 
     handleDirClick: function(event, component)
     {
+        FileActions.selectFile.onNext(undefined);
+
         // get path from element in the list
         var _path =  $("[data-reactid='" + component + "']").attr("data-path");
 
@@ -67,11 +70,11 @@ var DirectoryRow = React.createClass({
                      onClick={this.handleDirClick}
                      data-id={this.props.dir.id}  data-path={this.props.dir.path}>
 
-                    <div className="col-xs-2 col-sm-1">
+                    <div style={{'display': 'table-cell', 'width': '50px;'}}>
                         <img src="assets/icons/ic_folder_48px.svg"
                              style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
                     </div>
-                    <div className="col-xs-10 col-sm-11">
+                    <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
                             <div className="col-sm-8" style={{'marginTop': '15px;'}}>
                                 <Link to="photoDetails" params={{'id': this.props.dir.id}}>{this.props.dir.name}</Link>
