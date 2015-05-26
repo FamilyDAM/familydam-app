@@ -152,7 +152,6 @@ var FolderTree = React.createClass({
 
         // listen for trigger to reload for files in directory
         DirectoryActions.refreshDirectories.subscribe(function(data_){
-            debugger;
             DirectoryActions.getDirectories.source.onNext( undefined );
             DirectoryActions.getDirectories.source.onNext( _this.props.baseDir );
         });

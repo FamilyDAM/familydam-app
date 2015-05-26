@@ -33,6 +33,9 @@ var NodeActions = require('../../actions/NodeActions');
 var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 
+var ImageRow = require('./ImageRow');
+var MusicRow = require('./MusicRow');
+
 var FileRow = React.createClass({
     mixins : [Navigation],
 
@@ -76,42 +79,59 @@ var FileRow = React.createClass({
 
     render:function(){
 
-        return  <div className="row" onClick={this.handleRowClick} style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'60px'}}>
-                    <div style={{'display': 'table-cell', 'width': '50px;'}}>
-                        <Link to="photoDetails" params={{'id': this.props.file.id}}>
-                            <img src={PreferenceStore.getBaseUrl() +this.props.file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.token.value}
-                                 style={{'width':'50px', 'height':'50px'}}/></Link>
-                    </div>
-                    <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
-                        <div className="row">
-                            <div className="col-sm-6 col-lg-8" style={{'overflow':'hidden'}}>
-                                <Link to="photoDetails" params={{'id': this.props.file.id}}>{this.props.file.name}</Link>
-                            </div>
-                            <div className="col-sm-6 col-lg-4">
-                                { this.props.file.mixins.indexOf("dam:image") > -1 ?
-                                    <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                        <ButtonLink to="photoDetails" params={{'id': this.props.file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
-                                            <Glyphicon glyph="eye-open"/> view
-                                        </ButtonLink>
-                                        <ButtonLink to="photoEdit" params={{id: this.props.file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
-                                            <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
-                                        </ButtonLink>
-                                        <Button onClick={this.handleNodeDelete} data-id={this.props.file.id} data-path={this.props.file.path}  style={{'padding':'5px 10px', 'margin':0}}>
-                                            <Glyphicon glyph="remove"/> delete
-                                        </Button>
-                                    </ButtonGroup>
-                                    :
-                                    <ButtonGroup  bsSize="small">
-                                        <Button onClick={this.handleNodeDelete} data-id={this.props.file.id} data-path={this.props.file.path}>
-                                            <Glyphicon glyph="remove"/> delete
-                                        </Button>
-                                    </ButtonGroup>
-                                }
-                            </div>
+        if( this.props.file.mixins !== undefined && this.props.file.mixins.indexOf("dam:image") > -1 ){
+            return <ImageRow file={this.props.file}></ImageRow>
+        }
+        else if( this.props.file.mixins !== undefined && this.props.file.mixins.indexOf("dam:music") > -1 ){
+            return <MusicRow file={this.props.file}></MusicRow>
+        }
+        //else if( this.props.file.mixins !== undefined && this.props.file.mixins.indexOf("dam:movie") > -1  ){}
+        else
+        {
+            return <div className="row" onClick={this.handleRowClick}
+                        style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'60px'}}>
+                <div style={{'display': 'table-cell', 'width': '50px;'}}>
+                    <Link to="photoDetails" params={{'id': this.props.file.id}}>
+                        <img
+                            src={PreferenceStore.getBaseUrl() +this.props.file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.token.value}
+                            style={{'width':'50px', 'height':'50px'}}/></Link>
+                </div>
+                <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
+                    <div className="row">
+                        <div className="col-sm-6 col-lg-8" style={{'overflow':'hidden'}}>
+                            <Link to="photoDetails" params={{'id': this.props.file.id}}>{this.props.file.name}</Link>
+                        </div>
+                        <div className="col-sm-6 col-lg-4">
+                            { this.props.file.mixins.indexOf("dam:image") > -1 ?
+                                <ButtonGroup bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
+                                    <ButtonLink to="photoDetails" params={{'id': this.props.file.id}}
+                                                style={{'padding':'5px 10px', 'margin':0}}>
+                                        <Glyphicon glyph="eye-open"/> view
+                                    </ButtonLink>
+                                    <ButtonLink to="photoEdit" params={{id: this.props.file.id}}
+                                                style={{'padding':'5px 10px', 'margin':0}}>
+                                        <img src="assets/icons/ic_mode_edit_24px.svg"
+                                             style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
+                                    </ButtonLink>
+                                    <Button onClick={this.handleNodeDelete} data-id={this.props.file.id}
+                                            data-path={this.props.file.path} style={{'padding':'5px 10px', 'margin':0}}>
+                                        <Glyphicon glyph="remove"/> delete
+                                    </Button>
+                                </ButtonGroup>
+                                :
+                                <ButtonGroup bsSize="small">
+                                    <Button onClick={this.handleNodeDelete} data-id={this.props.file.id}
+                                            data-path={this.props.file.path}>
+                                        <Glyphicon glyph="remove"/> delete
+                                    </Button>
+                                </ButtonGroup>
+                            }
                         </div>
                     </div>
-
                 </div>
+
+            </div>
+        }
 
     }
 

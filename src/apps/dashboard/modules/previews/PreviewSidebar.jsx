@@ -25,6 +25,7 @@ var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 
 var FileDetails = require('./FileDetails');
+var MusicDetails = require('./MusicDetails');
 var ImageDetails = require('./ImageDetails');
 var SectionTree = require('../../components/folderTree/SectionTree');
 
@@ -62,6 +63,7 @@ var PreviewSidebar = React.createClass({
         this.state.isMusic = false;
         this.state.isMovie = false;
         this.state.isGenericFile = false;
+
 
         if( nextProps.file.mixins !== undefined && nextProps.file.mixins.indexOf("dam:image") > -1 ){
             this.state.isImage = true;
@@ -104,6 +106,9 @@ var PreviewSidebar = React.createClass({
 
                 {this.state.isImage?
                     <ImageDetails file={this.props.file}/>
+                :''}
+                {this.state.isMusic?
+                    <MusicDetails file={this.props.file}/>
                 :''}
                 {this.state.isGenericFile?
                     <FileDetails file={this.props.file}/>

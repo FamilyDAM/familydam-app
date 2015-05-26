@@ -12,7 +12,8 @@
     "react-bootstrap": "~0.13.2",
     "bootstrap-sass-official": "~3.3.1",
     "bootstrap-tokenfield": "~0.12.1",
-    "bootstrap-fileinput": "~4.1.6"
+    "bootstrap-fileinput": "~4.1.6",
+    "plyr": "~1.1.10"
   },
   "resolutions": {
     "react": ">= 0.12.0"
