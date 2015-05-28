@@ -139,9 +139,7 @@ module.exports = {
             },
             xhrFields: {
                 onprogress: function (e) {
-                    debugger;
                     if (e.lengthComputable) {
-                        debugger;
                         console.log(e.loaded / e.total * 100 + '%');
                     }
                 }
@@ -160,7 +158,6 @@ module.exports = {
             }
             return data_;
         }, function(err_){
-            debugger;
             console.dir(err_);
         });
 

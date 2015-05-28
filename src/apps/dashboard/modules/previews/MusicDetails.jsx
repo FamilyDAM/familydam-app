@@ -119,15 +119,37 @@ module.exports = React.createClass({
         var _this = this;
 
 
-        var audioPlayer = <div></div>
+        var _audioPlayer = <div></div>
 
         if( _this.props.file['jcr:uuid'] !== undefined ){
             var location = PreferenceStore.getBaseUrl() +"/api/files/" +_this.props.file['jcr:uuid'] +"?token=" +UserStore.token.value;
 
-            audioPlayer = <audio key={new Date().getTime()} controls="controls" preload="auto" crossOrigin="Use Credentials">
+            _audioPlayer = <audio key={new Date().getTime()} controls="controls" preload="auto" crossOrigin="Use Credentials">
                         <source src={location +'&format=audio/mp3'} type="audio/mp3"/>
                         <source src={location +'&format=audio/ogg'} type="audio/ogg"/>
                     </audio>
+        }
+
+
+        var _name = <div>
+                        <div>{_this.props.file['jcr:name']}</div>
+                    </div>
+        if( _this.props.file['dam:metadata'] !== undefined )
+        {
+            _name = <div>{_this.props.file['dam:metadata'].title}</div>
+        }
+
+
+
+        var _metadata = <div></div>
+
+        if( _this.props.file['dam:metadata'] !== undefined )
+        {
+            _metadata = <div>
+                            <div><strong>{_this.props.file['dam:metadata'].artist}</strong></div>
+                            <div>{_this.props.file['dam:metadata'].album}</div>
+                        </div>
+
         }
 
 
@@ -135,23 +157,25 @@ module.exports = React.createClass({
             <div className="fileDetailsView" >
                 <SectionTree title="Music Info"/>
 
+                {_name}
                 <div className="player">
-                    {audioPlayer}
+                    {_audioPlayer}
                 </div>
 
-                <div><strong>Name:</strong></div>
-                <div>{_this.props.file['jcr:name']}</div>
-
-                <br/><br/>
-                <img src="assets/icons/ic_file_download_24px.svg" style={{
+                <div style={{'textAlign':'right'}}>
+                    <img src="assets/icons/ic_file_download_24px.svg" style={{
                                         'width': '36px',
                                         'height': '36px'
                                     }} onClick={this.handleDownloadOriginal}/>
 
-                <img src="assets/icons/ic_delete_24px.svg" style={{
+                    <img src="assets/icons/ic_delete_24px.svg" style={{
                                         'width': '36px',
                                         'height': '36px'
                                     }} onClick={this.handleDelete}/>
+                </div>
+                <br/>
+                {_metadata}
+
 
 
             </div>

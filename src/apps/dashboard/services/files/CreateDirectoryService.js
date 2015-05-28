@@ -46,7 +46,6 @@ module.exports = {
      */
     createDirectory: function(data_)
     {
-        debugger;
         var _this = this;
         var _name = data_.name;
         var _dir = data_.parent.path;
@@ -61,7 +60,6 @@ module.exports = {
                     }
                 }).then(function(data_, status_, xhr_){
 
-            debugger;
                     _this.sink.onNext(data_);
                     // refresh the overall directories list
                     DirectoryActions.refreshDirectories.onNext(true);

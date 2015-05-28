@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build', 'watch']);//, 'connect'
 
     grunt.registerTask('build', [
-        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
+        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard', 'uglify'
     ]); /*, 'build-atom-shell-app'*/
 
     grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
@@ -218,6 +218,19 @@ module.exports = function(grunt) {
             }
         },
 
+
+
+        uglify: {
+            options: {
+                // the banner is inserted at the top of the output
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+            },
+            dashboard: {
+                files: {
+                    '<%= options.dist %>/apps/dashboard/app.min.js': [  '<%= options.dist %>/apps/dashboard/app.js']
+                }
+            }
+        },
 
         'download-atom-shell': {
             version: '0.22.2',

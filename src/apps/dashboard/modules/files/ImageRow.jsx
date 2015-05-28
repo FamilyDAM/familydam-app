@@ -60,6 +60,7 @@ var FileRow = React.createClass({
     },
 
 
+
     handleNodeDelete: function(event, component)
     {
         var _this = this;
@@ -68,9 +69,10 @@ var FileRow = React.createClass({
 
         var _id = $("[data-reactid='" + component + "']").attr("data-id");
         var _path = $("[data-reactid='" + component + "']").attr("data-path");
-
+        debugger;
         NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
     },
+
 
 
 

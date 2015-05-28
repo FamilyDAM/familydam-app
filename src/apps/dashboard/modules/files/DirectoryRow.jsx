@@ -37,7 +37,9 @@ var DirectoryRow = React.createClass({
 
     handleDirClick: function(event, component)
     {
-        FileActions.selectFile.onNext(undefined);
+        debugger;
+        // send event that has will be picked up by the FilesView
+        DirectoryActions.selectFolder.onNext(folder_);
 
         // get path from element in the list
         var _path =  $("[data-reactid='" + component + "']").attr("data-path");

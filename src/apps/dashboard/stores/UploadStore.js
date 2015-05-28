@@ -91,7 +91,7 @@ module.exports = {
     },
 
     handleFileUploadError: function(err_){
-        debugger;
+
     }
 
 
