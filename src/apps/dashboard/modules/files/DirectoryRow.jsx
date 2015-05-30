@@ -28,6 +28,7 @@ var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var FileActions = require('../../actions/FileActions');
+var DirectoryActions = require('../../actions/DirectoryActions');
 var NodeActions = require('../../actions/NodeActions');
 var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
@@ -37,15 +38,15 @@ var DirectoryRow = React.createClass({
 
     handleDirClick: function(event, component)
     {
-        debugger;
-        // send event that has will be picked up by the FilesView
-        DirectoryActions.selectFolder.onNext(folder_);
-
         // get path from element in the list
         var _path =  $("[data-reactid='" + component + "']").attr("data-path");
 
         if( _path !== undefined )
         {
+            // send event that has will be picked up by the FilesView
+            DirectoryActions.selectFolder.onNext({'path':_path});
+            FileActions.selectFile.onNext(undefined);
+
             this.transitionTo('files', {}, {'path': _path})
         }
 

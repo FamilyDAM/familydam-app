@@ -2,10 +2,13 @@ module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('default', ['build', 'watch']);//, 'connect'
+    grunt.registerTask('default', ['build-dev', 'watch']);//, 'connect'
 
-    grunt.registerTask('build', [
-        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard', 'uglify'
+    grunt.registerTask('build-dev', [
+        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
+    ]); /*, 'build-atom-shell-app'*/
+    grunt.registerTask('build-prod', [
+        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard','uglify'
     ]); /*, 'build-atom-shell-app'*/
 
     grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
@@ -180,6 +183,16 @@ module.exports = function(grunt) {
                     }
                 ]
             },
+            'debug': {
+                files: [
+                    {
+                        src: '**/*.js',
+                        cwd: '<%= options.tmp %>/apps/dashboard',
+                        dest: '<%= options.dist %>/apps/dashboard',
+                        expand: true
+                    }
+                ]
+            }
         },
 
         react: {
@@ -205,6 +218,32 @@ module.exports = function(grunt) {
             }
         },
 
+
+
+        uglify: {
+            options: {
+                // the banner is inserted at the top of the output
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+            },
+            dashboard: {
+                options:{
+                    beautify: true,
+                    screwIE8:true,
+                    sourceMap: true,
+                    sourceMapIncludeSources:true,
+                    compress: {
+                        'drop_debugger':true,
+                        'drop_console':true,
+                        dead_code: false
+                    }
+                },
+                files: {
+                    '<%= options.dist %>/apps/dashboard/app.js': [  '<%= options.dist %>/apps/dashboard/app.js']
+                }
+            }
+        },
+
+
         browserify2: {
             'dashboard': {
                 entry: './<%= options.tmp %>/apps/dashboard/app.js',
@@ -214,23 +253,12 @@ module.exports = function(grunt) {
             'shared-lib': {
                 entry: './<%= options.app %>/apps/dashboard/shared-lib.js',
                 compile: './<%= options.dist %>/apps/dashboard/shared-lib.js',
-                debug: true
+                debug: false,
+
             }
         },
 
 
-
-        uglify: {
-            options: {
-                // the banner is inserted at the top of the output
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
-            },
-            dashboard: {
-                files: {
-                    '<%= options.dist %>/apps/dashboard/app.min.js': [  '<%= options.dist %>/apps/dashboard/app.js']
-                }
-            }
-        },
 
         'download-atom-shell': {
             version: '0.22.2',

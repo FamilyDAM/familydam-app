@@ -64,6 +64,7 @@ var FileUploadControls = React.createClass({
         }
     },
 
+
     handleFileChange: function(event_){
         //console.dir(event_);
         var _files = event_.currentTarget.files;
@@ -79,7 +80,25 @@ var FileUploadControls = React.createClass({
         
         //save for later, dir check
         // if( _file.webkitRelativePath.length > 0 && _file.path.endsWith(_file.webkitRelativePath) ) {//is a dir.}
+    },
 
+
+    handleFolderChange: function(event_){
+        //console.dir(event_);
+        debugger;
+        var _files = event_.currentTarget.files;
+        //console.dir(_files);
+
+        var _this = this;
+
+        Rx.Observable.from(_files).forEach(function(item_){
+            item_.uploadPath = _this.state.uploadPath;
+            item_.id = UUID.create().toString();
+            UploadActions.addFileAction.onNext(item_);
+        })
+
+        //save for later, dir check
+        // if( _file.webkitRelativePath.length > 0 && _file.path.endsWith(_file.webkitRelativePath) ) {//is a dir.}
     },
 
     handleUploadAllFiles:function(){
@@ -97,6 +116,15 @@ var FileUploadControls = React.createClass({
      */
     clickFileInputField:function(){
         $(this.refs.fileInputField.getDOMNode()).click();
+    },
+
+
+    /**
+     * Use jquery to click a hiddle file input field
+     */
+    clickFolderInputField:function(){
+        $(this.refs.folderInputField.getDOMNode()).attr("webkitdirectory", "webkitdirectory");
+        $(this.refs.folderInputField.getDOMNode()).click();
     },
 
 
@@ -141,7 +169,14 @@ var FileUploadControls = React.createClass({
                                     ref="fileInputField"
                                     onChange={this.handleFileChange}
                                     multiple="true"/>
-                                <span className={_selectFileBtnClass} style={{'width':'360px'}}>Select Files</span>
+                                <span className={_selectFileBtnClass} style={{'width':'360px'}}>Select Individual Files</span>
+                            </div>
+                            <div className="file-wrapper" onClick={this.clickFolderInputField} style={{'width':'100%'}}>
+                                <input type="file"
+                                    ref="folderInputField"
+                                    onChange={this.handleFolderChange}
+                                    multiple="true"  webkitdirectory="webkitdirectory" directory="true"/>
+                                <span className={_selectFileBtnClass} style={{'width':'360px'}}>Select Folder</span>
                             </div>
                             <br/>
                             <div className="file-wrapper" onClick={this.handleUploadAllFiles}>
