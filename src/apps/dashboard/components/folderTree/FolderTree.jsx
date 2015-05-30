@@ -15,7 +15,7 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @jsx React.DOM */
+/** jsx React.DOM */
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
@@ -172,7 +172,7 @@ var FolderTree = React.createClass({
                 var boundClick = _this.handleSelectDir.bind(_this, _f);
 
                 return <ListGroupItem key={_f.path}>
-                            <div className="folderItem"
+                            <div
                                 style={{'cursor': 'pointer'}}
                                 className={_this.state.activeFolder == _f ? 'folderItem active' : 'folderItem'}
                                 onClick={boundClick}>

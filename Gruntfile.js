@@ -2,7 +2,15 @@ module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('default', ['build-dev', 'watch']);//, 'connect'
+    grunt.registerTask('default', ['build-babel-dev', 'watch']);//, 'connect'
+
+    grunt.registerTask('build-babel-dev', [
+        'clean',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
+    ]); /*, 'build-atom-shell-app'*/
+    grunt.registerTask('build-babel-prod', [
+        'clean',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify'
+    ]); /*, 'build-atom-shell-app'*/
+
 
     grunt.registerTask('build-dev', [
         'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
@@ -182,16 +190,6 @@ module.exports = function(grunt) {
                         expand: true
                     }
                 ]
-            },
-            'debug': {
-                files: [
-                    {
-                        src: '**/*.js',
-                        cwd: '<%= options.tmp %>/apps/dashboard',
-                        dest: '<%= options.dist %>/apps/dashboard',
-                        expand: true
-                    }
-                ]
             }
         },
 
@@ -227,7 +225,7 @@ module.exports = function(grunt) {
             },
             dashboard: {
                 options:{
-                    beautify: true,
+                    beautify: false,
                     screwIE8:true,
                     sourceMap: true,
                     sourceMapIncludeSources:true,
@@ -258,7 +256,23 @@ module.exports = function(grunt) {
             }
         },
 
-
+        "babel": {
+            options: {
+                sourceMap: true,
+                nonStandard: true,
+                optional: ["utility.inlineEnvironmentVariables"],
+                code:{ optional: ["utility.inlineEnvironmentVariables"] }
+            },
+            dist: {
+                files: [{
+                    "expand": true,
+                    "cwd": "src/apps/dashboard",
+                    "src": ["**/*.jsx", 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
+                    "dest": ".tmp/apps/dashboard",
+                    "ext": ".js"
+                }]
+            }
+        },
 
         'download-atom-shell': {
             version: '0.22.2',

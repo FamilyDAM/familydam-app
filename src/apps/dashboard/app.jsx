@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 //Needed for onTouchTap
 //Can go away when react 1.0 release
 //Check this repo:
@@ -31,8 +30,8 @@ var UploadActions = require('./actions/UploadActions');
 
 
 // register the different services
-var GetUsersService = require('./services/users/GetUsersService').subscribe();
 var LoginService = require('./services/users/LoginService').subscribe();
+var GetUsersService = require('./services/users/GetUsersService').subscribe();
 var NodeCrudService = require('./services/content/NodeCrudService').subscribe();
 var GetFilesService = require('./services/files/GetFilesService').subscribe();
 var GetDirectoriesService = require('./services/files/GetDirectoriesService').subscribe();

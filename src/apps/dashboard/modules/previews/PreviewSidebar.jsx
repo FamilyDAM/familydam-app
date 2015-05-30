@@ -15,7 +15,7 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @jsx React.DOM */
+/** jsx React.DOM */
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');

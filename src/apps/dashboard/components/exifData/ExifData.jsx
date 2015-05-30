@@ -15,7 +15,7 @@
  *     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @jsx React.DOM */
+/** jsx React.DOM */
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
@@ -39,7 +39,6 @@ var ExifData = React.createClass({
                 'Focal_Length':{'description':''},
                 'Lens_Specification':{'description':''},
                 'F-Number':{'description':''},
-                'Focal_Length':{'description':''},
                 'Shutter_Speed_Value':{'description':''},
                 'ISO_Speed_Ratings':{'description':''}
             },

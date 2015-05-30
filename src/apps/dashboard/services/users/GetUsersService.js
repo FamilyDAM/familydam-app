@@ -43,7 +43,6 @@ module.exports = {
      */
     getUsers: function()
     {
-        debugger;
         var _this = this;
         return $.ajax({
                     'method':'get'
