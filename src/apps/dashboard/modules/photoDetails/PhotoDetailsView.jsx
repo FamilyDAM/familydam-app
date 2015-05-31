@@ -348,6 +348,15 @@ module.exports = React.createClass({
 
                                     <div style={{'padding': '5px'}}>
                                         <Tags
+                                            title="People"
+                                            tags={this.state.photo['dam:people']}
+                                            onAdd={this.handleOnPeopleAdd}
+                                            onRemove={this.handleOnPeopleRemove}/>
+                                    </div>
+
+                                    <div style={{'padding': '5px'}}>
+                                        <Tags
+                                            title="Tags"
                                             tags={this.state.photo['dam:tags']}
                                             onAdd={this.handleOnTagAdd}
                                             onRemove={this.handleOnTagRemove}/>

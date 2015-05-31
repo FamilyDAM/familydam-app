@@ -26,6 +26,7 @@ module.exports = {
     {
         console.log("{upload single file} " +file_.path);
         console.dir(file_);
+        debugger;
 
         var _this = this;
         var _currentFile = file_;
@@ -40,6 +41,7 @@ module.exports = {
         var _hasAccess = false;
         var _checkAccess = _this.checkAccess(_currentFile)
             .then(function (result_) {
+                debugger;
                 _hasAccess = result_.visible;
 
                 if (!_hasAccess)
@@ -121,7 +123,7 @@ module.exports = {
      * @param path
      */
     uploadFile: function (file_) {
-
+        debugger;
         var data = new FormData();
         data.append("path", file_.uploadPath);
         data.append("file", file_);
@@ -145,7 +147,7 @@ module.exports = {
                 }
             }
         }).then(function(data_, status_, xhr_){
-
+            debugger;
             file_.status = "COMPLETE";
             file_.percentComplete = "100";
             UploadActions.fileStatusAction.onNext(file_);

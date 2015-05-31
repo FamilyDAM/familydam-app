@@ -44,7 +44,12 @@ var FileUploadControls = React.createClass({
         var _this = this;
 
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(d_){
+
             _this.state.uploadPath = d_.path;
+            if( d_.path.substring(d_.path.length-1) != "/")
+            {
+                _this.state.uploadPath = d_.path +"/";
+            }
             _this.state.uploadPathFriendly = d_.path.replace("/dam:files/", "/home/");
             if( _this.isMounted() ) _this.forceUpdate();
         });
@@ -72,8 +77,13 @@ var FileUploadControls = React.createClass({
         
         var _this = this;
 
+
         Rx.Observable.from(_files).forEach(function(item_){
             item_.uploadPath = _this.state.uploadPath;
+            if( item_.webkitRelativePath != "" && item_.webkitRelativePath.length > 0)
+            {
+                item_.uploadPath = _this.state.uploadPath + item_.webkitRelativePath.replace(item_.name, "");
+            }
             item_.id = UUID.create().toString();
             UploadActions.addFileAction.onNext(item_);
         })
@@ -85,14 +95,19 @@ var FileUploadControls = React.createClass({
 
     handleFolderChange: function(event_){
         //console.dir(event_);
-        debugger;
         var _files = event_.currentTarget.files;
         //console.dir(_files);
 
         var _this = this;
 
+
         Rx.Observable.from(_files).forEach(function(item_){
+            debugger;
             item_.uploadPath = _this.state.uploadPath;
+            if( item_.webkitRelativePath != "" && item_.webkitRelativePath.length > 0)
+            {
+                item_.uploadPath = _this.state.uploadPath + item_.webkitRelativePath.replace(item_.name, "");
+            }
             item_.id = UUID.create().toString();
             UploadActions.addFileAction.onNext(item_);
         })
@@ -153,7 +168,7 @@ var FileUploadControls = React.createClass({
                         <p>
                             <h3>Copy files into your FamilyD.A.M.</h3>
 
-                            <span>Copy location: <strong>{this.state.uploadPathFriendly}</strong></span>
+                            <span>Copy location: <strong>{this.state.uploadPath}</strong></span>
                         </p>
                     </div>
                 </div>

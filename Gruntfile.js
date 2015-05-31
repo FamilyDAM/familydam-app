@@ -12,13 +12,19 @@ module.exports = function(grunt) {
     ]); /*, 'build-atom-shell-app'*/
 
 
+    //deprecated
     grunt.registerTask('build-dev', [
         'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
     ]); /*, 'build-atom-shell-app'*/
+    //deprecated
     grunt.registerTask('build-prod', [
         'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard','uglify'
     ]); /*, 'build-atom-shell-app'*/
 
+
+    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify2:dashboard']);
+
+    //deprecated
     grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
     grunt.registerTask('build-css', ['compass']);
 
@@ -69,7 +75,7 @@ module.exports = function(grunt) {
             },
             js: {
                 files: ['<%= options.app %>/apps/dashboard/**/*.js'],
-                tasks: ['build-js-dashboard'],
+                tasks: ['build-babel-js-dashboard'],
                 options: {
                     livereload: true
                 }
@@ -83,7 +89,7 @@ module.exports = function(grunt) {
             },
             react: {
                 files: '<%= options.app %>/apps/dashboard/**/*.jsx',
-                tasks: ['build-js-dashboard'],
+                tasks: ['build-babel-js-dashboard'],
                 options: {
                     livereload: true
                 }

@@ -31,7 +31,7 @@ var Tags = React.createClass({
     },
 
     getDefaultProps: function(){
-        return {'tags':[]}
+        return {'tags':[], title:"Tags"}
     },
 
     getInitialState: function(){
@@ -81,7 +81,7 @@ var Tags = React.createClass({
         return (
 
             <div className="TagComponent input-group" >
-                <span className="input-group-addon">Tags:</span>
+                <span className="input-group-addon">{this.props.title}:</span>
                 <input type="text" ref="tokenField"
                     placeholder="Enter Tags"
                     defaultValue={this.props.tags} />
