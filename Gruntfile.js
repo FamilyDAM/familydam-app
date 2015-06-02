@@ -5,20 +5,20 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build-babel-dev', 'watch']);//, 'connect'
 
     grunt.registerTask('build-babel-dev', [
-        'clean',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
+        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
     ]); /*, 'build-atom-shell-app'*/
     grunt.registerTask('build-babel-prod', [
-        'clean',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify'
+        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify'
     ]); /*, 'build-atom-shell-app'*/
 
 
     //deprecated
     grunt.registerTask('build-dev', [
-        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
+        'clean:dist',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
     ]); /*, 'build-atom-shell-app'*/
     //deprecated
     grunt.registerTask('build-prod', [
-        'clean',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard','uglify'
+        'clean:dist',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard','uglify'
     ]); /*, 'build-atom-shell-app'*/
 
 
@@ -27,6 +27,7 @@ module.exports = function(grunt) {
     //deprecated
     grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
     grunt.registerTask('build-css', ['compass']);
+    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron:osxBuild']);
 
 
 
@@ -97,7 +98,7 @@ module.exports = function(grunt) {
 ,
             dist: {
                 files: '<%= options.dist %>/**',
-                tasks: ['copy:dist'],
+                tasks: ['copy:binary-dist'],
                 options: {
                     livereload: true
                 }
@@ -111,9 +112,16 @@ module.exports = function(grunt) {
                     dot: true,
                     src: [
                         '.tmp',
-                        'binary-dist',
                         '<%= options.dist %>/*',
                         '!<%= options.dist %>/.git*'
+                    ]
+                }]
+            },
+            binaryDist: {
+                files: [{
+                    dot: true,
+                    src: [
+                        'binary-dist'
                     ]
                 }]
             },
@@ -187,12 +195,12 @@ module.exports = function(grunt) {
                     ]
                 }]
             },
-            'dist': {
+            'binary-dist': {
                 files: [
                     {
                         cwd: './dist/',
                         src: '**',
-                        dest: './binary-dist/darwin/atom-shell/Atom.app/Contents/Resources/app/',
+                        dest: './binary-dist/FamilyD.A.M.app/Contents/Resources/app/',
                         expand: true
                     }
                 ]
@@ -279,6 +287,33 @@ module.exports = function(grunt) {
                 }]
             }
         },
+
+
+        electron: {
+            osxBuild: {
+                options: {
+                    name: 'FamilyD.A.M',
+                    dir: 'dist',
+                    out: 'binary-dist',
+                    version: '0.27.1',
+                    platform: 'darwin',
+                    arch: 'x64',
+                    'app-bundle-id': 'com.familydam',
+                    'app-version': '0.0.1'
+                }
+            },
+            winBuild: {
+                options: {
+                    name: 'FamilyD.A.M',
+                    dir: 'dist',
+                    out: 'binary-dist',
+                    version: '0.27.1',
+                    platform: 'win32',
+                    arch: 'x64'
+                }
+            }
+        },
+
 
         'download-atom-shell': {
             version: '0.22.2',

@@ -26,7 +26,6 @@ module.exports = {
     {
         console.log("{upload single file} " +file_.path);
         console.dir(file_);
-        debugger;
 
         var _this = this;
         var _currentFile = file_;
@@ -41,7 +40,6 @@ module.exports = {
         var _hasAccess = false;
         var _checkAccess = _this.checkAccess(_currentFile)
             .then(function (result_) {
-                debugger;
                 _hasAccess = result_.visible;
 
                 if (!_hasAccess)
@@ -91,27 +89,36 @@ module.exports = {
      * @param path
      */
     copyLocalFile: function (file_) {
+        if( file_.recursive == undefined ){
+            file_.recursive = true;
+        }
+
          return $.ajax({
                 method: "post",
-                url: PreferenceStore.getBaseUrl() + "/api/import/copy/",
-                data: {'dir': file_.uploadPath, 'path': file_.path_, 'recursive': true},
+                url: PreferenceStore.getBaseUrl() + "/api/import/file/copy/",
+                data: {'dir': file_.uploadPath, 'path': file_.path, 'recursive': file_.recursive},
                 headers: {
                     "X-Auth-Token":  UserStore.token.value
                 }
             }).then(function(data_, status_, xhr_){
 
-
-                 _currentFile.status = "COMPLETE";
-                 _currentFile.percentComplete = "100";
+                 file_.status = "COMPLETE";
+                 file_.percentComplete = "100";
                  UploadActions.fileStatusAction.onNext(file_);
+                 UploadActions.removeFileAction.onNext(file_);
 
 
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    UserActions.saveToken.onNext(_token);
-                }
-                return data_;
-            });
+                 var _token = xhr_.getResponseHeader("X-Auth-Token");
+                 if( _token != null && _token !== undefined ){
+                     UserActions.saveToken.onNext(_token);
+                 }
+                 return data_;
+
+         }, function(err_){
+             debugger;
+             console.dir(err_);
+             return err_;
+         });
 
     },
 
@@ -123,7 +130,6 @@ module.exports = {
      * @param path
      */
     uploadFile: function (file_) {
-        debugger;
         var data = new FormData();
         data.append("path", file_.uploadPath);
         data.append("file", file_);
@@ -147,7 +153,6 @@ module.exports = {
                 }
             }
         }).then(function(data_, status_, xhr_){
-            debugger;
             file_.status = "COMPLETE";
             file_.percentComplete = "100";
             UploadActions.fileStatusAction.onNext(file_);
@@ -161,6 +166,7 @@ module.exports = {
             return data_;
         }, function(err_){
             console.dir(err_);
+            return err_;
         });
 
     }

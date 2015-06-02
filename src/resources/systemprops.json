@@ -5,9 +5,11 @@
     "port":"9000",
     "storageLocation": "/Users/mnimer/Development/temp/familydam",
     "modules": {
-        "photos": true,
-        "music": true,
-        "videos": true,
-        "email": true
+        "photos": false,
+        "music": false,
+        "videos": false,
+        "email": false,
+        "web": false,
+        "backup": false
     }
 }

@@ -76,7 +76,7 @@ module.exports = {
             }, function (xhr_, textStatus_, errorThrown) {
 
                 console.log("{GetFiles Service} getFiles() error");
-                _this.sink.setError(xhr_);
+                _this.sink.onError(xhr_);
             });
         }
 

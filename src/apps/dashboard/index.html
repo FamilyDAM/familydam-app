@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>FamilyD.A.M. (A Digital Asset Manager for the whole family)</title>
 
-    <script src="//localhost:35729/livereload.js"></script>
+
 
     <link href='http://fonts.googleapis.com/css?family=Roboto:500,300,400' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css">
@@ -24,15 +24,18 @@
 
 
 
-    <!-- react friendly js components -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<!-- react friendly js components -->
+<script src="bower_components/jquery/1.9.1/jquery.min.js"></script>
 
-    <script>
+<script>
+    $( document ).ready( function(){
+        console.log("loaded scripts");
         jQuery.getScript('bower_components/bootstrap-material-design/dist/js/ripples.js');
         jQuery.getScript('bower_components/bootstrap-material-design/dist/js/material.js');
         jQuery.getScript('bower_components/react-bootstrap/react-bootstrap.js');
         jQuery.getScript('bower_components/bootstrap-fileinput/js/fileinput.min.js');
         jQuery.getScript('app.js');
-    </script>
+    } );
+</script>
 </body>
 </html>

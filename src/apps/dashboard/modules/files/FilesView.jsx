@@ -57,7 +57,8 @@ var FilesView = React.createClass({
     getInitialState: function(){
         return {
             files:[],
-            selectedItem: undefined
+            selectedItem: undefined,
+            state:'100%'
         };
     },
 
@@ -141,6 +142,17 @@ var FilesView = React.createClass({
         {
             this.selectedFileSubscription.dispose();
         }
+
+        window.removeEventListener("resize", this.updateDimensions);
+    },
+
+    componentDidMount: function() {
+        this.updateDimensions();
+        window.addEventListener("resize", this.updateDimensions);
+    },
+
+    updateDimensions: function() {
+        this.setState({width: $(window).width(), height: ($(window).height()-130)+'px'});
     },
 
 
@@ -173,6 +185,10 @@ var FilesView = React.createClass({
                 return <FileRow file={file_}/>
             });
 
+        var sectionStyle = {};
+        sectionStyle['borderLeft'] = '1px solid #cccccc';
+        sectionStyle['overflow'] = 'scroll';
+        sectionStyle['height'] = this.state.height ;
 
 
         return (
@@ -187,7 +203,7 @@ var FilesView = React.createClass({
                         <SectionTree title="Web Archive" disabled={true}/>
                     </aside>
 
-                    <section className={tableClass} style={{'borderLeft':'1px solid #eee'}}>
+                    <section className={tableClass} style={sectionStyle}>
                         <div className="container-fluid fileRows">
                             <div className="row" style={{'borderBottom':'1px solid #000'}}>
                                 <div className="col-xs-2 col-sm-1"></div>

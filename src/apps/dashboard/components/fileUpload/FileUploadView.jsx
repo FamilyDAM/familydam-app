@@ -109,9 +109,9 @@ var FileUploadView = React.createClass({
                                         <Glyphicon glyph="remove"  style={{'padding': '8px 8px;', 'margin':'0px 0px'}}  className="btn" onClick={_this.handleRemoveFile.bind(_this, result_)}/>
                                         <Glyphicon glyph="cloud-upload" style={{'padding': '8px 8px;', 'margin':'0px 0px'}} className="btn" onClick={_this.handleUploadSingleFile.bind(_this, result_)}/>
                                     </div>
-                                    <div style={{'float':'left', 'padding-top': '8px'}}>
-                                           <div style={{'vertical-align':'middle'}}>{result_.name}</div>
-                                           <div style={{'vertical-align':'middle'}}><strong>copy to:</strong> {result_.uploadPath}</div>
+                                    <div style={{'float':'left', 'paddingTop': '8px'}}>
+                                           <div style={{'verticalAlign':'middle'}}>{result_.name}</div>
+                                           <div style={{'verticalAlign':'middle'}}><strong>copy to:</strong> {result_.uploadPath}</div>
                                     </div>
                                 </li>;
                     })}

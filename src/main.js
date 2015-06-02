@@ -75,11 +75,16 @@ app.on('open-url', function(event, path) {
     });
 });
 
-// Called when user tries to open a new url to leave the applicate
+//todo: Called when user tries to open a new url to leave the application.
 app.on('open-file', function(event, url) {
-    console.log("Open-FILE: " +url);
+    console.log("TODO Open-FILE: " +url);
 
 });
+
+
+
+
+
 
 // This method will be called when atom-shell has done everything
 // initialization and ready for creating browser windows.
@@ -156,7 +161,8 @@ app.on('ready', function() {
  */
 app.loadConfigApplication = function(_settings) {
     //start jar
-    //console.log("{loadMainApplication}" +_settings);
+    console.log("{loadMainApplication}" +_settings);
+    console.log("url=" +'file://' + __dirname  +'/apps/dashboard/index.html')
     //serverManager.startServer(_settings, app, splashWindow, mainWindow);
 
     splashWindow.hide();
@@ -173,16 +179,24 @@ app.loadConfigApplication = function(_settings) {
  */
 app.loadMainApplication = function(_settings) {
     //start jar
-    //console.log("{loadMainApplication}" +_settings);
+    console.log("{loadMainApplication}" +_settings);
+    console.log("url=" +'file://' + __dirname  +'/apps/dashboard/index.html')
     //serverManager.startServer(_settings, app, splashWindow, mainWindow);
 
     splashWindow.hide();
     mainWindow.show();
     mainWindow.maximize();
 
+    // Open the devtools.
+    mainWindow.openDevTools();
+
     mainWindow.loadUrl('file://' + __dirname  +'/apps/dashboard/index.html');
 };
 
+
+/*****************************
+ * Messaging
+ */
 
 app.sendClientMessage = function(_type, _message, _logToConsole)
 {
