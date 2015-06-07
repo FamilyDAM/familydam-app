@@ -10,8 +10,8 @@ var Rx = require('rx');
 module.exports = {
 
     // Logged in user
-    //_baseUrl : "http://localhost:9000",
-    _baseUrl : "",
+    _baseUrl : "http://localhost:9000",
+    //_baseUrl : "",
     _rootDirectory : "/dam:files/",
     _documentRootDirectory : "/documents/",
 
