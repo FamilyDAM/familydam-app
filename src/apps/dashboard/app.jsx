@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015  Mike Nimer & 11:58 Labs
+ */
+
 //Needed for onTouchTap
 //Can go away when react 1.0 release
 //Check this repo:

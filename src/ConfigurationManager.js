@@ -1,5 +1,9 @@
 
 /*
+ * Copyright (c) 2015  Mike Nimer & 11:58 Labs
+ */
+
+/*
  * This file is part of FamilyDAM Project.
  *
  *     The FamilyDAM Project is free software: you can redistribute it and/or modify

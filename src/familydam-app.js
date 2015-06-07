@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015  Mike Nimer & 11:58 Labs
+ */
+
 var app = require('app');  // Module to control application life.
 var ipc = require('ipc');
 var BrowserWindow = require('browser-window');  // Module to create native browser window.

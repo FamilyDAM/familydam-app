@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015  Mike Nimer & 11:58 Labs
+ */
+
 /** jsx React.DOM */
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
