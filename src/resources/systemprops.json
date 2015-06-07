@@ -1,9 +1,12 @@
 {
     "version": "1.0.0",
     "serverVersion": "1.0.0",
-    "state":"INSTALLED",
+    "state":"PENDING",
     "port":"9000",
     "storageLocation": "/Users/mnimer/Development/temp/familydam",
+    "resources":[
+        "FamilyDAM.jar"
+    ],
     "modules": {
         "photos": false,
         "music": false,

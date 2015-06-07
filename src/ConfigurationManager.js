@@ -28,18 +28,102 @@
     var ipc = require('ipc');
     var http = require('http');
     var BrowserWindow = require('browser-window');
+    var serverManager = require('./ServerManager');
 
     var settings = {};
     var settingsFile = "resources/systemprops.json";
 
     var appRoot;
     var configWindow;
+    var splashWindow;
+    var mainWindow;
 
-    var link = function (_app, _configWindow)
+    var link = function (app_, configWindow_, splashWindow_, mainWindow_)
     {
-        this.appRoot = _app;
-        configWindow = _configWindow;
+        appRoot = app_;
+        configWindow = configWindow_;
+        splashWindow = splashWindow_;
+        mainWindow = mainWindow_;
     };
+
+
+    var validateConfiguration = function()
+    {
+        var _this = this;
+        console.log("[ValidateConfiguration]")
+        if( !fs.existsSync( __dirname +"/"  +settingsFile) )
+        {
+            //todo: create default file
+            console.warn("settings file does not exists");
+        }
+
+
+        fs.readFile( __dirname +'/resources/systemprops.json',  {'encoding':'utf8'}, function (err, data)
+        {
+            //console.log(data);
+            if (err) {
+                console.log("Error: " +err);
+                throw err;
+            }
+
+            settings = JSON.parse(data);
+
+            initializeStorageLocation();
+
+            if( true || settings.state == "READY" && _this.initializeStorageLocation() )
+            {
+                serverManager.startServer(settings, appRoot, configWindow, splashWindow, mainWindow);
+            }else{
+                console.log("START CONFIG WIZARD");
+                //loadConfigApplication();
+            }
+
+        });
+    };
+
+
+    /**
+     * Move the server and any external dependencies to the selected storage location.
+     * @returns {boolean}
+     */
+    function initializeStorageLocation() {
+
+        console.log("[InitializeStorageLocation] " +settings.storageLocation);
+
+        try{
+            fs.mkdirSync(settings.storageLocation);
+        }catch(err){
+            //swallow
+        }
+
+
+        if( fs.existsSync(settings.storageLocation) )
+        {
+            for(var indx in settings.resources)
+            {
+                var file = settings.resources[indx];
+                //console.log("checking file:" +settings.storageLocation +"/" +file);
+                if( !fs.existsSync( settings.storageLocation +"/" +file  ) )
+                {
+                    console.log("moving file:" +source +" to:" +target);
+                    //copy jar to new dir
+                    var source = __dirname +"/resources/" +file;
+                    var target = settings.storageLocation +"/" +file;
+                    //copy
+                    appRoot.sendClientMessage('info', "Copying '" +file +"' to "+settings.storageLocation, false);
+                    //console.log( "{ConfigurationManager} copy: dest=" +source);
+                    //console.log( "{ConfigurationManager} copy: target=" +target);
+                    fs.writeFileSync(target, fs.readFileSync(source));
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+
 
 
     /**
@@ -47,18 +131,23 @@
      */
     var loadConfigApplication = function()
     {
-        //console.log("Load internal configuration window (" +new Date() +")");
-
-        var configWindow = new BrowserWindow({width:900, height:600, center:true, frame:true, show:false, title:'FamilyDAM Configuration Wizard'});
+        console.log("Load configuration window (" +new Date() +")");
+        //this.configWindow = new BrowserWindow({width:900, height:600, center:true, frame:true, show:false, title:'FamilyDAM Configuration Wizard'});
 
         configWindow.loadUrl('file://' + __dirname + '/apps/setup/index.html');
         configWindow.webContents.on('did-finish-load', function()
             {
                 configWindow.webContents.send('settingConfig', settings);
             });
+
+
+        splashWindow.hide();
+        mainWindow.hide();
         configWindow.show();
         configWindow.focus();
-        app.dock.bounce("informational");
+
+        //Bouce the dock to get the users attention
+        this.app.dock.bounce("informational");
 
 
         // Call back handler which invoked from the webpage when all of the fields have been filled out.
@@ -73,97 +162,26 @@
 
             fs.writeFile( __dirname +'/resources/systemprops.json',  encodedSettings, {'encoding':'utf8'}, function (err, data)
             {
-                storageLocationInitialize();
-                splashwindow = null;
-                configWindow.hide();
-                this.appRoot.loadMainApplication(settings);
+                if( initializeStorageLocation() )
+                {
+                    settings.state = "INSTALLED";
+                    serverManager.startServer(settings, this.app, this.splashWindow, this.configWindow, this.mainWindow );
+                }else{
+                    alert("Error Saving Settings & Moving Resources, Please restart your application and try again.  Also, please double the permissions of the storage location folder.");
+                }
             });
         });
     };
 
 
-    var validateSettingsFile = function()
-    {
-        if( !fs.existsSync( __dirname +"/"  +settingsFile) )
-        {
-            //todo: create default file
-            console.warn("settings file does not exists");
-        }
-
-
-        fs.readFile( __dirname +'/resources/systemprops.json',  {'encoding':'utf8'}, function (err, data)
-        {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-
-            console.log(data);
-            settings = JSON.parse(data);
-
-
-            if( true || settings.state == "READY" && storageLocationInitialize() )
-            {
-                this.appRoot.loadMainApplication(settings);
-            }else{
-                loadConfigApplication();
-            }
-
-        });
-    };
-
-
-    function storageLocationIsValid() {
-
-        var target = settings.storageLocation +"/familydam-" +settings.serverVersion +"-SNAPSHOT-standalone.jar";
-
-        if( fs.existsSync(  target  ) )
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-
-    function storageLocationInitialize() {
-
-        var target = settings.storageLocation +"/familydam-" +settings.serverVersion +"-SNAPSHOT-standalone.jar";
-
-        try{
-            fs.mkdirSync(settings.storageLocation);
-        }catch(err){
-            //swallow
-        }
-
-
-        if( fs.existsSync(settings.storageLocation) )
-        {
-            if( !fs.existsSync(  target  ) )
-            {
-                //copy jar to new dir
-                var source = __dirname +"/resources/familydam-" +settings.serverVersion +"-SNAPSHOT-standalone.jar";
-                //copy
-                this.appRoot.sendClientMessage('info', "Copying FamilyDAMServer to "+settings.storageLocation, false);
-                console.log( "{ConfigurationManager} copy: dest=" +source);
-                console.log( "{ConfigurationManager} copy: target=" +target);
-                fs.writeFileSync(target, fs.readFileSync(source));
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
 
     module.exports = {
 
-        initializeServer : function(_app, _configWindow)
+        initializeServer : function(app_, configWindow_, splashWindow_, mainWindow_)
         {
-            link(_app, _configWindow);
+            link(app_, configWindow_, splashWindow_, mainWindow_);
 
-            validateSettingsFile();
+            validateConfiguration();
         }
 
     };

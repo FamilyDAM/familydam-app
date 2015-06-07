@@ -5,6 +5,11 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['build-babel-dev', 'watch']);//, 'connect'
     grunt.registerTask('default-prod', ['build-babel-prod', 'watch']);//, 'connect'
 
+
+    grunt.registerTask('build-css', ['compass']);
+    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify2:dashboard']);
+
+
     grunt.registerTask('build-babel-dev', [
         'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard', 'copy:binary-dist'
     ]); /*, 'build-atom-shell-app'*/
@@ -13,11 +18,7 @@ module.exports = function(grunt) {
     ]); /*, 'build-atom-shell-app'*/
 
 
-    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify2:dashboard']);
-
-    grunt.registerTask('build-css', ['compass']);
-
-    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron:osxBuild']);
+    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron:osxBuild', 'clean:binaryDashboard', 'copy:embeddedServer']);
 
 
     //deprecated
@@ -28,7 +29,6 @@ module.exports = function(grunt) {
     grunt.registerTask('build-prod', [
         'clean:dist',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard','uglify'
     ]); /*, 'build-atom-shell-app'*/
-
     //deprecated
     grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
 
@@ -84,6 +84,13 @@ module.exports = function(grunt) {
                     livereload: true
                 }
             },
+            'electron-js': {
+                files: ['<%= options.app %>/*.js'],
+                tasks: ['copy:app','build-electron'],
+                options: {
+                    livereload: true
+                }
+            },
             html: {
                 files: ['<%= options.app %>/apps/dashboard/*.html'],
                 tasks: ['newer:copy:dashboard'],
@@ -125,6 +132,14 @@ module.exports = function(grunt) {
                     dot: true,
                     src: [
                         'binary-dist'
+                    ]
+                }]
+            },
+            binaryDashboard: {
+                files: [{
+                    dot: true,
+                    src: [
+                        'binary-dist/FamilyDAM.app/Contents/Resources/app/apps/dashboard'
                     ]
                 }]
             },
@@ -203,10 +218,19 @@ module.exports = function(grunt) {
                     {
                         cwd: './dist/',
                         src: '**',
-                        dest: './binary-dist/FamilyD.A.M.app/Contents/Resources/app/',
+                        dest: './binary-dist/FamilyDAM.app/Contents/Resources/app/',
                         expand: true
                     }
                 ]
+            },
+            'embeddedServer': {
+                files:[{
+                    src: './../server-embedded/target/FamilyDAM.jar',
+                    dest: './binary-dist/FamilyDAM.app/Contents/Resources/app/resources',
+                    expand: true,
+                    flatten:true,
+                    verbose:true
+                }]
             }
         },
 
@@ -295,7 +319,7 @@ module.exports = function(grunt) {
         electron: {
             osxBuild: {
                 options: {
-                    name: 'FamilyD.A.M',
+                    name: 'FamilyDAM',
                     dir: 'dist',
                     out: 'binary-dist',
                     version: '0.27.1',
@@ -307,7 +331,7 @@ module.exports = function(grunt) {
             },
             winBuild: {
                 options: {
-                    name: 'FamilyD.A.M',
+                    name: 'FamilyDAM',
                     dir: 'dist',
                     out: 'binary-dist',
                     version: '0.27.1',

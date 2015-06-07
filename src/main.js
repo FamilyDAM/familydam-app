@@ -8,7 +8,6 @@ var ipc = require('ipc');
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 var serverManager = require('./ServerManager');
 var configurationManager = require('./ConfigurationManager');
-var fileManager = require('./FileManager');  // Module to create native browser window.
 
 // Report crashes to our server.
 require('crash-reporter').start();
@@ -18,7 +17,7 @@ require('crash-reporter').start();
 
 // Parse command line options.
 var argv = process.argv.slice(1);
-var option = { file: null, help: null, version: null, webdriver: null };
+var option = { version: null, help: null, debug: false };
 for (var i in argv) {
     if (argv[i] == '--version' || argv[i] == '-v') {
         option.version = true;
@@ -26,6 +25,9 @@ for (var i in argv) {
     } else if (argv[i] == '--help' || argv[i] == '-h') {
         option.help = true;
         break;
+    } else if (argv[i] == '--debug' || argv[i] == '-d') {
+        option.debug = true;
+        continue;
     } else if (argv[i][0] == '-') {
         continue;
     } else {

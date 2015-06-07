@@ -7,7 +7,6 @@ var ipc = require('ipc');
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 var serverManager = require('./ServerManager');
 var configurationManager = require('./ConfigurationManager');
-var fileManager = require('./FileManager');  // Module to create native browser window.
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -26,8 +25,6 @@ app.on('ready', function() {
     // Show splash screen, while starting embedded server
     app.loadSplashApplication();
 
-    // start embedded server
-    app.startContentRepository();
 });
 
 
@@ -99,35 +96,12 @@ app.loadSplashApplication = function(){
 }
 
 
-/**
- * Launch the main application
- * @param _settings
- */
-app.loadConfigApplication = function(_settings) {
-    //start jar
-    console.log("{loadMainApplication}" +_settings);
-    console.log("url=" +'file://' + __dirname  +'/apps/dashboard/index.html')
-    //serverManager.startServer(_settings, app, splashWindow, mainWindow);
+app.loadDashboardApplication = function(port){
+
+    console.log("{loadDashboardApplication} " +"http://localhost:" +port +"/index.html");
 
     splashWindow.hide();
-    mainWindow.hide();
-    configWindow.show();
-
-    configWindow.loadUrl('file://' + __dirname  +'/apps/config/index.html');
-};
-
-
-/**
- * Launch the main application
- * @param _settings
- */
-app.loadMainApplication = function(_settings) {
-    //start jar
-    console.log("{loadMainApplication}" +_settings);
-    console.log("url=" +'file://' + __dirname  +'/apps/dashboard/index.html')
-    //serverManager.startServer(_settings, app, splashWindow, mainWindow);
-
-    splashWindow.hide();
+    configWindow.hide();
     mainWindow.show();
     mainWindow.maximize();
 
@@ -135,15 +109,10 @@ app.loadMainApplication = function(_settings) {
     mainWindow.openDevTools();
 
     //mainWindow.loadUrl('file://' + __dirname  +'/apps/dashboard/index.html');
-    mainWindow.loadUrl('http://localhost:9000/index.html');
-};
+    mainWindow.loadUrl("http://localhost:" +port +"/index.html");
 
-
-
-app.startContentRepository = function(){
-    // Start the embedded Sling Server
-    //serverManager.startServer(splashWindow, mainWindow);
 }
+
 
 
 
@@ -155,14 +124,13 @@ app.sendClientMessage = function(_type, _message, _logToConsole)
 {
     if( _logToConsole )
     {
-        console.log("{sendCLientMessage}");
-        console.dir(type);
-        console.dir(message);
+        console.log("{sendClientMessage}");
+        console.dir(_type);
+        console.dir(_message);
     }
     if (splashWindow !== undefined && splashWindow.webContents != null) splashWindow.webContents.send(_type, _message);
     if (mainWindow !== undefined && mainWindow.webContents != null) mainWindow.webContents.send(_type, _message);
 };
-
 
 
 
