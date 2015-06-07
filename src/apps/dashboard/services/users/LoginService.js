@@ -18,6 +18,7 @@
 var Rx = require('rx');
 var PreferenceStore = require('../../stores/PreferenceStore');
 var AuthActions = require('../../actions/AuthActions');
+var UserActions = require('../../actions/UserActions');
 
 
 
@@ -59,10 +60,19 @@ module.exports = {
 
                     // update token
                     var _token = xhr_.getResponseHeader("X-Auth-Token");
-                    AuthActions.saveToken.onNext(_token);
+                    if( _token != null && _token !== undefined ){
+                        AuthActions.saveToken.onNext(_token);
+                    }
+                }, function (xhr_, status_, errorThrown_){
 
-                }, function(xhr_, textStatus_, errorThrown) {
-                    _this.sink.setError(_token);
+                    //send the error to the store (through the sink observer
+                    if( xhr_.status == 401){
+                        AuthActions.loginRedirect.onNext(true);
+                    }else
+                    {
+                        var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                        _this.sink.onError(_error);
+                    }
                 });
 
     }

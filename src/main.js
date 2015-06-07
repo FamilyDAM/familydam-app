@@ -25,197 +25,40 @@ var fileManager = require('./FileManager');  // Module to create native browser 
 // Report crashes to our server.
 require('crash-reporter').start();
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the javascript object is GCed.
-var splashWindow = null;
-var configWindow = null;
-var mainWindow = null;
 
 
 
-/******************************
- * Event Handlers
- */
-process.on('exit', function () {
-    serverManager.kill();
-});
-
-
-// Quit when all windows are closed.
-app.on('will-quit', function() {
-    serverManager.kill();
-});
-
-
-// Quit when all windows are closed.
-app.on('window-all-closed', function() {
-    serverManager.kill();
-
-    if (process.platform != 'darwin')
-        app.quit();
-});
-
-
-// Called when user tries to open a new url to leave the application
-app.on('open-url', function(event, path) {
-    console.log("Open-URL: " +path);
-
-    // Create the browser window.
-    var childWindow = new BrowserWindow({width:1024, height:800, frame:true});
-
-    // and load the index.html of the app.
-    childWindow.loadUrl(path);
-
-    // Emitted when the window is closed.
-    childWindow.on('closed', function() {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
-        childWindow = null;
-    });
-});
-
-//todo: Called when user tries to open a new url to leave the application.
-app.on('open-file', function(event, url) {
-    console.log("TODO Open-FILE: " +url);
-
-});
-
-
-
-
-
-
-// This method will be called when atom-shell has done everything
-// initialization and ready for creating browser windows.
-app.on('ready', function() {
-    // Create the browser window.
-    splashWindow = new BrowserWindow({width:600, height:400, center:true, frame:false, show:true});
-    configWindow = new BrowserWindow({width:600, height:400, center:true, frame:false, show:false});
-    mainWindow = new BrowserWindow({
-        width:1024,
-        height:800,
-        center:true,
-        frame:true,
-        show:false,
-        title:'FamilyDAM - The Digital Asset Manager for Families'});
-
-
-
-    // and load the index.html of the app.
-    splashWindow.loadUrl('file://' + __dirname + '/apps/splash/index.html');
-    splashWindow.focus();
-
-    // Emitted when the window is closed.
-    splashWindow.on('closed', function() {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
-        splashWindow = null;
-    });
-
-
-    configWindow.on('closed', function() {
-        configWindow = null;
-    });
-
-
-    // Emitted when the window is closed.
-    mainWindow.on('closed', function() {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
-        splashWindow = null;
-        configWindow = null;
-        mainWindow = null;
-        serverManager.kill();
-        if (process.platform != 'darwin')
-        {
-            app.quit();
-        }
-    });
-
-
-    // Check the settings configuration before opening up the main app.
-    var _this = this;
-    var timer = setInterval(function(){
-        clearTimeout(timer);
-        _this.splashWindow = null;
-        configurationManager.initializeServer(app, configWindow);
-    }, 2000);
-
-
-    // Start the embedded Sling Server
-    //serverManager.startServer(splashWindow, mainWindow);
-});
-
-
-
-/******************************
- * App level functions
- */
-
-/**
- * Launch the main application
- * @param _settings
- */
-app.loadConfigApplication = function(_settings) {
-    //start jar
-    console.log("{loadMainApplication}" +_settings);
-    console.log("url=" +'file://' + __dirname  +'/apps/dashboard/index.html')
-    //serverManager.startServer(_settings, app, splashWindow, mainWindow);
-
-    splashWindow.hide();
-    mainWindow.hide();
-    configWindow.show();
-
-    configWindow.loadUrl('file://' + __dirname  +'/apps/config/index.html');
-};
-
-
-/**
- * Launch the main application
- * @param _settings
- */
-app.loadMainApplication = function(_settings) {
-    //start jar
-    console.log("{loadMainApplication}" +_settings);
-    console.log("url=" +'file://' + __dirname  +'/apps/dashboard/index.html')
-    //serverManager.startServer(_settings, app, splashWindow, mainWindow);
-
-    splashWindow.hide();
-    mainWindow.show();
-    mainWindow.maximize();
-
-    // Open the devtools.
-    mainWindow.openDevTools();
-
-    mainWindow.loadUrl('file://' + __dirname  +'/apps/dashboard/index.html');
-};
-
-
-/*****************************
- * Messaging
- */
-
-app.sendClientMessage = function(_type, _message, _logToConsole)
-{
-    if( _logToConsole )
-    {
-        console.log("{sendCLientMessage}");
-        console.dir(type);
-        console.dir(message);
+// Parse command line options.
+var argv = process.argv.slice(1);
+var option = { file: null, help: null, version: null, webdriver: null };
+for (var i in argv) {
+    if (argv[i] == '--version' || argv[i] == '-v') {
+        option.version = true;
+        break;
+    } else if (argv[i] == '--help' || argv[i] == '-h') {
+        option.help = true;
+        break;
+    } else if (argv[i][0] == '-') {
+        continue;
+    } else {
+        option.file = argv[i];
+        break;
     }
-    if (splashWindow !== undefined && splashWindow.webContents != null) splashWindow.webContents.send(_type, _message);
-    if (mainWindow !== undefined && mainWindow.webContents != null) mainWindow.webContents.send(_type, _message);
-};
+}
 
 
-
-
-ipc.on('asynchronous-reply', function(arg) {
-    console.log("Asyn-Reply:" +arg); // prints "pong"
-});
-
+if (option.version) {
+    console.log('v' + process.versions.electron);
+    process.exit(0);
+} else if (option.help) {
+    var helpMessage = "FamilyD.A.M v" + process.versions.electron + " - Digital Asset Manager for the whole family\n";
+    helpMessage    += "Options:\n";
+    helpMessage    += "  -h, --help            Print this usage message.\n";
+    helpMessage    += "  -v, --version         Print the version.";
+    console.log(helpMessage);
+    process.exit(0);
+} else {
+    require('./familydam-app.js');
+}
 
 

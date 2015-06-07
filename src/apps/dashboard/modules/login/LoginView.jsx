@@ -22,12 +22,19 @@ var LoginView = React.createClass({
     componentDidMount: function(){
         var _this = this;
 
+        AuthActions.logout.onNext(true);
         UserActions.getUsers.source.onNext(true);
 
-        var stream = UserStore.users.subscribe(function (results) {
+        this.usersSubscription = UserStore.users.subscribe(function (results) {
             _this.state.users = results;
             if (_this.isMounted())  _this.forceUpdate();
         });
+    },
+
+    componentWillUnmount: function(){
+        if( this.usersSubscription != undefined ){
+            this.usersSubscription.dispose();
+        }
     },
 
 

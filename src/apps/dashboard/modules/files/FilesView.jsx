@@ -173,16 +173,16 @@ var FilesView = React.createClass({
         var folderRows = this.state.files
             .filter( function(dir_){
                 return dir_._class == "com.familydam.core.models.Directory";
-            }).map( function(dir_){
-                return <DirectoryRow dir={dir_}/>
+            }).map( function(dir_, indx){
+                return <DirectoryRow  key={indx} dir={dir_}/>
             });
 
 
         var fileRows = this.state.files
             .filter( function(file_){
                 return file_._class == "com.familydam.core.models.File";
-            }).map( function(file_){
-                return <FileRow file={file_}/>
+            }).map( function(file_, indx){
+                return <FileRow key={indx} file={file_}/>
             });
 
         var sectionStyle = {};
@@ -195,12 +195,8 @@ var FilesView = React.createClass({
             <div className="filesView container-fluid" >
                 <div  className="row">
                     <aside className="col-xs-4 col-sm-3" >
-                        <SectionTree title="Files" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
-                        <SectionTree title="Photos" disabled={true}/>
-                        <SectionTree title="Music" disabled={true}/>
-                        <SectionTree title="Movies" disabled={true}/>
-                        <SectionTree title="Email Archive" disabled={true}/>
-                        <SectionTree title="Web Archive" disabled={true}/>
+                        <SectionTree title="Local Files" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
+                        <SectionTree title="Cloud Files" disabled={true}/>
                     </aside>
 
                     <section className={tableClass} style={sectionStyle}>

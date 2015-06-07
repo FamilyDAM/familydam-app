@@ -48,7 +48,7 @@ module.exports = {
                     'method':'get'
                     ,'url': PreferenceStore.getBaseUrl() +'/api/users'
                     , cache: false
-                }).then(function(results){
+                }).then(function(results, status_, xhr_){
                     var list = [];
 
                     results.map(function(item) {
@@ -61,8 +61,21 @@ module.exports = {
                     });
 
                     var _sortedUsers = list.sort(function (a, b) { return b.username - a.username; });
-            console.dir(_this.sink);
                     _this.sink.onNext(_sortedUsers);
+
+                    var _token = xhr_.getResponseHeader("X-Auth-Token");
+                    if( _token != null && _token !== undefined ){
+                        AuthActions.saveToken.onNext(_token);
+                    }
+                }, function (xhr_, status_, errorThrown_){
+
+                    //send the error to the store (through the sink observer
+                    if( xhr_.status == 401){
+                        AuthActions.loginRedirect.onNext(true);
+                    } else {
+                        var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                        _this.sink.onError(_error);
+                    }
                 });
 
     }

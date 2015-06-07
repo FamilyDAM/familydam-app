@@ -39,7 +39,7 @@ module.exports = {
         // First check access, can we copy a local file (desktop mode) or do we need to upload the file)
         var _hasAccess = false;
         var _checkAccess = _this.checkAccess(_currentFile)
-            .then(function (result_) {
+            .then(function (result_, status_, xhr_) {
                 _hasAccess = result_.visible;
 
                 if (!_hasAccess)
@@ -49,7 +49,7 @@ module.exports = {
                     _this.copyLocalFile(file_);
                 }
 
-            }, function (result_) {
+            }, function (result_, status_, xhr_) {
                 _this.uploadFile(file_);
             });
 
@@ -64,6 +64,8 @@ module.exports = {
      * @returns {HttpPromise}
      */
     checkAccess: function (file_) {
+        var _this = this;
+
         return $.ajax({
             method: "post",
             url: PreferenceStore.getBaseUrl() + "/api/import/info/",
@@ -77,8 +79,14 @@ module.exports = {
                 UserActions.saveToken.onNext(_token);
             }
             return data_;
-        }, function(err_){
-            return err_;
+        }, function(result_, status_, xhr_){
+            if( xhr_.status == 401){
+                AuthActions.loginRedirect.onNext(true);
+            }else
+            {
+                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                _this.sink.onError(_error);
+            }
         });
     },
 
@@ -89,6 +97,8 @@ module.exports = {
      * @param path
      */
     copyLocalFile: function (file_) {
+        var _this = this;
+
         if( file_.recursive == undefined ){
             file_.recursive = true;
         }
@@ -115,9 +125,13 @@ module.exports = {
                  return data_;
 
          }, function(err_){
-             debugger;
-             console.dir(err_);
-             return err_;
+             if( xhr_.status == 401){
+                 AuthActions.loginRedirect.onNext(true);
+             }else
+             {
+                 var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                 _this.sink.onError(_error);
+             }
          });
 
     },
@@ -130,6 +144,7 @@ module.exports = {
      * @param path
      */
     uploadFile: function (file_) {
+        var _this = this;
         var data = new FormData();
         data.append("path", file_.uploadPath);
         data.append("file", file_);
@@ -161,12 +176,19 @@ module.exports = {
 
             var _token = xhr_.getResponseHeader("X-Auth-Token");
             if( _token != null && _token !== undefined ){
-                UserActions.saveToken.onNext(_token);
+                AuthActions.saveToken.onNext(_token);
             }
             return data_;
-        }, function(err_){
-            console.dir(err_);
-            return err_;
+        }, function (xhr_, status_, errorThrown_){
+
+            //send the error to the store (through the sink observer
+            if( xhr_.status == 401){
+                AuthActions.loginRedirect.onNext(true);
+            }else
+            {
+                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                _this.sink.onError(_error);
+            }
         });
 
     }

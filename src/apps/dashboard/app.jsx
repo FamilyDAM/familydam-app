@@ -67,7 +67,6 @@ var UploadsView = require('./modules/uploads/UploadsView');
 var routes = [
     <Route handler={LoginView} path="/">
         <Route name="login" handler={LoginView}/>
-        <Route name="signup" handler={LoginView}/>
     </Route>,
     <Route name="dashboard" handler={DashboardView}>
         <DefaultRoute handler={Home}/>

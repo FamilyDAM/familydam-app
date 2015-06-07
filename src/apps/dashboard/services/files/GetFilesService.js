@@ -67,16 +67,23 @@ module.exports = {
                 console.log("{GetFiles Service} getFiles() success");
 
                 _this.sink.onNext(data_);
+
+                // update token
                 var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if (_token != null && _token !== undefined)
-                {
+                if( _token != null && _token !== undefined ){
                     AuthActions.saveToken.onNext(_token);
                 }
 
-            }, function (xhr_, textStatus_, errorThrown) {
+            }, function (xhr_, status_, errorThrown_){
 
-                console.log("{GetFiles Service} getFiles() error");
-                _this.sink.onError(xhr_);
+                //send the error to the store (through the sink observer
+                if( xhr_.status == 401){
+                    AuthActions.loginRedirect.onNext(true);
+                }else
+                {
+                    var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                    _this.sink.onError(_error);
+                }
             });
         }
 

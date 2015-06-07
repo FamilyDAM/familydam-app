@@ -74,13 +74,17 @@ module.exports = {
 
             var _token = xhr_.getResponseHeader("X-Auth-Token");
             if( _token != null && _token !== undefined ){
-                AuthActions.saveToken.onNext(_token);
+                UserActions.saveToken.onNext(_token);
             }
-            return data_;
         }, function (xhr_, status_, errorThrown_){
             //send the error to the store (through the sink observer
-            var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-            _this.sink.onError(_error);
+            if( xhr_.status == 401){
+                AuthActions.loginRedirect.onNext(true);
+            }else
+            {
+                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                _this.sink.onError(_error);
+            }
         });
 
     },
@@ -113,13 +117,18 @@ module.exports = {
             // update the token in memory (incase expire date changes)
             var _token = xhr_.getResponseHeader("X-Auth-Token");
             if( _token != null && _token !== undefined ){
-                AuthActions.saveToken.onNext(_token);
+                UserActions.saveToken.onNext(_token);
             }
-            return data_;
+
         }, function (xhr_, status_, errorThrown_){
             //send the error to the store (through the sink observer
-            var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-            _this.sink.onError(_error);
+            if( xhr_.status == 401){
+                AuthActions.loginRedirect.onNext(true);
+            }else
+            {
+                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                _this.sink.onError(_error);
+            }
         });
 
     },
@@ -155,14 +164,18 @@ module.exports = {
                 // update the token in memory (incase expire date changes)
                 var _token = xhr_.getResponseHeader("X-Auth-Token");
                 if( _token != null && _token !== undefined ){
-                    AuthActions.saveToken.onNext(_token);
+                    UserActions.saveToken.onNext(_token);
                 }
-                return data_;
 
             }, function (xhr_, status_, errorThrown_){
                 //send the error to the store (through the sink observer
-                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                _this.sink.onError(_error);
+                if( xhr_.status == 401){
+                    AuthActions.loginRedirect.onNext(true);
+                }else
+                {
+                    var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                    _this.sink.onError(_error);
+                }
             });
 
 
@@ -192,15 +205,18 @@ module.exports = {
             // update the token in memory (incase expire date changes)
             var _token = xhr_.getResponseHeader("X-Auth-Token");
             if( _token != null && _token !== undefined ){
-                AuthActions.saveToken.onNext(_token);
+                UserActions.saveToken.onNext(_token);
             }
-
-
         }, function (xhr_, status_, errorThrown_){
 
             //send the error to the store (through the sink observer
-            var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-            _this.sink.onError(_error);
+            if( xhr_.status == 401){
+                AuthActions.loginRedirect.onNext(true);
+            }else
+            {
+                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                _this.sink.onError(_error);
+            }
         });
 
     }

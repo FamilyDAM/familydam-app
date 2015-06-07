@@ -26,6 +26,7 @@ module.exports = {
      * @param observer
      * @returns {*}
      */
+    logout: new Rx.Subject(),
     loginRedirect: new Rx.Subject(),
 
 

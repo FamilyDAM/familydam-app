@@ -3,13 +3,21 @@ module.exports = function(grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     grunt.registerTask('default', ['build-babel-dev', 'watch']);//, 'connect'
+    grunt.registerTask('default-prod', ['build-babel-prod', 'watch']);//, 'connect'
 
     grunt.registerTask('build-babel-dev', [
-        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
+        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard', 'copy:binary-dist'
     ]); /*, 'build-atom-shell-app'*/
     grunt.registerTask('build-babel-prod', [
-        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify'
+        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify', 'copy:binary-dist'
     ]); /*, 'build-atom-shell-app'*/
+
+
+    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify2:dashboard']);
+
+    grunt.registerTask('build-css', ['compass']);
+
+    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron:osxBuild']);
 
 
     //deprecated
@@ -21,13 +29,8 @@ module.exports = function(grunt) {
         'clean:dist',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard','uglify'
     ]); /*, 'build-atom-shell-app'*/
 
-
-    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify2:dashboard']);
-
     //deprecated
     grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
-    grunt.registerTask('build-css', ['compass']);
-    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron:osxBuild']);
 
 
 

@@ -96,6 +96,7 @@ var LoginCard = React.createClass({
         if (this.props.mode !== "active") {
             activeView = <div
                             className="loginCard panel center-block"
+                            onTouchEnd={this.handleSelect}
                             onClick={this.handleSelect}>
                             <div className="box">&nbsp;</div>
                             <h2>{this.props.user.firstName}</h2>
@@ -116,7 +117,7 @@ var LoginCard = React.createClass({
                                     </div>
                                     <div>
                                         <button className="btn btn-default btn-link" onClick={this.handleCancel}>cancel</button>
-                                        <button className="btn btn-primary" onClick={this.handleSubmit}>Login</button>
+                                        <button className="btn btn-primary" onClick={this.handleSubmit} onTouch={this.handleSubmit}>Login</button>
                                         <br/>
                                     </div>
                                 </div>
