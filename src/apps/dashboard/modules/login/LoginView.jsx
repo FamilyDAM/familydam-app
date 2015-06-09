@@ -9,6 +9,9 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
+var ReactIntl  = require('react-intl');
+var IntlMixin  = ReactIntl.IntlMixin;
+
 var LoginCard = require('./LoginCard');
 var Clock = require('./../../components/clock/Clock');
 
@@ -17,6 +20,7 @@ var UserActions = require('./../../actions/UserActions');
 var UserStore = require('./../../stores/UserStore');
 
 var LoginView = React.createClass({
+
 
     getInitialState: function(){
         return { users : [], activeUser: undefined };
@@ -62,7 +66,8 @@ var LoginView = React.createClass({
                 return <div key={index}>
                         <LoginCard  user={user}
                             mode="inactive"
-                            onSelect={_this.handleCardSelection} />
+                            onSelect={_this.handleCardSelection}
+                            {..._this.props}/>
                         </div>
             });
         }else{
@@ -71,7 +76,8 @@ var LoginView = React.createClass({
                                 <LoginCard  user={this.state.activeUser}
                                     mode="active"
                                     onSelect={_this.handleCardSelection}
-                                    onCancel={_this.handleCancelCardSelection}/>
+                                    onCancel={_this.handleCancelCardSelection}
+                                    {..._this.props} />
                             </div>
 
         }

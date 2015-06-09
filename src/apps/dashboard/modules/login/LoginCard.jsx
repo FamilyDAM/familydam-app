@@ -9,12 +9,16 @@
 var React = require('react');
 var Navigation = require('react-router').Navigation;
 
+var ReactIntl  = require('react-intl');
+var IntlMixin  = ReactIntl.IntlMixin;
+var FormattedMessage = ReactIntl.FormattedMessage;
+
+
 var AuthActions = require('./../../actions/AuthActions');
 var UserStore = require('./../../stores/UserStore');
 
 var LoginCard = React.createClass({
-
-    mixins : [Navigation],
+    mixins : [Navigation, IntlMixin],
 
     propTypes: {
         // You can declare that a prop is a specific JS primitive. By default, these
@@ -33,6 +37,10 @@ var LoginCard = React.createClass({
         };
     },
 
+
+    componentDidMount: function() {
+        var _this = this;
+    },
 
 
     /**
@@ -101,11 +109,11 @@ var LoginCard = React.createClass({
                                 <div className="loginForm col-sm-8" >
                                     <h3>{this.props.user.username}</h3>
                                     <div>
-                                        <input type="password" label="Password"/>
+                                        <input type="password" label={this.getIntlMessage('password')}/>
                                     </div>
                                     <div>
-                                        <button className="btn btn-default btn-link" onClick={this.handleCancel}>cancel</button>
-                                        <button className="btn btn-primary" onClick={this.handleSubmit} onTouch={this.handleSubmit}>Login</button>
+                                        <button className="btn btn-default btn-link" onClick={this.handleCancel}>{this.getIntlMessage('cancel')}</button>
+                                        <button className="btn btn-primary" onClick={this.handleSubmit} onTouch={this.handleSubmit}>{this.getIntlMessage('login')}</button>
                                         <br/>
                                     </div>
                                 </div>

@@ -18,7 +18,7 @@ module.exports = function(grunt) {
     ]); /*, 'build-atom-shell-app'*/
 
 
-    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron:osxBuild', 'clean:binaryDashboard', 'copy:embeddedServer']);
+    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron', 'clean:binaryDashboard', 'copy:embeddedServer']);
 
 
     //deprecated
@@ -308,7 +308,7 @@ module.exports = function(grunt) {
                 files: [{
                     "expand": true,
                     "cwd": "src/apps/dashboard",
-                    "src": ["**/*.jsx", 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
+                    "src": ["**/*.jsx", 'locales/*.js', 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
                     "dest": ".tmp/apps/dashboard",
                     "ext": ".js"
                 }]

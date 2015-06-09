@@ -11,6 +11,8 @@
 var React = require('react');
 var Reflux = require('reflux');
 
+var ReactIntl  = require('react-intl');
+
 var Router = require('react-router');
 var Route = Router.Route;
 var Navigation = Router.Navigation;
@@ -64,9 +66,7 @@ var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
 var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
 var PhotoEditView = require('./modules/photoEdit/PhotoEditView');
 var UploadsView = require('./modules/uploads/UploadsView');
-
-
-
+var intlData = require("./locales/en-us");
 
 var routes = [
     <Route handler={LoginView} path="/">
@@ -87,6 +87,8 @@ var routes = [
 //Router.run(routes, Router.HistoryLocation, function (Handler, state) {
 Router.run(routes, function (Handler, state) {
     var params = state.params;
-    React.render(<Handler params={state.params} query={state.query}/>, document.body);
+    React.render(
+        <Handler params={state.params} query={state.query} {...intlData} />
+    , document.body);
 });
 
