@@ -1,0 +1,53 @@
+
+
+.folderTree
+{
+  .header{
+    border-bottom: 1px solid #eee;
+  }
+
+  .folderItem, .addFolderField{
+    padding-top:5px;
+    padding-bottom:5px;
+
+    &.active{
+      background-color: #eee;
+    }
+
+    input{
+      width: 100px;
+    }
+  }
+
+  .has-children{
+
+  }
+  .open{
+    display:block;
+  }
+  .closed{
+    display:none;
+  }
+  .selected{
+    
+  }
+
+  &.disabled
+  {
+    color: #eeeeee;
+  }
+
+  a{
+    color:black
+  }
+
+  &.h3
+  {
+    color:black;
+
+    &:hover{
+      text-decoration: none;
+    }
+  }
+
+}

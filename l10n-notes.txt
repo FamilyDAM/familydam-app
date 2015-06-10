@@ -1,0 +1,10 @@
+1. use attribute   data-l10n="<key>"   to set the key
+
+ - by default we will use the inner HTML of the element
+
+2. For attributes use    data-l10n="<key>" data-l10n-attr="<name of attribute>"
+
+
+3. Todo: generate grunt script to pull out all keys and default text (inner Html or attribute)
+
+4. todo: write script that will monitor the DOM and replace default text with localized text.
