@@ -37,7 +37,7 @@ module.exports = {
 
     setToken: function (data_) {
         this.token.onNext(data_);
-        if( data_ != null && data_ != undefined )
+        if( data_ !== null && data_ !== undefined )
         {
             localStorage.setItem("token", data_);
         }else{

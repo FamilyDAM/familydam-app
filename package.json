@@ -20,6 +20,7 @@
     "node-is": "^0.5.2",
     "proj4": "^2.3.3",
     "react": "^0.12.2",
+    "react-addons": "^0.9.1-deprecated",
     "react-bootstrap": "^0.13.2",
     "react-draggable2": "^0.4.2",
     "react-infinite-scroll-mixin": "^0.1.3",

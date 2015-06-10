@@ -5,9 +5,9 @@
 
 'use strict';
 
-var Rx = require('rx');
-var PreferenceStore = require('./PreferenceStore');
-var UserStore = require('./UserStore');
+//var Rx = require('rx');
+//var PreferenceStore = require('./PreferenceStore');
+//var UserStore = require('./UserStore');
 var UploadActions = require("./../actions/UploadActions");
 //di = require('di');
 
@@ -41,7 +41,7 @@ module.exports = {
 
     addFile: function (file_) {
         console.dir(file_);
-        file_.status == "PENDING";
+        file_.status = "PENDING";
 
         this._files.push(file_);
     },
@@ -64,7 +64,7 @@ module.exports = {
 
 
     uploadAllFiles: function (dir_) {
-        var _this = this;
+        //var _this = this;
         console.log("{upload all}");
 
         this._files.forEach(function (file_) {

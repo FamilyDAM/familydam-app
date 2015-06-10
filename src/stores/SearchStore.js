@@ -6,6 +6,7 @@
 'use strict';
 
 var Rx = require('rx');
+var UserStore = require('../stores/UserStore');
 //di              = require('di');
 
 // Logged in user
@@ -55,7 +56,7 @@ module.exports = {
                 }
             }).then(function(data_, status_, xhr_){
                 var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
+                if( _token !== null && _token !== undefined ){
                     UserStore.setToken(_token);
                 }
                 return data_;

@@ -11,26 +11,11 @@ module.exports = function(grunt) {
 
 
     grunt.registerTask('build-babel-dev', [
-        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard', 'copy:binary-dist'
+        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
     ]); /*, 'build-atom-shell-app'*/
     grunt.registerTask('build-babel-prod', [
-        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify', 'copy:binary-dist'
+        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify'
     ]); /*, 'build-atom-shell-app'*/
-
-
-    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron', 'clean:binaryDashboard', 'copy:embeddedServer']);
-
-
-    //deprecated
-    grunt.registerTask('build-dev', [
-        'clean:dist',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard'
-    ]); /*, 'build-atom-shell-app'*/
-    //deprecated
-    grunt.registerTask('build-prod', [
-        'clean:dist',  'build-css', 'browserify2:shared-lib', 'copy', 'build-js-dashboard','uglify'
-    ]); /*, 'build-atom-shell-app'*/
-    //deprecated
-    grunt.registerTask('build-js-dashboard', ['jshint', 'react:dashboard', 'browserify2:dashboard']);
 
 
 
@@ -64,56 +49,40 @@ module.exports = function(grunt) {
         watch: {
 
             styles: {
-                files: ['<%= options.app %>/apps/dashboard/**/*.scss'],
+                files: ['<%= options.app %/**/*.scss'],
                 tasks: ['compass:dashboard', 'newer:copy:dashboard' ],
                 options: {
                     livereload: true
                 }
             },
             css: {
-                files: ['<%= options.app %>/apps/dashboard/**/*.css'],
+                files: ['<%= options.app %>/**/*.css'],
                 tasks: ['copy:dashboard'],
                 options: {
                     livereload: true
                 }
             },
             js: {
-                files: ['<%= options.app %>/apps/dashboard/**/*.js'],
+                files: ['<%= options.app %>/**/*.js'],
                 tasks: ['build-babel-js-dashboard'],
                 options: {
                     livereload: true
                 }
             },
-            'electron-js': {
-                files: ['<%= options.app %>/*.js'],
-                tasks: ['copy:app','build-electron'],
-                options: {
-                    livereload: true
-                }
-            },
             html: {
-                files: ['<%= options.app %>/apps/dashboard/*.html'],
+                files: ['<%= options.app %>/*.html'],
                 tasks: ['newer:copy:dashboard'],
                 options: {
                     livereload: true
                 }
             },
             react: {
-                files: '<%= options.app %>/apps/dashboard/**/*.jsx',
+                files: '<%= options.app %>/**/*.jsx',
                 tasks: ['build-babel-js-dashboard'],
                 options: {
                     livereload: true
                 }
             }
-,
-            dist: {
-                files: '<%= options.dist %>/**',
-                tasks: ['copy:binary-dist'],
-                options: {
-                    livereload: true
-                }
-            }
-
         },
 
         clean: {
@@ -126,24 +95,7 @@ module.exports = function(grunt) {
                         '!<%= options.dist %>/.git*'
                     ]
                 }]
-            },
-            binaryDist: {
-                files: [{
-                    dot: true,
-                    src: [
-                        'binary-dist'
-                    ]
-                }]
-            },
-            binaryDashboard: {
-                files: [{
-                    dot: true,
-                    src: [
-                        'binary-dist/FamilyDAM.app/Contents/Resources/app/apps/dashboard'
-                    ]
-                }]
-            },
-            server: '.tmp'
+            }
         },
 
         jshint: {
@@ -152,11 +104,9 @@ module.exports = function(grunt) {
                 reporter: require('jshint-stylish')
             },
             all: [
-                '<%= options.app %>/apps/dashboard/{,*/}*.js',
-                '!<%= options.app %>/apps/dashboard/bower_components/*',
-                '!<%= options.app %>/apps/dashboard/stores/*.js',
-                '!<%= options.app %>/apps/dashboard/actions/*.js',
-                '!<%= options.app %>/apps/dashboard/shared-lib.js'
+                '<%= options.app %>/{,*/}*.js',
+                '!<%= options.app %>/bower_components/*',
+                '!<%= options.app %>**/*.js'
             ]
         },
 
@@ -171,20 +121,21 @@ module.exports = function(grunt) {
                     sassDir: '<%= options.app %>',
                     cssDir: '<%= options.dist %>',
                     debugInfo: true,
-                    fontsDir: '<%= options.app %>/apps/dashboard/assets/fonts',
-                    httpFontsPath: '<%= options.app %>/apps/dashboard/assets/fonts',
+                    fontsDir: '<%= options.app %>/assets/fonts',
+                    httpFontsPath: '<%= options.app %>/assets/fonts',
                     relativeAssets: false,
                     assetCacheBuster: false,
                     specify: [
-                        '<%= options.app %>/apps/dashboard/*.scss',
-                        '<%= options.app %>/apps/dashboard/modules/**/*.scss'
+                        '<%= options.app %>/*.scss',
+                        '<%= options.app %>/components/**/*.scss',
+                        '<%= options.app %>/modules/**/*.scss'
                     ]
                 }
             }
         },
 
         copy: {
-            app: {
+            dashboard: {
                 files: [{
                     expand: true,
                     dot: true,
@@ -194,42 +145,13 @@ module.exports = function(grunt) {
                         '*.js',
                         '**/*.json',
                         'apps/splash/**',
-                        'apps/setup/**'
-                    ]
-                }]
-            },
-            dashboard: {
-                files: [{
-                    expand: true,
-                    dot: true,
-                    cwd: '<%= options.app %>/apps/dashboard',
-                    dest: '<%= options.dist %>/apps/dashboard',
-                    src: [
+                        'apps/setup/**',
                         '*.{html,ico,png,txt}',
                         '**/*.css',
                         'assets/**/*',
                         'bower_components/**/*',
                         '.htaccess'
                     ]
-                }]
-            },
-            'binary-dist': {
-                files: [
-                    {
-                        cwd: './dist/',
-                        src: '**',
-                        dest: './binary-dist/FamilyDAM.app/Contents/Resources/app/',
-                        expand: true
-                    }
-                ]
-            },
-            'embeddedServer': {
-                files:[{
-                    src: './../server-embedded/target/FamilyDAM.jar',
-                    dest: './binary-dist/FamilyDAM.app/Contents/Resources/app/resources',
-                    expand: true,
-                    flatten:true,
-                    verbose:true
                 }]
             }
         },
@@ -242,9 +164,9 @@ module.exports = function(grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= options.app %>/apps/dashboard',
+                        cwd: '<%= options.app %>',
                         src: ['**/*.jsx', 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
-                        dest: '<%= options.tmp %>/apps/dashboard',
+                        dest: '<%= options.tmp %>',
                         ext: '.js'
                     }
                 ]
@@ -277,7 +199,7 @@ module.exports = function(grunt) {
                     }
                 },
                 files: {
-                    '<%= options.dist %>/apps/dashboard/app.js': [  '<%= options.dist %>/apps/dashboard/app.js']
+                    '<%= options.dist %>/app.js': [  '<%= options.dist %>/app.js']
                 }
             }
         },
@@ -285,13 +207,13 @@ module.exports = function(grunt) {
 
         browserify2: {
             'dashboard': {
-                entry: './<%= options.tmp %>/apps/dashboard/app.js',
-                compile: './<%= options.dist %>/apps/dashboard/app.js',
+                entry: './<%= options.tmp %>/app.js',
+                compile: './<%= options.dist %>/app.js',
                 debug: true
             },
             'shared-lib': {
-                entry: './<%= options.app %>/apps/dashboard/shared-lib.js',
-                compile: './<%= options.dist %>/apps/dashboard/shared-lib.js',
+                entry: './<%= options.app %>/shared-lib.js',
+                compile: './<%= options.dist %>/shared-lib.js',
                 debug: false,
 
             }
@@ -307,56 +229,14 @@ module.exports = function(grunt) {
             dist: {
                 files: [{
                     "expand": true,
-                    "cwd": "src/apps/dashboard",
+                    "cwd": "src",
                     "src": ["**/*.jsx", 'locales/*.js', 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
-                    "dest": ".tmp/apps/dashboard",
+                    "dest": ".tmp",
                     "ext": ".js"
                 }]
             }
         },
 
-
-        electron: {
-            osxBuild: {
-                options: {
-                    name: 'FamilyDAM',
-                    dir: 'dist',
-                    out: 'binary-dist',
-                    version: '0.27.1',
-                    platform: 'darwin',
-                    arch: 'x64',
-                    'app-bundle-id': 'com.familydam',
-                    'app-version': '0.0.1'
-                }
-            },
-            winBuild: {
-                options: {
-                    name: 'FamilyDAM',
-                    dir: 'dist',
-                    out: 'binary-dist',
-                    version: '0.27.1',
-                    platform: 'win32',
-                    arch: 'x64'
-                }
-            }
-        },
-
-
-        'download-atom-shell': {
-            version: '0.22.2',
-            outputDir: '.tmp/binaries'
-        },
-
-        /** platforms: ["darwin", "win32", "linux"], **/
-        'build-atom-shell-app': {
-            options: {
-                platforms: ["darwin"],
-                app_dir:"dist",
-                cache_dir:".tmp/binaries",
-                build_dir:"binary-dist",
-                atom_shell_version: 'v0.22.2'
-            }
-        }
 
     });
 
