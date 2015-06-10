@@ -134,7 +134,7 @@
         console.log("Load configuration window (" +new Date() +")");
         //this.configWindow = new BrowserWindow({width:900, height:600, center:true, frame:true, show:false, title:'FamilyDAM Configuration Wizard'});
 
-        configWindow.loadUrl('file://' + __dirname + '/apps/setup/index.html');
+        configWindow.loadUrl('file://' + __dirname + '/apps/config/index.html');
         configWindow.webContents.on('did-finish-load', function()
             {
                 configWindow.webContents.send('settingConfig', settings);
