@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
@@ -11,11 +11,13 @@ module.exports = function(grunt) {
 
 
     grunt.registerTask('build-babel-dev', [
-        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
-    ]); /*, 'build-atom-shell-app'*/
+        'clean:dist', 'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
+    ]);
+    /*, 'build-atom-shell-app'*/
     grunt.registerTask('build-babel-prod', [
-        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify'
-    ]); /*, 'build-atom-shell-app'*/
+        'clean:dist', 'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
+    ]);
+    /*, 'build-atom-shell-app'*/
 
 
     var options = {
@@ -47,8 +49,8 @@ module.exports = function(grunt) {
         watch: {
 
             styles: {
-                files: ['<%= options.app %>/**/*.scss'],
-                tasks: ['compass:dashboard', 'newer:copy:dashboard' ],
+                files: ['<%= options.app %/**/*.scss'],
+                tasks: ['compass', 'newer:copy:dashboard'],
                 options: {
                     livereload: true
                 }
@@ -81,7 +83,6 @@ module.exports = function(grunt) {
                     livereload: true
                 }
             }
-
         },
 
         clean: {
@@ -105,9 +106,7 @@ module.exports = function(grunt) {
             all: [
                 '<%= options.app %>/{,*/}*.js',
                 '!<%= options.app %>/bower_components/*',
-                '!<%= options.app %>/stores/*.js',
-                '!<%= options.app %>/actions/*.js',
-                '!<%= options.app %>/shared-lib.js'
+                '!<%= options.app %>**/*.js'
             ]
         },
 
@@ -128,6 +127,7 @@ module.exports = function(grunt) {
                     assetCacheBuster: false,
                     specify: [
                         '<%= options.app %>/*.scss',
+                        '<%= options.app %>/components/**/*.scss',
                         '<%= options.app %>/modules/**/*.scss'
                     ]
                 }
@@ -135,7 +135,7 @@ module.exports = function(grunt) {
         },
 
         copy: {
-            app: {
+            dashboard: {
                 files: [{
                     expand: true,
                     dot: true,
@@ -143,38 +143,40 @@ module.exports = function(grunt) {
                     dest: '<%= options.dist %>',
                     src: [
                         '*.js',
-                        'locales/*.js',
                         '**/*.json',
+                        'apps/splash/**',
+                        'apps/setup/**',
+                        '*.{html,ico,png,txt}',
                         '**/*.css',
                         'assets/**/*',
                         'bower_components/**/*',
-                        '*.{html,ico,png,txt}',
                         '.htaccess'
                     ]
                 }]
             }
         },
 
-        uglify: {
+        react: {
             options: {
-                // the banner is inserted at the top of the output
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+                'options.harmony': true
             },
             dashboard: {
-                options:{
-                    beautify: false,
-                    screwIE8:true,
-                    sourceMap: true,
-                    sourceMapIncludeSources:true,
-                    compress: {
-                        'drop_debugger':true,
-                        'drop_console':true,
-                        dead_code: false
+                files: [
+                    {
+                        expand: true,
+                        cwd: '<%= options.app %>',
+                        src: ['**/*.jsx', 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
+                        dest: '<%= options.tmp %>',
+                        ext: '.js'
                     }
-                },
-                files: {
-                    '<%= options.dist %>/app.js': [  '<%= options.dist %>/app.js']
-                }
+                ]
+            }
+        },
+
+
+        "6to5": {
+            options: {
+                sourceMap: true
             }
         },
 
@@ -188,8 +190,7 @@ module.exports = function(grunt) {
             'shared-lib': {
                 entry: './<%= options.app %>/shared-lib.js',
                 compile: './<%= options.dist %>/shared-lib.js',
-                debug: false,
-
+                debug: false
             }
         },
 
@@ -198,18 +199,19 @@ module.exports = function(grunt) {
                 sourceMap: true,
                 nonStandard: true,
                 optional: ["utility.inlineEnvironmentVariables"],
-                code:{ optional: ["utility.inlineEnvironmentVariables"] }
+                code: {optional: ["utility.inlineEnvironmentVariables"]}
             },
             dist: {
                 files: [{
                     "expand": true,
                     "cwd": "src",
-                    "src": ["**/*.jsx"],
+                    "src": ["**/*.jsx", 'locales/*.js', 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
                     "dest": ".tmp",
                     "ext": ".js"
                 }]
             }
         }
+
 
     });
 
