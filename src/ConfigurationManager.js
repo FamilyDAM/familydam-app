@@ -58,26 +58,19 @@
         }
 
 
-        fs.readFile( __dirname +'/resources/systemprops.json',  {'encoding':'utf8'}, function (err, data)
+        //fs.readFile( __dirname +'/resources/systemprops.json',  {'encoding':'utf8'}, function (err, data)
+        fs.exists( __dirname +'/resources/systemprops.json',  function (exists_)
         {
-            //console.log(data);
-            if (err) {
-                console.log("Error: " +err);
-                throw err;
-            }
-
-            settings = JSON.parse(data);
-
-            initializeStorageLocation();
-
-            if( true || settings.state == "READY" && _this.initializeStorageLocation() )
-            {
-                serverManager.startServer(settings, appRoot, configWindow, splashWindow, mainWindow);
+            if( !exists_ ){
+                loadConfigApplication();
+                return false;
             }else{
-                console.log("START CONFIG WIZARD");
-                //loadConfigApplication();
-            }
+                //todo read settings file
+                
 
+                initializeStorageLocation(_this.settings);
+                return true;
+            }
         });
     };
 
@@ -86,42 +79,58 @@
      * Move the server and any external dependencies to the selected storage location.
      * @returns {boolean}
      */
-    function initializeStorageLocation() {
+    function initializeStorageLocation(settings_) {
 
-        console.log("[InitializeStorageLocation] " +settings.storageLocation);
+        console.log("[InitializeStorageLocation] " +settings_.storageLocation);
 
         try{
-            fs.mkdirSync(settings.storageLocation);
-        }catch(err){
-            //swallow
-        }
 
+            fs.mkdirSync(settings_.storageLocation);
 
-        if( fs.existsSync(settings.storageLocation) )
-        {
-            for(var indx in settings.resources)
+            if( fs.existsSync(settings_.storageLocation) )
             {
-                var file = settings.resources[indx];
-                //console.log("checking file:" +settings.storageLocation +"/" +file);
-                if( !fs.existsSync( settings.storageLocation +"/" +file  ) )
-                {
-                    console.log("moving file:" +source +" to:" +target);
-                    //copy jar to new dir
-                    var source = __dirname +"/resources/" +file;
-                    var target = settings.storageLocation +"/" +file;
-                    //copy
-                    appRoot.sendClientMessage('info', "Copying '" +file +"' to "+settings.storageLocation, false);
-                    //console.log( "{ConfigurationManager} copy: dest=" +source);
-                    //console.log( "{ConfigurationManager} copy: target=" +target);
-                    fs.writeFileSync(target, fs.readFileSync(source));
-                }
+                var _root = __dirname +"/resources";
+                copyResourceDir(_root, "/");
+
+                return true;
             }
 
-            return true;
+        }catch(err){
+            return false;
         }
-
         return false;
-    }
+    };
+
+
+    /**
+     * Copy all of the files in a directory
+     * @param path_
+     */
+    var copyResourceDir = function(root_, path_)
+    {
+        var path = root_ +path_;
+        fs.readdir(path, function(err, files_){
+
+            var source = files_
+
+            for (var i = 0; i < files_.length; i++)
+            {
+                var _file = files_[i];
+                var source = path +_file;
+                var target = settings_.storageLocation +"/" +_file;
+
+                var stats =  fs.stat();
+                if( stats.isFile() && !stats.existsSync(target) ){
+                    console.log('info', "Copying '" +file +"' to "+settings_.storageLocation, false);
+                    fs.writeFileSync(target, fs.readFileSync(source));
+                }else if( stats.isDirectory() ){
+                    //todo
+                }
+
+            }
+        });
+    };
+
 
 
 
@@ -147,30 +156,45 @@
         configWindow.focus();
 
         //Bouce the dock to get the users attention
-        this.app.dock.bounce("informational");
+        app.dock.bounce("informational");
 
+        //configWindow.openDevTools();
 
         // Call back handler which invoked from the webpage when all of the fields have been filled out.
         ipc.on('saveConfig', function(event, _settings)
         {
-            console.log("save settings : " +_settings );
+            //  console.log("save settings : " +_settings );
 
+            //deserialize
             settings = JSON.parse(_settings);
-            settings.state = "READY";
 
+            //update settings
+            settings.state = "READY";
+            settings.storageLocation = "/Users/mnimer/Development/temp/familydam";
+            console.dir(settings);
+
+            //serialize
             var encodedSettings = JSON.stringify(settings);
 
+            // write back to file in package
             fs.writeFile( __dirname +'/resources/systemprops.json',  encodedSettings, {'encoding':'utf8'}, function (err, data)
             {
                 if( initializeStorageLocation() )
                 {
-                    settings.state = "INSTALLED";
-                    serverManager.startServer(settings, this.app, this.splashWindow, this.configWindow, this.mainWindow );
+                    app.loadServerApplication();
+                    app.loadSplashApplication();
+                    return true;
                 }else{
-                    alert("Error Saving Settings & Moving Resources, Please restart your application and try again.  Also, please double the permissions of the storage location folder.");
+                    configWindow.webContents.on('did-finish-load', function() {
+                        configWindow.webContents.executeJavaScript("alert('Error Saving Settings & Moving Resources, Please restart your application and try again.  Also, please double the permissions of the storage location folder.');");
+                    });
+
+                    return false;
                 }
             });
         });
+
+
     };
 
 
@@ -182,6 +206,10 @@
             link(app_, configWindow_, splashWindow_, mainWindow_);
 
             validateConfiguration();
+        },
+
+        getSettings: function(){
+            return settings;
         }
 
     };

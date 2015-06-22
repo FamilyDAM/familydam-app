@@ -4,10 +4,6 @@
  */
 
 var app = require('app');  // Module to control application life.
-var ipc = require('ipc');
-var BrowserWindow = require('browser-window');  // Module to create native browser window.
-var serverManager = require('./ServerManager');
-var configurationManager = require('./ConfigurationManager');
 
 // Report crashes to our server.
 require('crash-reporter').start();

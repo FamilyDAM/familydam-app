@@ -116,7 +116,7 @@ module.exports = function(grunt) {
             },
             'embeddedServer': {
                 files:[{
-                    src: './../server-embedded/target/FamilyDAM.jar',
+                    src: '../server-content-repository/target/FamilyDAM.jar',
                     dest: './dist/resources',
                     expand: true,
                     flatten:true,
@@ -159,7 +159,7 @@ module.exports = function(grunt) {
                     name: 'FamilyDAM',
                     dir: 'dist',
                     out: 'binary-dist',
-                    version: '0.27.1',
+                    version: '0.28.2',
                     platform: 'darwin',
                     arch: 'x64',
                     'app-bundle-id': 'com.familydam',
@@ -171,7 +171,7 @@ module.exports = function(grunt) {
                     name: 'FamilyDAM',
                     dir: 'dist',
                     out: 'binary-dist',
-                    version: '0.27.1',
+                    version: '0.28.2',
                     platform: 'win32',
                     arch: 'x64',
                     'app-bundle-id': 'com.familydam',
