@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
@@ -9,27 +8,38 @@
 var React = require('react');
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
-var Link = Router.Link;
-var Navbar = require('react-bootstrap').Navbar;
-var Nav = require('react-bootstrap').Nav;
-var Glyphicon = require('react-bootstrap').Glyphicon;
-var NavItemLink = require('react-router-bootstrap').NavItemLink;
-var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
+var IntlMixin = require('react-intl');
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
+
+var ConfigActions = require('./../../actions/ConfigActions');
+var SettingsStore = require('./../../stores/SettingsStore');
 
 module.exports = React.createClass({
 
-    componentDidMount: function(){
-        console.log("WelcomeView");
-        // update the breadcrumb
-        //var _pathData = {'label':'Home', 'navigateTo':"dashboard", 'params':{}, 'level':0};
-        //this.navigationActions = NavigationActions.currentPath.onNext( _pathData );
+    mixins: [IntlMixin],
+
+    getInitialState: function () {
+        return {'locale': "en_us"};
     },
 
-    componentWillUnmount: function(){
+    componentDidMount: function () {
+        //console.log("WelcomeView");
+
+        SettingsStore.locale.subscribe(function(data_){
+            debugger;
+            this.state.locale = data_;
+            if( this.isMounted()) this.forceUpdate();
+        }.bind(this));
+    },
+
+    componentWillUnmount: function () {
         //if( this.navigationActions !== undefined ) this.navigationActions.dispose();
     },
 
+    changeLocale: function (event) {
+        var _locale = event.target.value;
+        ConfigActions.changeLocale.onNext(_locale);
+    },
 
     render: function () {
 
@@ -38,18 +48,17 @@ module.exports = React.createClass({
                 <div className="main-section">
 
                     <span className="intro">
-                        Before we can start the application we need to know a few things. The first, is a place to
-                        store all of the files we are going to manage. This could be a large hard drive, a USB drive, or a
-                        network drive. The second item are the members of the family who will be using this application.
+                        {this.getIntlMessage('welcome.intro')}
                     </span>
 
                     <br/><br/>
+
                     <div>
-                        <label>Select a Language:</label><br/>
-                        <select>
-                            <option>English</option>
-                            <option>Spanish</option>
-                            <option>French</option>
+                        <label>{this.getIntlMessage('welcome.selectDefaultLanguage')}:</label><br/>
+                        <select defaultValue={this.state.locale} onChange={this.changeLocale}>
+                            <option value="es-ES">{this.getIntlMessage('language.spanish')}</option>
+                            <option value="zh-CN">{this.getIntlMessage('language.chinese')}</option>
+                            <option value="en_us">{this.getIntlMessage('language.english')}</option>
                         </select>
                     </div>
                 </div>
@@ -57,10 +66,10 @@ module.exports = React.createClass({
 
                 <div className="row footer">
                     <div className="col-xs-12">
-                        <div className="left" >
+                        <div className="left">
                         </div>
-                        <div className="right" >
-                            <ButtonLink to="register">Next</ButtonLink>
+                        <div className="right">
+                            <ButtonLink to="register">{this.getIntlMessage('next')}</ButtonLink>
                         </div>
                     </div>
                 </div>

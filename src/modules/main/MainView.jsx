@@ -5,56 +5,50 @@
 var React = require('react');
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
+var IntlMixin = require('react-intl');
 var Link = Router.Link;
-var Navbar = require('react-bootstrap').Navbar;
-var Nav = require('react-bootstrap').Nav;
-var Glyphicon = require('react-bootstrap').Glyphicon;
-var NavItemLink = require('react-router-bootstrap').NavItemLink;
-var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 
 module.exports = React.createClass({
 
+    mixins: [IntlMixin],
+
+
+    componentWillMount: function () {
+        var _this = this;
+    },
+
     componentDidMount: function () {
-        // update the breadcrumb
-        //var _pathData = {'label':'Home', 'navigateTo':"dashboard", 'params':{}, 'level':0};
-        //this.navigationActions = NavigationActions.currentPath.onNext( _pathData );
-        console.log("MainView");
+        //console.log("Main View");
+        // initialize the material view code
         $.material.init();
     },
 
-    componentWillUnmount: function () {
-        //if (this.navigationActions !== undefined) this.navigationActions.dispose();
-    },
 
 
-    render: function () {
+    render: function() {
 
         return (
             <div className="container-fluid">
                 <div className="row header">
                     <div className="col-xs-12">
-                        <h3>FamilyD.A.M.  Setup Wizard</h3>
+                        <h3>FamilyD.A.M.  {this.getIntlMessage('title')}</h3>
                     </div>
                 </div>
 
                 <div className="row main">
                     <aside >
                         <ul>
-                            <li><Link to="welcome">Welcome</Link></li>
-                            <li><Link to="familyName">Family Name</Link></li>
-                            <li><Link to="storage">Storage</Link></li>
-                            <li><Link to="accounts">Accounts</Link></li>
+                            <li><Link to="welcome">{this.getIntlMessage('nav.welcome')}</Link></li>
+                            <li><Link to="register">{this.getIntlMessage('nav.register')}</Link></li>
+                            <li><Link to="storage">{this.getIntlMessage('nav.storage')}</Link></li>
+                            <li><Link to="accounts">{this.getIntlMessage('nav.accounts')}</Link></li>
                         </ul>
                     </aside>
 
                     <div className="main-body">
                         <RouteHandler {...this.props}/>
                     </div>
-
-
                 </div>
-
-
             </div>
 
         );

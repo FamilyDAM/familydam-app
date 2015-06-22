@@ -7,25 +7,42 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
+var IntlMixin = require('react-intl');
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
+
+var ConfigActions = require("./../../actions/ConfigActions");
+var SettingsStore = require("./../../stores/SettingsStore");
 
 module.exports = React.createClass({
 
+    mixins: [IntlMixin],
+
     getInitialState: function(){
-        return {}
+        return {'email':'', 'familyName':''}
     },
 
     componentDidMount: function(){
-        console.log("RegisterView");
-        // update the breadcrumb
-        //var _pathData = {'label':'Home', 'navigateTo':"dashboard", 'params':{}, 'level':0};
-        //this.navigationActions = NavigationActions.currentPath.onNext( _pathData );
+        //console.log("RegisterView");
+
+        this.emailSubscription = SettingsStore.email.subscribe(function(data_){
+            this.state.email = data_;
+            if( this.isMounted() ) this.forceUpdate();
+        }.bind(this));
     },
 
     componentWillUnmount: function(){
-        //if( this.navigationActions !== undefined ) this.navigationActions.dispose();
+        if( this.emailSubscription !== undefined ) this.emailSubscription.dispose();
     },
 
+    handleEmailChange: function(event_){
+        var _email = event_.target.value;
+        ConfigActions.emailChange.onNext(_email);
+    },
+
+    handleNameChange: function(event_){
+        var _email = event_.target.value;
+        ConfigActions.familyNameChange.source.onNext(_email);
+    },
 
 
     render: function () {
@@ -34,17 +51,30 @@ module.exports = React.createClass({
             <div >
                 <div className="main-section">
                     <div className="intro">
-                        Register
+                        {this.getIntlMessage('register.intro1')}
                     </div>
                     <br/>
                     <div>
-                        <label>Pick a name for your family:</label><br/>
-                        <input type="text" ref="familyName"  style={{'width':'250px'}}/>
-                        <button className="btn btn-default" >Check</button>
+                        <label>{this.getIntlMessage('register.label.email')}:</label><br/>
+                        <input type="email"
+                               ref="emailReg"
+                               required="true"
+                               value={this.state.email}
+                               onChange={this.handleEmailChange}
+                               style={{'width':'250px'}}/>
                     </div>
-                    <div>
-                        <label>Email:</label><br/>
-                        <input type="text" ref="emailReg"  style={{'width':'250px'}}/>
+                    <br/>
+                    <div className="intro" style={{'display':'none'}}>
+                        {this.getIntlMessage('register.intro2')}
+                    </div>
+                    <div  style={{'display':'none'}}>
+                        <label>{this.getIntlMessage('register.label.pickName')}:</label><br/>
+                        <input type="text"
+                               ref="familyName"
+                               value={this.state.familyName}
+                               onChange={this.handleNameChange}
+                               style={{'width':'250px'}}/><label>.familydam.com</label>
+                        <button className="btn btn-default">{this.getIntlMessage('register.label.checkAvailability')}:</button>
                     </div>
                 </div>
 
@@ -52,10 +82,10 @@ module.exports = React.createClass({
                 <div className="row footer">
                     <div className="col-xs-12">
                         <div className="left" >
-                            <ButtonLink to="welcome">Back</ButtonLink>
+                            <ButtonLink to="welcome">{this.getIntlMessage('back')}</ButtonLink>
                         </div>
                         <div className="right" >
-                            <ButtonLink to="storage">Next</ButtonLink>
+                            <ButtonLink to="storage">{this.getIntlMessage('next')}</ButtonLink>
                         </div>
                     </div>
                 </div>
