@@ -7,6 +7,7 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
+var IntlMixin = require('react-intl');
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
@@ -17,21 +18,27 @@ var NavItemLink = require('react-router-bootstrap').NavItemLink;
 var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
 
+var ConfigActions = require("./../../actions/ConfigActions");
+var SettingsStore = require("./../../stores/SettingsStore");
+
 module.exports = React.createClass({
+
+    mixins: [IntlMixin],
 
     getInitialState: function(){
         return {'storagePath':""}
     },
 
     componentDidMount: function(){
-        console.log("StorageView");
-        // update the breadcrumb
-        //var _pathData = {'label':'Home', 'navigateTo':"dashboard", 'params':{}, 'level':0};
-        //this.navigationActions = NavigationActions.currentPath.onNext( _pathData );
+        //console.log("StorageView");
+        this.storageLocationSub = SettingsStore.storageLocation.subscribe(function(data_){
+            this.state.storagePath = data_;
+            if( this.isMounted()) this.forceUpdate();
+        }.bind(this));
     },
 
     componentWillUnmount: function(){
-        if( this.navigationActions !== undefined ) this.navigationActions.dispose();
+        if( this.storageLocationSub !== undefined ) this.storageLocationSub.dispose();
     },
 
 
@@ -49,15 +56,21 @@ module.exports = React.createClass({
     handleFolderChange: function(event_){
         var _this = this;
         //console.dir(event_);
-        debugger;
         var _files = event_.currentTarget.files;
 
         if( _files[0].path != undefined )
         {
-            this.setState({storagePath:_files[0].path});
+            ConfigActions.storageFolderChange.onNext(_files[0].path);
         }else{
-            this.setState({storagePath:"/"});
+            ConfigActions.storageFolderChange.onNext("/");
         }
+    },
+
+    editFolderPath:function(event_){
+        var _path = event_.target.value;
+        this.setState({storagePath:_path});
+
+        ConfigActions.storageFolderChange.onNext(_path);
     },
 
 
@@ -67,17 +80,21 @@ module.exports = React.createClass({
             <div >
                 <div className="main-section">
                     <div className="intro">
-                        The FamilyD.A.M system needs a folder on your largest Hard Drive, USB Drive, or Mapped Network Drive.
-                        This is were we will store all of the files, thumbnails, renditions, metadata, and other data.
+                        {this.getIntlMessage('storage.intro1a')}
+
                         <br/><br/>
-                        <strong>Note:</strong> Everything is stored in this folder, so you can make complete backups of the FamilyD.A.M. data by backing up this folder.
-                        Or if you need to move everything to a new folder/drive, you can do this by moving this folder and everything in it.
+                        <strong>{this.getIntlMessage('note')}: </strong>
+                        {this.getIntlMessage('storage.intro1b')}
+
                     </div>
                     <br/>
                     <div>
-                        <label>Storage Location:</label><br/>
-                        <input type="text" value={this.state.storagePath} style={{'width':'250px'}}/>
-                        <button className="btn btn-default" onClick={this.clickFolderInputField}>Browse</button>
+                        <label>{this.getIntlMessage('storage.location')}:</label><br/>
+                        <input type="text"
+                               value={this.state.storagePath}
+                               onChange={this.editFolderPath}
+                               style={{'width':'250px'}}/>
+                        <button className="btn btn-default" onClick={this.clickFolderInputField}>{this.getIntlMessage('browse')}</button>
                         <input type="file"
                                ref="folderInputField"
                                style={{'display':'none'}}
@@ -89,10 +106,10 @@ module.exports = React.createClass({
                 <div className="row footer">
                     <div className="col-xs-12">
                         <div className="left" >
-                            <ButtonLink to="register">Back</ButtonLink>
+                            <ButtonLink to="register">{this.getIntlMessage('back')}</ButtonLink>
                         </div>
                         <div className="right" >
-                            <ButtonLink to="accounts">Next</ButtonLink>
+                            <ButtonLink to="accounts">{this.getIntlMessage('next')}</ButtonLink>
                         </div>
                     </div>
                 </div>
