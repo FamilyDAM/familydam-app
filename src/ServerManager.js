@@ -40,7 +40,7 @@
 
 
 
-    var checkLoadingStatus = function(callback_)
+    var checkLoadingStatus = function(port, callback_)
     {
         //console.log("Check Loading Status");
 
@@ -48,7 +48,7 @@
         {
             //console.log("checking server");
 
-            http.get("http://localhost:9000/health", function (res, data)
+            http.get("http://localhost:" +port +"/health", function (res, data)
             {
                 if (res.statusCode == 200 || res.statusCode == 302)
                 {
@@ -176,7 +176,7 @@
 
 
             var isReady = false;
-            checkLoadingStatus(function(){
+            checkLoadingStatus(jarPort, function(){
                 appRoot.loadDashboardApplication(jarPort);
             })
 

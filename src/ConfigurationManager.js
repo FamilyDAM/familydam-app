@@ -62,21 +62,17 @@
         {
 
             var _settings = fs.readFileSync(__dirname + "/" + settingsFile, {'encoding': 'utf8'});
-            _settings = JSON.parse(_settings);
+            settings = JSON.parse(_settings);
 
-            if (_settings.state != "READY")
+            if (settings.state != "READY")
             {
                 loadConfigApplication();
                 return false;
-            } else
+            }
+            else
             {
-                console.dir(_settings);
                 console.log("** Initialize Storage");
-                initializeStorageLocation(_settings);
-                console.log("** Start Server");
-                app.startServerApplication(_settings);
-                console.log("** load splash");
-                app.loadSplashApplication();
+                initializeStorageLocation(settings);
 
                 return true;
 
@@ -92,11 +88,8 @@
      */
     function initializeStorageLocation(settings_) {
 
-        console.log("[InitializeStorageLocation] ");
-        console.dir(settings_);
 
         try{
-
 
             if( !fs.existsSync(settings_.storageLocation) )
             {
@@ -125,8 +118,6 @@
         console.log("{copy resource dir} root=" +root_ +"  |  path=" +path_);
         var path = root_ +path_;
         var _dirList = fs.readdirSync(path);
-
-        console.dir(_dirList);
 
         for (var i = 0; i < _dirList.length; i++)
         {
@@ -189,8 +180,7 @@
 
             //update settings
             settings.state = "READY";
-            settings.storageLocation = "/Users/mnimer/Development/temp/familydam";
-            console.dir(settings);
+
 
             //serialize
             var encodedSettings = JSON.stringify(settings);
@@ -219,8 +209,7 @@
         {
             link(app_, configWindow_, splashWindow_, mainWindow_);
 
-            validateConfiguration();
-
+            return validateConfiguration();
         },
 
         getSettings: function(){

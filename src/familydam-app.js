@@ -27,20 +27,27 @@ app.on('ready', function() {
 
     var isReady = configurationManager.initializeServer(app, configWindow, splashWindow, mainWindow);
 
-    console.log("isReady=" +isReady);
 
     if( isReady )
     {
         var _this = this;
+        var _settings = configurationManager.getSettings();
 
-        // Show splash screen, while starting embedded server
+        console.log("Start app with these settings:");
+        console.dir(_settings);
+
+        console.log("** Start Server");
+        app.startServerApplication(_settings);
+        console.log("** load splash");
         app.loadSplashApplication();
 
-        // Check the settings configuration before opening up the main app.
-        var _settings = configurationManager.getSettings();
-        console.dir( _settings );
 
-        // setup check status
+/***
+ // Show splash screen, while starting embedded server
+ app.loadSplashApplication();
+
+
+ // setup check status
         var timer = setInterval(function(){
             //check if server is ready, before closing. Otherwise wait 2secs and try again.
             if( _this.isServerReady )
@@ -54,8 +61,8 @@ app.on('ready', function() {
         }, 2000);
 
         // start embedded java server
-        app.loadServerApplication();
-
+        app.startServerApplication(_settings);
+***/
     }
 });
 
@@ -68,9 +75,9 @@ app.on('ready', function() {
 app.checkServer = function(port){
     var _this = this;
 
-    http.get("http://www.google.com/index.html", function(res) {
+    http.get("http://localhost:" +port +"/index.html", function(res) {
         if( res.statusCode == 200 ){
-             _this.isServerReady = true;
+            _this.isServerReady = true;
         }
     }).on('error', function(e) {
         _this.isServerReady = false;
@@ -158,8 +165,8 @@ app.loadDashboardApplication = function(port){
 
     splashWindow.hide();
     configWindow.hide();
-    mainWindow.show();
     mainWindow.maximize();
+    mainWindow.show();
 
     // Open the devtools.
     mainWindow.openDevTools();
