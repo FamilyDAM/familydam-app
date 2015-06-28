@@ -34,13 +34,13 @@ module.exports = {
         ConfigActions.storageFolderChange.subscribe( this.setStorageLocation.bind(this) );
         ConfigActions.addUser.subscribe( this.addUser.bind(this) );
         ConfigActions.removeUser.subscribe( this.removeUser.bind(this) );
+
+
         ConfigActions.saveSettings.subscribe( function(){
             var result = ipc.sendSync('saveConfig', this.buildJson());
             console.log("RESULT=" +result);
         }.bind(this) );
 
-
-        ConfigActions.saveSettings.onNext("{test:true}");
     },
 
 
@@ -134,7 +134,6 @@ module.exports = {
         settings.defaultLocale = this.locale.value;
         settings.storageLocation = this.storageLocation.value;
         settings.users = this.users.value;
-        settings.resources = ['FamilyDAM.jar'];
 
         return JSON.stringify(settings);
     }
