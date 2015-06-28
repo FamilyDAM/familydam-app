@@ -50,29 +50,40 @@
     var validateConfiguration = function()
     {
         var _this = this;
-        console.log("[ValidateConfiguration]")
+        console.log("[ValidateConfiguration] " +__dirname);
         if( !fs.existsSync( __dirname +"/"  +settingsFile) )
         {
             //todo: create default file
             console.warn("settings file does not exists");
+            loadConfigApplication();
+            return false;
         }
-
-
-        //fs.readFile( __dirname +'/resources/systemprops.json',  {'encoding':'utf8'}, function (err, data)
-        fs.exists( __dirname +'/resources/systemprops.json',  function (exists_)
+        else
         {
-            if( !exists_ ){
+
+            var _settings = fs.readFileSync(__dirname + "/" + settingsFile, {'encoding': 'utf8'});
+            _settings = JSON.parse(_settings);
+
+            if (_settings.state != "READY")
+            {
                 loadConfigApplication();
                 return false;
-            }else{
-                //todo read settings file
-                
+            } else
+            {
+                console.dir(_settings);
+                console.log("** Initialize Storage");
+                initializeStorageLocation(_settings);
+                console.log("** Start Server");
+                app.startServerApplication(_settings);
+                console.log("** load splash");
+                app.loadSplashApplication();
 
-                initializeStorageLocation(_this.settings);
                 return true;
+
             }
-        });
+        }
     };
+
 
 
     /**
@@ -81,21 +92,24 @@
      */
     function initializeStorageLocation(settings_) {
 
-        console.log("[InitializeStorageLocation] " +settings_.storageLocation);
+        console.log("[InitializeStorageLocation] ");
+        console.dir(settings_);
 
         try{
 
-            fs.mkdirSync(settings_.storageLocation);
 
-            if( fs.existsSync(settings_.storageLocation) )
+            if( !fs.existsSync(settings_.storageLocation) )
             {
-                var _root = __dirname +"/resources";
-                copyResourceDir(_root, "/");
-
-                return true;
+                fs.mkdirSync(settings_.storageLocation);
             }
 
+            var _root = __dirname +"/resources";
+            copyResourceDir(settings_, _root, "/");
+
+            return true;
+
         }catch(err){
+            console.dir(err);
             return false;
         }
         return false;
@@ -106,29 +120,32 @@
      * Copy all of the files in a directory
      * @param path_
      */
-    var copyResourceDir = function(root_, path_)
+    var copyResourceDir = function(settings_, root_, path_)
     {
+        console.log("{copy resource dir} root=" +root_ +"  |  path=" +path_);
         var path = root_ +path_;
-        fs.readdir(path, function(err, files_){
+        var _dirList = fs.readdirSync(path);
 
-            var source = files_
+        console.dir(_dirList);
 
-            for (var i = 0; i < files_.length; i++)
-            {
-                var _file = files_[i];
-                var source = path +_file;
-                var target = settings_.storageLocation +"/" +_file;
+        for (var i = 0; i < _dirList.length; i++)
+        {
+            var _file = _dirList[i];
+            var source = path +_file;
+            var target = settings_.storageLocation +"/" +_file;
 
-                var stats =  fs.stat();
-                if( stats.isFile() && !stats.existsSync(target) ){
-                    console.log('info', "Copying '" +file +"' to "+settings_.storageLocation, false);
-                    fs.writeFileSync(target, fs.readFileSync(source));
-                }else if( stats.isDirectory() ){
-                    //todo
-                }
+            console.log("{checking file} source=" +source +"  |  target=" +target);
 
+            var stats =  fs.statSync(source);
+            if( stats.isFile() && !fs.existsSync(target) ){
+                console.log('info', "Copying '" +source +"' to "+settings_.storageLocation, false);
+                fs.writeFileSync(target, fs.readFileSync(source));
+            }else if( stats.isDirectory() ){
+                //todo
             }
-        });
+
+        }
+
     };
 
 
@@ -160,7 +177,9 @@
 
         //configWindow.openDevTools();
 
-        // Call back handler which invoked from the webpage when all of the fields have been filled out.
+        /**
+         * Call back handler which invoked from the webpage when all of the fields have been filled out.
+         */
         ipc.on('saveConfig', function(event, _settings)
         {
             //  console.log("save settings : " +_settings );
@@ -179,18 +198,13 @@
             // write back to file in package
             fs.writeFile( __dirname +'/resources/systemprops.json',  encodedSettings, {'encoding':'utf8'}, function (err, data)
             {
-                if( initializeStorageLocation() )
-                {
-                    app.loadServerApplication();
-                    app.loadSplashApplication();
-                    return true;
-                }else{
-                    configWindow.webContents.on('did-finish-load', function() {
-                        configWindow.webContents.executeJavaScript("alert('Error Saving Settings & Moving Resources, Please restart your application and try again.  Also, please double the permissions of the storage location folder.');");
-                    });
+                console.log("** Initialize Storage");
+                initializeStorageLocation(settings);
+                console.log("** Start Server");
+                app.startServerApplication(settings);
+                console.log("** load splash");
+                app.loadSplashApplication();
 
-                    return false;
-                }
             });
         });
 
@@ -206,6 +220,7 @@
             link(app_, configWindow_, splashWindow_, mainWindow_);
 
             validateConfiguration();
+
         },
 
         getSettings: function(){

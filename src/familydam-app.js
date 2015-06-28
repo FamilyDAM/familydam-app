@@ -124,9 +124,10 @@ app.setupWindows = function(){
 };
 
 
-app.loadServerApplication = function(){
+app.startServerApplication = function(_settings){
 
-    var _settings = configurationManager.getSettings();
+    console.log("Start Embedded Server");
+    console.dir(_settings);
     serverManager.startServer(_settings, app, this.splashWindow, this.configWindow, this.mainWindow );
 
 };
