@@ -43,7 +43,7 @@ var HomeView = React.createClass({
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <aside className="col-sm-3" >
+                    <aside className="col-xs-3" >
                         <SectionTree title="Files" sectionNavigateTo="files"/>
                         <SectionTree title="Photos" disabled={true}/>
                         <SectionTree title="Music" disabled={true}/>
@@ -52,7 +52,7 @@ var HomeView = React.createClass({
                         <SectionTree title="Web Archive" disabled={true}/>
                     </aside>
 
-                    <div className="col-sm-9">
+                    <div className="col-xs-9">
                         <RouteHandler {...this.props}/>
                     </div>
                 </div>

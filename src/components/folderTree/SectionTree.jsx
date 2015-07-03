@@ -90,6 +90,49 @@ var AddFolderModal = React.createClass({
 
 
 
+var AddUserModal = React.createClass({
+
+    getInitialState: function(){
+        return {
+            'parent':"/"
+        }
+    },
+
+    componentWillMount: function(){
+        var _this = this;
+    },
+
+
+
+    handleCreateFolder:function(event_){
+        var _this = this;
+    },
+
+
+    render: function() {
+
+        var activeVisibleDir = this.state.parent.path;
+
+        return (
+            <Modal {...this.props} title="Add User" animation={false}>
+                <div className="modal-body">
+                    <h4>First Name</h4>
+                    <input type="text" ref="folderName" label="User"/>
+                </div>
+                <div className="modal-footer">
+                    <ButtonGroup>
+                        <Button onClick={this.props.onRequestHide}>Close</Button>
+                        <Button onClick={this.handleCreateFolder}>Create</Button>
+                    </ButtonGroup>
+                </div>
+            </Modal>
+        );
+    }
+});
+
+
+
+
 var FolderTree = React.createClass({
     mixins: [ Router.Navigation ],
 
@@ -99,6 +142,7 @@ var FolderTree = React.createClass({
         baseDir: React.PropTypes.string,
         disabled: React.PropTypes.bool,
         showAddFolder: React.PropTypes.bool,
+        showAddUser: React.PropTypes.bool,
         sectionNavigateTo: React.PropTypes.string
     },
 
@@ -107,6 +151,7 @@ var FolderTree = React.createClass({
             'section':'files',
             'baseDir':null,
             'showAddFolder':false,
+            'showAddUser':false,
             renderDepth:2,
             disabled:false,
             navigateToFiles:true,
@@ -248,6 +293,13 @@ var FolderTree = React.createClass({
                             :this.props.title}
                         {this.props.showAddFolder==true ?
                         <ModalTrigger modal={<AddFolderModal dir={this.state.activeFolder.path} />}>
+                            <Glyphicon glyph="plus"
+                                    className="pull-right"
+                                    onClick={this.handleAddFolder}/>
+                        </ModalTrigger>
+                        :""}
+                        {this.props.showAddUser==true ?
+                        <ModalTrigger modal={<AddUserModal dir={this.state.activeFolder.path} />}>
                             <Glyphicon glyph="plus"
                                     className="pull-right"
                                     onClick={this.handleAddFolder}/>

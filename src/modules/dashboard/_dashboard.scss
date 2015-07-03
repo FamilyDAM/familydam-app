@@ -10,7 +10,8 @@
   {
     position: absolute;
     right:    0px;
-    top:      220px;
+    top:      110px;
+    z-index: 1100;
 
     .fab {
       cursor: pointer;

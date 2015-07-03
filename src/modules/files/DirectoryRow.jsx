@@ -67,12 +67,12 @@ var DirectoryRow = React.createClass({
                     </div>
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
-                            <div className="col-sm-8" style={{'marginTop': '15px;'}}>
+                            <div className="col-sm-6 col-lg-7" style={{'marginTop': '15px;'}}>
                                 <Link to="photoDetails" params={{'id': this.props.dir.id}}>{this.props.dir.name}</Link>
                             </div>
-                            <div className="col-sm-4">
+                            <div className="col-sm-6 col-lg-5 text-right">
                                 {this.props.dir.mixins.indexOf("dam:userfolder")>-1?
-                                    <ButtonGroup  bsSize="small">
+                                    <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
                                         <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}  style={{'padding':'5px 10px', 'margin':0}}>
                                             <Glyphicon glyph="eye-open"/> open
                                         </Button>

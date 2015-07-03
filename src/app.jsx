@@ -66,6 +66,7 @@ var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
 var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
 var PhotoEditView = require('./modules/photoEdit/PhotoEditView');
 var UploadsView = require('./modules/uploads/UploadsView');
+var UserManagerView = require('./modules/userManager/UserManagerView');
 var intlData = require("./locales/en-us");
 
 var routes = [
@@ -80,6 +81,7 @@ var routes = [
         <Route name="photos" path="photos" handler={PhotosView}/>
         <Route name="photoDetails" path="photos/:id" handler={PhotoDetailView}/>
         <Route name="photoEdit"  path="photos/:id/edit" handler={PhotoEditView}/>
+        <Route name="userManager"  handler={UserManagerView}/>
     </Route>
 ];
 

@@ -1,5 +1,3 @@
-
-
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
@@ -42,8 +40,31 @@ var DashboardView = React.createClass({
             AuthActions.loginRedirect.subscribe(function () {
                 this.transitionTo('login');
             }.bind(this));
+
         },
 
+
+        componentDidMount: function () {
+            $(".dropdown").bind('DOMSubtreeModified', function (evnt) {
+                debugger;
+                if (evnt.attributeName == "class")
+                { // which attribute you want to watch for changes
+                    if (evnt.newValue.search(/open/i) == -1)
+                    { // "open" is the class name you search for inside "class" attribute
+                        $("#fab-button-group").style("right:100px;");
+                    } else
+                    {
+                        $("#fab-button-group").style("right:0px;");
+                    }
+                }
+            });
+
+        },
+
+
+        handleDropDownToggle: function(e){
+            debugger;
+        },
 
         render: function () {
 
@@ -57,42 +78,23 @@ var DashboardView = React.createClass({
                             <Nav className="navbar-left">
                                 <NavItem >FamilyD.A.M</NavItem>
                             </Nav>
-                            <Nav className="navbar-right">
+                            <Nav className="navbar-right hidden-xs">
                                 <NavItemLink eventKey={1} to="files">Files</NavItemLink>
-                                <NavItemLink eventKey={1} to="files">Photos</NavItemLink>
-                                <NavItemLink eventKey={1} to="files">Music</NavItemLink>
-                                <NavItemLink eventKey={1} to="files">Movies</NavItemLink>
-                                <NavItemLink eventKey={1} to="files">Email Archive</NavItemLink>
-                                <NavItemLink eventKey={1} to="files">Web Archive</NavItemLink>
-                                <DropdownButton eventKey={3} title="">
-                                    <MenuItemLink eventKey="1" to="login">Logout</MenuItemLink>
+                                <NavItemLink eventKey={2} to="files">Photos</NavItemLink>
+                                <NavItemLink eventKey={3} to="files">Music</NavItemLink>
+                                <NavItemLink eventKey={4} to="files">Movies</NavItemLink>
+                                <NavItemLink eventKey={5} to="files">Email Archive</NavItemLink>
+                                <NavItemLink eventKey={6} to="files">Web Archive</NavItemLink>
+                                <DropdownButton ref="dropDownSettings" eventKey={7} title="">
+                                    <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
+                                    <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
                                 </DropdownButton>
                             </Nav>
                             <Nav style={clear_style}>
                                 <Breadcrumb/>
                             </Nav>
-                        </Navbar>
 
-                        <div id="fab-button-group" style={{'zIndex':2000}}>
-                            <div className="fab  show-on-hover dropup">
-                                <div data-toggle="tooltip" data-placement="left" title="Compose">
-                                    <button type="button" className="btn btn-danger btn-io dropdown-toggle"
-                                            data-toggle="dropdown">
-                                    <span className="fa-stack fa-2x">
-                                        <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
-                                        <Link to="upload" style={{'color':'#fff'}}>
-                                            <Glyphicon glyph="plus"
-                                                       className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
-                                                       style={{'fontSize': '24px;'}}></Glyphicon>
-                                        </Link>
-                                        <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
-                                    </span>
-                                    </button>
-                                </div>
-                                <ul className="dropdown-menu dropdown-menu-right" role="menu">
-                                </ul>
-                            </div>
-                        </div>
+                        </Navbar>
                     </div>
 
                     <br/>

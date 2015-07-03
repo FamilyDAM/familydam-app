@@ -208,6 +208,29 @@ var FilesView = React.createClass({
                         <PreviewSidebar file={this.state.selectedItem}/>
                     </aside>
                 </div>
+
+
+
+                <div id="fab-button-group" >
+                    <div className="fab  show-on-hover dropup">
+                        <div data-toggle="tooltip" data-placement="left" title="Compose">
+                            <button type="button" className="btn btn-material-lightblue btn-io dropdown-toggle"
+                                    data-toggle="dropdown">
+                                    <span className="fa-stack fa-2x">
+                                        <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
+                                        <Link to="upload" style={{'color':'#fff'}}>
+                                            <Glyphicon glyph="plus"
+                                                       className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
+                                                       style={{'fontSize': '24px;'}}></Glyphicon>
+                                        </Link>
+                                        <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
+                                    </span>
+                            </button>
+                        </div>
+                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                        </ul>
+                    </div>
+                </div>
             </div>
 
         );

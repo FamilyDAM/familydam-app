@@ -73,10 +73,10 @@ var FileRow = React.createClass({
                     </div>
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
-                            <div className="col-sm-6 col-lg-8" style={{'overflow':'hidden'}}>
+                            <div className="col-sm-6 col-lg-7" style={{'overflow':'hidden'}}>
                                 <Link to="photoDetails" params={{'id': this.props.file.id}}>{this.props.file.name}</Link>
                             </div>
-                            <div className="col-sm-6 col-lg-4">
+                            <div className="col-sm-6 col-lg-5 text-right">
                                 { this.props.file.mixins.indexOf("dam:image") > -1 ?
                                     <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
                                         <ButtonLink to="photoDetails" params={{'id': this.props.file.id}}  style={{'padding':'5px 10px', 'margin':0}}>

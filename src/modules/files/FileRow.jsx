@@ -97,12 +97,11 @@ var FileRow = React.createClass({
 
                 <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                     <div className="row">
-                        <div className="col-sm-6 col-lg-8" style={{'overflow':'hidden'}}>
+                        <div className="col-sm-6 col-lg-7" style={{'overflow':'hidden'}}>
                             <Link to="photoDetails" params={{'id': this.props.file.id}}>{this.props.file.name}</Link>
                         </div>
-                        <div className="col-sm-6 col-lg-4">
-
-                            <ButtonGroup bsSize="small">
+                        <div className="col-sm-6 col-lg-5 text-right">
+                            <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
                                 <Button onClick={this.handleDownloadOriginal} data-id={this.props.file.id}
                                         data-path={this.props.file.path}>
                                     <Glyphicon glyph="download"/> download
