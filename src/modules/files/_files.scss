@@ -1,35 +1,51 @@
 
-
-
 .filesView
 {
-  background-color: #fff;
+  background-color: #ffffff;
 
-  tr{
+  tr
+  {
     :hover
     {
-        font-weight: bold;
+      font-weight: bold;
     }
   }
 
-  .active
+  li
   {
-      background-color: #eee;
+    float:   left;
+    padding: 5px;
   }
-  
+
+  .btn
+  {
+    padding: 8px 15px;
+    margin:  0px 0px;
+  }
+
+  .fileRows
+  {
+    .active
+    {
+      background-color: #eeeeee;
+    }
+  }
+
   .disabled
   {
-      color: #eeeeee;
+    color: #eeeeee;
   }
-  
 
-  .list-group{
+  .list-group
+  {
     margin-bottom: 3px;
   }
 
-  .fileRows {
-    .row:hover{
-      background-color: #eee;
+  .fileRows
+  {
+    .row:hover
+    {
+      background-color: #eeeeee;
     }
   }
 }

@@ -19,8 +19,9 @@ var ListGroup = require('react-bootstrap').ListGroup;
 var ListGroupItem = require('react-bootstrap').ListGroupItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
-var SectionTree = require('../../components/folderTree/SectionTree');
-
+var DropdownButton = require('react-bootstrap').DropdownButton;
+var NavItemLink = require('react-router-bootstrap').NavItemLink;
+var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
@@ -32,10 +33,12 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 
+
 var FileRow = require("./FileRow");
 var DirectoryRow = require("./DirectoryRow");
 var BackFolder = require("./BackFolder");
 var PreviewSidebar = require("./../previews/PreviewSidebar");
+var SectionTree = require('../../components/folderTree/SectionTree');
 
 
 var FilesView = React.createClass({
@@ -148,12 +151,14 @@ var FilesView = React.createClass({
 
         var _this = this;
         var tableClass = "col-xs-8 col-sm-9 col-md-9";
-        var asideClass = "hidden col-md-3";
+        var asideClass = "col-xs-4 col-sm-3 col-md-3";
+        var asideRightClass = "hidden col-xs-4 col-sm-3 col-md-3";
 
         if( this.state.selectedItem !== undefined )
         {
             tableClass = "col-xs-8 col-sm-9 col-md-6";
             asideClass = "hidden-xs hidden-sm col-md-3";
+            asideRightClass = "hidden-xs hidden-sm col-md-3";
         };
 
 
@@ -182,17 +187,24 @@ var FilesView = React.createClass({
         return (
             <div className="filesView container-fluid" >
                 <div  className="row">
-                    <aside className="col-xs-4 col-sm-3" >
+                    <aside className={asideClass} >
+                        <ButtonGroup>
+                            <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon glyph='home' /></ButtonLink>
+                            <ButtonLink to="userManager" bsSize='medium' bsStyle="link"><Glyphicon glyph='user' /></ButtonLink>
+                            <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon glyph='search' /></ButtonLink>
+                            <DropdownButton ref="dropDownSettings" bsSize='medium' glyph='cog' className="glyphicon glyphicon-cog">
+                                <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
+                                <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
+                            </DropdownButton>
+                        </ButtonGroup>
+
+
                         <SectionTree title="Local Files" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
                         <SectionTree title="Cloud Files" disabled={true}/>
                     </aside>
 
                     <section className={tableClass} style={sectionStyle}>
                         <div className="container-fluid fileRows">
-                            <div className="row" style={{'borderBottom':'1px solid #000'}}>
-                                <div className="col-xs-2 col-sm-1"></div>
-                                <div className="col-xs-10 col-sm-11">Name</div>
-                            </div>
 
                             <BackFolder/>
 
@@ -204,7 +216,7 @@ var FilesView = React.createClass({
 
                     </section>
 
-                    <aside className={asideClass}>
+                    <aside className={asideRightClass}>
                         <PreviewSidebar file={this.state.selectedItem}/>
                     </aside>
                 </div>

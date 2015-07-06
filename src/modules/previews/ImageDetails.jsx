@@ -30,7 +30,7 @@ module.exports = React.createClass({
 
     getDefaultProps:function(){
         return {
-            file:{}
+            file:{},
         };
     },
 
@@ -158,7 +158,7 @@ module.exports = React.createClass({
 
         return (
             <div className="fileDetailsView" >
-                <SectionTree title="Image Info"/>
+                <SectionTree title="Image Info" buttonGlyph="remove" buttonClick=""/>
 
                 <div>
                 <img src={this.state.imagePath}
@@ -168,16 +168,16 @@ module.exports = React.createClass({
 
                 <br/>
                 <div style={{'textAlign':'right'}}>
+                    <ButtonGroup>
+                        <Button bsSize='large'>
+                            <Glyphicon glyph="download-alt" onClick={this.props.handleDownloadOriginal}/>
+                        </Button>
+                        <Button bsSize='large'>
+                            <Glyphicon glyph="trash" onClick={this.props.handleDelete}/>
+                        </Button>
+                    </ButtonGroup>
 
-                    <img src="assets/icons/ic_file_download_24px.svg" style={{
-                                        'width': '36px',
-                                        'height': '36px'
-                                    }} onClick={this.handleDownloadOriginal}/>
 
-                    <img src="assets/icons/ic_delete_24px.svg" style={{
-                                        'width': '36px',
-                                        'height': '36px'
-                                    }} onClick={this.handleDelete}/>
                 </div>
                 <br/>
 

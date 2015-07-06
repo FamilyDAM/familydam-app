@@ -143,7 +143,9 @@ var FolderTree = React.createClass({
         disabled: React.PropTypes.bool,
         showAddFolder: React.PropTypes.bool,
         showAddUser: React.PropTypes.bool,
-        sectionNavigateTo: React.PropTypes.string
+        sectionNavigateTo: React.PropTypes.string,
+        'buttonGlyph': React.PropTypes.string,
+        'buttonClick': React.PropTypes.string
     },
 
     getDefaultProps: function(){
@@ -155,7 +157,9 @@ var FolderTree = React.createClass({
             renderDepth:2,
             disabled:false,
             navigateToFiles:true,
-            sectionNavigateTo:undefined
+            sectionNavigateTo:undefined,
+            'buttonGlyph':"",
+            'buttonClick':""
         };
     },
 
@@ -304,6 +308,12 @@ var FolderTree = React.createClass({
                                     className="pull-right"
                                     onClick={this.handleAddFolder}/>
                         </ModalTrigger>
+                        :""}
+
+                        {this.props.buttonGlyph!==""?
+                        <Glyphicon glyph={this.props.buttonGlyph}
+                                   className="pull-right"
+                                   onClick={this.props.buttonClick}/>
                         :""}
                     </h3>
                 </div><br/>

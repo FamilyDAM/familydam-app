@@ -78,18 +78,7 @@ var DashboardView = React.createClass({
                             <Nav className="navbar-left">
                                 <NavItem >FamilyD.A.M</NavItem>
                             </Nav>
-                            <Nav className="navbar-right hidden-xs">
-                                <NavItemLink eventKey={1} to="files">Files</NavItemLink>
-                                <NavItemLink eventKey={2} to="files">Photos</NavItemLink>
-                                <NavItemLink eventKey={3} to="files">Music</NavItemLink>
-                                <NavItemLink eventKey={4} to="files">Movies</NavItemLink>
-                                <NavItemLink eventKey={5} to="files">Email Archive</NavItemLink>
-                                <NavItemLink eventKey={6} to="files">Web Archive</NavItemLink>
-                                <DropdownButton ref="dropDownSettings" eventKey={7} title="">
-                                    <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
-                                    <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
-                                </DropdownButton>
-                            </Nav>
+
                             <Nav style={clear_style}>
                                 <Breadcrumb/>
                             </Nav>
