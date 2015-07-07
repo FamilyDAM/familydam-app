@@ -25,6 +25,8 @@ var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 var SectionTree = require('../../components/folderTree/SectionTree');
 var NavigationActions = require('../../actions/NavigationActions');
 
+var AppSidebar = require('../../components/appSidebar/AppSidebar');
+
 var HomeView = React.createClass({
 
     componentDidMount: function(){
@@ -44,12 +46,9 @@ var HomeView = React.createClass({
             <div className="container-fluid">
                 <div className="row">
                     <aside className="col-xs-3" >
-                        <SectionTree title="Files" sectionNavigateTo="files"/>
-                        <SectionTree title="Photos" disabled={true}/>
-                        <SectionTree title="Music" disabled={true}/>
-                        <SectionTree title="Movies" disabled={true}/>
-                        <SectionTree title="Email Archive" disabled={true}/>
-                        <SectionTree title="Web Archive" disabled={true}/>
+
+                        <AppSidebar style="list"/>
+
                     </aside>
 
                     <div className="col-xs-9">

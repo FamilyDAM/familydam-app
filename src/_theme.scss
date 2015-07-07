@@ -17,6 +17,32 @@
 $font-family-base: 'Roboto Light', 'Roboto', "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 
+/******************************
+* Simple growing content box layout for aside's
+******************************/
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.box .boxRow {
+  flex: 0 1 40px;
+}
+
+.box .boxRow.header {
+  flex: 0 0 40px;
+}
+
+.box .boxRow.content {
+  flex: 1 0 auto;
+}
+
+.box .boxRow.footer {
+  flex: 0 1 220px;
+}
+
+
 
 
 /******************************

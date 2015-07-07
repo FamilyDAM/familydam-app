@@ -25,7 +25,6 @@ var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 var Breadcrumb = require('../../components/breadcrumb/Breadcrumb');
 var SectionTree = require('../../components/folderTree/SectionTree');
 
-
 var AuthActions = require('../../actions/AuthActions');
 
 
@@ -45,25 +44,11 @@ var DashboardView = React.createClass({
 
 
         componentDidMount: function () {
-            $(".dropdown").bind('DOMSubtreeModified', function (evnt) {
-                debugger;
-                if (evnt.attributeName == "class")
-                { // which attribute you want to watch for changes
-                    if (evnt.newValue.search(/open/i) == -1)
-                    { // "open" is the class name you search for inside "class" attribute
-                        $("#fab-button-group").style("right:100px;");
-                    } else
-                    {
-                        $("#fab-button-group").style("right:0px;");
-                    }
-                }
-            });
 
         },
 
-
         handleDropDownToggle: function(e){
-            debugger;
+
         },
 
         render: function () {

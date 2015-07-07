@@ -195,7 +195,7 @@ module.exports = function(grunt) {
                     compress: {
                         'drop_debugger':true,
                         'drop_console':true,
-                        dead_code: false
+                        dead_code: true
                     }
                 },
                 files: {
