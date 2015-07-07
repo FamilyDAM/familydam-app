@@ -94,7 +94,7 @@ var AddUserModal = React.createClass({
 
     getInitialState: function(){
         return {
-            'parent':"/"
+            'parent':"/dam:files/"
         }
     },
 

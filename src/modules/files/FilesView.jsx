@@ -76,7 +76,6 @@ var FilesView = React.createClass({
 
         // rx callbacks
         this.fileStoreSubscription = FileStore.files.subscribe(function (data_) {
-
             _this.state.files = data_;
             if (_this.isMounted())  _this.forceUpdate();
         });

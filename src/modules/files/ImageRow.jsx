@@ -65,11 +65,11 @@ var FileRow = React.createClass({
 
 
     render:function(){
-
+debugger;
         return  <div className="row" onClick={this.handleRowClick} style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'60px'}}>
                     <div style={{'display': 'table-cell', 'width': '50px;'}}>
                         <Link to="photoDetails" params={{'id': this.props.file.id}}>
-                            <img src={PreferenceStore.getBaseUrl() +this.props.file.path.replace("dam:files", "~") +"?rendition=thumbnail.200&token=" +UserStore.token.value}
+                            <img src={PreferenceStore.getBaseUrl() +this.props.file.path +"?rendition=thumbnail.200&token=" +UserStore.token.value}
                                  style={{'width':'50px', 'height':'50px'}}/></Link>
                     </div>
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
