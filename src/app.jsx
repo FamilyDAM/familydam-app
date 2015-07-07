@@ -46,13 +46,7 @@ var routes = [
 //React.renderComponent(routes, document.body);
 //Router.run(routes, Router.HistoryLocation, function (Handler, state) {
 Router.run(routes, function (Handler, state) {
-
-    console.log("run");
-
     var _locale = SettingsStore.locale.value;
-
-
-
     // Listen for locale changes and reload the whole page
 
         this.localSubscription = SettingsStore.locale.subscribe(function (locale_) {
@@ -74,7 +68,5 @@ Router.run(routes, function (Handler, state) {
 
 
         }.bind(this));
-
         //this.localSubscription.dispose();
-
 });
