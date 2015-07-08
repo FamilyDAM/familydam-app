@@ -39,7 +39,7 @@ var _AppSidebar = React.createClass({
         }
 
         return (
-            <div className="appSidebar container-fluid boxRow footer">
+            <div className="appSidebar container-fluid">
                 <div className="row" style={_headerStyle}>
                     <div className="titleBar" >
                         <span>

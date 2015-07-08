@@ -20,6 +20,8 @@ var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var NodeActions = require('../../actions/NodeActions');
+var FileActions = require('../../actions/FileActions');
+
 var SectionTree = require('../../components/folderTree/SectionTree');
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserStore = require('../../stores/UserStore');
@@ -62,6 +64,9 @@ module.exports = React.createClass({
         // list for results
         this.currentNodeSubscription = ContentStore.currentNode.subscribe(function (results)
         {
+
+            if( results == undefined || results == null ) return;
+
             if (results['dam:tags'] == undefined)
             {
                 results['dam:tags'] = [];
@@ -137,15 +142,25 @@ module.exports = React.createClass({
     },
 
 
-    handleDownloadOriginal:function(){
+    onDownloadOriginal:function(event_, component){
         window.open(this.state.location);
     },
 
 
-    handleDelete:function(){
+    onDelete:function(event_, component){
+        var _id = this.props.file['jcr:uuid'];
+        var _path = this.props.file['jcr:path'];
 
+        NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
+
+        // close sidebar after delete
+        this.onClose(event_);
     },
 
+
+    onClose: function(event_){
+        FileActions.selectFile.onNext(null);
+    },
 
 
 
@@ -158,7 +173,7 @@ module.exports = React.createClass({
 
         return (
             <div className="fileDetailsView" >
-                <SectionTree title="Image Info" buttonGlyph="remove" buttonClick=""/>
+                <SectionTree title="Image Info" buttonGlyph="remove" buttonClick={this.onClose}/>
 
                 <div>
                 <img src={this.state.imagePath}
@@ -168,12 +183,14 @@ module.exports = React.createClass({
 
                 <br/>
                 <div style={{'textAlign':'right'}}>
-                    <ButtonGroup>
-                        <Button bsSize='large'>
-                            <Glyphicon glyph="download-alt" onClick={this.props.handleDownloadOriginal}/>
+                    <ButtonGroup className="previewButtonBar">
+                        <Button bsSize='large'
+                                onClick={this.onDownloadOriginal}>
+                            <Glyphicon glyph="download-alt" style={{'fontSize':'2.4rem'}}/>
                         </Button>
-                        <Button bsSize='large'>
-                            <Glyphicon glyph="trash" onClick={this.props.handleDelete}/>
+                        <Button bsSize='large'
+                                onClick={this.onDelete}>
+                            <Glyphicon glyph="trash"  style={{'fontSize':'2.4rem'}}/>
                         </Button>
                     </ButtonGroup>
 

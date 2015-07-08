@@ -32,6 +32,12 @@ $font-family-base: 'Roboto Light', 'Roboto', "Helvetica Neue", Helvetica, Arial,
 
 .box .boxRow.header {
   flex: 0 0 40px;
+
+  .btn
+  {
+    padding: 8px 15px;
+    margin:  0px 0px;
+  }
 }
 
 .box .boxRow.content {

@@ -34,13 +34,14 @@ var FileRow = React.createClass({
             var _id = $("[data-reactid='" + component + "']").attr("data-id");
         }
 
-
         if( $('.device-xs').is(':visible') || $('.device-sm').is(':visible'))
         {
             FileActions.selectFile.onNext(undefined);
             this.context.transitionTo("photoDetails", {'id': this.props.file.id});
         }else{
             FileActions.selectFile.onNext(this.props.file);
+            //load the data
+            NodeActions.getNode.source.onNext(this.props.file.id);
         }
         // IF DBL CLick
         //var _id = $( "[data-reactid='" +component +"']" ).attr("data-id");
@@ -65,7 +66,7 @@ var FileRow = React.createClass({
 
 
     render:function(){
-debugger;
+
         return  <div className="row" onClick={this.handleRowClick} style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'60px'}}>
                     <div style={{'display': 'table-cell', 'width': '50px;'}}>
                         <Link to="photoDetails" params={{'id': this.props.file.id}}>

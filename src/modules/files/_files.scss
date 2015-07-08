@@ -17,10 +17,13 @@
     padding: 5px;
   }
 
-  .btn
+  .previewButtonBar
   {
-    padding: 8px 15px;
-    margin:  0px 0px;
+    .btn
+    {
+      padding: 8px 15px;
+      margin:  0px 0px;
+    }
   }
 
   .fileRows

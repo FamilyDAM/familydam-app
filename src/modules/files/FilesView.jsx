@@ -150,13 +150,13 @@ var FilesView = React.createClass({
         var asideClass = "col-xs-4 col-sm-3 col-md-3 box";
         var asideRightClass = "hidden col-xs-4 col-sm-3 col-md-3";
 
-        if (this.state.selectedItem !== undefined)
+        if (this.state.selectedItem !== undefined && this.state.selectedItem !== null)
         {
             tableClass = "col-xs-8 col-sm-9 col-md-6";
             asideClass = "hidden-xs hidden-sm col-md-3 box";
             asideRightClass = "hidden-xs hidden-sm col-md-3";
         }
-        ;
+
 
 
         var folderRows = this.state.files
@@ -210,7 +210,9 @@ var FilesView = React.createClass({
                         </div>
 
 
-                        <AppSidebar />
+                        <div className=" boxRow footer">
+                            <AppSidebar />
+                        </div>
 
                     </aside>
 

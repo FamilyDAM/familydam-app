@@ -6,15 +6,13 @@
 'use strict';
 
 var Rx = require('rx');
-//di              = require('di');
+
 var PreferenceStore = require('./PreferenceStore');
 var UserStore = require('./UserStore');
 var NodeActions = require('./../actions/NodeActions');
+var FileActions = require('./../actions/FileActions');
 
 // Logged in user
-
-
-
 module.exports = {
 
     currentNode:new Rx.BehaviorSubject({}),
@@ -33,7 +31,4 @@ module.exports = {
 
 
 };
-
-//di.annotate(AuthActions, new di.Inject());
-
 
