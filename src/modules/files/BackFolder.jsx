@@ -39,13 +39,13 @@ var BackFolder = React.createClass({
                      style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'50px', 'cursor': 'pointer'}}
                      onClick={this.back}>
 
-                    <div style={{'display': 'table-cell', 'width': '50px;'}}>
+                    <div style={{'display': 'table-cell', 'width': '50px'}}>
                         <img src="assets/icons/ic_folder_48px.svg"
                              style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
                     </div>
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
-                            <div className="col-sm-12" style={{'verticalAlign':'middle', 'cursor': 'pointer'}}><span style={{'marginTop': '15px;'}}>...</span></div>
+                            <div className="col-sm-12" style={{'verticalAlign':'middle', 'cursor': 'pointer'}}><span style={{'marginTop': '15px'}}>...</span></div>
                         </div>
                     </div>
                 </div>

@@ -21,6 +21,13 @@ var DropdownButton = require('react-bootstrap').DropdownButton;
 var NavItemLink = require('react-router-bootstrap').NavItemLink;
 var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 
+var Modal = require('react-bootstrap').Modal;
+var ModalHeader = require('react-bootstrap').Modal.Header;
+var ModalTitle = require('react-bootstrap').Modal.Title;
+var ModalBody = require('react-bootstrap').Modal.Body;
+var ModalFooter = require('react-bootstrap').Modal.Footer;
+
+
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
@@ -48,7 +55,8 @@ var FilesView = React.createClass({
         return {
             files: [],
             selectedItem: undefined,
-            state: '100%'
+            state: '100%',
+            showAddFolder: false
         };
     },
 
@@ -143,6 +151,22 @@ var FilesView = React.createClass({
     },
 
 
+    handleAddFolder: function(event_){
+        this.setState({showAddFolder: false});
+    },
+
+
+    closeAddFolderModal: function(event_){
+        this.setState({ showAddFolder: false });
+    },
+
+
+    handleCreateFolder: function(event_){
+
+    },
+
+
+
     render: function () {
 
         var _this = this;
@@ -174,6 +198,7 @@ var FilesView = React.createClass({
                 return <FileRow key={indx} file={file_}/>
             });
 
+
         var asideStyle = {};
         asideStyle['height'] = this.state.height;
 
@@ -183,12 +208,15 @@ var FilesView = React.createClass({
         sectionStyle['height'] = this.state.height;
 
 
+        var activeVisibleDir = "/foo";
+
+
         return (
+
             <div className="filesView container-fluid">
                 <div className="row">
 
                     <aside className={asideClass} style={asideStyle}>
-
 
                         <ButtonGroup className="boxRow header">
                             <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></ButtonLink>
@@ -196,17 +224,23 @@ var FilesView = React.createClass({
                                 glyph='user'/></ButtonLink>
                             <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon
                                 glyph='search'/></ButtonLink>
-                            <DropdownButton ref="dropDownSettings" bsSize='medium' glyph='cog'
-                                            className="glyphicon glyphicon-cog">
+                            <DropdownButton
+                                ref="dropDownSettings"
+                                bsSize='medium'
+                                glyph='cog'
+                                className="glyphicon glyphicon-cog">
                                 <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
                                 <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
                             </DropdownButton>
                         </ButtonGroup>
 
-                        <div className="boxRow content">
-                            <SectionTree title="Local Files" showAddFolder={true} navigateToFiles={true}
+                        <div className="boxRow content" style={{'minHeight':'200px'}}>
+                            <SectionTree title="Local Files"
+                                         showAdd={true}
+                                         onAdd={this.handleAddFolder}
+                                         navigateToFiles={true}
                                          baseDir="/dam:files/"/>
-                            <SectionTree title="Cloud Files" disabled={true}/>
+
                         </div>
 
 
@@ -245,7 +279,7 @@ var FilesView = React.createClass({
                                         <Link to="upload" style={{'color':'#fff'}}>
                                             <Glyphicon glyph="plus"
                                                        className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
-                                                       style={{'fontSize': '24px;'}}></Glyphicon>
+                                                       style={{'fontSize': '24px'}}></Glyphicon>
                                         </Link>
                                         <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
                                     </span>
@@ -255,7 +289,26 @@ var FilesView = React.createClass({
                         </ul>
                     </div>
                 </div>
+
+
+
+                <Modal  title="Add Folder"
+                        animation={false}
+                        show={this.state.showAddFolder}
+                        onHide={this.closeAddFolderModal}>
+                    <div className="modal-body">
+                        <h4>Create a new sub folder</h4>
+                        {activeVisibleDir} <input type="text" ref="folderName" label="Folder Name"/>
+                    </div>
+                    <div className="modal-footer">
+                        <ButtonGroup>
+                            <Button onClick={this.closeAddFolderModal}>Close</Button>
+                            <Button onClick={this.handleCreateFolder}>Create</Button>
+                        </ButtonGroup>
+                    </div>
+                </Modal>
             </div>
+
 
         );
     }

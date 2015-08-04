@@ -90,49 +90,6 @@ var AddFolderModal = React.createClass({
 
 
 
-var AddUserModal = React.createClass({
-
-    getInitialState: function(){
-        return {
-            'parent':"/dam:files/"
-        }
-    },
-
-    componentWillMount: function(){
-        var _this = this;
-    },
-
-
-
-    handleCreateFolder:function(event_){
-        var _this = this;
-    },
-
-
-    render: function() {
-
-        var activeVisibleDir = this.state.parent.path;
-
-        return (
-            <Modal {...this.props} title="Add User" animation={false}>
-                <div className="modal-body">
-                    <h4>First Name</h4>
-                    <input type="text" ref="folderName" label="User"/>
-                </div>
-                <div className="modal-footer">
-                    <ButtonGroup>
-                        <Button onClick={this.props.onRequestHide}>Close</Button>
-                        <Button onClick={this.handleCreateFolder}>Create</Button>
-                    </ButtonGroup>
-                </div>
-            </Modal>
-        );
-    }
-});
-
-
-
-
 var FolderTree = React.createClass({
     mixins: [ Router.Navigation ],
 
@@ -141,8 +98,8 @@ var FolderTree = React.createClass({
         title: React.PropTypes.string,
         baseDir: React.PropTypes.string,
         disabled: React.PropTypes.bool,
+        showAdd: React.PropTypes.bool,
         showAddFolder: React.PropTypes.bool,
-        showAddUser: React.PropTypes.bool,
         sectionNavigateTo: React.PropTypes.string,
         'buttonGlyph': React.PropTypes.string,
         'buttonClick': React.PropTypes.string
@@ -153,7 +110,7 @@ var FolderTree = React.createClass({
             'section':'files',
             'baseDir':null,
             'showAddFolder':false,
-            'showAddUser':false,
+            'showAdd':false,
             renderDepth:2,
             disabled:false,
             navigateToFiles:true,
@@ -212,12 +169,13 @@ var FolderTree = React.createClass({
         DirectoryActions.selectFolder.onNext(folder_);
 
     },
-    
 
-    handleAddFolder: function(){
 
+    handleAdd: function(event_){
+        this.props.onAdd(event_);
     },
-    
+
+
     
     isParentPath: function(path_, activePath_){
         var _isParentPath = false;
@@ -249,6 +207,7 @@ var FolderTree = React.createClass({
         var _depth = 0;
         var _boundClick = _this.handleSelectDir.bind(this, {'path':this.props.baseDir});
  
+
         var listItems = function(_folders, expand_)
         {
             return _folders.map(function(_f)  {
@@ -287,27 +246,22 @@ var FolderTree = React.createClass({
             'folderTree': true,
             'disabled': this.props.disabled? true:false
         });
+
         
         return (
             <div className={rootClassSet}>
                 <div className="header">
                     <h3>
-                        {this.props.sectionNavigateTo!==undefined ?
+                        {this.props.sectionNavigateTo !== undefined ?
                             <Link to={this.props.sectionNavigateTo}>{this.props.title}</Link>
                             :this.props.title}
-                        {this.props.showAddFolder==true ?
-                        <ModalTrigger modal={<AddFolderModal dir={this.state.activeFolder.path} />}>
-                            <Glyphicon glyph="plus"
-                                    className="pull-right"
-                                    onClick={this.handleAddFolder}/>
-                        </ModalTrigger>
-                        :""}
-                        {this.props.showAddUser==true ?
-                        <ModalTrigger modal={<AddUserModal dir={this.state.activeFolder.path} />}>
-                            <Glyphicon glyph="plus"
-                                    className="pull-right"
-                                    onClick={this.handleAddFolder}/>
-                        </ModalTrigger>
+
+
+                        {this.props.showAdd==true ?
+                        <Glyphicon glyph="plus"
+                                className="pull-right"
+                                onClick={this.handleAdd}/>
+
                         :""}
 
                         {this.props.buttonGlyph!==""?
@@ -330,7 +284,7 @@ var FolderTree = React.createClass({
                         <ListGroup>
                             {listItems(this.state.folders, true)}
                         </ListGroup>
-                    </ListGroupItem> 
+                    </ListGroupItem>
                     :""}
                 </ListGroup>
 

@@ -61,13 +61,13 @@ var DirectoryRow = React.createClass({
                      onClick={this.handleDirClick}
                      data-id={this.props.dir.id}  data-path={this.props.dir.path}>
 
-                    <div style={{'display': 'table-cell', 'width': '50px;'}}>
+                    <div style={{'display': 'table-cell', 'width': '50px'}}>
                         <img src="assets/icons/ic_folder_48px.svg"
                              style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
                     </div>
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
-                            <div className="col-sm-6 col-lg-7" style={{'marginTop': '15px;'}}>
+                            <div className="col-sm-6 col-lg-7" style={{'marginTop': '15px'}}>
                                 <Link to="photoDetails" params={{'id': this.props.dir.id}}>{this.props.dir.name}</Link>
                             </div>
                             <div className="col-sm-6 col-lg-5 text-right">

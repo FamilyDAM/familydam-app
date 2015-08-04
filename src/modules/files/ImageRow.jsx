@@ -37,7 +37,7 @@ var FileRow = React.createClass({
         if( $('.device-xs').is(':visible') || $('.device-sm').is(':visible'))
         {
             FileActions.selectFile.onNext(undefined);
-            this.context.transitionTo("photoDetails", {'id': this.props.file.id});
+            this.transitionTo("photoDetails", {'id': this.props.file.id});
         }else{
             FileActions.selectFile.onNext(this.props.file);
             //load the data
@@ -68,7 +68,7 @@ var FileRow = React.createClass({
     render:function(){
 
         return  <div className="row" onClick={this.handleRowClick} style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'60px'}}>
-                    <div style={{'display': 'table-cell', 'width': '50px;'}}>
+                    <div style={{'display': 'table-cell', 'width': '50px'}}>
                         <Link to="photoDetails" params={{'id': this.props.file.id}}>
                             <img src={PreferenceStore.getBaseUrl() +this.props.file.path +"?rendition=thumbnail.200&token=" +UserStore.token.value}
                                  style={{'width':'50px', 'height':'50px'}}/></Link>
