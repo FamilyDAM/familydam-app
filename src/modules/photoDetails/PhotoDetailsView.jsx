@@ -32,6 +32,7 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var ContentStore = require('./../../stores/ContentStore');
 
 var NodeActions = require('./../../actions/NodeActions');
+var NavigationActions = require('./../../actions/NavigationActions');
 
 
 module.exports = React.createClass({
@@ -54,6 +55,10 @@ module.exports = React.createClass({
     componentWillMount: function () {
         var _this = this;
         NodeActions.getNode.source.onNext(this.props.params.id);
+
+        // update the breadcrumb
+        var _pathData = {'label': 'Photo Details', 'navigateTo': "photoDetails", 'params': {id: this.props.params.id}, 'level': 1};
+        NavigationActions.currentPath.onNext(_pathData);
 
         this.registerListeners();
 

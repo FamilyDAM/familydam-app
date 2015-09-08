@@ -17,6 +17,8 @@ var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
 var UserStore = require('../../stores/UserStore');
 
+var NavigationActions = require('./../../actions/NavigationActions');
+
 
 module.exports = React.createClass({
 
@@ -26,8 +28,20 @@ module.exports = React.createClass({
         }
     },
 
+    statics:{
+        willTransitionTo:function(transition, params, query, callback){
+
+            // update the breadcrumb
+            var _pathData = {'label': params.id, 'navigateTo': "userManagerDetails", 'params': {id:params.id}, 'level': 2};
+            NavigationActions.currentPath.onNext(_pathData);
+            callback();
+        }
+    },
+
     componentDidMount: function () {
         console.log("{UserManagerDetailView} componentWillMount");
+
+
 
         this.loadUserSubscription = UserActions.loadUser.sink.subscribe(function(data_){
             this.setState({'user':data_});

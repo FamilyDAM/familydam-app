@@ -10,8 +10,18 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
+var NavigationActions = require('./../../actions/NavigationActions');
+
+
 var PhotoEditView = React.createClass({
 
+    componentWillMount: function () {
+
+        // update the breadcrumb
+        var _pathData = {'label': 'Photo Editor', 'navigateTo': "photoEdit", 'params': {id: this.props.params.id}, 'level': 1};
+        NavigationActions.currentPath.onNext(_pathData);
+
+    },
 
     render: function() {
 

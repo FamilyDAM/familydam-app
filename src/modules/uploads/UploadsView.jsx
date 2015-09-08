@@ -22,6 +22,8 @@ var FolderTree = require('../../components/folderTree/FolderTree');
 var FileUploadView = require('../../components/fileUpload/FileUploadView')
 var UploadActions = require('../../actions/UploadActions')
 
+var NavigationActions = require('./../../actions/NavigationActions');
+
 var UploadsView = React.createClass({
 
 
@@ -33,6 +35,11 @@ var UploadsView = React.createClass({
 
     componentWillMount: function(){
         var _this = this;
+
+        // update the breadcrumb
+        var _pathData = {'label': 'Upload Files', 'navigateTo': "upload", 'params': {}, 'level': 1};
+        NavigationActions.currentPath.onNext(_pathData);
+
     },
 
     componentDidMount: function () {

@@ -21,6 +21,11 @@ var MenuItem = require('react-bootstrap').MenuItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var NavItemLink = require('react-router-bootstrap').NavItemLink;
 var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
+var Button = require('react-bootstrap').Button;
+var ButtonGroup = require('react-bootstrap').ButtonGroup;
+var ButtonLink = require('react-router-bootstrap').ButtonLink;
+var Glyphicon = require('react-bootstrap').Glyphicon;
+var Dropdown = require('react-bootstrap').Dropdown;
 
 var SectionTree = require('../../components/folderTree/SectionTree');
 var NavigationActions = require('../../actions/NavigationActions');
@@ -42,12 +47,40 @@ var HomeView = React.createClass({
 
     render: function () {
 
+        var asideClass = "col-xs-3 box";
+        var asideStyle = {};
+
+
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <aside className="col-xs-3" >
+                    <aside className={asideClass} style={asideStyle}>
 
-                        <AppSidebar style="list"/>
+
+                        <ButtonGroup className="boxRow header">
+                            <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></ButtonLink>
+                            <ButtonLink to="userManager" bsSize='medium' bsStyle="link"><Glyphicon
+                                glyph='user'/></ButtonLink>
+                            <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon
+                                glyph='search'/></ButtonLink>
+
+
+                            <Dropdown id='dropdown-custom-1'>
+                                <Dropdown.Toggle>
+                                    <Glyphicon glyph='cog' />
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu className='super-colors'>
+                                    <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
+                                    <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </ButtonGroup>
+
+                        <div className="boxRow content" style={{'minHeight':'200px'}}>
+                            <SectionTree title="Apps"/>
+                            <AppSidebar style="list"/>
+                        </div>
+
 
                     </aside>
 

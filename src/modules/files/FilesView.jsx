@@ -12,11 +12,13 @@ var Link = Router.Link;
 
 var Table = require('react-bootstrap').Table;
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
+
 var Button = require('react-bootstrap').Button;
 var ListGroup = require('react-bootstrap').ListGroup;
 var ListGroupItem = require('react-bootstrap').ListGroupItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
+var Dropdown = require('react-bootstrap').Dropdown;
 var DropdownButton = require('react-bootstrap').DropdownButton;
 var NavItemLink = require('react-router-bootstrap').NavItemLink;
 var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
@@ -252,14 +254,17 @@ var FilesView = React.createClass({
                                 glyph='user'/></ButtonLink>
                             <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon
                                 glyph='search'/></ButtonLink>
-                            <DropdownButton
-                                ref="dropDownSettings"
-                                bsSize='medium'
-                                glyph='cog'
-                                className="glyphicon glyphicon-cog">
-                                <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
-                                <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
-                            </DropdownButton>
+
+
+                            <Dropdown id='dropdown-custom-1'>
+                                <Dropdown.Toggle>
+                                    <Glyphicon glyph='cog' />
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu className='super-colors'>
+                                    <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
+                                    <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </ButtonGroup>
 
                         <div className="boxRow content" style={{'minHeight':'200px'}}>
@@ -304,12 +309,13 @@ var FilesView = React.createClass({
                                     data-toggle="dropdown">
                                     <span className="fa-stack fa-2x">
                                         <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
+                                        <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
                                         <Link to="upload" style={{'color':'#fff'}}>
                                             <Glyphicon glyph="plus"
                                                        className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
                                                        style={{'fontSize': '24px'}}></Glyphicon>
                                         </Link>
-                                        <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
+
                                     </span>
                             </button>
                         </div>
