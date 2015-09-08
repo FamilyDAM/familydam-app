@@ -19,12 +19,9 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{GetUsers Service} subscribe");
-        this.sink = UserActions.getUsers.sink;
-        UserActions.getUsers.source.subscribe(this.getUsers.bind(this));
-
-        //refresh the list after any user data is saved
-        UserActions.saveUser.sink.subscribe(this.getUsers.bind(this));
+        console.log("{CreateUser Service} subscribe");
+        this.sink = UserActions.createUser.sink;
+        UserActions.createUser.source.subscribe(this.createUser.bind(this));
     },
 
     /**
@@ -32,27 +29,23 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    getUsers: function()
+    createUser: function(data_)
     {
         var _this = this;
+
+        var _username = data_.username;
+        var _password = data_.password;
+        var _userProps = JSON.stringify(data_.userProps);
+
+        var _data = {'username':_username,  'password': _password, 'userProps': _userProps};
+
         return $.ajax({
-                    'method':'get'
+                    'method':'post'
                     ,'url': PreferenceStore.getBaseUrl() +'/api/users'
                     , cache: false
+                    , data: _data
                 }).then(function(results, status_, xhr_){
-                    var list = [];
-
-                    results.map(function(item) {
-
-                        if( item.firstName === undefined )
-                        {
-                            item.firstName = item.username;
-                        }
-                        list.push(item);
-                    });
-
-                    var _sortedUsers = list.sort(function (a, b) { return b.username - a.username; });
-                    _this.sink.onNext(_sortedUsers);
+                    _this.sink.onNext(results);
 
                     var _token = xhr_.getResponseHeader("X-Auth-Token");
                     if( _token != null && _token !== undefined ){

@@ -71,12 +71,12 @@ var _AppSidebar = React.createClass({
                     <div className={_class} style={_rowStyle}>
                         <Link to="home">
                         <img src="assets/icons/appicon77.png"/>
-                        <span style={_linkStyle}>Email Archive</span></Link>
+                        <span style={_linkStyle}>Email</span></Link>
                     </div>
                     <div className={_class} style={_rowStyle}>
                         <Link to="home">
                         <img src="assets/icons/appicon77.png"/>
-                        <span style={_linkStyle}>Web Archive</span></Link>
+                        <span style={_linkStyle}>Web</span></Link>
                     </div>
                 </div>
             </div>

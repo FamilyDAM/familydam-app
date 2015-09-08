@@ -7,8 +7,13 @@ var Rx = require('rx');
 
 module.exports = {
 
-    getUsers: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
+    getUsers: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
+    createUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+
+    loadUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+
+    saveUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
 
 };
 

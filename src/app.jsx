@@ -38,6 +38,8 @@ var UploadActions = require('./actions/UploadActions');
 // register the different services
 var LoginService = require('./services/users/LoginService').subscribe();
 var GetUsersService = require('./services/users/GetUsersService').subscribe();
+var SaveUserService = require('./services/users/SaveUserService').subscribe();
+var CreateUserService = require('./services/users/CreateUserService').subscribe();
 var NodeCrudService = require('./services/content/NodeCrudService').subscribe();
 var GetFilesService = require('./services/files/GetFilesService').subscribe();
 var GetDirectoriesService = require('./services/files/GetDirectoriesService').subscribe();
@@ -67,6 +69,8 @@ var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
 var PhotoEditView = require('./modules/photoEdit/PhotoEditView');
 var UploadsView = require('./modules/uploads/UploadsView');
 var UserManagerView = require('./modules/userManager/UserManagerView');
+var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
+var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails');
 var intlData = require("./locales/en-us");
 
 var routes = [
@@ -81,7 +85,10 @@ var routes = [
         <Route name="photos" path="photos" handler={PhotosView}/>
         <Route name="photoDetails" path="photos/:id" handler={PhotoDetailView}/>
         <Route name="photoEdit"  path="photos/:id/edit" handler={PhotoEditView}/>
-        <Route name="userManager"  handler={UserManagerView}/>
+        <Route name="userManagerShell" handler={UserManagerView}>
+            <Route name="userManager"  handler={UserManagerHomeView}/>
+            <Route name="userManagerDetails" path="userManager/:id"  handler={UserManagerDetailsView}/>
+        </Route>
     </Route>
 ];
 

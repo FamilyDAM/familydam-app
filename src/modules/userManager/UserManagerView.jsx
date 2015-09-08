@@ -17,33 +17,75 @@ var ModalTitle = require('react-bootstrap').Modal.Title;
 var ModalBody = require('react-bootstrap').Modal.Body;
 var ModalFooter = require('react-bootstrap').Modal.Footer;
 
+
+var NavigationActions = require('../../actions/NavigationActions');
+var UserActions = require('../../actions/UserActions');
+
+
 module.exports = React.createClass({
 
-    getInitialState:function(){
+    getInitialState: function () {
         return {
-            'showCreateUserModal':false
+            users: [],
+            'showCreateUserModal': false
         }
     },
 
-    componentDidMount: function(){
-        console.log("{UserManagerView} componentDidMount");
+    componentDidMount: function () {
+        console.log("{UserManagerView} componentWillMount");
+
+        // update the breadcrumb
+        var _pathData = {'label': 'User Manager', 'navigateTo': "userManager", 'params': {}, 'level': 1};
+        NavigationActions.currentPath.onNext(_pathData);
+
+        // handle get all users
+        this.getUsersSubscription = UserActions.getUsers.sink.subscribe(function (data_) {
+            this.state.users = data_;
+            if (this.isMounted()) this.forceUpdate();
+        }.bind(this));
+
+        // after a user has been created, add them to the array
+        this.createUsersSubscription = UserActions.createUser.sink.subscribe(function (data_) {
+            this.closeCreateUser();
+            //refresh user list
+            UserActions.getUsers.source.onNext(true);
+        }.bind(this));
+
+
+        // request user list
+        UserActions.getUsers.source.onNext(true);
+
     },
 
-    componentWillUnmount: function(){
-        //if( this.navigationActions !== undefined ) this.navigationActions.dispose();
+
+    componentWillUnmount: function () {
+        if (this.getUsersSubscription !== undefined) this.getUsersSubscription.dispose();
+        if (this.createUsersSubscription !== undefined) this.createUsersSubscription.dispose();
     },
 
-    handleAddUser: function(event_)
-    {
+    handleAddUser: function (event_) {
         this.openCreateUser();
     },
 
     closeCreateUser(){
-        this.setState({ showCreateUserModal: false });
+        this.setState({showCreateUserModal: false});
     },
 
     openCreateUser(){
-        this.setState({ showCreateUserModal: true });
+        this.setState({showCreateUserModal: true});
+    },
+
+    handleCreateUser: function (event_) {
+
+        var _username = this.refs.username.getDOMNode().value;
+        var _password = this.refs.password.getDOMNode().value;
+        var _userProps = {'firstName':_username};
+
+        UserActions.createUser.source.onNext({
+            'username': _username,
+            'password': _password,
+            'userProps': _userProps
+        });
     },
 
     render: function () {
@@ -56,17 +98,22 @@ module.exports = React.createClass({
                     <div className="row">
                         <aside className="col-xs-3">
                             <SectionTree title="Users" showAdd={true} onAdd={this.handleAddUser}/>
+                            <ul style={{'listStyle':'none'}}>
+                                {this.state.users.map(function (user, index) {
+                                    return <li key={user.username}><Link to="userManagerDetails" params={{'id':user.id}}>{user.firstName}</Link></li>
+                                })}
+                            </ul>
                         </aside>
 
                         <section className="col-xs-9">
-                            [User Manager]
+                            <RouteHandler {...this.props}/>
                         </section>
                     </div>
                 </div>
 
 
-
-                <div id="fab-button-group" style={{'position':'absolute','top': '150px','right': '0px', 'display':'none'}}>
+                <div id="fab-button-group"
+                     style={{'position':'absolute','top': '150px','right': '0px', 'display':'none'}}>
                     <div className="fab  show-on-hover dropup">
                         <div data-toggle="tooltip" data-placement="left" title="Compose">
                             <button type="button" className="btn btn-danger btn-io dropdown-toggle"
@@ -74,8 +121,8 @@ module.exports = React.createClass({
                                     <span className="fa-stack fa-2x">
                                         <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
                                          <Glyphicon glyph="plus"
-                                                       className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
-                                                       style={{'fontSize': '24px'}}></Glyphicon>
+                                                    className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
+                                                    style={{'fontSize': '24px'}}></Glyphicon>
                                         <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
                                     </span>
                             </button>
@@ -91,11 +138,19 @@ module.exports = React.createClass({
                     <div className="modal-body">
                         <table>
                             <tr>
-                                <td><h4>Name</h4></td>
+                                <td><h4>First Name (username)*</h4></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <input type="text" ref="firstName" label="First Name"/>
+                                    <input type="text" ref="username" label="User Name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><h4>Password*</h4></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="password" ref="password" label="Password"/>
                                 </td>
                             </tr>
                         </table>
@@ -104,7 +159,7 @@ module.exports = React.createClass({
                     <div className="modal-footer">
                         <ButtonGroup>
                             <Button onClick={this.closeCreateUser}>Close</Button>
-                            <Button onClick={this.handleCreateFolder}>Create</Button>
+                            <Button onClick={this.handleCreateUser}>Create</Button>
                         </ButtonGroup>
                     </div>
                 </Modal>

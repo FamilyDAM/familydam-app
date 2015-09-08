@@ -56,30 +56,34 @@ var FilesView = React.createClass({
             files: [],
             selectedItem: undefined,
             state: '100%',
-            showAddFolder: false
+            showAddFolder: false,
+            selectedPath: "/dam:files/"
         };
     },
 
 
     componentWillMount: function () {
+        var _this = this;
         console.log("{FilesView} componentWillMount");
 
-        var _this = this;
-        this.state.path = "/dam:files/";
 
+        // update the breadcrumb
+        var _pathData = {'label': 'Files', 'navigateTo': "files", 'params': {}, 'level': 1};
+        NavigationActions.currentPath.onNext(_pathData);
+
+
+        this.state.path = "/dam:files/";
         if (this.props.query && this.props.query.path)
         {
             this.state.path = this.props.query.path;
         }
+        this.state.selectedPath = this.state.path;
+
 
         // save current dir
         //DirectoryActions.selectFolder.onNext(this.state.path);
         // load files
         FileActions.getFiles.source.onNext(this.state.path);
-
-        // update the breadcrumb
-        var _pathData = {'label': 'Files', 'navigateTo': "files", 'params': {}, 'level': 1};
-        NavigationActions.currentPath.onNext(_pathData);
 
 
         // rx callbacks
@@ -98,6 +102,8 @@ var FilesView = React.createClass({
         // Refresh the file list when someone changes the directory
         this.selectFolderSubscription = DirectoryActions.selectFolder.subscribe(function (data_) {
             FileActions.getFiles.source.onNext(data_.path);
+            _this.state.selectedPath = data_.path;
+            if (_this.isMounted())  _this.forceUpdate();
         });
 
         // Refresh the file list when someone changes the directory
@@ -105,6 +111,25 @@ var FilesView = React.createClass({
             _this.state.selectedItem = data_;
             if (_this.isMounted())  _this.forceUpdate();
         });
+
+
+        /**
+         * Add Folder Modal
+         */
+            // listen for the selected dir.
+        this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(data_){
+            _this.state.parent = data_;
+            if( _this.isMounted() ) _this.forceUpdate();
+        }.bind(this));
+
+        // listen for save complete, then hide
+        this.createFolderSubscription = DirectoryActions.createFolder.sink.subscribe(function(data_){
+            debugger;
+            _this.closeAddFolderModal();
+            if( _this.isMounted() ) _this.forceUpdate();
+        }, function(error_){
+            alert(error_.statusText);
+        }.bind(this));
     },
 
 
@@ -121,21 +146,23 @@ var FilesView = React.createClass({
     },
 
     componentWillUnmount: function () {
-        if (this.fileStoreSubscription !== undefined)
-        {
+        if (this.fileStoreSubscription !== undefined) {
             this.fileStoreSubscription.dispose();
         }
-        if (this.refreshFilesSubscription !== undefined)
-        {
+        if (this.refreshFilesSubscription !== undefined) {
             this.refreshFilesSubscription.dispose();
         }
-        if (this.selectFolderSubscription !== undefined)
-        {
+        if (this.selectFolderSubscription !== undefined) {
             this.selectFolderSubscription.dispose();
         }
-        if (this.selectedFileSubscription !== undefined)
-        {
+        if (this.selectedFileSubscription !== undefined) {
             this.selectedFileSubscription.dispose();
+        }
+        if( this.currentFolderSubscription !== undefined ){
+            this.currentFolderSubscription.dispose();
+        }
+        if( this.createFolderSubscription !== undefined ){
+            this.createFolderSubscription.dispose();
         }
 
         window.removeEventListener("resize", this.updateDimensions);
@@ -152,7 +179,7 @@ var FilesView = React.createClass({
 
 
     handleAddFolder: function(event_){
-        this.setState({showAddFolder: false});
+        this.setState({showAddFolder: true});
     },
 
 
@@ -162,7 +189,9 @@ var FilesView = React.createClass({
 
 
     handleCreateFolder: function(event_){
-
+        var _parent = this.state.parent;
+        var _name = this.refs.folderName.getDOMNode().value;
+        DirectoryActions.createFolder.source.onNext({'parent': _parent, 'name': _name})
     },
 
 
@@ -208,7 +237,6 @@ var FilesView = React.createClass({
         sectionStyle['height'] = this.state.height;
 
 
-        var activeVisibleDir = "/foo";
 
 
         return (
@@ -298,7 +326,7 @@ var FilesView = React.createClass({
                         onHide={this.closeAddFolderModal}>
                     <div className="modal-body">
                         <h4>Create a new sub folder</h4>
-                        {activeVisibleDir} <input type="text" ref="folderName" label="Folder Name"/>
+                        {this.state.selectedPath} <input type="text" ref="folderName" label="Folder Name"/>
                     </div>
                     <div className="modal-footer">
                         <ButtonGroup>

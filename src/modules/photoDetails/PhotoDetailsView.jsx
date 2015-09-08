@@ -17,6 +17,9 @@ var TabPane = require('react-bootstrap').TabPane;
 var Carousel = require('react-bootstrap').Carousel;
 var CarouselItem = require('react-bootstrap').CarouselItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
+var Rating = require('react-rating');
+
+
 var Tags = require('./../../components/tags/Tags');
 var ExifMap = require('./../../components/exifMap/ExifMap');
 var ExifData = require('./../../components/exifData/ExifData');
@@ -304,17 +307,10 @@ module.exports = React.createClass({
 
                                     <br/>
 
-                                    <img src="assets/icons/ic_star_24px.svg"
-                                        style={{'width': '24px', 'height': '24px'}}/>
-                                    <img src="assets/icons/ic_star_24px.svg"
-                                        style={{'width': '24px', 'height': '24px'}}/>
-                                    <img src="assets/icons/ic_star_24px.svg"
-                                        style={{'width': '24px', 'height': '24px'}}/>
-                                    <img src="assets/icons/ic_star_24px.svg"
-                                        style={{'width': '24px', 'height': '24px'}}/>
-                                    <img src="assets/icons/ic_star_outline_24px.svg"
-                                        style={{'width': '24px', 'height': '24px'}}/>
-                                    <span style={{'fontSize': '16px'}}>{this.state.rating}</span>
+                                    <Rating
+                                        empty="fa fa-star-o fa-2x"
+                                        full="fa fa-star fa-2x"
+                                        initialRate={this.state.rating}/>
                                 </div>
                             </div>
 
