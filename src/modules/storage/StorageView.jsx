@@ -35,6 +35,12 @@ module.exports = React.createClass({
             this.state.storagePath = data_;
             if( this.isMounted()) this.forceUpdate();
         }.bind(this));
+
+
+        this.isValidSubscription = SettingsStore.isValid.subscribe(function(data_){
+            this.state.isValid = data_;
+            if( this.isMounted() ) this.forceUpdate();
+        }.bind(this));
     },
 
     componentWillUnmount: function(){
@@ -74,6 +80,11 @@ module.exports = React.createClass({
     },
 
 
+    handleSave:function(){
+        ConfigActions.saveSettings.onNext(true);
+    },
+
+
     render: function () {
 
         return (
@@ -81,11 +92,6 @@ module.exports = React.createClass({
                 <div className="main-section">
                     <div className="intro">
                         {this.getIntlMessage('storage.intro1a')}
-
-                        <br/><br/>
-                        <strong>{this.getIntlMessage('note')}: </strong>
-                        {this.getIntlMessage('storage.intro1b')}
-
                     </div>
                     <br/>
                     <div>
@@ -100,16 +106,21 @@ module.exports = React.createClass({
                                style={{'display':'none'}}
                                onChange={this.handleFolderChange} />
                     </div>
+                    <div>
+                        <strong>{this.getIntlMessage('note')}: </strong>
+                        {this.getIntlMessage('storage.intro1b')}
+                    </div>
                 </div>
 
 
                 <div className="row footer">
                     <div className="col-xs-12">
-                        <div className="left" >
-                            <ButtonLink to="register">{this.getIntlMessage('back')}</ButtonLink>
-                        </div>
-                        <div className="right" >
-                            <ButtonLink to="accounts">{this.getIntlMessage('next')}</ButtonLink>
+                        <div className="right">
+                            {this.state.isValid ?
+                                <button onClick={this.handleSave}>{this.getIntlMessage('save')}</button>
+                                :
+                                <button disabled="disabled">{this.getIntlMessage('save')}</button>
+                            }
                         </div>
                     </div>
                 </div>

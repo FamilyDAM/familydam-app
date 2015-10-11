@@ -26,7 +26,6 @@ module.exports = React.createClass({
         //console.log("WelcomeView");
 
         SettingsStore.locale.subscribe(function(data_){
-            debugger;
             this.state.locale = data_;
             if( this.isMounted()) this.forceUpdate();
         }.bind(this));
@@ -56,10 +55,10 @@ module.exports = React.createClass({
                     <div>
                         <label>{this.getIntlMessage('welcome.selectDefaultLanguage')}:</label><br/>
                         <select defaultValue={this.state.locale} onChange={this.changeLocale}>
-                            <option value="es-ES">{this.getIntlMessage('language.spanish')}</option>
-                            <option value="zh-CN">{this.getIntlMessage('language.chinese')}</option>
                             <option value="en_us">{this.getIntlMessage('language.english')}</option>
                         </select>
+                        <br/>
+                        {this.getIntlMessage('welcome.moreComingSoon')}
                     </div>
                 </div>
 
@@ -69,7 +68,7 @@ module.exports = React.createClass({
                         <div className="left">
                         </div>
                         <div className="right">
-                            <ButtonLink to="register">{this.getIntlMessage('next')}</ButtonLink>
+                            <ButtonLink to="storage">{this.getIntlMessage('next')}</ButtonLink>
                         </div>
                     </div>
                 </div>

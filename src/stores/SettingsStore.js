@@ -37,7 +37,9 @@ module.exports = {
 
 
         ConfigActions.saveSettings.subscribe( function(){
-            var result = ipc.sendSync('saveConfig', this.buildJson());
+            var _json = this.buildJson();
+            console.log("Calling Save Config : " +_json);
+            var result = ipc.sendSync('saveConfig', _json );
             console.log("RESULT=" +result);
         }.bind(this) );
 
@@ -96,24 +98,19 @@ module.exports = {
 
     checkValidState: function()
     {
-        var isEmailValid = false;
+        var isEmailValid = true;//todo
         var isFamilyNameValid = true; //todo
         var isStorageLocationValid = false;
-        var isUserListValid = false;
 
         if( this.email.value !== undefined && this.email.value.length > 0 ){
-            isEmailValid = true;
+            //isEmailValid = true;
         }
 
         if( this.storageLocation.value !== undefined && this.storageLocation.value.length > 0 ){
             isStorageLocationValid = true;
         }
 
-        if( this.users.value !== undefined && this.users.value.length > 0 ){
-            isUserListValid = true;
-        }
-
-        if( isEmailValid && isFamilyNameValid && isStorageLocationValid && isUserListValid ){
+        if( isEmailValid && isFamilyNameValid && isStorageLocationValid ){
             //generate new json packet of valid data
             this.json.onNext( this.buildJson() );
             // flip the isValid flag

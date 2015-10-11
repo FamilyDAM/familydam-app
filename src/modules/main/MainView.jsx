@@ -26,7 +26,6 @@ module.exports = React.createClass({
 
 
     render: function() {
-
         return (
             <div className="container-fluid">
                 <div className="row header">
@@ -39,9 +38,7 @@ module.exports = React.createClass({
                     <aside >
                         <ul>
                             <li><Link to="welcome">{this.getIntlMessage('nav.welcome')}</Link></li>
-                            <li><Link to="register">{this.getIntlMessage('nav.register')}</Link></li>
                             <li><Link to="storage">{this.getIntlMessage('nav.storage')}</Link></li>
-                            <li><Link to="accounts">{this.getIntlMessage('nav.accounts')}</Link></li>
                         </ul>
                     </aside>
 
@@ -52,6 +49,7 @@ module.exports = React.createClass({
             </div>
 
         );
+
     }
 });
 

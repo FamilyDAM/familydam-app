@@ -22,8 +22,9 @@ module.exports = {
             chinese:"Chinese"
         },
         welcome: {
-            intro: "Before we can start the application we need to know a few things. The first, is a place to store all of the files we are going to manage. This could be a large hard drive, a USB drive, or a network drive. The second item are the members of the family who will be using this application.",
-            selectDefaultLanguage:"Select a default language"
+            intro: "Before we can start the application we need to know a few things. The first, is your preferred language. The second, is a place to store all of the files we are going to manage.",
+            selectDefaultLanguage:"Select a default language",
+            moreComingSoon:"(More languages coming soon)"
         },
         register: {
             intro1: "Let us know your using the FamilyD.A.M desktop by sharing your email and registering a unique name for your family. Your email, will never be shared or sold. We only need it so we can send you information on updates and new features.",
@@ -35,7 +36,7 @@ module.exports = {
             }
         },
         storage: {
-            intro1a: "The FamilyD.A.M system needs a folder on your largest Hard Drive, USB Drive, or Mapped Network Drive. This is were we will store all of the files, thumbnails, renditions, metadata, and other data.",
+            intro1a: "Before we can start the application we need to know the location of a folder on your largest Hard Drive, USB Drive, or Mapped Network Drive. This is were we will store all of the files, thumbnails, renditions, metadata, and other data.",
             intro1b: "Everything is stored in this folder, so you can make complete backups of the FamilyD.A.M. data by backing up this folder. Or if you need to move everything to a new folder/drive, you can do this by moving this folder and everything in it.",
             location: "Storage Location"
         },

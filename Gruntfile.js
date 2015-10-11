@@ -15,7 +15,7 @@ module.exports = function (grunt) {
     ]);
     /*, 'build-atom-shell-app'*/
     grunt.registerTask('build-babel-prod', [
-        'clean:dist', 'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
+        'clean:dist', 'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard', 'uglify'
     ]);
     /*, 'build-atom-shell-app'*/
 
@@ -108,6 +108,31 @@ module.exports = function (grunt) {
                 '!<%= options.app %>/bower_components/*',
                 '!<%= options.app %>**/*.js'
             ]
+        },
+
+
+
+        uglify: {
+            options: {
+                // the banner is inserted at the top of the output
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+            },
+            dashboard: {
+                options:{
+                    beautify: false,
+                    screwIE8:true,
+                    sourceMap: true,
+                    sourceMapIncludeSources:true,
+                    compress: {
+                        'drop_debugger':true,
+                        'drop_console':true,
+                        dead_code: true
+                    }
+                },
+                files: {
+                    '<%= options.dist %>/app.min.js': [  '<%= options.dist %>/app.js']
+                }
+            }
         },
 
 
@@ -211,7 +236,6 @@ module.exports = function (grunt) {
                 }]
             }
         }
-
 
     });
 
