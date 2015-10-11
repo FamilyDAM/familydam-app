@@ -7,3 +7,6 @@ binary-dist
 .sass-cache
 .tmp
 npm-debug.log
+*.iml
+*.ipr
+*.iws
