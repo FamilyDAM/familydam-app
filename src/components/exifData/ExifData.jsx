@@ -55,93 +55,96 @@ var ExifData = React.createClass({
         var _this = this;
         try
         {
+            if( this.props.exif == undefined ){
+                this.props.exif = {};
+            }
 
-            if (this.props.exif['Exif IFD0'] == undefined)
+            if (this.props.exif['Exif IFD0'] === undefined)
             {
                 this.props.exif['Exif IFD0'] = {};
             }
-            if (this.props.exif['Exif SubIFD'] == undefined)
+            if (this.props.exif['Exif SubIFD'] === undefined)
             {
                 this.props.exif['Exif SubIFD'] = {};
             }
 
-            if (this.props.exif['Exif IFD0']['Make'] == undefined)
+            if (this.props.exif['Exif IFD0']['Make'] === undefined)
             {
                 this.props.exif['Exif IFD0']['Make'] = {};
             }
-            if (this.props.exif['Exif IFD0']['Make'].description == undefined)
+            if (this.props.exif['Exif IFD0']['Make'].description === undefined)
             {
                 this.props.exif['Exif IFD0']['Make'].description = "";
             }
 
-            if (this.props.exif['Exif IFD0']['Model'] == undefined)
+            if (this.props.exif['Exif IFD0']['Model'] === undefined)
             {
                 this.props.exif['Exif IFD0']['Model'] = {};
             }
-            if (this.props.exif['Exif IFD0']['Model'].description == undefined)
+            if (this.props.exif['Exif IFD0']['Model'].description === undefined)
             {
                 this.props.exif['Exif IFD0']['Model'].description = "";
             }
 
-            if (this.props.exif['Exif IFD0']['Focal_Length'] == undefined)
+            if (this.props.exif['Exif IFD0']['Focal_Length'] === undefined)
             {
                 this.props.exif['Exif IFD0']['Focal_Length'] = {};
             }
-            if (this.props.exif['Exif IFD0']['Focal_Length'].description == undefined)
+            if (this.props.exif['Exif IFD0']['Focal_Length'].description === undefined)
             {
                 this.props.exif['Exif IFD0']['Focal_Length'].description = "";
             }
 
-            if (this.props.exif['Exif IFD0']['Lens_Specification'] == undefined)
+            if (this.props.exif['Exif IFD0']['Lens_Specification'] === undefined)
             {
                 this.props.exif['Exif IFD0']['Lens_Specification'] = {};
             }
-            if (this.props.exif['Exif IFD0']['Lens_Specification'].description == undefined)
+            if (this.props.exif['Exif IFD0']['Lens_Specification'].description === undefined)
             {
                 this.props.exif['Exif IFD0']['Lens_Specification'].description = "";
             }
 
-            if (this.props.exif['Exif IFD0']['F-Number'] == undefined)
+            if (this.props.exif['Exif IFD0']['F-Number'] === undefined)
             {
                 this.props.exif['Exif IFD0']['F-Number'] = {};
             }
-            if (this.props.exif['Exif IFD0']['F-Number'].description == undefined)
+            if (this.props.exif['Exif IFD0']['F-Number'].description === undefined)
             {
                 this.props.exif['Exif IFD0']['F-Number'].description = "";
             }
 
-            if (this.props.exif['Exif IFD0']['Focal_Length'] == undefined)
+            if (this.props.exif['Exif IFD0']['Focal_Length'] === undefined)
             {
                 this.props.exif['Exif IFD0']['Focal_Length'] = {};
             }
-            if (this.props.exif['Exif IFD0']['Focal_Length'].description == undefined)
+            if (this.props.exif['Exif IFD0']['Focal_Length'].description === undefined)
             {
                 this.props.exif['Exif IFD0']['Focal_Length'].description = "";
             }
 
-            if (this.props.exif['Exif IFD0']['Shutter_Speed_Value'] == undefined)
+            if (this.props.exif['Exif IFD0']['Shutter_Speed_Value'] === undefined)
             {
                 this.props.exif['Exif IFD0']['Shutter_Speed_Value'] = {};
             }
-            if (this.props.exif['Exif IFD0']['Shutter_Speed_Value'].description == undefined)
+            if (this.props.exif['Exif IFD0']['Shutter_Speed_Value'].description === undefined)
             {
                 this.props.exif['Exif IFD0']['Shutter_Speed_Value'].description = "";
             }
 
-            if (this.props.exif['Exif IFD0']['ISO_Speed_Ratings'] == undefined)
+            if (this.props.exif['Exif IFD0']['ISO_Speed_Ratings'] === undefined)
             {
                 this.props.exif['Exif IFD0']['ISO_Speed_Ratings'] = {};
             }
-            if (this.props.exif['Exif IFD0']['ISO_Speed_Ratings'].description == undefined)
+            if (this.props.exif['Exif IFD0']['ISO_Speed_Ratings'].description === undefined)
             {
                 this.props.exif['Exif IFD0']['ISO_Speed_Ratings'].description = "";
             }
 
-            if (this.props.exif['Exif SubIFD']['Flash'] == undefined)
+            if (this.props.exif['Exif SubIFD']['Flash'] === undefined)
             {
                 this.props.exif['Exif SubIFD']['Flash'] = {};
             }
-            if (this.props.exif['Exif SubIFD']['Flash'].description == undefined)
+            if (this.props.exif['Exif SubIFD']['Flash'].description === undefined)
             {
                 this.props.exif['Exif SubIFD']['Flash'].description = "";
             }
@@ -207,8 +210,8 @@ var ExifData = React.createClass({
             )
 
         }catch(err_){
-            console.log("Error Rendering ExifData Component");
-            console.dir(err_);
+            //console.log("Error Rendering ExifData Component");
+            //console.dir(err_);
 
             return (<div></div>)
         }

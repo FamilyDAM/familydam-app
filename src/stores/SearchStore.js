@@ -12,6 +12,7 @@ var UserStore = require('../stores/UserStore');
 // Logged in user
 
 var PreferenceStore = require("./PreferenceStore");
+var FileActions = require("./../actions/FileActions");
 
 module.exports = {
 
@@ -19,11 +20,12 @@ module.exports = {
 
     subscribe: function() {
         console.log("{SearchStore}.init()");
-    },
 
-    setResults : function(val_) {
-        this.results.onNext(val_);
-    },
+        FileActions.getFiles.sink.distinctUntilChanged().subscribe(function(data_){
+            this.results.onNext(data_);
+        }.bind(this));
+    }
+
 
 
     /**
@@ -32,8 +34,8 @@ module.exports = {
      * @param successCallback
      * @param errorCallback
      * @returns {*|Array|Object|Mixed|promise|HTMLElement}
-     */
-    /* deprectated */
+
+    @deprectated
     searchImages : function(limit, offset, filterPath, filterTags, filterDateFrom, filterDateTo )
     {
         //todo: add support for these
@@ -63,6 +65,7 @@ module.exports = {
             });
         });
     }
+    **/
 
 };
 

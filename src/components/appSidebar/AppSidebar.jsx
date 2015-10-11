@@ -37,6 +37,9 @@ var _AppSidebar = React.createClass({
             _rowStyle = {};
             _linkStyle = {'display':'inline-block'}
         }
+        if( this.props.style == "grid" ){
+            _linkStyle = {'fontSize':'1.5rem', 'paddingLeft':'0px', 'clear':'left'}
+        }
 
         return (
             <div className="appSidebar container-fluid">

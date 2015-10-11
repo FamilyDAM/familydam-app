@@ -13,6 +13,7 @@ var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
 
 var LoginCard = require('./LoginCard');
+var SignupCard = require('./SignupCard');
 var Clock = require('./../../components/clock/Clock');
 
 var AuthActions = require('./../../actions/AuthActions');
@@ -23,7 +24,7 @@ var LoginView = React.createClass({
 
 
     getInitialState: function(){
-        return { users : [], activeUser: undefined };
+        return { users : undefined, activeUser: undefined };
     },
 
 
@@ -61,25 +62,37 @@ var LoginView = React.createClass({
 
         var _this = this;
         var childNodes;
-        if (this.state.activeUser === undefined ) {
-            childNodes = this.state.users.map(function(user, index) {
-                return <div key={index}>
-                        <LoginCard  user={user}
-                            mode="inactive"
-                            onSelect={_this.handleCardSelection}
-                            {..._this.props}/>
-                        </div>
-            });
-        }else{
-            var overrideStyle = {width:"100%"};
-            childNodes =  <div key="0" style={overrideStyle}>
-                                <LoginCard  user={this.state.activeUser}
-                                    mode="active"
-                                    onSelect={_this.handleCardSelection}
-                                    onCancel={_this.handleCancelCardSelection}
+
+        if( this.state.users !== undefined )
+        {
+            if (this.state.users !== undefined && this.state.users.length == 0)
+            {
+                childNodes = <div>
+                                <SignupCard/>
+                            </div>;
+            }
+            else if (this.state.activeUser === undefined)
+            {
+                childNodes = this.state.users.map(function (user, index) {
+                    return <div key={index}>
+                                <LoginCard user={user}
+                                           mode="inactive"
+                                           onSelect={_this.handleCardSelection}
+                                    {..._this.props}/>
+                            </div>
+                });
+            } else
+            {
+                var overrideStyle = {width: "100%"};
+                childNodes = <div key="0" style={overrideStyle}>
+                                <LoginCard user={this.state.activeUser}
+                                           mode="active"
+                                           onSelect={_this.handleCardSelection}
+                                           onCancel={_this.handleCancelCardSelection}
                                     {..._this.props} />
                             </div>
 
+            }
         }
 
         return (

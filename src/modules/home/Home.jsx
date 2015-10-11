@@ -61,7 +61,7 @@ var HomeView = React.createClass({
                             <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></ButtonLink>
                             <ButtonLink to="userManager" bsSize='medium' bsStyle="link"><Glyphicon
                                 glyph='user'/></ButtonLink>
-                            <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon
+                            <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon
                                 glyph='search'/></ButtonLink>
 
 

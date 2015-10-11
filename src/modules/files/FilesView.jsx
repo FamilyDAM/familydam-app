@@ -126,7 +126,6 @@ var FilesView = React.createClass({
 
         // listen for save complete, then hide
         this.createFolderSubscription = DirectoryActions.createFolder.sink.subscribe(function(data_){
-            debugger;
             _this.closeAddFolderModal();
             if( _this.isMounted() ) _this.forceUpdate();
         }, function(error_){

@@ -12,8 +12,8 @@ var Link = Router.Link;
 var Keymaster = require('keymaster');
 var moment = require('moment');
 
-var TabbedArea = require('react-bootstrap').TabbedArea;
-var TabPane = require('react-bootstrap').TabPane;
+var Tab = require('react-bootstrap').Tab;
+var Tabs = require('react-bootstrap').Tabs;
 var Carousel = require('react-bootstrap').Carousel;
 var CarouselItem = require('react-bootstrap').CarouselItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
@@ -92,6 +92,9 @@ module.exports = React.createClass({
         if( this.currentNodeSubscription !== undefined ){
             this.currentNodeSubscription.dispose();
         }
+        if( this.searchStoreSubscription !== undefined ){
+            this.searchStoreSubscription.dispose();
+        }
     },
 
 
@@ -102,10 +105,15 @@ module.exports = React.createClass({
 
         // list for results
         this.currentNodeSubscription = ContentStore.currentNode.subscribe(function (results) {
+
             // set defaults for missing props
             if (results['dam:tags'] == undefined)
             {
                 results['dam:tags'] = [];
+            }
+            if (results['dam:people'] == undefined)
+            {
+                results['dam:people'] = [];
             }
             if (results['dam:note'] == undefined)
             {
@@ -126,6 +134,7 @@ module.exports = React.createClass({
                 var datetaken = results['dam:metadata']['Exif IFD0']['Date_Time']['description'];
             };
 
+
             var gps = undefined;
             if (results['dam:metadata'] != undefined
                 && results['dam:metadata']['GPS'] != undefined)
@@ -142,98 +151,145 @@ module.exports = React.createClass({
             }
 
 
+            this.subscribe(results);
 
-            // Find the NEXT and PREV image
-            var currentSearchResults = SearchStore.results.value;
-            // find index, previous item, and next item
+
+            _this.state = {
+                'photo': results,
+                'location': _location,
+                'imagePath': imagePath,
+                'rating': rating,
+                'datetaken': _datetaken,
+                'gps': gps,
+                'prevId': undefined,
+                'nextId': undefined
+            };
+
+            if( _this.isMounted() ) _this.forceUpdate();
+
+        }.bind(this), function (error) {
+            console.dir(error);
+        });
+
+    },
+
+    subscribe:function(photos_){
+        // Find the NEXT and PREV image
+        this.searchStoreSubscription = SearchStore.results.subscribe(function(data_){
             var _prevId = undefined;
             var _nextId = undefined;
+            // find index, previous item, and next item
             var index = -1;
-            for (var i = 0; i < currentSearchResults.length; i++)
+            for (var i = 0; i < data_.length; i++)
             {
-                var obj = currentSearchResults[i];
-                if( obj.id == results['jcr:uuid']){
+                var obj = data_[i];
+                if( obj.id == photos_['jcr:uuid']){
                     index = i;
 
                     if( i > 0 ){
-                        _prevId = currentSearchResults[i-1].id;
+                        _prevId = data_[i-1].id;
                     }
-                    if( i < (currentSearchResults.length-1) ){
-                        _nextId = currentSearchResults[i+1].id;
+                    if( i < (photos_.length-1) ){
+                        _nextId = data_[i+1].id;
                     }
 
                     break;
                 }
             }
 
-
-
-                _this.state = {
-                    'photo': results,
-                    'location': _location,
-                    'imagePath': imagePath,
-                    'rating': rating,
-                    'datetaken': _datetaken,
-                    'gps': gps,
-                    'prevId': _prevId,
-                    'nextId': _nextId
-                };
-
-            if( _this.isMounted() ) _this.forceUpdate();
-
-        }, function (error) {
-            console.dir(error);
-        });
+            if( this.isMounted() )  this.setState({'prevId': _prevId, 'nextId': _nextId});
+        }.bind(this));
 
     },
 
 
-    save: function () {
-
+    save: function (property_) {
         var _id = this.state.photo['jcr:uuid'];
+        var _val = this.state.photo[property_];
 
-        NodeActions.updateNode.source.onNext(_id);
-        /**
-        ContentStore.updateNodeById(_id, this.state.photo).subscribe(
-            function (results) {
-                //reload the updated object
-                this.load(id_);
-            }, function(err_){
+        var _data = {'jcr:uuid':_id};
+        _data[property_] = _val;
+
+        //$(this.refs.savingLabel.getDOMNode()).show();
+        //window.status = "Saving Changes";
+
+        NodeActions.updateNode.source.onNext(_data);
+
+        NodeActions.updateNode.sink.subscribe(
+            function (id_) {
+                //do nothing on successful save
+                //$(this.refs.savingLabel.getDOMNode()).hide();
+            }.bind(this), function(err_){
                 alert(err_.status +":" +err_.statusText +"\n" +err_.responseText);
-            });
-        **/
+            }.bind(this));
     },
 
+
+    handleRatingChange: function (rating_) {
+        this.state.rating = rating_;
+        this.state.photo['dam:rating'] = rating_;
+        if( this.isMounted() ) this.forceUpdate();
+        this.save("dam:rating");
+    },
 
     handleOnNoteChange: function (event_) {
         this.state.photo['dam:note'] = event_.target.value;
-        if( this.isMounted() ) this.setState({'photo': this.state.photo});
+        if( this.isMounted() ) this.forceUpdate();
     },
-
 
     handleOnNoteBlur: function (event_) {
         this.state.photo['dam:note'] = event_.target.value;
-        this.save();
+        if( this.isMounted() ) this.forceUpdate();
+        this.save("dam:note");
     },
 
-
     handleOnTagAdd: function (tag_) {
+        if( this.state.photo['dam:tags'] == undefined ){
+            this.state.photo['dam:tags'] = [];
+        }
+
         var pos = this.state.photo['dam:tags'].indexOf(tag_);
         if (pos == -1)
         {
             this.state.photo['dam:tags'].push(tag_);
-            this.save();
+            if( this.isMounted() ) this.forceUpdate();
+            this.save("dam:tags");
         }
     },
 
-
     handleOnTagRemove: function (tag_) {
-
         var pos = this.state.photo['dam:tags'].indexOf(tag_);
         if (pos > -1)
         {
             this.state.photo['dam:tags'].splice(pos, 1);
-            this.save();
+            if( this.isMounted() ) this.forceUpdate();
+            this.save("dam:tags");
+        }
+    },
+
+    handleOnPeopleAdd: function (people_) {
+        if( this.state.photo['dam:people'] == undefined ){
+            this.state.photo['dam:people'] = [];
+        }
+
+        var pos = this.state.photo['dam:people'].indexOf(people_);
+        if (pos == -1)
+        {
+            this.state.photo['dam:people'].push(people_);
+            if( this.isMounted() ) this.forceUpdate();
+            this.save("dam:people");
+        }
+    },
+
+
+    handleOnPeopleRemove: function (people_) {
+
+        var pos = this.state.photo['dam:people'].indexOf(people_);
+        if (pos > -1)
+        {
+            this.state.photo['dam:people'].splice(pos, 1);
+            if( this.isMounted() ) this.forceUpdate();
+            this.save("dam:people");
         }
     },
 
@@ -315,7 +371,8 @@ module.exports = React.createClass({
                                     <Rating
                                         empty="fa fa-star-o fa-2x"
                                         full="fa fa-star fa-2x"
-                                        initialRate={this.state.rating}/>
+                                        initialRate={this.state.rating}
+                                        onChange={this.handleRatingChange}/>
                                 </div>
                             </div>
 
@@ -327,6 +384,11 @@ module.exports = React.createClass({
 
                             <div className="row">
                                 <div className="col-sm-6">
+                                    <div ref="savingLabel" style={{'display':'none'}}>
+                                        <h4>Saving...</h4>
+                                    </div>
+
+
                                     <h5>Notes:</h5>
                                     <textarea
                                         value={this.state.photo['dam:note']}
@@ -354,23 +416,21 @@ module.exports = React.createClass({
 
 
                                 <div className="col-sm-12 col-md-6">
-
                                     <div>
                                         <ExifMap gps={this.state.gps} />
                                         <hr style={{'marginTop': '15px', 'marginBottom': '15px'}}/>
                                     </div>
 
-
                                     <ExifData exif={this.state.photo['dam:metadata']}/>
-
                                 </div>
                             </div>
 
                             <br/><br/><br/><br/>
-                            <div className="row" style={{'marginTop': '30px', 'minHeight': '400px', 'display':'none'}}>
+                            <div className="row" style={{'marginTop': '30px', 'minHeight': '400px'}}>
 
-                                <TabbedArea defaultActiveKey={1} animation={false}  style={{'display':'none'}}>
-                                    <TabPane eventKey={1} tab="Similar or Duplicate">
+                                <Tabs defaultActiveKey={1} animation={false} style={{'display':'none'}} >
+
+                                    <Tab eventKey={1} tab="Renditions">
                                         <div style={{
                                             'borderRight': '1px solid #eee',
                                             'borderLeft': '1px solid #eee'
@@ -379,53 +439,16 @@ module.exports = React.createClass({
                                                 'minWidth': '150px',
                                                 'minHeight': '150px',
                                                 'float': 'left',
-                                                'padding': '10px'
+                                                'padding': '10px',
+                                                'textAlign':'center', 'verticle':'middle'
                                             }}>
-                                                <img src="http://loremflickr.com/150/150/dog" style={{'margin': 'auto'}}/>
-                                            </div>
-                                            <div style={{
-                                                'minWidth': '150px',
-                                                'minHeight': '150px',
-                                                'float': 'left',
-                                                'padding': '10px'
-                                            }}>
-                                                <img src="http://loremflickr.com/150/150/cat" style={{'margin': 'auto'}}/>
-                                            </div>
-                                            <div style={{
-                                                'minWidth': '150px',
-                                                'minHeight': '150px',
-                                                'float': 'left',
-                                                'padding': '10px'
-                                            }}>
-                                                <img src="http://loremflickr.com/150/150/abstract" style={{'margin': 'auto'}}/>
-                                            </div>
-                                            <div style={{
-                                                'minWidth': '150px',
-                                                'minHeight': '150px',
-                                                'float': 'left',
-                                                'padding': '10px'
-                                            }}>
-                                                <img src="http://loremflickr.com/150/150/paris?random=1" style={{'margin': 'auto'}}/>
-                                            </div>
-                                            <div style={{
-                                                'minWidth': '150px',
-                                                'minHeight': '150px',
-                                                'float': 'left',
-                                                'padding': '10px'
-                                            }}>
-                                                <img src="http://loremflickr.com/150/150/paris?random=2" style={{'margin': 'auto'}}/>
-                                            </div>
-                                            <div style={{
-                                                'minWidth': '150px',
-                                                'minHeight': '150px',
-                                                'float': 'left',
-                                                'padding': '10px'
-                                            }}>
-                                                <img src="http://loremflickr.com/150/150/paris?random=3" style={{'margin': 'auto'}}/>
+                                                (Coming Soon)
                                             </div>
                                         </div>
-                                    </TabPane>
-                                    <TabPane eventKey={2} tab="Renditions">
+                                    </Tab>
+
+
+                                    <Tab eventKey={2} tab="Similar or Duplicate">
                                         <div style={{
                                             'borderRight': '1px solid #eee',
                                             'borderLeft': '1px solid #eee'
@@ -434,14 +457,16 @@ module.exports = React.createClass({
                                                 'minWidth': '150px',
                                                 'minHeight': '150px',
                                                 'float': 'left',
-                                                'padding': '10px'
+                                                'padding': '10px',
+                                                'textAlign':'center', 'verticle':'middle'
                                             }}>
-                                                <img src="http://lorempixel.com/g/150/150/nature" style={{'margin': 'auto'}}/>
+                                                (Coming Soon)
                                             </div>
+
                                         </div>
-                                    </TabPane>
-                                    <TabPane eventKey={3} tab="Albums">[List of albums]</TabPane>
-                                </TabbedArea>
+                                    </Tab>
+
+                                </Tabs>
 
                             </div>
 
