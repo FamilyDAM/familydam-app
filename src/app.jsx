@@ -45,6 +45,7 @@ var GetFilesService = require('./services/files/GetFilesService').subscribe();
 var GetDirectoriesService = require('./services/files/GetDirectoriesService').subscribe();
 var CreateDirectoriesService = require('./services/files/CreateDirectoryService').subscribe();
 var UploadFileService = require('./services/upload/UploadFileService').subscribe();
+var GetBase64UrlService = require('./services/images/GetBase64UrlService').subscribe();
 
 
 // Initialize the stores
@@ -66,7 +67,6 @@ var FilesView = require('./modules/files/FilesView');
 var PhotosView = require('./modules/photos/PhotosView');
 var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
 var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
-var PhotoEditView = require('./modules/photoEdit/PhotoEditView');
 var UploadsView = require('./modules/uploads/UploadsView');
 var UserManagerView = require('./modules/userManager/UserManagerView');
 var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
@@ -84,7 +84,6 @@ var routes = [
         <Route name="upload" handler={UploadsView}/>
         <Route name="photos" path="photos" handler={PhotosView}/>
         <Route name="photoDetails" path="photos/:id" handler={PhotoDetailView}/>
-        <Route name="photoEdit"  path="photos/:id/edit" handler={PhotoEditView}/>
         <Route name="userManagerShell" handler={UserManagerView}>
             <Route name="userManager"  handler={UserManagerHomeView}/>
             <Route name="userManagerDetails" path="userManager/:id"  handler={UserManagerDetailsView}/>

@@ -23,8 +23,10 @@ var Rating = require('react-rating');
 var Tags = require('./../../components/tags/Tags');
 var ExifMap = require('./../../components/exifMap/ExifMap');
 var ExifData = require('./../../components/exifData/ExifData');
-
+var CreativeCloudEditor = require('./../../components/creativeCloudEditor/CreativeCloudEditor');
+var PicozuEditor = require('./../../components/picozuEditor/PicozuEditor');
 var FolderTree = require('../../components/folderTree/FolderTree');
+var DarkroomImage = require('../../components/darkroomImage/DarkroomImage');
 
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');
@@ -321,7 +323,9 @@ module.exports = React.createClass({
                                     :''}
                                 </div>
                                 <div className="col-sm-10">
-                                    <img src={this.state.imagePath}
+                                    <img id="editableImage"
+                                         ref="editableImage"
+                                         src={this.state.imagePath}
                                         style={{'height': '500px'}}
                                         className="center-block" />
                                 </div>
@@ -349,12 +353,9 @@ module.exports = React.createClass({
                                         'height': '36px'
                                     }} onClick={this.handleDownloadOriginal}/>
 
-                                    <Link to="photoEdit" params={{id: '123'}}>
-                                        <img src="assets/icons/ic_mode_edit_24px.svg" style={{
-                                            'width': '36px',
-                                            'height': '36px'
-                                        }}/>
-                                    </Link>
+                                    <CreativeCloudEditor
+                                        imageId={this.state.photo['jcr:uuid']}/>
+
 
                                     <img src="assets/icons/ic_delete_24px.svg" style={{
                                         'width': '36px',
@@ -374,6 +375,7 @@ module.exports = React.createClass({
                                         initialRate={this.state.rating}
                                         onChange={this.handleRatingChange}/>
                                 </div>
+
                             </div>
 
 

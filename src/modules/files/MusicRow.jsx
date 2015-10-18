@@ -82,7 +82,7 @@ var FileRow = React.createClass({
                                         <ButtonLink to="photoDetails" params={{'id': this.props.file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
                                             <Glyphicon glyph="eye-open"/> view
                                         </ButtonLink>
-                                        <ButtonLink to="photoEdit" params={{id: this.props.file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
+                                        <ButtonLink to="photoDetails" params={{id: this.props.file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
                                             <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
                                         </ButtonLink>
                                         <Button onClick={this.handleNodeDelete} data-id={this.props.file.id} data-path={this.props.file.path}  style={{'padding':'5px 10px', 'margin':0}}>

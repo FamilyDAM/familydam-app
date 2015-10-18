@@ -23,11 +23,29 @@ var PhotoEditView = React.createClass({
 
     },
 
+    componentDidMount: function() {
+
+        var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+        var eventer = window[eventMethod];
+        var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+        eventer(messageEvent, function(e) {
+            // always check if the origin is the Picozu domain, https included.
+            if (e.origin === 'https://www.picozu.com') {
+                debugger;
+                // e.data contains the image properties, and you can construct the URL as following:
+                console.log('https://www.picozu.com/v/' + e.data.dir + e.data.code + '.' + e.data.format);
+            }
+        }, false);
+
+    },
+
     render: function() {
 
         return (
             <div className="container-fluid">
-                Photo Edit!
+                <iframe
+                    name="picozu-disable-x-frame-options"
+                    src="https://www.picozu.com/editor/?workspace=0&theme=galaxy&key=c6esIt58tZxx4ANc&i=https://www.picozu.com/u/generic.jpg" width="1172" height="800"></iframe>
             </div>
 
         );

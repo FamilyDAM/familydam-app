@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
@@ -8,220 +7,223 @@
 // Used in TodoApp
 var React = require('react');
 var Router = require('react-router');
+var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 
-//InfiniteScroll = require('react-infinite-scroll')(React);
-var InfiniteScrollMixin = require('react-infinite-scroll-mixin');
+var Table = require('react-bootstrap').Table;
+var ButtonGroup = require('react-bootstrap').ButtonGroup;
 
-var FolderTree = require('../../components/folderTree/FolderTree');
-var PhotoThumbnail = require('./PhotoThumbnail');
+var Button = require('react-bootstrap').Button;
+var ListGroup = require('react-bootstrap').ListGroup;
+var ListGroupItem = require('react-bootstrap').ListGroupItem;
+var Glyphicon = require('react-bootstrap').Glyphicon;
+var ButtonLink = require('react-router-bootstrap').ButtonLink;
+var Dropdown = require('react-bootstrap').Dropdown;
+var DropdownButton = require('react-bootstrap').DropdownButton;
+var NavItemLink = require('react-router-bootstrap').NavItemLink;
+var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 
-var SearchStore = require('./../../stores/SearchStore');
+var Modal = require('react-bootstrap').Modal;
+var ModalHeader = require('react-bootstrap').Modal.Header;
+var ModalTitle = require('react-bootstrap').Modal.Title;
+var ModalBody = require('react-bootstrap').Modal.Body;
+var ModalFooter = require('react-bootstrap').Modal.Footer;
 
 
-var PhotosView = React.createClass({
+var NodeActions = require('../../actions/NodeActions');
+var FileActions = require('../../actions/FileActions');
+var DirectoryActions = require('../../actions/DirectoryActions');
+var NavigationActions = require('../../actions/NavigationActions');
 
-    mixins:[InfiniteScrollMixin],
+var FileStore = require('./../../stores/FileStore');
+var DirectoryStore = require('./../../stores/DirectoryStore');
+var PreferenceStore = require('./../../stores/PreferenceStore');
+var UserStore = require('./../../stores/UserStore');
 
-    getInitialState: function(){
+
+var PreviewSidebar = require("./../previews/PreviewSidebar");
+var SectionTree = require('../../components/folderTree/SectionTree');
+var AppSidebar = require('../../components/appSidebar/AppSidebar');
+
+
+module.exports =  React.createClass({
+    mixins: [Navigation],
+
+
+    getInitialState: function () {
         return {
             files: [],
-            shiftKeyPressed:false,
-            controlKeyPressed:false,
-            selectedItems:[]
-        }
-    },
-
-
-    /**
-     * Load the images in the root folder
-     */
-    componentWillMount:function(){
-        //this.loadData("/dam:files/", 10, 0);
-    },
-
-
-    loadData:function(folder_, limit_, offset_){
-        //todo: make path dynamic
-        var _this = this;
-        SearchStore.searchImages("/dam:files/").subscribe(function(results){
-            if( _this.isMounted() ) _this.setState({'files': results});
-        });
-    },
-
-
-
-    /**
-     * Call the server a load the next pagable batch
-     * @param page
-     */
-    fetchNextPage: function(page)
-    {
-        console.log( "page=" +page );
-        //this.loadData("/~/photos", 10, 1);
-
-        this.forceUpdate();
-    },
-
-
-    /**
-     * Manage the single & multiple (with control or shift key) logic
-     * @param event
-     * @param object
-     */
-    handleThumbnailEvents: function(event, object)
-    {
-        //console.dir(event);
-        if( !this.state.controlKeyPressed && !this.state.shiftKeyPressed )
-        {
-            for (var i = 0; i < this.state.files.length; i++)
-            {
-                var _file = this.state.files[i];
-                if( _file == object ){
-                    _file.active = !object.active;
-                }else{
-                    _file.active = false;
-                }
-            }
-        }
-        else if( this.state.controlKeyPressed )
-        {
-            var _fileIndx = this.state.files.indexOf(object);
-            if( _fileIndx > -1 )
-            {
-                var _file = this.state.files[_fileIndx];
-                _file.active = !object.active;
-            }
-        }
-        else if( this.state.shiftKeyPressed )
-        {
-            var _fileIndx = this.state.files.indexOf(object);
-            var _inSelection = false;
-
-            // handle the condition where the previously selected item is before the new one.
-            for (var i = 0; i <= _fileIndx; i++)
-            {
-                // find the first item with active flipped
-                var _file = this.state.files[i];
-                if( _file.active ){
-                    _inSelection = true;
-                }
-
-                if( _inSelection )
-                {
-                    _file.active = true;
-                }
-            }
-
-            // we didn't find a previously selected item before the new one. Let's find the last one after then and select
-            // everything inbetween
-            if( !_inSelection )
-            {
-                var _lastSelectedIndex = _fileIndx;
-                for (var i = _fileIndx; i < this.state.files.length; i++)
-                {
-                    if( this.state.files[i].active )
-                    {
-                        _lastSelectedIndex = i;
-                    }
-                }
-
-                for (var i = _fileIndx; i <= _lastSelectedIndex; i++){
-                    this.state.files[i].active = true;
-                }
-            }
-        }
-
-
-        var _selectedItems = [];
-        for (var j = 0; j < this.state.files.length; j++)
-        {
-            var _file = this.state.files[j];
-            if( _file.active ){
-                _selectedItems.push(_file);
-            }
-        }
-
-        if( this.isMounted() )
-        {
-            this.setState({'selectedItems': _selectedItems});
-        }
-
-
-        this.forceUpdate();
-    },
-
-    handleKeyDown: function(event)
-    {
-        console.log("key down:" +event.keyCode +":" +event.key);
-        if( event.keyCode == 16 ){
-            // shift key pressed
-            this.state.shiftKeyPressed = true;
-        }if( event.keyCode == 17 || event.keyCode == 91 ){
-            //control or command key pressed
-            this.state.controlKeyPressed = true;
-        }
-    },
-
-    handleKeyUp: function(event)
-    {
-        console.log("key up:" +event.key);
-        if( event.keyCode == 16 ){
-            // shift key pressed
-            this.state.shiftKeyPressed = false;
-        }if( event.keyCode == 17 || event.keyCode == 91 ){
-            //control or command key pressed
-            this.state.controlKeyPressed = false;
-        }
-    },
-
-
-
-    render: function() {
-
-        var _this = this;
-        _this.hasMore = true;
-
-        var photos = this.state.files.map( function(_image){
-            return <PhotoThumbnail photo={_image} active={_image.active} thumbnailEventHandler={_this.handleThumbnailEvents}/>
-        });
-
-        _this.tableClass = "col-sm-10 col-md-10";
-        _this.asideClass = " col-md-3";
-        if( this.state.selectedItems.length == 1)
-        {
-            _this.tableClass = "col-sm-10 col-md-7";
-            _this.asideClass = "col-md-3";
+            selectedItem: undefined,
+            state: '100%',
+            showAddFolder: false
         };
+    },
+
+
+    componentWillMount: function () {
+        var _this = this;
+        console.log("{PhotosView} componentWillMount");
+
+
+        // update the breadcrumb
+        var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'params': {}, 'level': 1};
+        NavigationActions.currentPath.onNext(_pathData);
+
+    },
+
+
+    componentWillReceiveProps: function (nextProps) {
+        //console.log("{PhotosView} componentWillReceiveProps");
+
+    },
+
+    componentWillUnmount: function () {
+
+        window.removeEventListener("resize", this.updateDimensions);
+    },
+
+    componentDidMount: function () {
+        this.updateDimensions();
+        window.addEventListener("resize", this.updateDimensions);
+    },
+
+    updateDimensions: function () {
+        this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
+    },
+
+
+
+
+    render: function () {
+
+        var _this = this;
+        var tableClass = "col-xs-8 col-sm-9 col-md-9";
+        var asideClass = "col-xs-4 col-sm-3 col-md-3 box";
+        var asideRightClass = "hidden col-xs-4 col-sm-3 col-md-3";
+
+        if (this.state.selectedItem !== undefined && this.state.selectedItem !== null)
+        {
+            tableClass = "col-xs-8 col-sm-9 col-md-6";
+            asideClass = "hidden-xs hidden-sm col-md-3 box";
+            asideRightClass = "hidden-xs hidden-sm col-md-3";
+        }
+
+
+        var asideStyle = {};
+        asideStyle['height'] = this.state.height;
+
+        var sectionStyle = {};
+        sectionStyle['borderLeft'] = '1px solid #cccccc';
+        sectionStyle['overflow'] = 'scroll';
+        sectionStyle['height'] = this.state.height;
+
+
 
 
         return (
-            <div className="photosView container-fluid"
-                onKeyDown={_this.handleKeyDown} onKeyUp={_this.handleKeyUp}>
-                <aside className="col-sm-2" >
-                    <FolderTree section="photos" navigateToFiles={true}/>
-                </aside>
 
-                <section className={_this.tableClass} style={{'borderLeft':'1px solid #eee'}}>
-                    <div className="container-fluid">
-                        <div className="">
-                            Selected: {this.state.selectedItems.length} / {this.state.files.length}
+            <div className="filesView container-fluid">
+                <div className="row">
+
+                    <aside className={asideClass} style={asideStyle}>
+
+                        <ButtonGroup className="boxRow header">
+                            <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></ButtonLink>
+                            <ButtonLink to="userManager" bsSize='medium' bsStyle="link"><Glyphicon
+                                glyph='user'/></ButtonLink>
+                            <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon
+                                glyph='search'/></ButtonLink>
+
+
+                            <Dropdown id='dropdown-custom-1'>
+                                <Dropdown.Toggle>
+                                    <Glyphicon glyph='cog' />
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu className='super-colors'>
+                                    <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
+                                    <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </ButtonGroup>
+
+                        <div className="boxRow content" style={{'minHeight':'200px'}}>
+                            <SectionTree title="Files"
+                                         showAdd={true}
+                                         navigateToFiles={true}
+                                         baseDir="/foo:cloud/"/>
+
+                            <SectionTree title="Dates"
+                                         showAdd={true}
+                                         navigateToFiles={true}
+                                         baseDir="/foo:cloud/"/>
+
+                            <SectionTree title="Albums"
+                                         showAdd={true}
+                                         navigateToFiles={true}
+                                         baseDir="/foo:cloud/"/>
+
+                            <SectionTree title="People"
+                                         showAdd={true}
+                                         navigateToFiles={true}
+                                         baseDir="/foo:cloud/"/>
+
+                            <SectionTree title="Tags"
+                                         showAdd={true}
+                                         navigateToFiles={true}
+                                         baseDir="/foo:cloud/"/>
+
                         </div>
-                        <div className="">
-                            {photos}
+
+
+                        <div className=" boxRow footer">
+                            <AppSidebar />
                         </div>
+
+                    </aside>
+
+                    <section className={tableClass} style={sectionStyle}>
+                        <div className="container-fluid fileRows">
+
+
+                        </div>
+                    </section>
+
+                    <aside className={asideRightClass}>
+                        <PreviewSidebar file={this.state.selectedItem}/>
+                    </aside>
+                </div>
+
+
+                <div id="fab-button-group">
+                    <div className="fab  show-on-hover dropup">
+                        <div data-toggle="tooltip" data-placement="left" title="Compose">
+                            <button type="button" className="btn btn-material-lightblue btn-io dropdown-toggle"
+                                    data-toggle="dropdown">
+                                    <span className="fa-stack fa-2x">
+                                        <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
+                                        <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
+                                        <Link to="upload" style={{'color':'#fff'}}>
+                                            <Glyphicon glyph="plus"
+                                                       className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
+                                                       style={{'fontSize': '24px'}}></Glyphicon>
+                                        </Link>
+
+                                    </span>
+                            </button>
+                        </div>
+                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                        </ul>
                     </div>
-                </section>
+                </div>
 
 
-                <aside className={_this.asideClass}>
-                    [previewWidget]
-                </aside>
             </div>
+
 
         );
     }
 
 });
 
-module.exports = PhotosView;
+
+

@@ -57,7 +57,7 @@ var _AppSidebar = React.createClass({
                         <span style={_linkStyle}>Files</span></Link>
                     </div>
                     <div className={_class} style={_rowStyle}>
-                        <Link to="home">
+                        <Link to="photos">
                         <img src="assets/icons/appicon77.png"/>
                         <span style={_linkStyle}>Photos</span></Link>
                     </div>
