@@ -34,16 +34,22 @@ var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
 var NavigationActions = require('../../actions/NavigationActions');
+var ImageActions = require('../../actions/ImageActions');
 
 var FileStore = require('./../../stores/FileStore');
 var DirectoryStore = require('./../../stores/DirectoryStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
+var PhotoStore = require('./../../stores/PhotoStore');
 
 
 var PreviewSidebar = require("./../previews/PreviewSidebar");
 var SectionTree = require('../../components/folderTree/SectionTree');
+var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
+var TagList = require('./TagList');
+var PeopleList = require('./PeopleList');
+var DateTree = require('./DateTree');
 
 
 module.exports =  React.createClass({
@@ -53,6 +59,9 @@ module.exports =  React.createClass({
     getInitialState: function () {
         return {
             files: [],
+            tags: [],
+            people: [],
+            dateTree: {},
             selectedItem: undefined,
             state: '100%',
             showAddFolder: false
@@ -69,6 +78,30 @@ module.exports =  React.createClass({
         var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'params': {}, 'level': 1};
         NavigationActions.currentPath.onNext(_pathData);
 
+        // load lists
+        ImageActions.dateTree.source.onNext(true);
+        ImageActions.tagsList.source.onNext(true);
+        ImageActions.peopleList.source.onNext(true);
+
+        // run initial search to populate the view
+        ImageActions.search.source.onNext(PhotoStore.filters.value);
+
+
+        // subscribe to changes
+        PhotoStore.tags.subscribe(function(data){
+            this.state.tags = data;
+            if (_this.isMounted())  _this.forceUpdate();
+        }.bind(this));
+
+        PhotoStore.people.subscribe(function(data){
+            this.state.people = data;
+            if (_this.isMounted())  _this.forceUpdate();
+        }.bind(this));
+
+        PhotoStore.dateTree.subscribe(function(data){
+            this.state.dateTree = data;
+            if (_this.isMounted())  _this.forceUpdate();
+        }.bind(this));
     },
 
 
@@ -91,7 +124,9 @@ module.exports =  React.createClass({
         this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
     },
 
-
+    addFilter: function(data){
+        ImageActions.addFilter.onNext(data);
+    },
 
 
     render: function () {
@@ -151,26 +186,22 @@ module.exports =  React.createClass({
                                          showAdd={true}
                                          navigateToFiles={true}
                                          baseDir="/foo:cloud/"/>
-
-                            <SectionTree title="Dates"
-                                         showAdd={true}
-                                         navigateToFiles={true}
-                                         baseDir="/foo:cloud/"/>
-
-                            <SectionTree title="Albums"
-                                         showAdd={true}
-                                         navigateToFiles={true}
-                                         baseDir="/foo:cloud/"/>
-
-                            <SectionTree title="People"
-                                         showAdd={true}
-                                         navigateToFiles={true}
-                                         baseDir="/foo:cloud/"/>
-
-                            <SectionTree title="Tags"
-                                         showAdd={true}
-                                         navigateToFiles={true}
-                                         baseDir="/foo:cloud/"/>
+                            <br/><br/>
+                            <SidebarSection label="Dates">
+                                <DateTree
+                                    onSelect={this.addFilter}
+                                    tree={this.state.dateTree}/>
+                            </SidebarSection>
+                            <SidebarSection label="People">
+                                <PeopleList
+                                    onSelect={this.addFilter}
+                                    people={this.state.people}/>
+                            </SidebarSection>
+                            <SidebarSection label="Tags">
+                                <TagList
+                                    onSelect={this.addFilter}
+                                    tags={this.state.tags}/>
+                            </SidebarSection>
 
                         </div>
 
@@ -216,7 +247,7 @@ module.exports =  React.createClass({
                     </div>
                 </div>
 
-
+                <br/>
             </div>
 
 

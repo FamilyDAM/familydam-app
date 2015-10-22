@@ -4,21 +4,53 @@
 
   .thumbnailCard
   {
-    float:left;
-    border: 1px solid $gray-lighter;
+    float:         left;
+    border:        1px solid $gray-lighter;
     border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-    min-width: 175px;
+    padding:       10px;
+    margin:        10px;
+    min-width:     175px;
 
-    &.active{
-      border: 1px solid $gray;
+    &.active
+    {
+      border:     1px solid $gray;
       box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
     }
 
-    img{
-      width:auto;
-      height:150px;
+    img
+    {
+      width:  auto;
+      height: 150px;
     }
+  }
+}
+
+.dateTree
+{
+  padding-bottom: 20px;
+
+  li
+  {
+    padding: 0px;
+  }
+}
+
+.tagList
+{
+  padding-bottom: 20px;
+
+  li
+  {
+    padding: 0px;
+  }
+}
+
+.peopleList
+{
+  padding-bottom: 20px;
+
+  li
+  {
+    padding: 0px;
   }
 }

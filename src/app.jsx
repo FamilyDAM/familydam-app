@@ -9,10 +9,7 @@
 //var injectTapEventPlugin = require("react-tap-event-plugin");
 //injectTapEventPlugin();
 var React = require('react');
-var Reflux = require('reflux');
-
 var ReactIntl  = require('react-intl');
-
 var Router = require('react-router');
 var Route = Router.Route;
 var Navigation = Router.Navigation;
@@ -20,42 +17,50 @@ var NotFoundRoute = Router.NotFoundRoute;
 var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
-window.Reflux = Reflux;
 window.Route = Route;
 window.Navigation = Navigation;
 
 
 // register the different Actions
-var AuthActions = require('./actions/AuthActions');
-var NodeActions = require('./actions/NodeActions');
-var UserActions = require('./actions/UserActions');
-var FileActions = require('./actions/FileActions');
-var DirectoryActions = require('./actions/DirectoryActions');
-var NavigationActions = require('./actions/NavigationActions');
-var UploadActions = require('./actions/UploadActions');
+var actions = require('./actions/_actions');
+//var AuthActions = require('./actions/AuthActions');
+//var NodeActions = require('./actions/NodeActions');
+//var UserActions = require('./actions/UserActions');
+//var FileActions = require('./actions/FileActions');
+//var DirectoryActions = require('./actions/DirectoryActions');
+//var NavigationActions = require('./actions/NavigationActions');
+//var UploadActions = require('./actions/UploadActions');
 
 
 // register the different services
-var LoginService = require('./services/users/LoginService').subscribe();
-var GetUsersService = require('./services/users/GetUsersService').subscribe();
-var SaveUserService = require('./services/users/SaveUserService').subscribe();
-var CreateUserService = require('./services/users/CreateUserService').subscribe();
-var NodeCrudService = require('./services/content/NodeCrudService').subscribe();
-var GetFilesService = require('./services/files/GetFilesService').subscribe();
-var GetDirectoriesService = require('./services/files/GetDirectoriesService').subscribe();
-var CreateDirectoriesService = require('./services/files/CreateDirectoryService').subscribe();
-var UploadFileService = require('./services/upload/UploadFileService').subscribe();
-var GetBase64UrlService = require('./services/images/GetBase64UrlService').subscribe();
+var services = require('./services/_services');
+//var LoginService = require('./services/users/LoginService').subscribe();
+//var GetUsersService = require('./services/users/GetUsersService').subscribe();
+//var SaveUserService = require('./services/users/SaveUserService').subscribe();
+//var CreateUserService = require('./services/users/CreateUserService').subscribe();
+//var NodeCrudService = require('./services/content/NodeCrudService').subscribe();
+//var GetFilesService = require('./services/files/GetFilesService').subscribe();
+//var GetDirectoriesService = require('./services/files/GetDirectoriesService').subscribe();
+//var CreateDirectoriesService = require('./services/files/CreateDirectoryService').subscribe();
+//var UploadFileService = require('./services/upload/UploadFileService').subscribe();
+//var GetBase64UrlService = require('./services/images/GetBase64UrlService').subscribe();
+//var PhotoTagsListService = require('./services/photos/PhotoTagsListService').subscribe();
+//var PhotoPeopleListService = require('./services/photos/PhotoPeopleListService').subscribe();
+//var PhotoDateTreeService = require('./services/photos/PhotoDateTreeService').subscribe();
+//var PhotoSearchService = require('./services/photos/PhotoSearchService').subscribe();
 
 
 // Initialize the stores
-var ContentStore = require('./stores/ContentStore').subscribe();
-var PreferenceStore = require('./stores/PreferenceStore').subscribe();
-var DirectoryStore = require('./stores/DirectoryStore').subscribe();
-var FileStore = require('./stores/FileStore').subscribe();
-var SearchStore = require('./stores/SearchStore').subscribe();
-var UploadStore = require('./stores/UploadStore').subscribe();
-var UserStore = require('./stores/UserStore').subscribe();
+var stores = require('./stores/_stores');
+//var ContentStore = require('./stores/ContentStore').subscribe();
+//var PreferenceStore = require('./stores/PreferenceStore').subscribe();
+//var DirectoryStore = require('./stores/DirectoryStore').subscribe();
+//var FileStore = require('./stores/FileStore').subscribe();
+//var SearchStore = require('./stores/SearchStore').subscribe();
+//var UploadStore = require('./stores/UploadStore').subscribe();
+//var UserStore = require('./stores/UserStore').subscribe();
+//var PhotoStore = require('./stores/PhotoStore').subscribe();
+
 
 
 //load compiled jsx views
@@ -94,6 +99,11 @@ var routes = [
 //React.renderComponent(routes, document.body);
 //Router.run(routes, Router.HistoryLocation, function (Handler, state) {
 Router.run(routes, function (Handler, state) {
+
+    actions.subscribe();
+    stores.subscribe();
+    services.subscribe();
+
     var params = state.params;
     React.render(
         <Handler params={state.params} query={state.query} {...intlData} />

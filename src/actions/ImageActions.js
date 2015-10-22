@@ -3,14 +3,20 @@
  */
 
 var Rx = require('rx');
-//di              = require('di');
 
 module.exports = {
 
-    getBase64Url: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
+    addFilter: new Rx.Subject(),
+    removeFilter: new Rx.Subject(),
+
+    //processors
+    search: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+    getBase64Url: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+    tagsList: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+    peopleList: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+    dateTree: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
 
 };
 
-//di.annotate(AuthActions, new di.Inject());
 
 

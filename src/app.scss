@@ -48,13 +48,14 @@ body
 @import "modules/photoEdit/photoEdit";
 @import "modules/uploads/uploads";
 @import "modules/userManager/userManager";
+@import "components/appSidebar/appSidebar";
 @import "components/clock/clock";
 @import "components/folderTree/folderTree";
 @import "components/tags/tags";
 @import "components/exifData/exifData";
 @import "components/exifMap/exifMap";
 @import "components/fileUpload/fileUpload";
-@import "components/appSidebar/appSidebar";
+@import "components/sidebarSection/sidebarSection";
 
 
 /**
