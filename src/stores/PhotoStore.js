@@ -10,20 +10,20 @@ module.exports = {
     tags: new Rx.BehaviorSubject([]),
     people: new Rx.BehaviorSubject([]),
     dateTree: new Rx.BehaviorSubject({}),
-    filters: new Rx.BehaviorSubject({tags:[],
-                                    people:[],
-                                    date:{},
-                                    order:{
-                                        field:'datecreated',
-                                        direction:'asc'
-                                    }
-                                }),
+    filters: new Rx.BehaviorSubject({
+            tags:[],
+            people:[],
+            date:{},
+            order:{
+                field:'datecreated',
+                direction:'asc'
+            }
+        }),
 
     subscribe: function(){
         console.log("{PhotoStore} init()");
 
         ImageActions.addFilter.subscribe(function(data){
-            debugger;
             var val = this.filters.value;
 
             if( data.type === "date" ){

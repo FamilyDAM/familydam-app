@@ -16,7 +16,6 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        debugger;
         console.log("{PhotoSearch Service} subscribe");
         this.sink = ImageActions.search.sink;
         ImageActions.search.source.subscribe(this.execute.bind(this));
@@ -27,9 +26,10 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    execute: function(id_)
+    execute: function(filters_)
     {
-        if( id_ !== undefined )
+        debugger;
+        if( filters_ !== undefined )
         {
 
             var _this = this;
@@ -43,7 +43,7 @@ module.exports = {
                 }
 
             }).then(function (data_, status_, xhr_) {
-
+                debugger;
                 _this.sink.onNext(data_);
 
                 // update token

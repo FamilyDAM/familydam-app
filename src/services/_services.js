@@ -13,7 +13,7 @@ var GetBase64UrlService = require('./images/GetBase64UrlService');
 var PhotoTagsListService = require('./photos/PhotoTagsListService');
 var PhotoPeopleListService = require('./photos/PhotoPeopleListService');
 var PhotoDateTreeService = require('./photos/PhotoDateTreeService');
-var PhotoSearchService = require('./photos/PhotoDateTreeService');
+var PhotoSearchService = require('./photos/PhotoSearchService');
 
 module.exports = {
     subscribe:function()

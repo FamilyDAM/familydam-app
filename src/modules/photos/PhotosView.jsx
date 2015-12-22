@@ -182,11 +182,11 @@ module.exports =  React.createClass({
                         </ButtonGroup>
 
                         <div className="boxRow content" style={{'minHeight':'200px'}}>
-                            <SectionTree title="Files"
-                                         showAdd={true}
-                                         navigateToFiles={true}
-                                         baseDir="/foo:cloud/"/>
-                            <br/><br/>
+                            <SidebarSection label="Files">
+                                <DateTree
+                                    onSelect={this.addFilter}
+                                    tree={this.state.dateTree}/>
+                            </SidebarSection>
                             <SidebarSection label="Dates">
                                 <DateTree
                                     onSelect={this.addFilter}
