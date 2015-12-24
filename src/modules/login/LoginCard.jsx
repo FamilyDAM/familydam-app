@@ -50,8 +50,8 @@ var LoginCard = React.createClass({
     handleSubmit: function(event)
     {
         var _this = this;
-        var _username = "admin";
-        var _password = "admin";
+        var _username = this.props.user.username;
+        var _password = this.state.password;
 
         AuthActions.login.source.onNext({'username':_username, 'password':_password});
 
@@ -109,7 +109,10 @@ var LoginCard = React.createClass({
                                 <div className="loginForm col-sm-8" >
                                     <h3>{this.props.user.username}</h3>
                                     <div>
-                                        <input type="password" label={this.getIntlMessage('password')}/>
+                                        <input ref="pwdField"
+                                               type="password"
+                                               onChange={(e) => {this.setState({'password': e.target.value})}}
+                                               label={this.getIntlMessage('password')}/>
                                     </div>
                                     <div>
                                         <button className="btn btn-default btn-link" onClick={this.handleCancel}>{this.getIntlMessage('cancel')}</button>
