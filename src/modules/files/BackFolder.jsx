@@ -16,40 +16,60 @@ var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var FileActions = require('../../actions/FileActions');
-var NodeActions = require('../../actions/NodeActions');
-var UserStore = require('./../../stores/UserStore');
-var PreferenceStore = require('./../../stores/PreferenceStore');
+var DirectoryActions = require('../../actions/DirectoryActions');
 
 var BackFolder = React.createClass({
 
+    getInitialProps:{
+        path:''
+    },
+
+    componentWillReceiveProps: function (nextProps) {
+        this.props = nextProps;
+    },
+
+
     back: function(){
 
-        FileActions.selectFile.onNext(undefined);
+        if( this.props.path.lastIndexOf("/") > 0 ){
+            var _path = this.props.path.substr(0,this.props.path.lastIndexOf("/"));
 
-        history.go("-1");
+            DirectoryActions.selectFolder.onNext({'path':_path});
+            FileActions.selectFile.onNext(undefined);
+        }
+        //history.go("-1");
     },
 
 
 
     render:function(){
 
-        return  <div
-                     className="row"
-                     style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'50px', 'cursor': 'pointer'}}
-                     onClick={this.back}>
+        if( this.props.path !== "/dam:files" && this.props.path !== "/dam:files/" )
+        {
+            return (<div
+                className="row"
+                style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'50px', 'cursor': 'pointer'}}
+                onClick={this.back}>
 
-                    <div style={{'display': 'table-cell', 'width': '50px'}}>
-                        <img src="assets/icons/ic_folder_48px.svg"
-                             style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
-                    </div>
-                    <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
-                        <div className="row">
-                            <div className="col-sm-12" style={{'verticalAlign':'middle', 'cursor': 'pointer'}}><span style={{'marginTop': '15px'}}>...</span></div>
-                        </div>
+                <div style={{'display': 'table-cell', 'width': '50px'}}>
+                    <img src="assets/icons/ic_folder_48px.svg"
+                         style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
+                </div>
+                <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
+                    <div className="row">
+                        <div className="col-sm-12" style={{'verticalAlign':'middle', 'cursor': 'pointer', 'marginTop': '15px'}}><span>Parent Folder</span></div>
                     </div>
                 </div>
+            </div>);
+
+        }else{
+            return <div/>
+        }
 
     }
+
+
+
 
 });
 

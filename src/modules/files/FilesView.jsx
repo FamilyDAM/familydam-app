@@ -100,6 +100,11 @@ var FilesView = React.createClass({
         // Refresh the file list when someone changes the directory
         this.selectFolderSubscription = DirectoryActions.selectFolder.subscribe(function (data_) {
             FileActions.getFiles.source.onNext(data_.path);
+
+            // update the breadcrumb
+            var _pathData = {'label': 'Files (' +data_.path +')', 'navigateTo': "files", 'params': {path:data_.path}, 'level': 1};
+            NavigationActions.currentPath.onNext(_pathData);
+
             _this.state.selectedPath = data_.path;
             if (_this.isMounted())  _this.forceUpdate();
         });
@@ -114,7 +119,7 @@ var FilesView = React.createClass({
         /**
          * Add Folder Modal
          */
-            // listen for the selected dir.
+        // listen for the selected dir.
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(data_){
             _this.state.parent = data_;
             if( _this.isMounted() ) _this.forceUpdate();
@@ -132,7 +137,6 @@ var FilesView = React.createClass({
 
     componentWillReceiveProps: function (nextProps) {
         //console.log("{FilesView} componentWillReceiveProps");
-
         var _path = nextProps.query.path;
 
         // upload local state, and reset list to prepare for new files
@@ -285,7 +289,7 @@ var FilesView = React.createClass({
                     <section className={tableClass} style={sectionStyle}>
                         <div className="container-fluid fileRows">
 
-                            <BackFolder/>
+                            <BackFolder path={this.state.selectedPath}/>
 
                             {folderRows}
 

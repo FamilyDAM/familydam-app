@@ -79,6 +79,7 @@ ReactDOM.render(
 
 
             <Route path="photos" component={Home}/>
+            <Route path="photoDetails" component={Home}/>
             <Route path="userManager" component={Home}/>
         </Route>
     </Router>
