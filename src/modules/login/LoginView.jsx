@@ -7,7 +7,6 @@
 // Used in TodoApp
 var React = require('react');
 var Router = require('react-router');
-var Link = Router.Link;
 
 var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
@@ -20,7 +19,9 @@ var AuthActions = require('./../../actions/AuthActions');
 var UserActions = require('./../../actions/UserActions');
 var UserStore = require('./../../stores/UserStore');
 
-var LoginView = React.createClass({
+var intlData = require("./../../locales/en-us");
+
+module.exports = React.createClass({
 
 
     getInitialState: function(){
@@ -57,7 +58,6 @@ var LoginView = React.createClass({
     },
 
 
-
     render: function() {
 
         var _this = this;
@@ -75,9 +75,10 @@ var LoginView = React.createClass({
             {
                 childNodes = this.state.users.map(function (user, index) {
                     return <div key={index}>
-                                <LoginCard user={user}
-                                           mode="inactive"
-                                           onSelect={_this.handleCardSelection}
+                                <LoginCard
+                                    user={user}
+                                    mode="inactive"
+                                    onSelect={_this.handleCardSelection}
                                     {..._this.props}/>
                             </div>
                 });
@@ -85,10 +86,11 @@ var LoginView = React.createClass({
             {
                 var overrideStyle = {width: "100%"};
                 childNodes = <div key="0" style={overrideStyle}>
-                                <LoginCard user={this.state.activeUser}
-                                           mode="active"
-                                           onSelect={_this.handleCardSelection}
-                                           onCancel={_this.handleCancelCardSelection}
+                                <LoginCard
+                                    user={this.state.activeUser}
+                                    mode="active"
+                                    onSelect={_this.handleCardSelection}
+                                    onCancel={_this.handleCancelCardSelection}
                                     {..._this.props} />
                             </div>
 
@@ -114,4 +116,3 @@ var LoginView = React.createClass({
 
 });
 
-module.exports = LoginView;

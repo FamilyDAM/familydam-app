@@ -7,7 +7,7 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Navigation = require('react-router').Navigation;
+var History = require('react-router').History;
 
 var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
@@ -18,8 +18,8 @@ var AuthActions = require('./../../actions/AuthActions');
 var UserActions = require('./../../actions/UserActions');
 var UserStore = require('./../../stores/UserStore');
 
-var LoginCard = React.createClass({
-    mixins : [Navigation],
+module.exports = React.createClass({
+    mixins : [History],
 
     propTypes: {
         // You can declare that a prop is a specific JS primitive. By default, these
@@ -58,7 +58,6 @@ var LoginCard = React.createClass({
         _user.userProps.firstName = this.refs.firstName.getDOMNode().value;
 
         UserActions.createUser.source.onNext(_user);
-
 
         this.createUserSubscription = UserActions.createUser.sink.subscribe(function(data_){
             //load all the users (with our new user)
@@ -132,6 +131,3 @@ var LoginCard = React.createClass({
 
 });
 
-
-
-module.exports = LoginCard;

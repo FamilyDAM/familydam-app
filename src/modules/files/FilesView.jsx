@@ -7,7 +7,6 @@
 // Used in TodoApp
 var React = require('react');
 var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 
 var Table = require('react-bootstrap').Table;
@@ -20,15 +19,14 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
 var Dropdown = require('react-bootstrap').Dropdown;
 var DropdownButton = require('react-bootstrap').DropdownButton;
-var NavItemLink = require('react-router-bootstrap').NavItemLink;
-var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
+var MenuItem = require('react-bootstrap').MenuItem;
 
 var Modal = require('react-bootstrap').Modal;
 var ModalHeader = require('react-bootstrap').Modal.Header;
 var ModalTitle = require('react-bootstrap').Modal.Title;
 var ModalBody = require('react-bootstrap').Modal.Body;
 var ModalFooter = require('react-bootstrap').Modal.Footer;
-
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
@@ -50,8 +48,6 @@ var AppSidebar = require('../../components/appSidebar/AppSidebar');
 
 
 var FilesView = React.createClass({
-    mixins: [Navigation],
-
 
     getInitialState: function () {
         return {
@@ -85,7 +81,7 @@ var FilesView = React.createClass({
         // save current dir
         //DirectoryActions.selectFolder.onNext(this.state.path);
         // load files
-        FileActions.getFiles.source.onNext(this.state.path);
+        FileActions.getFiles.source.onNext(this.state.selectedPath);
 
 
         // rx callbacks
@@ -98,7 +94,7 @@ var FilesView = React.createClass({
         // listen for trigger to reload for files in directory
         this.refreshFilesSubscription = FileActions.refreshFiles.subscribe(function (data_) {
             FileActions.getFiles.source.onNext(undefined);
-            FileActions.getFiles.source.onNext(_this.state.path);
+            FileActions.getFiles.source.onNext(_this.state.selectedPath);
         });
 
         // Refresh the file list when someone changes the directory
@@ -248,11 +244,15 @@ var FilesView = React.createClass({
                     <aside className={asideClass} style={asideStyle}>
 
                         <ButtonGroup className="boxRow header">
-                            <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></ButtonLink>
-                            <ButtonLink to="userManager" bsSize='medium' bsStyle="link"><Glyphicon
-                                glyph='user'/></ButtonLink>
-                            <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon
-                                glyph='search'/></ButtonLink>
+                            <LinkContainer to="/dashboard" >
+                                <Button><Glyphicon glyph='home'/></Button>
+                            </LinkContainer>
+                            <LinkContainer to="/" >
+                                <Button><Glyphicon glyph='user'/></Button>
+                            </LinkContainer>
+                            <LinkContainer to="/" >
+                                <Button><Glyphicon glyph='search'/></Button>
+                            </LinkContainer>
 
 
                             <Dropdown id='dropdown-custom-1'>
@@ -260,8 +260,8 @@ var FilesView = React.createClass({
                                     <Glyphicon glyph='cog' />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu className='super-colors'>
-                                    <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
-                                    <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
+                                    <MenuItem eventKey="1" to="userManager">User Manager</MenuItem>
+                                    <MenuItem eventKey="2" to="login">Logout</MenuItem>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </ButtonGroup>

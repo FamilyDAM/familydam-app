@@ -9,7 +9,6 @@
 var React = require('react');
 var Router = require('react-router');
 var IS = require('is_js');
-var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 
 var FileDetails = require('./FileDetails');
@@ -17,8 +16,7 @@ var MusicDetails = require('./MusicDetails');
 var ImageDetails = require('./ImageDetails');
 var SectionTree = require('../../components/folderTree/SectionTree');
 
-var PreviewSidebar = React.createClass({
-    mixins : [Navigation],
+module.exports = React.createClass({
 
     getDefaultProps:function(){
         return {
@@ -44,7 +42,7 @@ var PreviewSidebar = React.createClass({
 
     componentWillReceiveProps:function(nextProps)
     {
-        console.log("{FilesView} componentWillReceiveProps");
+        console.log("{PreviewSidebar} componentWillReceiveProps");
 
         // reset state
         this.state.isImage = false;
@@ -107,6 +105,5 @@ var PreviewSidebar = React.createClass({
 
 });
 
-module.exports = PreviewSidebar;
 
 

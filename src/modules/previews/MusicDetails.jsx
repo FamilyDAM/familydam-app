@@ -26,7 +26,6 @@ var UserStore = require('../../stores/UserStore');
 var ContentStore = require('../../stores/ContentStore');
 
 module.exports = React.createClass({
-    mixins : [Navigation],
 
     getDefaultProps:function(){
         return {

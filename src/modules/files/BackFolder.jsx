@@ -21,7 +21,6 @@ var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 
 var BackFolder = React.createClass({
-    mixins : [Navigation],
 
     back: function(){
 

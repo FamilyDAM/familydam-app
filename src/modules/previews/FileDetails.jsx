@@ -15,7 +15,6 @@ var Link = Router.Link;
 var SectionTree = require('../../components/folderTree/SectionTree');
 
 module.exports = React.createClass({
-    mixins : [Navigation],
 
     getDefaultProps:function(){
         return {
@@ -32,7 +31,7 @@ module.exports = React.createClass({
     componentWillReceiveProps:function(nextProps)
     {
         //console.log("{FilesView} componentWillReceiveProps");
-        this.props.file = nextProps.file;
+        this.props = nextProps;
     },
 
     componentWillUnmount: function() {

@@ -11,20 +11,21 @@ var Router = require('react-router');
 var Link = Router.Link;
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var ButtonLink = require('react-router-bootstrap').ButtonLink;
-var DropdownButton = require('react-bootstrap').DropdownButton;
-var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
+var Button = require('react-bootstrap').Button;
+var MenuItem = require('react-bootstrap').MenuItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
+var Dropdown = require('react-bootstrap').Dropdown;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
 var SectionTree = require('../../components/folderTree/SectionTree');
 var FolderTree = require('../../components/folderTree/FolderTree');
-var FileUploadView = require('../../components/fileUpload/FileUploadView')
-var UploadActions = require('../../actions/UploadActions')
+var FileUploadView = require('../../components/fileUpload/FileUploadView');
+var UploadActions = require('../../actions/UploadActions');
 
 var NavigationActions = require('./../../actions/NavigationActions');
 
-var UploadsView = React.createClass({
+module.exports = React.createClass({
 
 
     getInitialState: function () {
@@ -57,41 +58,57 @@ var UploadsView = React.createClass({
         asideStyle['height'] = this.state.height;
 
 
-        return (
-            <div className="container-fluid">
-                <div className="row">
-                    <aside className="col-xs-4 col-sm-3 box" style={asideStyle}>
-                        <ButtonGroup className="boxRow header">
-                            <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></ButtonLink>
-                            <ButtonLink to="userManager" bsSize='medium' bsStyle="link"><Glyphicon
-                                glyph='user'/></ButtonLink>
-                            <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon
-                                glyph='search'/></ButtonLink>
-                            <DropdownButton ref="dropDownSettings" bsSize='medium' glyph='cog'
-                                            className="glyphicon glyphicon-cog">
-                                <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
-                                <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
-                            </DropdownButton>
-                        </ButtonGroup>
-
-                        <div className="boxRow content">
-                            <SectionTree title="Folders" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
-                        </div>
-
-                        <div className="boxRow footer">
-                            <AppSidebar />
-                        </div>
-                    </aside>
+        try
+        {
+            return (
+                <div className="container-fluid">
+                    <div className="row">
+                        <aside className="col-xs-4 col-sm-3 box" style={asideStyle}>
+                            <ButtonGroup className="boxRow header">
+                                <LinkContainer to="/dashboard">
+                                    <Button><Glyphicon glyph='home'/></Button>
+                                </LinkContainer>
+                                <LinkContainer to="/">
+                                    <Button><Glyphicon glyph='user'/></Button>
+                                </LinkContainer>
+                                <LinkContainer to="/">
+                                    <Button><Glyphicon glyph='search'/></Button>
+                                </LinkContainer>
 
 
-                    <section className="col-sm-9" style={{'borderLeft':'1px solid #eee'}}>
-                        <FileUploadView />
-                    </section>
+                                <Dropdown id='dropdown-custom-1'>
+                                    <Dropdown.Toggle>
+                                        <Glyphicon glyph='cog'/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu className='super-colors'>
+                                        <MenuItem eventKey="1" to="userManager">User Manager</MenuItem>
+                                        <MenuItem eventKey="2" to="login">Logout</MenuItem>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </ButtonGroup>
+
+                            <div className="boxRow content">
+                                <SectionTree title="Folders" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
+                            </div>
+
+                            <div className="boxRow footer">
+                                <AppSidebar />
+                            </div>
+                        </aside>
+
+
+                        <section className="col-sm-9" style={{'borderLeft':'1px solid #eee'}}>
+                            <FileUploadView />
+                        </section>
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }catch(err){
+            debugger;
+            console.log(err);
+        }
     }
 
 });
 
-module.exports = UploadsView;
+

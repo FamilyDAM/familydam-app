@@ -11,14 +11,10 @@
 var React = require('react');
 var ReactIntl  = require('react-intl');
 var Router = require('react-router');
+var ReactDOM = require('react-dom');
+var RouterContext = React.RouteContext;
 var Route = Router.Route;
-var Navigation = Router.Navigation;
-var NotFoundRoute = Router.NotFoundRoute;
-var DefaultRoute = Router.DefaultRoute;
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler;
-window.Route = Route;
-window.Navigation = Navigation;
+var Router = Router.Router;
 
 
 // register the different Actions
@@ -31,47 +27,60 @@ var stores = require('./stores/_stores').subscribe();
 var services = require('./services/_services').subscribe();
 
 
-
 //load compiled jsx views
-var Home = require('./modules/home/Home');
 var LoginView = require('./modules/login/LoginView');
-var SignupView = require('./modules/signup/SignupView');
 var DashboardView = require('./modules/dashboard/DashboardView');
+var Home = require('./modules/home/Home');
 var FilesView = require('./modules/files/FilesView');
-var PhotosView = require('./modules/photos/PhotosView');
-var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
-var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
 var UploadsView = require('./modules/uploads/UploadsView');
-var UserManagerView = require('./modules/userManager/UserManagerView');
-var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
-var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails');
-var intlData = require("./locales/en-us");
+//var SignupView = require('./modules/signup/SignupView');
+//var PhotosView = require('./modules/photos/PhotosView');
+//var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
+//var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
+//var UserManagerView = require('./modules/userManager/UserManagerView');
+//var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
+//var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails');
 
+/**
 var routes = [
-    <Route handler={LoginView} path="/">
-        <Route name="login" handler={LoginView}/>
+    <Route path="/" component={LoginView} >
+        <Route path="/login" component={LoginView}/>
     </Route>,
-    <Route name="dashboard" handler={DashboardView}>
-        <DefaultRoute handler={Home}/>
-        <Route name="home" handler={Home}/>
-        <Route name="files" handler={FilesView}/>
-        <Route name="upload" handler={UploadsView}/>
-        <Route name="photos" path="photos" handler={PhotosView}/>
-        <Route name="photoDetails" path="photos/:id" handler={PhotoDetailView}/>
-        <Route name="userManagerShell" handler={UserManagerView}>
-            <Route name="userManager"  handler={UserManagerHomeView}/>
-            <Route name="userManagerDetails" path="userManager/:id"  handler={UserManagerDetailsView}/>
+    <Route path="/dashboard" component={DashboardView}>
+        <Route path="*" component={Home}/>
+        <Route path="/home" component={Home}/>
+        <Route path="/files" component={FilesView}/>
+        <Route path="/upload" component={UploadsView}/>
+        <Route path="/photos" component={PhotosView}/>
+        <Route path="/photos/:id" component={PhotoDetailView}/>
+        <Route path="/userManager" component={UserManagerView}>
+            <Route path="/"  component={UserManagerHomeView}/>
+            <Route path="/:id"  component={UserManagerDetailsView}/>
         </Route>
     </Route>
 ];
 
-//React.renderComponent(routes, document.body);
-//Router.run(routes, Router.HistoryLocation, function (Handler, state) {
-Router.run(routes, function (Handler, state) {
+ Router.run(routes, function (Handler, state) {
 
     var params = state.params;
     React.render(
         <Handler params={state.params} query={state.query} {...intlData} />
     , document.body);
 });
+ **/
+ReactDOM.render(
+    <Router history={Router.History}>
+        <Route path="/" component={LoginView} />
+        <Route path="logout" component={LoginView} />
+        <Route component={DashboardView}>
+            <Route path="dashboard" component={Home}/>
+            <Route path="files" component={FilesView}/>
+            <Route path="upload" component={UploadsView}/>
 
+
+            <Route path="photos" component={Home}/>
+            <Route path="userManager" component={Home}/>
+        </Route>
+    </Router>
+    , document.getElementById("appBody")
+);
