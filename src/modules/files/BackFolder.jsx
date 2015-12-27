@@ -65,11 +65,7 @@ var BackFolder = React.createClass({
         }else{
             return <div/>
         }
-
     }
-
-
-
 
 });
 

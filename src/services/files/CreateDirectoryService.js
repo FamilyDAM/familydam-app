@@ -36,7 +36,7 @@ module.exports = {
     {
         var _this = this;
         var _name = data_.name;
-        var _dir = data_.parent.path;
+        var _dir = data_.path;
         var _url = PreferenceStore.getBaseUrl() +"/api/directory/";
 
         return $.ajax({

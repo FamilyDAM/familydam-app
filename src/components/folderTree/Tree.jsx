@@ -1,94 +1,183 @@
 'use strict';
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {Treebeard} from 'react-treebeard';
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Treebeard = require('react-treebeard').Treebeard;
+var Glyphicon = require('react-bootstrap').Glyphicon;
 
+var FileActions = require('./../../actions/FileActions');
 var DirectoryActions = require('./../../actions/DirectoryActions');
 var DirectoryStore = require('./../../stores/DirectoryStore');
 
 
-const data = {
-    name: 'root',
-    toggled: true,
-    children: [
-        {
-            name: 'parent',
-            children: [
-                { name: 'child1' },
-                { name: 'child2' }
-            ]
-        },
-        {
-            name: 'loading parent',
-            loading: true,
-            children: []
-        },
-        {
-            name: 'parent',
-            children: [
-                {
-                    name: 'nested parent',
-                    children: [
-                        { name: 'nested child 1' },
-                        { name: 'nested child 2' }
-                    ]
-                }
-            ]
-        }
-    ]
+var animations = {
+    toggle: (props) => {
+        return {
+            animation: {rotateZ: props.node.toggled ? 90 : 0},
+            duration: 100
+        };
+    },
+    drawer: (/* props */) => {
+        return {
+            enter: {
+                animation: 'slideDown',
+                duration: 100
+            },
+            leave: {
+                animation: 'slideUp',
+                duration: 100
+            }
+        };
+    }
 };
 
-class Tree extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            treeData: data
-        };
-        this.onToggle = this.onToggle.bind(this);
 
-        refreshDirectories();
+var styles = {
+    tree: {
+        base: {
+            listStyle: 'none',
+            backgroundColor: '#ffffff',
+            margin: 0,
+            padding: 0,
+            color: '#333333'
+        },
+        node: {
+            base: {
+                position: 'relative'
+            },
+            link: {
+                cursor: 'pointer',
+                position: 'relative',
+                padding: '0px 5px',
+                display: 'block'
+            },
+            activeLink: {
+                background: '#ffffff'
+            },
+            toggle: {
+                base: {
+                    position: 'relative',
+                    display: 'inline-block',
+                    verticalAlign: 'top',
+                    marginLeft: '-5px',
+                    height: '24px',
+                    width: '24px'
+                },
+                wrapper: {
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    margin: '-7px 0 0 -7px',
+                    height: '14px'
+                },
+                height: 14,
+                width: 14,
+                arrow: {
+                    fill: '#333333',
+                    strokeWidth: 0
+                }
+            },
+            header: {
+                base: {
+                    display: 'inline-block',
+                    verticalAlign: 'top',
+                    color: '#0000'
+                },
+                connector: {
+                    width: '2px',
+                    height: '12px',
+                    borderLeft: 'solid 2px black',
+                    borderBottom: 'solid 2px black',
+                    position: 'absolute',
+                    top: '0px',
+                    left: '-21px'
+                },
+                title: {
+                    lineHeight: '24px',
+                    verticalAlign: 'middle'
+                }
+            },
+            subtree: {
+                listStyle: 'none',
+                paddingLeft: '19px'
+            },
+            loading: {
+                color: '#000000'
+            }
+        }
     }
+};
 
-    componentWillMount(){
-        debugger;
-    }
 
-    componentWillReceiveProps(nextProps){
-        debugger;
-    }
+module.exports = React.createClass({
 
-    refreshDirectories() {
+
+    getInitialState: function () {
+        return {
+            treeData: []
+        }
+    },
+
+
+    componentWillMount: function () {
         // trigger a directory reload
         this.directoryStore = DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
 
         // listen for trigger to reload for files in directory
-        DirectoryActions.refreshDirectories.subscribe(function(data_){
-            DirectoryActions.getDirectories.source.onNext( undefined );
-            DirectoryActions.getDirectories.source.onNext( this.props.baseDir );
-        }.bind(this) );
+        this.refreshDirectoriesSubscription = DirectoryActions.refreshDirectories.subscribe(function (data_) {
+            DirectoryActions.getDirectories.source.onNext(undefined);
+            DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+        }.bind(this));
 
         //Listen for directory changes
-        DirectoryStore.directories.subscribe(function (data_) {
+        this.directoriesSubscription = DirectoryStore.directories.subscribe(function (data_) {
             this.state.treeData = data_;
             if (this.isMounted()) this.forceUpdate();
-        }.bind(this) );
-    }
+        }.bind(this));
+    },
 
 
-    onToggle(node, toggled){
-        if(this.state.cursor){this.state.cursor.active = false;}
+    componentWillUnmount: function () {
+        if (this.refreshDirectoriesSubscription !== undefined)
+        {
+            this.refreshDirectoriesSubscription.dispose();
+        }
+        if (this.directoriesSubscription !== undefined)
+        {
+            this.directoriesSubscription.dispose();
+        }
+    },
+
+
+    onToggle: function (node, toggled) {
+        if (this.state.cursor)
+        {
+            this.state.cursor.active = false;
+        }
         node.active = true;
-        if(node.children){ node.toggled = toggled; }
-        this.setState({ cursor: node });
-    }
+        if (node.children)
+        {
+            node.toggled = toggled;
+        }
+        this.setState({cursor: node});
+
+        // trigger the file list section
+        FileActions.getFiles.source.onNext(node.path);
+    },
 
     render(){
         return (
-            <Treebeard
-                data={this.state.treeData}
-                onToggle={this.onToggle}
-            />
+            <div>
+               <Treebeard
+                    animations={animations}
+                    style={styles}
+                    data={this.state.treeData}
+                    onToggle={this.onToggle}
+                />
+
+            </div>
         );
     }
-}
+
+});
+

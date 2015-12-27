@@ -9,23 +9,14 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
-var Table = require('react-bootstrap').Table;
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 
 var Button = require('react-bootstrap').Button;
-var ListGroup = require('react-bootstrap').ListGroup;
-var ListGroupItem = require('react-bootstrap').ListGroupItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
-var ButtonLink = require('react-router-bootstrap').ButtonLink;
 var Dropdown = require('react-bootstrap').Dropdown;
-var DropdownButton = require('react-bootstrap').DropdownButton;
 var MenuItem = require('react-bootstrap').MenuItem;
 
 var Modal = require('react-bootstrap').Modal;
-var ModalHeader = require('react-bootstrap').Modal.Header;
-var ModalTitle = require('react-bootstrap').Modal.Title;
-var ModalBody = require('react-bootstrap').Modal.Body;
-var ModalFooter = require('react-bootstrap').Modal.Footer;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 var NodeActions = require('../../actions/NodeActions');
@@ -43,7 +34,7 @@ var FileRow = require("./FileRow");
 var DirectoryRow = require("./DirectoryRow");
 var BackFolder = require("./BackFolder");
 var PreviewSidebar = require("./../previews/PreviewSidebar");
-var SectionTree = require('../../components/folderTree/SectionTree');
+var Tree = require('../../components/folderTree/Tree');
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
 
 
@@ -83,6 +74,10 @@ var FilesView = React.createClass({
         // load files
         FileActions.getFiles.source.onNext(this.state.selectedPath);
 
+        var getFilesSubscription = FileActions.getFiles.source.subscribe(function (path_) {
+            this.state.selectedPath = path_;
+        }.bind(this));
+
 
         // rx callbacks
         this.fileStoreSubscription = FileStore.files.subscribe(function (data_) {
@@ -102,7 +97,12 @@ var FilesView = React.createClass({
             FileActions.getFiles.source.onNext(data_.path);
 
             // update the breadcrumb
-            var _pathData = {'label': 'Files (' +data_.path +')', 'navigateTo': "files", 'params': {path:data_.path}, 'level': 1};
+            var _pathData = {
+                'label': 'Files (' + data_.path + ')',
+                'navigateTo': "files",
+                'params': {path: data_.path},
+                'level': 1
+            };
             NavigationActions.currentPath.onNext(_pathData);
 
             _this.state.selectedPath = data_.path;
@@ -119,17 +119,17 @@ var FilesView = React.createClass({
         /**
          * Add Folder Modal
          */
-        // listen for the selected dir.
-        this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(data_){
+            // listen for the selected dir.
+        this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
             _this.state.parent = data_;
-            if( _this.isMounted() ) _this.forceUpdate();
+            if (_this.isMounted()) _this.forceUpdate();
         }.bind(this));
 
         // listen for save complete, then hide
-        this.createFolderSubscription = DirectoryActions.createFolder.sink.subscribe(function(data_){
+        this.createFolderSubscription = DirectoryActions.createFolder.sink.subscribe(function (data_) {
             _this.closeAddFolderModal();
-            if( _this.isMounted() ) _this.forceUpdate();
-        }, function(error_){
+            if (_this.isMounted()) _this.forceUpdate();
+        }, function (error_) {
             alert(error_.statusText);
         }.bind(this));
     },
@@ -147,22 +147,32 @@ var FilesView = React.createClass({
     },
 
     componentWillUnmount: function () {
-        if (this.fileStoreSubscription !== undefined) {
+        if (this.getFilesSubscription !== undefined)
+        {
+            this.getFilesSubscription.dispose();
+        }
+        if (this.fileStoreSubscription !== undefined)
+        {
             this.fileStoreSubscription.dispose();
         }
-        if (this.refreshFilesSubscription !== undefined) {
+        if (this.refreshFilesSubscription !== undefined)
+        {
             this.refreshFilesSubscription.dispose();
         }
-        if (this.selectFolderSubscription !== undefined) {
+        if (this.selectFolderSubscription !== undefined)
+        {
             this.selectFolderSubscription.dispose();
         }
-        if (this.selectedFileSubscription !== undefined) {
+        if (this.selectedFileSubscription !== undefined)
+        {
             this.selectedFileSubscription.dispose();
         }
-        if( this.currentFolderSubscription !== undefined ){
+        if (this.currentFolderSubscription !== undefined)
+        {
             this.currentFolderSubscription.dispose();
         }
-        if( this.createFolderSubscription !== undefined ){
+        if (this.createFolderSubscription !== undefined)
+        {
             this.createFolderSubscription.dispose();
         }
 
@@ -179,22 +189,21 @@ var FilesView = React.createClass({
     },
 
 
-    handleAddFolder: function(event_){
+    handleAddFolder: function (event_) {
         this.setState({showAddFolder: true});
     },
 
 
-    closeAddFolderModal: function(event_){
-        this.setState({ showAddFolder: false });
+    closeAddFolderModal: function (event_) {
+        this.setState({showAddFolder: false});
     },
 
 
-    handleCreateFolder: function(event_){
-        var _parent = this.state.parent;
+    handleCreateFolder: function (event_) {
+        var _path = this.state.selectedPath;
         var _name = this.refs.folderName.getDOMNode().value;
-        DirectoryActions.createFolder.source.onNext({'parent': _parent, 'name': _name})
+        DirectoryActions.createFolder.source.onNext({'path': _path, 'name': _name})
     },
-
 
 
     render: function () {
@@ -210,7 +219,6 @@ var FilesView = React.createClass({
             asideClass = "hidden-xs hidden-sm col-md-3 box";
             asideRightClass = "hidden-xs hidden-sm col-md-3";
         }
-
 
 
         var folderRows = this.state.files
@@ -237,9 +245,6 @@ var FilesView = React.createClass({
         sectionStyle['overflow'] = 'scroll';
         sectionStyle['height'] = this.state.height;
 
-
-
-
         return (
 
             <div className="filesView container-fluid">
@@ -248,34 +253,40 @@ var FilesView = React.createClass({
                     <aside className={asideClass} style={asideStyle}>
 
                         <ButtonGroup className="boxRow header">
-                            <LinkContainer to="/dashboard" >
+                            <LinkContainer to="/dashboard">
                                 <Button><Glyphicon glyph='home'/></Button>
                             </LinkContainer>
-                            <LinkContainer to="/" >
+                            <LinkContainer to="/">
                                 <Button><Glyphicon glyph='user'/></Button>
                             </LinkContainer>
-                            <LinkContainer to="/" >
+                            <LinkContainer to="/">
                                 <Button><Glyphicon glyph='search'/></Button>
                             </LinkContainer>
 
 
                             <Dropdown id='dropdown-custom-1'>
                                 <Dropdown.Toggle>
-                                    <Glyphicon glyph='cog' />
+                                    <Glyphicon glyph='cog'/>
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu className='super-colors'>
                                     <MenuItem eventKey="1" to="userManager">User Manager</MenuItem>
                                     <MenuItem eventKey="2" to="login">Logout</MenuItem>
                                 </Dropdown.Menu>
                             </Dropdown>
+
+                            <div className="pull-right">
+                                <Button>
+                                    <Glyphicon glyph="plus"
+                                               className="pull-right"
+                                               style={{'fontSize':'1.9rem'}}
+                                               onClick={this.handleAddFolder}/>
+                                </Button>
+                            </div>
                         </ButtonGroup>
 
                         <div className="boxRow content" style={{'minHeight':'200px'}}>
-                            <SectionTree title="Local Files"
-                                         showAdd={true}
-                                         onAdd={this.handleAddFolder}
-                                         navigateToFiles={true}
-                                         baseDir="/dam:files/"/>
+                            <Tree
+                                baseDir="/dam:files/"/>
 
                         </div>
 
@@ -328,11 +339,10 @@ var FilesView = React.createClass({
                 </div>
 
 
-
-                <Modal  title="Add Folder"
-                        animation={false}
-                        show={this.state.showAddFolder}
-                        onHide={this.closeAddFolderModal}>
+                <Modal title="Add Folder"
+                       animation={false}
+                       show={this.state.showAddFolder}
+                       onHide={this.closeAddFolderModal}>
                     <div className="modal-body">
                         <h4>Create a new sub folder</h4>
                         {this.state.selectedPath} <input type="text" ref="folderName" label="Folder Name"/>
