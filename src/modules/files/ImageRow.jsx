@@ -9,24 +9,22 @@
 var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
-var Navigation = Router.Navigation;
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var ButtonLink = require('react-router-bootstrap').ButtonLink;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 var FileActions = require('../../actions/FileActions');
 var NodeActions = require('../../actions/NodeActions');
 var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 
-var FileRow = React.createClass({
-    mixins : [Navigation],
+module.exports = React.createClass({
+
 
     handleRowClick: function(event, component)
     {
-
         if( $(event.target).attr('type') != "button" )
         {
             $(".active").removeClass("active");
@@ -37,7 +35,7 @@ var FileRow = React.createClass({
         if( $('.device-xs').is(':visible') || $('.device-sm').is(':visible'))
         {
             FileActions.selectFile.onNext(undefined);
-            this.transitionTo("photoDetails", {'id': this.props.file.id});
+            this.history.pushState(null, "photos/" +this.props.file.id +"/details");
         }else{
             FileActions.selectFile.onNext(this.props.file);
             //load the data
@@ -81,12 +79,16 @@ var FileRow = React.createClass({
                             <div className="col-sm-6 col-lg-5 text-right">
                                 { this.props.file.mixins.indexOf("dam:image") > -1 ?
                                     <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                        <ButtonLink to="photoDetails" params={{'id': this.props.file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
-                                            <Glyphicon glyph="eye-open"/> view
-                                        </ButtonLink>
-                                        <ButtonLink to="photoDetails" params={{id: this.props.file.id}}  style={{'padding':'5px 10px', 'margin':0}}>
-                                            <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
-                                        </ButtonLink>
+                                        <LinkContainer to="photoDetails" params={{'id': this.props.file.id}}>
+                                            <Button style={{'padding':'5px 10px', 'margin':0}}>
+                                                <Glyphicon glyph="eye-open"/> view
+                                            </Button>
+                                        </LinkContainer>
+                                        <LinkContainer to="photoDetails" params={{id: this.props.file.id}}>
+                                            <Button style={{'padding':'5px 10px', 'margin':0}}>
+                                                <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
+                                            </Button>
+                                        </LinkContainer>
                                         <Button onClick={this.handleNodeDelete} data-id={this.props.file.id} data-path={this.props.file.path}  style={{'padding':'5px 10px', 'margin':0}}>
                                             <Glyphicon glyph="remove"/> delete
                                         </Button>
@@ -108,5 +110,5 @@ var FileRow = React.createClass({
 
 });
 
-module.exports = FileRow;
+
 

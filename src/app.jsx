@@ -78,7 +78,9 @@ ReactDOM.render(
             <Route path="upload" component={UploadsView}/>
 
 
-            <Route path="photos" component={Home}/>
+            <Route path="photos" component={Home}>
+                <Route path=":id/details" component={Home}/>
+            </Route>
             <Route path="photoDetails" component={Home}/>
             <Route path="userManager" component={Home}/>
         </Route>

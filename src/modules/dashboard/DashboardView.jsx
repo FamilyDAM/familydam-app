@@ -4,6 +4,8 @@
 
 /** jsx React.DOM */
 var React = require('react');
+var Router = require('react-router');
+var History = require('react-router').History;
 var Navbar = require('react-bootstrap').Navbar;
 var Nav = require('react-bootstrap').Nav;
 var NavItem = require('react-bootstrap').NavItem;
@@ -20,7 +22,7 @@ module.exports = React.createClass({
         var _this = this;
 
         AuthActions.loginRedirect.subscribe(function () {
-            this.history.pushState(null, '/', null);
+            this.props.history.pushState(null, '/', null);
         }.bind(this));
 
     },

@@ -9,12 +9,11 @@
 var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
-var Navigation = Router.Navigation;
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var ButtonLink = require('react-router-bootstrap').ButtonLink;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 var FileActions = require('../../actions/FileActions');
 var NodeActions = require('../../actions/NodeActions');
@@ -25,7 +24,6 @@ var ImageRow = require('./ImageRow');
 var MusicRow = require('./MusicRow');
 
 var FileRow = React.createClass({
-    mixins : [Navigation],
 
     handleRowClick: function(event, component)
     {
@@ -41,7 +39,7 @@ var FileRow = React.createClass({
         if( $('.device-xs').is(':visible') || $('.device-sm').is(':visible'))
         {
             FileActions.selectFile.onNext(undefined);
-            this.transitionTo("photoDetails", {'id': this.props.file.id});
+            this.history.pushState(null, "/" +this.props.file.id +"/details", {'id': this.props.file.id});
         }else{
             FileActions.selectFile.onNext(this.props.file);
         }
@@ -68,8 +66,7 @@ var FileRow = React.createClass({
         var _id = $("[data-reactid='" + component + "']").attr("data-id");
         var _location = PreferenceStore.getBaseUrl() +"/api/files/" +_id +"?token=" +UserStore.token.value;
 
-
-        window.open(this.state.location);//, "_blank");
+        window.open(_location);//, "_blank");
     },
 
 
