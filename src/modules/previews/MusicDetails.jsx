@@ -79,7 +79,7 @@ module.exports = React.createClass({
         }
 
         //console.log("{FilesView} componentWillReceiveProps");
-        this.props.file = nextProps.file;
+        this.props = nextProps;
 
         if( this.props.file['jcr:uuid'] == undefined ){
             this.props.file['jcr:uuid'] = this.props.file.id;

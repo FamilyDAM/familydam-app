@@ -105,7 +105,7 @@ module.exports = React.createClass({
             }
 
 
-            _this.props.file = results;
+            _this.state.file = results;
             _this.state.location = _location;
             _this.state.datetaken = _datetaken;
             _this.state.gps = gps;
@@ -127,10 +127,10 @@ module.exports = React.createClass({
         }
 
         //console.log("{FilesView} componentWillReceiveProps");
-        this.props.file = nextProps.file;
+        this.state.file = nextProps.file;
 
         //load the data
-        NodeActions.getNode.source.onNext(this.props.file.id);
+        NodeActions.getNode.source.onNext(this.state.file.id);
 
 
     },
@@ -148,10 +148,11 @@ module.exports = React.createClass({
 
 
     onDelete:function(event_, component){
-        var _id = this.props.file['jcr:uuid'];
-        var _path = this.props.file['jcr:path'];
+        var _id = this.state.file['jcr:uuid'];
+        var _path = this.state.file['jcr:path'];
 
         NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
+        FileActions.refreshFiles.onNext(true);
 
         // close sidebar after delete
         this.onClose(event_);
@@ -168,7 +169,7 @@ module.exports = React.createClass({
 
         var _this = this;
 
-        var previewImage = PreferenceStore.getBaseUrl() + _this.props.file.path + "?token=" + UserStore.token.value + "&rendition=thumbnail.200";
+        var previewImage = PreferenceStore.getBaseUrl() + _this.state.file.path + "?token=" + UserStore.token.value + "&rendition=thumbnail.200";
 
 
         return (
@@ -199,10 +200,10 @@ module.exports = React.createClass({
                 <br/>
 
                 <div><strong>Name:</strong></div>
-                <div>{this.props.file['jcr:name']}</div>
+                <div>{this.state.file['jcr:name']}</div>
 
                 <div><strong>Path:</strong></div>
-                <div>{this.props.file['jcr:path']}</div>
+                <div>{this.state.file['jcr:path']}</div>
 
 
 

@@ -184,11 +184,12 @@ module.exports = {
             }
         }).then(function (data_, status_, xhr_) {
 
-            _this.deleteSink.onNext(data_);
 
             //trigger refresh
             FileActions.refreshFiles.onNext(true);
             DirectoryActions.refreshDirectories.onNext(true);
+
+            _this.deleteSink.onNext(data_);
 
             // update the token in memory (incase expire date changes)
             var _token = xhr_.getResponseHeader("X-Auth-Token");

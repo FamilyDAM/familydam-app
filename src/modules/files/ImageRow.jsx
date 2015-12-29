@@ -21,7 +21,29 @@ var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 
 module.exports = React.createClass({
+    
+    getInitialState:function()
+    {
+        return{
+            file:{},
+            name:''
+        }
+    },
 
+    componentWillMount: function(){
+        this.state.file = this.props.file;
+    },
+
+    componentWillReceiveProps: function (nextProps) {
+        this.props = nextProps;
+        
+        this.state.file = nextProps.file;
+        if (this.isMounted()) this.forceUpdate();
+    },
+
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return true;
+    },
 
     handleRowClick: function(event, component)
     {
@@ -60,42 +82,39 @@ module.exports = React.createClass({
         NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
     },
 
-
-
-
     render:function(){
 
         return  <div className="row" onClick={this.handleRowClick} style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'60px'}}>
                     <div style={{'display': 'table-cell', 'width': '50px'}}>
-                        <Link to="photoDetails" params={{'id': this.props.file.id}}>
-                            <img src={PreferenceStore.getBaseUrl() +this.props.file.path +"?rendition=thumbnail.200&token=" +UserStore.token.value}
+                        <Link to="photoDetails" params={{'id': this.state.file.id}}>
+                            <img src={PreferenceStore.getBaseUrl() +this.state.file.path +"?rendition=thumbnail.200&token=" +UserStore.token.value}
                                  style={{'width':'50px', 'height':'50px'}}/></Link>
                     </div>
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
                             <div className="col-sm-6 col-lg-7" style={{'overflow':'hidden'}}>
-                                <Link to="photoDetails" params={{'id': this.props.file.id}}>{this.props.file.name}</Link>
+                                <Link to="photoDetails" params={{'id': this.state.file.id}}>{this.state.file.name}</Link>
                             </div>
                             <div className="col-sm-6 col-lg-5 text-right">
-                                { this.props.file.mixins.indexOf("dam:image") > -1 ?
+                                { this.state.file.mixins.indexOf("dam:image") > -1 ?
                                     <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                        <LinkContainer to="photoDetails" params={{'id': this.props.file.id}}>
+                                        <LinkContainer to="photoDetails" params={{'id': this.state.file.id}}>
                                             <Button style={{'padding':'5px 10px', 'margin':0}}>
                                                 <Glyphicon glyph="eye-open"/> view
                                             </Button>
                                         </LinkContainer>
-                                        <LinkContainer to="photoDetails" params={{id: this.props.file.id}}>
+                                        <LinkContainer to="photoDetails" params={{id: this.state.file.id}}>
                                             <Button style={{'padding':'5px 10px', 'margin':0}}>
                                                 <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
                                             </Button>
                                         </LinkContainer>
-                                        <Button onClick={this.handleNodeDelete} data-id={this.props.file.id} data-path={this.props.file.path}  style={{'padding':'5px 10px', 'margin':0}}>
+                                        <Button onClick={this.handleNodeDelete} data-id={this.state.file.id} data-path={this.state.file.path}  style={{'padding':'5px 10px', 'margin':0}}>
                                             <Glyphicon glyph="remove"/> delete
                                         </Button>
                                     </ButtonGroup>
                                     :
                                     <ButtonGroup  bsSize="small">
-                                        <Button onClick={this.handleNodeDelete} data-id={this.props.file.id} data-path={this.props.file.path}>
+                                        <Button onClick={this.handleNodeDelete} data-id={this.state.file.id} data-path={this.state.file.path}>
                                             <Glyphicon glyph="remove"/> delete
                                         </Button>
                                     </ButtonGroup>

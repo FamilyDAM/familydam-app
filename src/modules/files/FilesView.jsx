@@ -82,15 +82,16 @@ var FilesView = React.createClass({
         // rx callbacks
         this.fileStoreSubscription = FileStore.files.subscribe(function (data_) {
             _this.state.files = data_;
-            if (_this.isMounted())  _this.forceUpdate();
-        });
+            if (this.isMounted()) this.forceUpdate();
+        }.bind(this));
 
 
         // listen for trigger to reload for files in directory
         this.refreshFilesSubscription = FileActions.refreshFiles.subscribe(function (data_) {
+            var _path = this.state.selectedPath;
             FileActions.getFiles.source.onNext(undefined);
-            FileActions.getFiles.source.onNext(_this.state.selectedPath);
-        });
+            FileActions.getFiles.source.onNext(_path);
+        }.bind(this));
 
         // Refresh the file list when someone changes the directory
         this.selectFolderSubscription = DirectoryActions.selectFolder.subscribe(function (data_) {
@@ -106,14 +107,14 @@ var FilesView = React.createClass({
             NavigationActions.currentPath.onNext(_pathData);
 
             _this.state.selectedPath = data_.path;
-            if (_this.isMounted())  _this.forceUpdate();
-        });
+            if (this.isMounted()) this.forceUpdate();
+        }.bind(this));
 
         // Refresh the file list when someone changes the directory
         this.selectedFileSubscription = FileActions.selectFile.subscribe(function (data_) {
             _this.state.selectedItem = data_;
-            if (_this.isMounted())  _this.forceUpdate();
-        });
+            if (this.isMounted()) this.forceUpdate();
+        }.bind(this));
 
 
         /**
@@ -221,7 +222,7 @@ var FilesView = React.createClass({
         }
 
 
-        var folderRows = this.state.files
+        var _folders = this.state.files
             .filter(function (dir_) {
                 return dir_._class == "com.familydam.core.models.Directory";
             }).map(function (dir_, indx) {
@@ -229,11 +230,11 @@ var FilesView = React.createClass({
             });
 
 
-        var fileRows = this.state.files
+        var _files = this.state.files
             .filter(function (file_) {
                 return file_._class == "com.familydam.core.models.File";
-            }).map(function (file_, indx) {
-                return <FileRow key={indx} file={file_}/>
+            }).map(function (file_, index_) {
+                return <FileRow key={index_} file={file_}/>
             });
 
 
@@ -302,9 +303,13 @@ var FilesView = React.createClass({
 
                             <BackFolder path={this.state.selectedPath}/>
 
-                            {folderRows}
+                            <div>
+                            {_folders}
+                            </div>
 
-                            {fileRows}
+                            <div>
+                            {_files}
+                            </div>
 
                         </div>
 
