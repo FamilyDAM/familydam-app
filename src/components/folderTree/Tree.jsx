@@ -163,6 +163,7 @@ module.exports = React.createClass({
 
         // trigger the file list section
         FileActions.getFiles.source.onNext(node.path);
+        DirectoryActions.selectFolder.onNext({path:node.path});
     },
 
     render(){

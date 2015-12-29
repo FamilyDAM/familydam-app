@@ -32,6 +32,7 @@ var FileUploadControls = React.createClass({
     componentWillMount: function(){
         var _this = this;
 
+
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(d_){
 
             _this.state.uploadPath = d_.path;

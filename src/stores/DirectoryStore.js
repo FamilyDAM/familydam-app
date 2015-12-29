@@ -28,18 +28,14 @@ module.exports = {
     subscribe: function() {
         console.log("{DirectoryStore}.init()");
 
-        DirectoryActions.selectFolder.subscribe( this.setCurrentFolder.bind(this) );
-        DirectoryActions.getDirectories.sink.subscribe( this.setDirectories.bind(this) );
+        DirectoryActions.selectFolder.subscribe( function(data_){
+            this.currentFolder.onNext(data_);
+        }.bind(this) );
+
+        DirectoryActions.getDirectories.sink.subscribe( function(data_){
+            this.directories.onNext(data_);
+        }.bind(this)  );
     },
-
-
-    setCurrentFolder: function(data_){
-        this.currentFolder.onNext(data_);
-    },
-
-    setDirectories: function(data_){
-        this.directories.onNext(data_);
-    }
 
 
 };

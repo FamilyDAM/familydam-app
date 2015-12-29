@@ -94,7 +94,7 @@ var FilesView = React.createClass({
         }.bind(this));
 
         // Refresh the file list when someone changes the directory
-        this.selectFolderSubscription = DirectoryActions.selectFolder.subscribe(function (data_) {
+        this.selectFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
             FileActions.getFiles.source.onNext(data_.path);
 
             // update the breadcrumb

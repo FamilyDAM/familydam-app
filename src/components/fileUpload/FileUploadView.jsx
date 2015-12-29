@@ -45,6 +45,7 @@ var FileUploadView = React.createClass({
         //this.refs.folderInputField.getDOMNode().setAttribute("webkitdirectory", "");
         //this.refs.folderInputField.getDOMNode().setAttribute("directory", "");
     },
+
     componentWillUnmount: function () {
         if( this.addFileSubscription !== undefined ){
             this.addFileSubscription.dispose();
