@@ -33,13 +33,13 @@ var DashboardView = require('./modules/dashboard/DashboardView');
 var Home = require('./modules/home/Home');
 var FilesView = require('./modules/files/FilesView');
 var UploadsView = require('./modules/uploads/UploadsView');
-//var SignupView = require('./modules/signup/SignupView');
-//var PhotosView = require('./modules/photos/PhotosView');
+var PhotosView = require('./modules/photos/PhotosView');
+var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
 //var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
-//var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
 //var UserManagerView = require('./modules/userManager/UserManagerView');
 //var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
 //var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails');
+//var SignupView = require('./modules/signup/SignupView');
 
 /**
 var routes = [
@@ -78,10 +78,11 @@ ReactDOM.render(
             <Route path="upload" component={UploadsView}/>
 
 
-            <Route path="photos" component={Home}>
-                <Route path=":id/details" component={Home}/>
-            </Route>
-            <Route path="photoDetails" component={Home}/>
+            <Route path="photos" component={PhotosView}/>
+            <Route path="photos/:id" component={PhotoDetailView}/>
+            <Route path="photos/:id/edit" component={Home}/>
+
+
             <Route path="userManager" component={Home}/>
         </Route>
     </Router>

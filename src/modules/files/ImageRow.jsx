@@ -98,12 +98,12 @@ module.exports = React.createClass({
                             <div className="col-sm-6 col-lg-5 text-right">
                                 { this.state.file.mixins.indexOf("dam:image") > -1 ?
                                     <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                        <LinkContainer to="photoDetails" params={{'id': this.state.file.id}}>
+                                        <LinkContainer to={'photos/' +this.state.file.id} params={{'id': this.state.file.id}}>
                                             <Button style={{'padding':'5px 10px', 'margin':0}}>
                                                 <Glyphicon glyph="eye-open"/> view
                                             </Button>
                                         </LinkContainer>
-                                        <LinkContainer to="photoDetails" params={{id: this.state.file.id}}>
+                                        <LinkContainer to={'photos/' +this.state.file.id +'/edit'} params={{id: this.state.file.id}}>
                                             <Button style={{'padding':'5px 10px', 'margin':0}}>
                                                 <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
                                             </Button>

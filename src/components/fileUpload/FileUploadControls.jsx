@@ -86,11 +86,12 @@ var FileUploadControls = React.createClass({
         var _this = this;
         //console.dir(event_);
         var _files = event_.currentTarget.files;
-        console.dir(_files);
+        //console.dir(_files);
 
         Rx.Observable.from(_files).forEach(function(item_){
+            debugger;
             item_.uploadPath = _this.state.uploadPath;
-            if( item_.path !== undefined || item_.path != ""){
+            if( item_.path !== undefined && item_.path != ""){
                 item_.uploadPath = _this.state.uploadPath;// +item_.name;
             }
             else if( item_.webkitRelativePath != "" && item_.webkitRelativePath.length > 0)

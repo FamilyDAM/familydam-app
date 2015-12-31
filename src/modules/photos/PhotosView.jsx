@@ -17,11 +17,9 @@ var Button = require('react-bootstrap').Button;
 var ListGroup = require('react-bootstrap').ListGroup;
 var ListGroupItem = require('react-bootstrap').ListGroupItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
-var ButtonLink = require('react-router-bootstrap').ButtonLink;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
 var Dropdown = require('react-bootstrap').Dropdown;
 var DropdownButton = require('react-bootstrap').DropdownButton;
-var NavItemLink = require('react-router-bootstrap').NavItemLink;
-var MenuItemLink = require('react-router-bootstrap').MenuItemLink;
 
 var Modal = require('react-bootstrap').Modal;
 var ModalHeader = require('react-bootstrap').Modal.Header;
@@ -53,8 +51,6 @@ var DateTree = require('./DateTree');
 
 
 module.exports =  React.createClass({
-    mixins: [Navigation],
-
 
     getInitialState: function () {
         return {
@@ -128,6 +124,9 @@ module.exports =  React.createClass({
         ImageActions.addFilter.onNext(data);
     },
 
+    handleLogout:function(event_){
+        //todo, logout and redirect back to /
+    },
 
     render: function () {
 
@@ -163,11 +162,15 @@ module.exports =  React.createClass({
                     <aside className={asideClass} style={asideStyle}>
 
                         <ButtonGroup className="boxRow header">
-                            <ButtonLink to="home" bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></ButtonLink>
-                            <ButtonLink to="userManager" bsSize='medium' bsStyle="link"><Glyphicon
-                                glyph='user'/></ButtonLink>
-                            <ButtonLink to="files" bsSize='medium' bsStyle="link"><Glyphicon
-                                glyph='search'/></ButtonLink>
+                            <LinkContainer to="/dashboard">
+                                <Button bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></Button>
+                            </LinkContainer>
+                            <LinkContainer to="/">
+                                <Button bsSize='medium' bsStyle="link"><Glyphicon glyph='user'/></Button>
+                            </LinkContainer>
+                            <LinkContainer to="/files">
+                                <Button bsSize='medium' bsStyle="link"><Glyphicon glyph='search'/></Button>
+                            </LinkContainer>
 
 
                             <Dropdown id='dropdown-custom-1'>
@@ -175,8 +178,10 @@ module.exports =  React.createClass({
                                     <Glyphicon glyph='cog' />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu className='super-colors'>
-                                    <MenuItemLink eventKey="1" to="userManager">User Manager</MenuItemLink>
-                                    <MenuItemLink eventKey="2" to="login">Logout</MenuItemLink>
+                                    <LinkContainer to="/dashboard">
+                                        <MenuItem eventKey="1">User Manager</MenuItem>
+                                    </LinkContainer>
+                                    <MenuItem eventKey="2" onClick={this.handleLogout}>Logout</MenuItem>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </ButtonGroup>

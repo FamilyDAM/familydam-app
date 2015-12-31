@@ -39,8 +39,6 @@ var NavigationActions = require('./../../actions/NavigationActions');
 
 module.exports = React.createClass({
 
-    mixins: [Router.State, Router.Navigation],
-
     getInitialState: function () {
         return {
             'photo': {}
@@ -69,7 +67,7 @@ module.exports = React.createClass({
             e_.stopImmediatePropagation();
             if( _this.state.prevId )
             {
-                _this.transitionTo('photoDetails', {'id': _this.state.prevId});
+                _this.history.pushState(null, 'photo/' +_this.state.prevId +'/details');
             }
         });
         Keymaster("right", function(e_){
@@ -77,7 +75,7 @@ module.exports = React.createClass({
             e_.stopImmediatePropagation();
             if( _this.state.nextId )
             {
-                _this.transitionTo('photoDetails', {'id': _this.state.nextId});
+                _this.history.pushState(null, 'photo/' +_this.state.nextId +'/details');
             }
         });
     },
@@ -134,7 +132,7 @@ module.exports = React.createClass({
                 && results['dam:metadata']['Exif IFD0']['Date_Time']['description'] != undefined )
             {
                 var datetaken = results['dam:metadata']['Exif IFD0']['Date_Time']['description'];
-            };
+            }
 
 
             var gps = undefined;
@@ -167,7 +165,7 @@ module.exports = React.createClass({
                 'nextId': undefined
             };
 
-            if( _this.isMounted() ) _this.forceUpdate();
+            if( this.isMounted() ) this.forceUpdate();
 
         }.bind(this), function (error) {
             console.dir(error);
@@ -317,7 +315,7 @@ module.exports = React.createClass({
                             <div className="row">
                                 <div className="col-sm-1">
                                     {this.state.prevId?
-                                    <Link to="photoDetails" params={{'id': this.state.prevId}} >
+                                    <Link to={'photo/' +this.state.prevId +'/details'}  >
                                         <Glyphicon glyph="chevron-left" style={{'fontSize':'48px', 'color':'#eee', 'top':'200px'}}/>
                                     </Link>
                                     :''}
@@ -331,7 +329,7 @@ module.exports = React.createClass({
                                 </div>
                                 <div className="col-sm-1">
                                     {this.state.nextId?
-                                    <Link to="photoDetails" params={{'id': this.state.nextId}} >
+                                    <Link to={'photo/' +this.state.nextId +'/details'}  >
                                         <Glyphicon glyph="chevron-right" style={{'fontSize':'48px', 'color':'#eee', 'top':'200px'}}/>
                                     </Link>
                                     :''}

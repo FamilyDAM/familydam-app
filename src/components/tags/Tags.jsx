@@ -28,8 +28,8 @@ var Tags = React.createClass({
 
     componentDidMount: function(){
         var _this = this;
-        $(this.refs.tokenField.getDOMNode()).tokenfield()
-        $(this.refs.tokenField.getDOMNode()).on('tokenfield:createdtoken', function(event_){
+        $(this.refs.tokenField).tokenfield()
+        $(this.refs.tokenField).on('tokenfield:createdtoken', function(event_){
             //console.dir(event_.attrs.value);
 
             if( _this.props.onAdd  != undefined ){
@@ -37,7 +37,7 @@ var Tags = React.createClass({
             }
 
         });
-        $(this.refs.tokenField.getDOMNode()).on('tokenfield:removedtoken', function(event_){
+        $(this.refs.tokenField).on('tokenfield:removedtoken', function(event_){
             //console.dir(event_.attrs.value);
 
             if( _this.props.onRemove != undefined ){
@@ -51,7 +51,7 @@ var Tags = React.createClass({
 
         if( nextProps['tags'] != undefined )
         {
-            $(this.refs.tokenField.getDOMNode()).tokenfield('setTokens', nextProps['tags']);
+            $(this.refs.tokenField).tokenfield('setTokens', nextProps['tags']);
         }
     },
 

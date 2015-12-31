@@ -138,13 +138,16 @@ var FilesView = React.createClass({
 
     componentWillReceiveProps: function (nextProps) {
         //console.log("{FilesView} componentWillReceiveProps");
-        var _path = nextProps.query.path;
+        if( nextProps.query !== undefined && nextProps.query.path !== undefined )
+        {
+            var _path = nextProps.query.path;
 
-        // upload local state, and reset list to prepare for new files
-        this.setState({'path': _path, 'files': []});
+            // upload local state, and reset list to prepare for new files
+            this.setState({'path': _path, 'files': []});
 
-        // load files
-        FileActions.getFiles.source.onNext(_path);
+            // load files
+            FileActions.getFiles.source.onNext(_path);
+        }
     },
 
     componentWillUnmount: function () {
@@ -226,7 +229,7 @@ var FilesView = React.createClass({
             .filter(function (dir_) {
                 return dir_._class == "com.familydam.core.models.Directory";
             }).map(function (dir_, indx) {
-                return <DirectoryRow key={indx} dir={dir_}/>
+                return <DirectoryRow key={dir_.id} dir={dir_}/>
             });
 
 
@@ -234,7 +237,7 @@ var FilesView = React.createClass({
             .filter(function (file_) {
                 return file_._class == "com.familydam.core.models.File";
             }).map(function (file_, index_) {
-                return <FileRow key={index_} file={file_}/>
+                return <FileRow key={file_.id} file={file_}/>
             });
 
 

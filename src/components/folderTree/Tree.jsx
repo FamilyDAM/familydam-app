@@ -31,8 +31,49 @@ var animations = {
     }
 };
 
+var decorators = {
+    Loading: function(props) {
+        return (
+            <div style={props.style}>
+                loading 1234...
+            </div>
+        );
+    },
+    Toggle: function(props) {
+        return (
+            <div style={props.style}>
+                <svg height={props.height} width={props.width}>
+                    <polygon
+                        points={props.points}
+                        style={props.style.arrow}
+                    />
+                </svg>
+            </div>
+        );
+    },
+    Header: function(props) {
+        debugger;
+        return (
+            <div style={props.style}>
+                {props.name}
+            </div>
+        );
+    },
+    Container: function(props) {
+        return (
+            <div onClick={props.onClick}>
+                // Hide Toggle When Terminal Here
+                <props.decorators.Toggle/>
+                <props.decorators.Header/>
+            </div>
+        );
+    }
+};
+
+
 
 var styles = {
+
     tree: {
         base: {
             listStyle: 'none',
@@ -44,6 +85,10 @@ var styles = {
         node: {
             base: {
                 position: 'relative'
+            },
+            arrow:{
+                fill: '#333333',
+                'strokeWidth':'0'
             },
             link: {
                 cursor: 'pointer',
@@ -114,14 +159,20 @@ module.exports = React.createClass({
 
     getInitialState: function () {
         return {
-            treeData: []
+            addNodeRefs: [],
+            treeData: [],
+            selectedPath: "/dam:files/"
         }
     },
 
 
     componentWillMount: function () {
         // trigger a directory reload
-        this.directoryStore = DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+        DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+
+        var getFilesSubscription = FileActions.getFiles.source.subscribe(function (path_) {
+            this.state.selectedPath = path_;
+        }.bind(this));
 
         // listen for trigger to reload for files in directory
         this.refreshDirectoriesSubscription = DirectoryActions.refreshDirectories.subscribe(function (data_) {
@@ -131,7 +182,33 @@ module.exports = React.createClass({
 
         //Listen for directory changes
         this.directoriesSubscription = DirectoryStore.directories.subscribe(function (data_) {
-            this.state.treeData = data_;
+
+            var isChild = false;
+            for (var i = 0; i < this.state.addNodeRefs.length; i++)
+            {
+                var obj = this.state.addNodeRefs[i];
+
+                for (var j = 0; j < data_.length; j++)
+                {
+                    var dataObj = data_[j];
+                    if( obj.path == dataObj.parent){
+                        isChild = true;
+                        obj.children.push(dataObj);
+
+                        this.state.addNodeRefs.push( dataObj );
+
+                    }
+                }
+            }
+
+            if( !isChild && data_.length > 0 )
+            {
+                this.state.treeData = data_;
+                for (var i = 0; i < data_.length; i++)
+                {
+                    this.state.addNodeRefs.push(data_[i]);
+                }
+            }
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
     },
@@ -150,20 +227,31 @@ module.exports = React.createClass({
 
 
     onToggle: function (node, toggled) {
-        if (this.state.cursor)
+
+        if( node.loading !== undefined && node.loading )
         {
-            this.state.cursor.active = false;
-        }
-        node.active = true;
-        if (node.children)
-        {
+            node.active = true;
             node.toggled = toggled;
+            node.loading = false;
+            // load child directories
+            DirectoryActions.getDirectories.source.onNext(node.path);
+        }else{
+            if (this.state.cursor)
+            {
+                this.state.cursor.active = false;
+            }
+            node.active = true;
+            if (node.children)
+            {
+                node.toggled = toggled;
+            }
+            this.setState({cursor: node});
         }
-        this.setState({cursor: node});
 
         // trigger the file list section
         FileActions.getFiles.source.onNext(node.path);
-        DirectoryActions.selectFolder.onNext({path:node.path});
+        DirectoryActions.selectFolder.onNext({path: node.path});
+
     },
 
     render(){
