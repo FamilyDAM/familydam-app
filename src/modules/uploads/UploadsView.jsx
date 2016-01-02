@@ -17,16 +17,18 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var Dropdown = require('react-bootstrap').Dropdown;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
+var FileUploadView = require('./FileUploadView');
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
-var SectionTree = require('../../components/folderTree/SectionTree');
+var Tree = require('../../components/folderTree/Tree');
 var FolderTree = require('../../components/folderTree/FolderTree');
-var FileUploadView = require('../../components/fileUpload/FileUploadView');
 var UploadActions = require('../../actions/UploadActions');
 
 var NavigationActions = require('./../../actions/NavigationActions');
+var FileActions = require('../../actions/FileActions');
+var DirectoryActions = require('../../actions/DirectoryActions');
+var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 
 module.exports = React.createClass({
-
 
     getInitialState: function () {
         return {
@@ -85,10 +87,27 @@ module.exports = React.createClass({
                                         <MenuItem eventKey="2" to="login">Logout</MenuItem>
                                     </Dropdown.Menu>
                                 </Dropdown>
+
+
+                                <div className="pull-right">
+                                    <Button>
+                                        <Glyphicon glyph="plus"
+                                                   className="pull-right"
+                                                   style={{'fontSize':'1.9rem'}}
+                                                   onClick={this.handleAddFolder}/>
+                                    </Button>
+                                </div>
                             </ButtonGroup>
 
                             <div className="boxRow content">
-                                <SectionTree title="Folders" showAddFolder={true} navigateToFiles={true} baseDir="/dam:files/"/>
+                                <SidebarSection label="Files" open={true}>
+                                    <Tree
+                                        baseDir="/dam:files/"
+                                        onSelect={(path_)=>{
+                                            FileActions.getFiles.source.onNext(path_);
+                                            DirectoryActions.selectFolder.onNext({path: path_});
+                                        }}/>
+                                </SidebarSection>
                             </div>
 
                             <div className="boxRow footer">
@@ -104,7 +123,6 @@ module.exports = React.createClass({
                 </div>
             );
         }catch(err){
-            debugger;
             console.log(err);
         }
     }

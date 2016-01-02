@@ -28,12 +28,11 @@ module.exports = {
      */
     execute: function(filters_)
     {
-        debugger;
         if( filters_ !== undefined )
         {
 
             var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/api/photos/search";
+            var _url = PreferenceStore.getBaseUrl() + "/api/search/dam:image";
 
             return $.ajax({
                 'method': "get",
@@ -43,7 +42,6 @@ module.exports = {
                 }
 
             }).then(function (data_, status_, xhr_) {
-                debugger;
                 _this.sink.onNext(data_);
 
                 // update token

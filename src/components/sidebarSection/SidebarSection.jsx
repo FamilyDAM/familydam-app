@@ -11,34 +11,47 @@ module.exports =  React.createClass({
 
     getDefaultProps: function(){
         return {
-            'label':''
+            'label':'',
+            'display':'none'
         };
     },
     
     getInitialState: function(){
         return {
-            'display':'none'
+            open:false
         }
     },
 
+    componentWillMount: function () {
+
+    },
+
+
+    componentWillReceiveProps: function(nextProps_){
+        if( nextProps_.open !== undefined ){
+            this.state.open = nextProps_.open;
+        }
+    },
+
+
     handleToggle : function(){
-        if( this.state.display == "none"){
-            this.setState({'display': 'block'});
+        if( this.props.display == "none"){
+            this.setState({'open': true});
         }else{
-            this.setState({'display': 'none'});
+            this.setState({'open': false});
         }
     },
 
 
     render: function() {
-
+debugger;
         return (
             <div className="sidebarSection">
-                <div className="header" onClick={this.handleToggle}>
+                <div className="header" onClick={this.handleToggle.bind(this)}>
                     <h3>{this.props.label}</h3>
                 </div>
 
-                <div style={{'display': this.state.display}}>{this.props.children}<br/></div>
+                <div style={{'display': this.state.open?"block":"none"}}>{this.props.children}<br/></div>
             </div>
         );
     }

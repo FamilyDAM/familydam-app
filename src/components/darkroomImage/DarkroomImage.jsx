@@ -33,7 +33,6 @@ module.exports = React.createClass({
 
 
     componentDidMount: function(){
-debugger;
         //this.dkrm = new Darkroom(this.refs.targetImage.getDOMNode(), {
         this.dkrm = new Darkroom('#targetImage', {
             // Size options
@@ -57,7 +56,6 @@ debugger;
 
             // Post initialize script
             initialize: function() {
-                debugger;
                 var cropPlugin = this.plugins['crop'];
                 // cropPlugin.selectZone(170, 25, 300, 300);
                 cropPlugin.requireFocus();

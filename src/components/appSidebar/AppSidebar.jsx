@@ -86,7 +86,6 @@ module.exports = React.createClass({
                 </div>
             );
         }catch(err){
-            debugger;
             console.log(err);
         }
     }

@@ -36,7 +36,7 @@ var BackFolder = require("./BackFolder");
 var PreviewSidebar = require("./../previews/PreviewSidebar");
 var Tree = require('../../components/folderTree/Tree');
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
-
+var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 
 var FilesView = React.createClass({
 
@@ -289,9 +289,14 @@ var FilesView = React.createClass({
                         </ButtonGroup>
 
                         <div className="boxRow content" style={{'minHeight':'200px'}}>
-                            <Tree
-                                baseDir="/dam:files/"/>
-
+                            <SidebarSection label="Files" open={true}>
+                                <Tree
+                                    baseDir="/dam:files/"
+                                    onSelect={(path_)=>{
+                                        FileActions.getFiles.source.onNext(path_);
+                                        DirectoryActions.selectFolder.onNext({path: path_});
+                                    }}/>
+                            </SidebarSection>
                         </div>
 
 

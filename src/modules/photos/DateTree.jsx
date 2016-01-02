@@ -6,18 +6,39 @@ var React = require('react');
 var Router = require('react-router');
 var Route = Router.Route;
 
+var ImageActions = require('../../actions/ImageActions');
+var PhotoStore = require('./../../stores/PhotoStore');
+var Tree = require('../../components/folderTree/Tree');
+
 module.exports =  React.createClass({
     mixins: [ Router.Navigation ],
 
     getDefaultProps: function(){
         return {
-            tree: {}
+            tree: []
         };
     },
     
     getInitialState: function(){
         return {}
     },
+
+
+    componentWillMount: function () {
+        ImageActions.dateTree.source.onNext(true);
+
+
+        PhotoStore.dateTree.subscribe(function(data){
+            var root = [];
+            for( var key in data ){
+                root.push(data[key]);
+            }
+
+            this.state.tree = root;
+            if (this.isMounted()) this.forceUpdate();
+        }.bind(this));
+    },
+
 
     selectItem: function(obj, event, id){
         if( this.props.onSelect !== undefined ){
@@ -26,43 +47,20 @@ module.exports =  React.createClass({
         }
     },
 
-    list: function(items_)
-    {
-        var _this = this;
-        if( items_ == undefined ){
-            items_ = this.props.tree;
-        }
-
-        var list = [];
-        Object.keys(items_).sort(function(a, b){
-            if( items_[a].key < items_[b].key ) return -1;
-            else if( items_[a].key > items_[b].key ) return 1;
-            else return 0;
-        }).forEach(function(key){
-            var item = items_[key];
-            var boundClick = this.selectItem.bind(this, item);
-            list.push(
-                <li>
-                    <a onClick={boundClick} key={item.label}>{item.label}</a>
-                    {Object.keys(item.children).length?
-                        <ul>{this.list(item.children)}</ul>
-                    :''}
-                </li>);
-        }.bind(this));
-
-        return list;
-    },
-
 
     render: function() {
-        return (
-            <div className="dateTree">
-                <ul>
-                    {this.list(this.props.tree)}
-                </ul>
-                <br/>   
-            </div>
-        );
+
+        try{
+            return (
+                <div className="dateTree">
+                    <Tree
+                        data={this.state.tree}
+                        onSelect={()=>{}}/>
+                </div>
+            );
+        }catch(err_){
+            console.log(err_);
+        }
     }
 
 });

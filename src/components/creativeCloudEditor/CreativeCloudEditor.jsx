@@ -43,7 +43,6 @@ module.exports = React.createClass({
                 tools: 'all',
                 appendTo: '',
                 onSave: function(imageID, newURL) {
-                    debugger;
                     var img = document.getElementById(this.props.element);
                     img.src = newURL;
                 }.bind(this),
@@ -54,7 +53,7 @@ module.exports = React.createClass({
                     //debugger;
                 },
                 onError(err){
-                    debugger;
+                    //debugger;
                 }
             });
         }.bind(this));

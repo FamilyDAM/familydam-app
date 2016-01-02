@@ -6,6 +6,9 @@ var React = require('react');
 var Router = require('react-router');
 var Route = Router.Route;
 
+var ImageActions = require('../../actions/ImageActions');
+var PhotoStore = require('./../../stores/PhotoStore');
+
 module.exports =  React.createClass({
     mixins: [ Router.Navigation ],
 
@@ -19,6 +22,16 @@ module.exports =  React.createClass({
         return {}
     },
 
+    componentWillMount: function () {
+        ImageActions.peopleList.source.onNext(true);
+
+
+        PhotoStore.people.subscribe(function(data){
+            this.state.people = data;
+            if (this.isMounted()) this.forceUpdate();
+        }.bind(this));
+    },
+
     selectItem: function(obj, event, id){
         if( this.props.onSelect !== undefined ){
             obj.type="people";
@@ -29,19 +42,25 @@ module.exports =  React.createClass({
     render: function() {
 
         var list = [];
-        this.props.people.forEach(function(item){
-            var boundClick = this.selectItem.bind(this, item);
-            list.push(<li key={item.name}><a onClick={boundClick}>{item.name} ({item.count})</a></li>);
-        }.bind(this));
 
-        return (
-            <div className="peopleList">
-                <ul>
-                    {list}
-                </ul>
-                <br/>
-            </div>
-        );
+        try
+        {
+            this.state.people.forEach(function(item){
+                var boundClick = this.selectItem.bind(this, item);
+                list.push(<li key={item.name}><a onClick={boundClick}>{item.name} ({item.count})</a></li>);
+            }.bind(this));
+
+            return (
+                <div className="peopleList">
+                    <ul>
+                        {list}
+                    </ul>
+                    <br/>
+                </div>
+            );
+        }catch(err_){
+            console.log(err_);
+        }
     }
 
 });

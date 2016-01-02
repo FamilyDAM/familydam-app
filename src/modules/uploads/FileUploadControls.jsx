@@ -89,7 +89,6 @@ var FileUploadControls = React.createClass({
         //console.dir(_files);
 
         Rx.Observable.from(_files).forEach(function(item_){
-            debugger;
             item_.uploadPath = _this.state.uploadPath;
             if( item_.path !== undefined && item_.path != ""){
                 item_.uploadPath = _this.state.uploadPath;// +item_.name;
@@ -100,7 +99,7 @@ var FileUploadControls = React.createClass({
             }
             item_.id = UUID.create().toString();
             UploadActions.addFileAction.onNext(item_);
-        })
+        });
 
         //save for later, dir check
         // if( _file.webkitRelativePath.length > 0 && _file.path.endsWith(_file.webkitRelativePath) ) {//is a dir.}

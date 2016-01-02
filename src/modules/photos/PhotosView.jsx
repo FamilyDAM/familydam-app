@@ -7,26 +7,15 @@
 // Used in TodoApp
 var React = require('react');
 var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 
-var Table = require('react-bootstrap').Table;
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 
 var Button = require('react-bootstrap').Button;
-var ListGroup = require('react-bootstrap').ListGroup;
-var ListGroupItem = require('react-bootstrap').ListGroupItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
+var MenuItem = require('react-bootstrap').MenuItem;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 var Dropdown = require('react-bootstrap').Dropdown;
-var DropdownButton = require('react-bootstrap').DropdownButton;
-
-var Modal = require('react-bootstrap').Modal;
-var ModalHeader = require('react-bootstrap').Modal.Header;
-var ModalTitle = require('react-bootstrap').Modal.Title;
-var ModalBody = require('react-bootstrap').Modal.Body;
-var ModalFooter = require('react-bootstrap').Modal.Footer;
-
 
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
@@ -40,9 +29,8 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 var PhotoStore = require('./../../stores/PhotoStore');
 
-
 var PreviewSidebar = require("./../previews/PreviewSidebar");
-var SectionTree = require('../../components/folderTree/SectionTree');
+var Tree = require('../../components/folderTree/Tree');
 var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
 var TagList = require('./TagList');
@@ -55,9 +43,6 @@ module.exports =  React.createClass({
     getInitialState: function () {
         return {
             files: [],
-            tags: [],
-            people: [],
-            dateTree: {},
             selectedItem: undefined,
             state: '100%',
             showAddFolder: false
@@ -67,37 +52,16 @@ module.exports =  React.createClass({
 
     componentWillMount: function () {
         var _this = this;
-        console.log("{PhotosView} componentWillMount");
 
+        console.log("{PhotosView} componentWillMount");
 
         // update the breadcrumb
         var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'params': {}, 'level': 1};
         NavigationActions.currentPath.onNext(_pathData);
 
-        // load lists
-        ImageActions.dateTree.source.onNext(true);
-        ImageActions.tagsList.source.onNext(true);
-        ImageActions.peopleList.source.onNext(true);
-
         // run initial search to populate the view
-        ImageActions.search.source.onNext(PhotoStore.filters.value);
+        //ImageActions.search.source.onNext(PhotoStore.filters.value);
 
-
-        // subscribe to changes
-        PhotoStore.tags.subscribe(function(data){
-            this.state.tags = data;
-            if (_this.isMounted())  _this.forceUpdate();
-        }.bind(this));
-
-        PhotoStore.people.subscribe(function(data){
-            this.state.people = data;
-            if (_this.isMounted())  _this.forceUpdate();
-        }.bind(this));
-
-        PhotoStore.dateTree.subscribe(function(data){
-            this.state.dateTree = data;
-            if (_this.isMounted())  _this.forceUpdate();
-        }.bind(this));
     },
 
 
@@ -107,7 +71,6 @@ module.exports =  React.createClass({
     },
 
     componentWillUnmount: function () {
-
         window.removeEventListener("resize", this.updateDimensions);
     },
 
@@ -152,89 +115,88 @@ module.exports =  React.createClass({
         sectionStyle['height'] = this.state.height;
 
 
+        try
+        {
+            return (
+
+                <div className="filesView container-fluid">
+                    <div className="row">
+
+                        <aside className={asideClass} style={asideStyle}>
+
+                            <ButtonGroup className="boxRow header">
+                                <LinkContainer to="/dashboard">
+                                    <Button><Glyphicon glyph='home'/></Button>
+                                </LinkContainer>
+                                <LinkContainer to="/">
+                                    <Button><Glyphicon glyph='user'/></Button>
+                                </LinkContainer>
+                                <LinkContainer to="/">
+                                    <Button><Glyphicon glyph='search'/></Button>
+                                </LinkContainer>
 
 
-        return (
-
-            <div className="filesView container-fluid">
-                <div className="row">
-
-                    <aside className={asideClass} style={asideStyle}>
-
-                        <ButtonGroup className="boxRow header">
-                            <LinkContainer to="/dashboard">
-                                <Button bsSize='medium' bsStyle="link"><Glyphicon glyph='home'/></Button>
-                            </LinkContainer>
-                            <LinkContainer to="/">
-                                <Button bsSize='medium' bsStyle="link"><Glyphicon glyph='user'/></Button>
-                            </LinkContainer>
-                            <LinkContainer to="/files">
-                                <Button bsSize='medium' bsStyle="link"><Glyphicon glyph='search'/></Button>
-                            </LinkContainer>
+                                <Dropdown id='dropdown-custom-1'>
+                                    <Dropdown.Toggle>
+                                        <Glyphicon glyph='cog'/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu className='super-colors'>
+                                        <MenuItem eventKey="1" to="userManager">User Manager</MenuItem>
+                                        <MenuItem eventKey="2" to="login">Logout</MenuItem>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </ButtonGroup>
 
 
-                            <Dropdown id='dropdown-custom-1'>
-                                <Dropdown.Toggle>
-                                    <Glyphicon glyph='cog' />
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu className='super-colors'>
-                                    <LinkContainer to="/dashboard">
-                                        <MenuItem eventKey="1">User Manager</MenuItem>
-                                    </LinkContainer>
-                                    <MenuItem eventKey="2" onClick={this.handleLogout}>Logout</MenuItem>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </ButtonGroup>
 
-                        <div className="boxRow content" style={{'minHeight':'200px'}}>
-                            <SidebarSection label="Files">
-                                <DateTree
-                                    onSelect={this.addFilter}
-                                    tree={this.state.dateTree}/>
-                            </SidebarSection>
-                            <SidebarSection label="Dates">
-                                <DateTree
-                                    onSelect={this.addFilter}
-                                    tree={this.state.dateTree}/>
-                            </SidebarSection>
-                            <SidebarSection label="People">
-                                <PeopleList
-                                    onSelect={this.addFilter}
-                                    people={this.state.people}/>
-                            </SidebarSection>
-                            <SidebarSection label="Tags">
-                                <TagList
-                                    onSelect={this.addFilter}
-                                    tags={this.state.tags}/>
-                            </SidebarSection>
+                            <div className="boxRow content" style={{'minHeight':'200px'}}>
+                                <SidebarSection label="Filter by folder" open={true}>
+                                    <Tree
+                                        baseDir="/dam:files/"/>
+                                </SidebarSection>
+                                <br/>
+                                <SidebarSection label="Filter by date" open={true}>
+                                    <DateTree
+                                        onSelect={this.addFilter}/>
+                                </SidebarSection>
+                                <br/>
+                                <SidebarSection label="Filter by people" open={true}>
+                                    <PeopleList
+                                        onSelect={this.addFilter}/>
+                                </SidebarSection>
+                                <br/>
+                                <SidebarSection label="Filter by tag" open={true}>
+                                    <TagList
+                                        onSelect={this.addFilter}/>
+                                </SidebarSection>
 
-                        </div>
+                            </div>
 
 
-                        <div className=" boxRow footer">
-                            <AppSidebar />
-                        </div>
+                            <div className=" boxRow footer">
+                                <AppSidebar />
+                            </div>
 
-                    </aside>
+                        </aside>
 
-                    <section className={tableClass} style={sectionStyle}>
-                        <div className="container-fluid fileRows">
-
-
-                        </div>
-                    </section>
-
-                    <aside className={asideRightClass}>
-                        <PreviewSidebar file={this.state.selectedItem}/>
-                    </aside>
-                </div>
+                        <section className={tableClass} style={sectionStyle}>
+                            <div className="container-fluid fileRows">
 
 
-                <div id="fab-button-group">
-                    <div className="fab  show-on-hover dropup">
-                        <div data-toggle="tooltip" data-placement="left" title="Compose">
-                            <button type="button" className="btn btn-material-lightblue btn-io dropdown-toggle"
-                                    data-toggle="dropdown">
+                            </div>
+                        </section>
+
+                        <aside className={asideRightClass}>
+                            <PreviewSidebar file={this.state.selectedItem}/>
+                        </aside>
+                    </div>
+
+
+                    <div id="fab-button-group">
+                        <div className="fab  show-on-hover dropup">
+                            <div data-toggle="tooltip" data-placement="left" title="Compose">
+                                <button type="button" className="btn btn-material-lightblue btn-io dropdown-toggle"
+                                        data-toggle="dropdown">
                                     <span className="fa-stack fa-2x">
                                         <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
                                         <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
@@ -245,18 +207,21 @@ module.exports =  React.createClass({
                                         </Link>
 
                                     </span>
-                            </button>
+                                </button>
+                            </div>
+                            <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                            </ul>
                         </div>
-                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
-                        </ul>
                     </div>
+
+                    <br/>
                 </div>
-
-                <br/>
-            </div>
-
-
-        );
+            );
+        }catch(err_){
+            debugger;
+            console.log(err_);
+            return(<div>{err_}</div>);
+        }
     }
 
 });

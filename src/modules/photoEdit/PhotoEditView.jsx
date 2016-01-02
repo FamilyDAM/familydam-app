@@ -31,7 +31,6 @@ var PhotoEditView = React.createClass({
         eventer(messageEvent, function(e) {
             // always check if the origin is the Picozu domain, https included.
             if (e.origin === 'https://www.picozu.com') {
-                debugger;
                 // e.data contains the image properties, and you can construct the URL as following:
                 console.log('https://www.picozu.com/v/' + e.data.dir + e.data.code + '.' + e.data.format);
             }

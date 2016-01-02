@@ -52,7 +52,6 @@ var decorators = {
         );
     },
     Header: function(props) {
-        debugger;
         return (
             <div style={props.style}>
                 {props.name}
@@ -168,6 +167,38 @@ module.exports = React.createClass({
 
     componentWillMount: function () {
         // trigger a directory reload
+        if( this.props.baseDir !== undefined )
+        {
+            this.loadDirectoryTree();
+        }
+
+
+        if( this.props.data !== undefined ){
+            this.state.treeData = this.props.data;
+        }
+    },
+
+
+    componentWillUnmount: function () {
+        if (this.refreshDirectoriesSubscription !== undefined)
+        {
+            this.refreshDirectoriesSubscription.dispose();
+        }
+        if (this.directoriesSubscription !== undefined)
+        {
+            this.directoriesSubscription.dispose();
+        }
+    },
+
+
+    componentWillReceiveProps: function(nextProps_){
+        if( nextProps_.data !== undefined ){
+            this.state.treeData = nextProps_.data;
+        }
+    },
+
+
+    loadDirectoryTree: function(){
         DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
 
         var getFilesSubscription = FileActions.getFiles.source.subscribe(function (path_) {
@@ -191,17 +222,18 @@ module.exports = React.createClass({
                 for (var j = 0; j < data_.length; j++)
                 {
                     var dataObj = data_[j];
-                    if( obj.path == dataObj.parent){
+                    if (obj.path == dataObj.parent)
+                    {
                         isChild = true;
                         obj.children.push(dataObj);
 
-                        this.state.addNodeRefs.push( dataObj );
+                        this.state.addNodeRefs.push(dataObj);
 
                     }
                 }
             }
 
-            if( !isChild && data_.length > 0 )
+            if (!isChild && data_.length > 0)
             {
                 this.state.treeData = data_;
                 for (var i = 0; i < data_.length; i++)
@@ -214,18 +246,6 @@ module.exports = React.createClass({
     },
 
 
-    componentWillUnmount: function () {
-        if (this.refreshDirectoriesSubscription !== undefined)
-        {
-            this.refreshDirectoriesSubscription.dispose();
-        }
-        if (this.directoriesSubscription !== undefined)
-        {
-            this.directoriesSubscription.dispose();
-        }
-    },
-
-
     onToggle: function (node, toggled) {
 
         if( node.loading !== undefined && node.loading )
@@ -234,8 +254,12 @@ module.exports = React.createClass({
             node.toggled = toggled;
             node.loading = false;
             // load child directories
-            DirectoryActions.getDirectories.source.onNext(node.path);
+            if( this.props.baseDir !== undefined )
+            {
+                DirectoryActions.getDirectories.source.onNext(node.path);
+            }
         }else{
+
             if (this.state.cursor)
             {
                 this.state.cursor.active = false;
@@ -249,12 +273,25 @@ module.exports = React.createClass({
         }
 
         // trigger the file list section
-        FileActions.getFiles.source.onNext(node.path);
-        DirectoryActions.selectFolder.onNext({path: node.path});
+        if( this.props.onSelect !== undefined )
+        {
+            this.props.onSelect(node.path);
+        }
 
     },
 
     render(){
+
+        if( this.state.cursor !== undefined && this.state.cursor.children !== undefined && !(this.state.cursor.children instanceof Array) ){
+            var children = [];
+            for(var key in this.state.cursor.children )
+            {
+                children.push(this.state.cursor.children[key]);
+            }
+            this.state.cursor.children = children;
+        }
+
+
         return (
             <div>
                <Treebeard
