@@ -1,17 +1,16 @@
-
 @font-face
 {
   font-family: 'Glyphicons Halflings';
   src:         url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.eot');
   src:         url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.woff') format('woff'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.ttf') format('truetype'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
 }
+
 @import "./bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/variables"; //set for defaults
 @import "./bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap-sprockets";
 @import "./bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
 @import "./../node_modules/darkroom/lib/css/darkroom";
 @import "./_colors"; //override bootstrap themes
 @import "./_theme"; //override bootstrap themes
-
 
 /***************************************
  * Defaults
@@ -25,6 +24,7 @@ html, body
 
 body
 {
+  background-color:  #f8f7f7;
   font-family:       $font-family-base;
   -webkit-transform: translateZ(0);
   transform:         translateZ(0);
@@ -37,10 +37,8 @@ body
 }
 
 
-
-
 @import "modules/login/login";
-@import "modules/signup/signup";
+@import "modules/home/home";
 @import "modules/dashboard/dashboard";
 @import "modules/files/files";
 @import "modules/photos/photos";
@@ -55,7 +53,6 @@ body
 @import "components/exifData/exifData";
 @import "components/exifMap/exifMap";
 @import "components/sidebarSection/sidebarSection";
-
 
 /**
 // features

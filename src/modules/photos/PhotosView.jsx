@@ -33,6 +33,7 @@ var PreviewSidebar = require("./../previews/PreviewSidebar");
 var Tree = require('../../components/folderTree/Tree');
 var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
+var Fab = require('../../components/fab/UploadFab');
 var TagList = require('./TagList');
 var PeopleList = require('./PeopleList');
 var DateTree = require('./DateTree');
@@ -94,14 +95,14 @@ module.exports =  React.createClass({
     render: function () {
 
         var _this = this;
-        var tableClass = "col-xs-8 col-sm-9 col-md-9";
-        var asideClass = "col-xs-4 col-sm-3 col-md-3 box";
+        var tableClass = "main-content col-xs-8 col-sm-9 col-md-9";
+        var asideClass = "body-sidebar col-xs-4 col-sm-3 col-md-3 box";
         var asideRightClass = "hidden col-xs-4 col-sm-3 col-md-3";
 
         if (this.state.selectedItem !== undefined && this.state.selectedItem !== null)
         {
-            tableClass = "col-xs-8 col-sm-9 col-md-6";
-            asideClass = "hidden-xs hidden-sm col-md-3 box";
+            tableClass = "main-content col-xs-8 col-sm-9 col-md-6";
+            asideClass = "body-sidebar hidden-xs hidden-sm col-md-3 box";
             asideRightClass = "hidden-xs hidden-sm col-md-3";
         }
 
@@ -110,7 +111,6 @@ module.exports =  React.createClass({
         asideStyle['height'] = this.state.height;
 
         var sectionStyle = {};
-        sectionStyle['borderLeft'] = '1px solid #cccccc';
         sectionStyle['overflow'] = 'scroll';
         sectionStyle['height'] = this.state.height;
 
@@ -124,32 +124,7 @@ module.exports =  React.createClass({
 
                         <aside className={asideClass} style={asideStyle}>
 
-                            <ButtonGroup className="boxRow header">
-                                <LinkContainer to="/dashboard">
-                                    <Button><Glyphicon glyph='home'/></Button>
-                                </LinkContainer>
-                                <LinkContainer to="/">
-                                    <Button><Glyphicon glyph='user'/></Button>
-                                </LinkContainer>
-                                <LinkContainer to="/">
-                                    <Button><Glyphicon glyph='search'/></Button>
-                                </LinkContainer>
-
-
-                                <Dropdown id='dropdown-custom-1'>
-                                    <Dropdown.Toggle>
-                                        <Glyphicon glyph='cog'/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu className='super-colors'>
-                                        <MenuItem eventKey="1" to="userManager">User Manager</MenuItem>
-                                        <MenuItem eventKey="2" to="login">Logout</MenuItem>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </ButtonGroup>
-
-
-
-                            <div className="boxRow content" style={{'minHeight':'200px'}}>
+                            <div className="main-content content" style={{'minHeight':'200px'}}>
                                 <SidebarSection label="Filter by folder" open={true}>
                                     <Tree
                                         baseDir="/dam:files/"/>
@@ -192,27 +167,7 @@ module.exports =  React.createClass({
                     </div>
 
 
-                    <div id="fab-button-group">
-                        <div className="fab  show-on-hover dropup">
-                            <div data-toggle="tooltip" data-placement="left" title="Compose">
-                                <button type="button" className="btn btn-material-lightblue btn-io dropdown-toggle"
-                                        data-toggle="dropdown">
-                                    <span className="fa-stack fa-2x">
-                                        <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
-                                        <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
-                                        <Link to="upload" style={{'color':'#fff'}}>
-                                            <Glyphicon glyph="plus"
-                                                       className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
-                                                       style={{'fontSize': '24px'}}></Glyphicon>
-                                        </Link>
-
-                                    </span>
-                                </button>
-                            </div>
-                            <ul className="dropdown-menu dropdown-menu-right" role="menu">
-                            </ul>
-                        </div>
-                    </div>
+                    <Fab glyph="plus" linkTo="upload"/>
 
                     <br/>
                 </div>

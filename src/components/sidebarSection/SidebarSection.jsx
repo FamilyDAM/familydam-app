@@ -6,12 +6,16 @@ var React = require('react');
 var Router = require('react-router');
 var Route = Router.Route;
 
+var Button = require('react-bootstrap').Button;
+var Glyphicon = require('react-bootstrap').Glyphicon;
+
 module.exports =  React.createClass({
     mixins: [ Router.Navigation ],
 
     getDefaultProps: function(){
         return {
             'label':'',
+            showAddFolder: false,
             'display':'none'
         };
     },
@@ -44,11 +48,20 @@ module.exports =  React.createClass({
 
 
     render: function() {
-debugger;
+
         return (
             <div className="sidebarSection">
                 <div className="header" onClick={this.handleToggle.bind(this)}>
-                    <h3>{this.props.label}</h3>
+                    <h3 className="pull-left">{this.props.label}</h3>
+
+                    <span className="pull-right">
+                        <Button style={{'padding':'5px'}}>
+                            <Glyphicon glyph="plus"
+                                       className="pull-right"
+                                       style={{'fontSize':'1.9rem'}}
+                                       onClick={this.props.onAddFolder}/>
+                        </Button>
+                    </span>
                 </div>
 
                 <div style={{'display': this.state.open?"block":"none"}}>{this.props.children}<br/></div>

@@ -39,48 +39,20 @@ module.exports = React.createClass({
 
 
         return (
-            <div className="container-fluid">
+            <div className="homesView container-fluid">
                 <div className="row">
-                    <aside className={asideClass} style={asideStyle}>
+                    <aside className="body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2" style={{'marginLeft':'-10px'}}>
 
-                        <ButtonGroup className="boxRow header">
-
-                            <LinkContainer to="/dashboard" >
-                                <Button><Glyphicon glyph='home'/></Button>
-                            </LinkContainer>
-                            <LinkContainer to="/" >
-                                <Button><Glyphicon glyph='user'/></Button>
-                            </LinkContainer>
-                            <LinkContainer to="/" >
-                                <Button><Glyphicon glyph='search'/></Button>
-                            </LinkContainer>
-
-
-                            <Dropdown id='dropdown-custom-1'>
-                                <Dropdown.Toggle>
-                                    <Glyphicon glyph='cog'/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu className='super-colors'>
-                                    <LinkContainer to="/" >
-                                        <MenuItem eventKey="1" to="/">User Manager</MenuItem>
-                                    </LinkContainer>
-                                    <LinkContainer to="/" >
-                                        <MenuItem eventKey="2" to="/">Logout</MenuItem>
-                                    </LinkContainer>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </ButtonGroup>
-
-                        <div className="boxRow content" style={{'minHeight':'200px'}}>
+                        <div style={{'minHeight':'200px', 'height':'100vh'}}>
                             <SectionTree title="Apps"/>
                             <AppSidebar style="list"/>
                         </div>
 
-
                     </aside>
 
-                    <div className="col-xs-9">
-                        {this.props.children}
+                    <div className="card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10">
+                        <br/><br/><br/><br/><br/>
+                        <h3 className="text-center">Select an App to start</h3>
                     </div>
                 </div>
             </div>

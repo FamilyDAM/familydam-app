@@ -37,8 +37,9 @@ var PreviewSidebar = require("./../previews/PreviewSidebar");
 var Tree = require('../../components/folderTree/Tree');
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
 var SidebarSection = require('../../components/sidebarSection/SidebarSection');
+var Fab = require('../../components/fab/UploadFab');
 
-var FilesView = React.createClass({
+module.exports = React.createClass({
 
     getInitialState: function () {
         return {
@@ -213,16 +214,23 @@ var FilesView = React.createClass({
     render: function () {
 
         var _this = this;
-        var tableClass = "col-xs-8 col-sm-9 col-md-9";
-        var asideClass = "col-xs-4 col-sm-3 col-md-3 box";
-        var asideRightClass = "hidden col-xs-4 col-sm-3 col-md-3";
+        var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
+        var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
+        var asideRightClass = "card hidden col-xs-4 col-sm-3 col-md-3";
 
         if (this.state.selectedItem !== undefined && this.state.selectedItem !== null)
         {
-            tableClass = "col-xs-8 col-sm-9 col-md-6";
-            asideClass = "hidden-xs hidden-sm col-md-3 box";
-            asideRightClass = "hidden-xs hidden-sm col-md-3";
+            tableClass = "card main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
+            asideClass = "box body-sidebar hidden-xs hidden-sm col-md-3 col-lg-2";
+            asideRightClass = "card hidden-xs hidden-sm col-md-3 col-lg-3";
         }
+
+        var asideStyle = {};
+        asideStyle['height'] = this.state.height;
+
+        var sectionStyle = {};
+        //sectionStyle['overflow'] = 'scroll';
+        //sectionStyle['height'] = this.state.height;
 
 
         var _folders = this.state.files
@@ -241,13 +249,6 @@ var FilesView = React.createClass({
             });
 
 
-        var asideStyle = {};
-        asideStyle['height'] = this.state.height;
-
-        var sectionStyle = {};
-        sectionStyle['borderLeft'] = '1px solid #cccccc';
-        sectionStyle['overflow'] = 'scroll';
-        sectionStyle['height'] = this.state.height;
 
         return (
 
@@ -255,41 +256,8 @@ var FilesView = React.createClass({
                 <div className="row">
 
                     <aside className={asideClass} style={asideStyle}>
-
-                        <ButtonGroup className="boxRow header">
-                            <LinkContainer to="/dashboard">
-                                <Button><Glyphicon glyph='home'/></Button>
-                            </LinkContainer>
-                            <LinkContainer to="/">
-                                <Button><Glyphicon glyph='user'/></Button>
-                            </LinkContainer>
-                            <LinkContainer to="/">
-                                <Button><Glyphicon glyph='search'/></Button>
-                            </LinkContainer>
-
-
-                            <Dropdown id='dropdown-custom-1'>
-                                <Dropdown.Toggle>
-                                    <Glyphicon glyph='cog'/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu className='super-colors'>
-                                    <MenuItem eventKey="1" to="userManager">User Manager</MenuItem>
-                                    <MenuItem eventKey="2" to="login">Logout</MenuItem>
-                                </Dropdown.Menu>
-                            </Dropdown>
-
-                            <div className="pull-right">
-                                <Button>
-                                    <Glyphicon glyph="plus"
-                                               className="pull-right"
-                                               style={{'fontSize':'1.9rem'}}
-                                               onClick={this.handleAddFolder}/>
-                                </Button>
-                            </div>
-                        </ButtonGroup>
-
                         <div className="boxRow content" style={{'minHeight':'200px'}}>
-                            <SidebarSection label="Files" open={true}>
+                            <SidebarSection label="Files" open={true} showAddFolder={true} onAddFolder={this.handleAddFolder}>
                                 <Tree
                                     baseDir="/dam:files/"
                                     onSelect={(path_)=>{
@@ -323,33 +291,13 @@ var FilesView = React.createClass({
 
                     </section>
 
-                    <aside className={asideRightClass}>
+                    <aside className={asideRightClass} style={{'marginTop':'-25px'}}>
                         <PreviewSidebar file={this.state.selectedItem}/>
                     </aside>
                 </div>
 
 
-                <div id="fab-button-group">
-                    <div className="fab  show-on-hover dropup">
-                        <div data-toggle="tooltip" data-placement="left" title="Compose">
-                            <button type="button" className="btn btn-material-lightblue btn-io dropdown-toggle"
-                                    data-toggle="dropdown">
-                                    <span className="fa-stack fa-2x">
-                                        <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
-                                        <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
-                                        <Link to="upload" style={{'color':'#fff'}}>
-                                            <Glyphicon glyph="plus"
-                                                       className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
-                                                       style={{'fontSize': '24px'}}></Glyphicon>
-                                        </Link>
-
-                                    </span>
-                            </button>
-                        </div>
-                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
-                        </ul>
-                    </div>
-                </div>
+                <Fab glyph="plus" linkTo="upload"/>
 
 
                 <Modal title="Add Folder"
@@ -375,6 +323,5 @@ var FilesView = React.createClass({
 
 });
 
-module.exports = FilesView;
 
 

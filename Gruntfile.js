@@ -57,7 +57,7 @@ module.exports = function(grunt) {
             },
             css: {
                 files: ['<%= options.app %>/**/*.css'],
-                tasks: ['copy:dashboard'],
+                tasks: ['compass:dashboard', 'copy:dashboard'],
                 options: {
                     livereload: true
                 }
