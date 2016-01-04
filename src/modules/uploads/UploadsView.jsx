@@ -32,7 +32,8 @@ module.exports = React.createClass({
 
     getInitialState: function () {
         return {
-            state: '100%'
+            state: '100%',
+            showAddFolder:false
         };
     },
 
@@ -54,69 +55,47 @@ module.exports = React.createClass({
     },
 
 
+    handleAddFolder: function (event_) {
+        this.setState({showAddFolder: true});
+    },
+
+
     render: function() {
+
+        var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
+        var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
 
         var asideStyle = {};
         asideStyle['height'] = this.state.height;
 
+        var sectionStyle = {};
 
         try
         {
             return (
-                <div className="container-fluid">
+                <div className="uploadView container-fluid">
                     <div className="row">
-                        <aside className="col-xs-4 col-sm-3 box" style={asideStyle}>
-                            <ButtonGroup className="boxRow header">
-                                <LinkContainer to="/dashboard">
-                                    <Button><Glyphicon glyph='home'/></Button>
-                                </LinkContainer>
-                                <LinkContainer to="/">
-                                    <Button><Glyphicon glyph='user'/></Button>
-                                </LinkContainer>
-                                <LinkContainer to="/">
-                                    <Button><Glyphicon glyph='search'/></Button>
-                                </LinkContainer>
 
-
-                                <Dropdown id='dropdown-custom-1'>
-                                    <Dropdown.Toggle>
-                                        <Glyphicon glyph='cog'/>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu className='super-colors'>
-                                        <MenuItem eventKey="1" to="userManager">User Manager</MenuItem>
-                                        <MenuItem eventKey="2" to="login">Logout</MenuItem>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-
-
-                                <div className="pull-right">
-                                    <Button>
-                                        <Glyphicon glyph="plus"
-                                                   className="pull-right"
-                                                   style={{'fontSize':'1.9rem'}}
-                                                   onClick={this.handleAddFolder}/>
-                                    </Button>
-                                </div>
-                            </ButtonGroup>
-
-                            <div className="boxRow content">
-                                <SidebarSection label="Files" open={true}>
+                        <aside className={asideClass} style={asideStyle}>
+                            <div className="boxRow content" style={{'minHeight':'200px'}}>
+                                <SidebarSection label="Files" open={true} showAddFolder={true} onAddFolder={this.handleAddFolder}>
                                     <Tree
                                         baseDir="/dam:files/"
                                         onSelect={(path_)=>{
-                                            FileActions.getFiles.source.onNext(path_);
-                                            DirectoryActions.selectFolder.onNext({path: path_});
-                                        }}/>
+                                        FileActions.getFiles.source.onNext(path_);
+                                        DirectoryActions.selectFolder.onNext({path: path_});
+                                    }}/>
                                 </SidebarSection>
                             </div>
 
-                            <div className="boxRow footer">
+
+                            <div className=" boxRow footer">
                                 <AppSidebar />
                             </div>
                         </aside>
 
 
-                        <section className="col-sm-9" style={{'borderLeft':'1px solid #eee'}}>
+                        <section className={tableClass} style={sectionStyle}>
                             <FileUploadView />
                         </section>
                     </div>

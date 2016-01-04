@@ -80,7 +80,7 @@ module.exports = React.createClass({
                                         <Glyphicon glyph='search'/>
                                     </LinkContainer>
 
-                                    <Dropdown pullRight >
+                                    <Dropdown id="settings" pullRight >
                                         <Dropdown.Toggle style={{'padding':'10px'}}>
                                             <Glyphicon glyph='cog'/>
                                         </Dropdown.Toggle>

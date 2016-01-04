@@ -51,7 +51,7 @@ module.exports =  React.createClass({
 
         return (
             <div className="sidebarSection">
-                <div className="header" onClick={this.handleToggle.bind(this)}>
+                <div className="header" onClick={this.handleToggle}>
                     <h3 className="pull-left">{this.props.label}</h3>
 
                     <span className="pull-right">

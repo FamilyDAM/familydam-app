@@ -119,7 +119,7 @@ var FileUploadControls = React.createClass({
      * Use jquery to click a handle file input field
      */
     clickFileInputField:function(){
-        $(this.refs.fileInputField.getDOMNode()).click();
+        $(this.refs.fileInputField).click();
     },
 
 
@@ -127,8 +127,8 @@ var FileUploadControls = React.createClass({
      * Use jquery to click a hiddle file input field
      */
     clickFolderInputField:function(){
-        $(this.refs.folderInputField.getDOMNode()).attr("webkitdirectory", "webkitdirectory");
-        $(this.refs.folderInputField.getDOMNode()).click();
+        $(this.refs.folderInputField).attr("webkitdirectory", "webkitdirectory");
+        $(this.refs.folderInputField).click();
     },
 
 
@@ -154,9 +154,8 @@ var FileUploadControls = React.createClass({
 
                 <div className="row">
                     <div className="col-sm-12">
+                        <h3>Add files to your FamilyD.A.M.</h3>
                         <p>
-                            <h3>Add files to your FamilyD.A.M.</h3>
-
                             <span>Add File to: <strong style={{'fontSize':'2rem'}}>{this.state.uploadPath}</strong></span>
                         </p>
                     </div>
