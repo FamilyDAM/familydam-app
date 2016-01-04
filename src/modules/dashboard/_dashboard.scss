@@ -40,6 +40,10 @@
     .title{
       height: 50px;
       font-weight: 400;
+
+      a {
+        color: #777
+      }
     }
 
     .title-link{
@@ -47,6 +51,10 @@
       font-weight: 200;
       font-size: 18px;
       font-size: 1.8rem;
+
+      a {
+        color: #777
+      }
     }
 
   }
@@ -57,7 +65,7 @@
     border-color:     #e7e7e7;
     border-bottom:    1px solid rgba(0, 0, 0, 0.1);
     background-color: #F8F7F7;
-    height:35px;
+    height:40px;
     padding: 0px;
     .btn {
       margin: 0px;
@@ -67,7 +75,7 @@
 
   .main-content{
     height:100vh;
-    margin-top: -30px;
+    margin-top: -25px;
     padding-left:15px;
     padding-right:15px;
     background-color: #F8F7F7;

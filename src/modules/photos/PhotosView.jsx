@@ -95,36 +95,35 @@ module.exports =  React.createClass({
     render: function () {
 
         var _this = this;
-        var tableClass = "main-content col-xs-8 col-sm-9 col-md-9";
-        var asideClass = "body-sidebar col-xs-4 col-sm-3 col-md-3 box";
-        var asideRightClass = "hidden col-xs-4 col-sm-3 col-md-3";
+        var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
+        var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
+        var asideRightClass = "card hidden col-xs-4 col-sm-3 col-md-3";
 
         if (this.state.selectedItem !== undefined && this.state.selectedItem !== null)
         {
-            tableClass = "main-content col-xs-8 col-sm-9 col-md-6";
-            asideClass = "body-sidebar hidden-xs hidden-sm col-md-3 box";
-            asideRightClass = "hidden-xs hidden-sm col-md-3";
+            tableClass = "card main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
+            asideClass = "box body-sidebar hidden-xs hidden-sm col-md-3 col-lg-2";
+            asideRightClass = "card hidden-xs hidden-sm col-md-3 col-lg-3";
         }
-
 
         var asideStyle = {};
         asideStyle['height'] = this.state.height;
 
         var sectionStyle = {};
-        sectionStyle['overflow'] = 'scroll';
-        sectionStyle['height'] = this.state.height;
+        //sectionStyle['overflow'] = 'scroll';
+        //sectionStyle['height'] = this.state.height;
 
 
         try
         {
             return (
 
-                <div className="filesView container-fluid">
+                <div className="photosView container-fluid">
                     <div className="row">
 
                         <aside className={asideClass} style={asideStyle}>
 
-                            <div className="main-content content" style={{'minHeight':'200px'}}>
+                            <div className="boxRow content" style={{'minHeight':'200px'}}>
                                 <SidebarSection label="Filter by folder" open={true}>
                                     <Tree
                                         baseDir="/dam:files/"/>

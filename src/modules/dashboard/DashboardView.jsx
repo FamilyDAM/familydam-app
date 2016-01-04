@@ -63,10 +63,7 @@ module.exports = React.createClass({
                         <section className="col-xs-8 col-sm-9 col-md-9 col-lg-10">
                             <div className="header-body row">
                                 <div className="pull-left title">
-                                    <LinkContainer to="/dashboard">
-                                        <Glyphicon glyph='home'/>
-                                    </LinkContainer>
-                                    &nbsp;&nbsp;Home
+                                    <Breadcrumb/>
                                 </div>
 
                                 <div className="pull-right title-link">
@@ -77,7 +74,7 @@ module.exports = React.createClass({
 
                                 <div className="pull-right title-link">
                                     <LinkContainer to="/dashboard">
-                                        <Glyphicon glyph='search'/>
+                                        <Button style={{'padding':'10px'}} disabled={true}><Glyphicon glyph='search'/></Button>
                                     </LinkContainer>
 
                                     <Dropdown id="settings" pullRight >

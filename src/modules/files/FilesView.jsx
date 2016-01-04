@@ -98,14 +98,6 @@ module.exports = React.createClass({
         this.selectFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
             FileActions.getFiles.source.onNext(data_.path);
 
-            // update the breadcrumb
-            var _pathData = {
-                'label': 'Files (' + data_.path + ')',
-                'navigateTo': "files",
-                'params': {path: data_.path},
-                'level': 1
-            };
-            NavigationActions.currentPath.onNext(_pathData);
 
             _this.state.selectedPath = data_.path;
             if (this.isMounted()) this.forceUpdate();
