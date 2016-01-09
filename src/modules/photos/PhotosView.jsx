@@ -29,14 +29,17 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 var PhotoStore = require('./../../stores/PhotoStore');
 
+var Tags = require('./../../components/tags/Tags');
 var PreviewSidebar = require("./../previews/PreviewSidebar");
 var Tree = require('../../components/folderTree/Tree');
 var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 var AppSidebar = require('../../components/appSidebar/AppSidebar');
 var Fab = require('../../components/fab/UploadFab');
+var IsotopeGallery = require('../../components/isotopeGallery/IsotopeGallery');
 var TagList = require('./TagList');
 var PeopleList = require('./PeopleList');
 var DateTree = require('./DateTree');
+
 
 
 module.exports =  React.createClass({
@@ -44,6 +47,7 @@ module.exports =  React.createClass({
     getInitialState: function () {
         return {
             files: [],
+            filters: {},
             selectedItem: undefined,
             state: '100%',
             showAddFolder: false
@@ -60,8 +64,22 @@ module.exports =  React.createClass({
         var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'params': {}, 'level': 1};
         NavigationActions.currentPath.onNext(_pathData);
 
-        // run initial search to populate the view
-        //ImageActions.search.source.onNext(PhotoStore.filters.value);
+
+
+        this.filtersSubscription = PhotoStore.filters.subscribe(function(data_){
+            this.state.filters = data_;
+
+            //on Initial load, or when filters change run initial search to populate the view
+            ImageActions.search.source.onNext(this.state.filters);
+
+            if( this.isMounted()) this.forceUpdate();
+        }.bind(this));
+
+
+        this.searchSubscription = ImageActions.search.sink.subscribe(function(data_){
+            this.state.files = data_;
+            if( this.isMounted()) this.forceUpdate();
+        }.bind(this));
 
     },
 
@@ -73,6 +91,9 @@ module.exports =  React.createClass({
 
     componentWillUnmount: function () {
         window.removeEventListener("resize", this.updateDimensions);
+
+        if( this.filtersSubscription !== undefined ) this.filtersSubscription.dispose();
+        if( this.searchSubscription !== undefined ) this.filtersSubscription.dispose();
     },
 
     componentDidMount: function () {
@@ -83,6 +104,7 @@ module.exports =  React.createClass({
     updateDimensions: function () {
         this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
     },
+
 
     addFilter: function(data){
         ImageActions.addFilter.onNext(data);
@@ -116,6 +138,7 @@ module.exports =  React.createClass({
 
         try
         {
+
             return (
 
                 <div className="photosView container-fluid">
@@ -154,8 +177,15 @@ module.exports =  React.createClass({
                         </aside>
 
                         <section className={tableClass} style={sectionStyle}>
-                            <div className="container-fluid fileRows">
+                            <div className="container-fluid photo-body">
 
+                                <Tags
+                                    title="Filters"
+                                    tags={this.state.filters}/>
+
+                                <IsotopeGallery
+                                    id="group1"
+                                    images={this.state.files}/>
 
                             </div>
                         </section>

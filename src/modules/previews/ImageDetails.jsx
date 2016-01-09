@@ -8,14 +8,9 @@
 // Used in TodoApp
 var React = require('react');
 var Router = require('react-router');
-var IS = require('is_js');
-var RouteHandler = Router.RouteHandler;
-var Link = Router.Link;
-
 var moment = require('moment');
-
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var ButtonLink = require('react-router-bootstrap').ButtonLink;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
@@ -28,7 +23,6 @@ var UserStore = require('../../stores/UserStore');
 var ContentStore = require('../../stores/ContentStore');
 
 module.exports = React.createClass({
-
 
     getDefaultProps:function(){
         return {
@@ -183,8 +177,13 @@ module.exports = React.createClass({
                 </div>
 
                 <br/>
-                <div style={{'textAlign':'right'}}>
-                    <ButtonGroup className="previewButtonBar">
+                <div>
+                    <ButtonGroup className="previewButtonBar pull-right">
+                        <LinkContainer to={'/photos/' +this.state.file['jcr:uuid']}>
+                            <Button bsSize='large'>
+                                <Glyphicon glyph="eye-open" style={{'fontSize':'2.4rem'}}/>
+                            </Button>
+                        </LinkContainer>
                         <Button bsSize='large'
                                 onClick={this.onDownloadOriginal}>
                             <Glyphicon glyph="download-alt" style={{'fontSize':'2.4rem'}}/>
@@ -197,14 +196,14 @@ module.exports = React.createClass({
 
 
                 </div>
-                <br/>
 
-                <div><strong>Name:</strong></div>
-                <div>{this.state.file['jcr:name']}</div>
+                <div>
+                    <div><strong>Name:</strong></div>
+                    <div>{this.state.file['jcr:name']}</div>
 
-                <div><strong>Path:</strong></div>
-                <div>{this.state.file['jcr:path']}</div>
-
+                    <div><strong>Path:</strong></div>
+                    <div>{this.state.file['jcr:path']}</div>
+                </div>
 
 
             </div>

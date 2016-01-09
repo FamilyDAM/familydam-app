@@ -235,7 +235,7 @@ module.exports = React.createClass({
 
         var _files = this.state.files
             .filter(function (file_) {
-                return file_._class == "com.familydam.core.models.File";
+                return file_._class == "com.familydam.core.models.File" || file_._class == "com.familydam.core.models.DamImage";
             }).map(function (file_, index_) {
                 return <FileRow key={file_.id} file={file_}/>
             });

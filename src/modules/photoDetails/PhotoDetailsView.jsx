@@ -67,7 +67,7 @@ module.exports = React.createClass({
             e_.stopImmediatePropagation();
             if( _this.state.prevId )
             {
-                _this.history.pushState(null, 'photo/' +_this.state.prevId +'/details');
+                _this.history.pushState(null, 'photo/' +_this.state.prevId );
             }
         });
         Keymaster("right", function(e_){
@@ -75,7 +75,7 @@ module.exports = React.createClass({
             e_.stopImmediatePropagation();
             if( _this.state.nextId )
             {
-                _this.history.pushState(null, 'photo/' +_this.state.nextId +'/details');
+                _this.history.pushState(null, 'photo/' +_this.state.nextId );
             }
         });
     },
@@ -315,7 +315,7 @@ module.exports = React.createClass({
                             <div className="row">
                                 <div className="col-sm-1">
                                     {this.state.prevId?
-                                    <Link to={'photo/' +this.state.prevId +'/details'}  >
+                                    <Link to={'photo/' +this.state.prevId }  >
                                         <Glyphicon glyph="chevron-left" style={{'fontSize':'48px', 'color':'#eee', 'top':'200px'}}/>
                                     </Link>
                                     :''}
@@ -329,7 +329,7 @@ module.exports = React.createClass({
                                 </div>
                                 <div className="col-sm-1">
                                     {this.state.nextId?
-                                    <Link to={'photo/' +this.state.nextId +'/details'}  >
+                                    <Link to={'photo/' +this.state.nextId }  >
                                         <Glyphicon glyph="chevron-right" style={{'fontSize':'48px', 'color':'#eee', 'top':'200px'}}/>
                                     </Link>
                                     :''}

@@ -19,7 +19,7 @@ var Dropdown = require('react-bootstrap').Dropdown;
 var MenuItem = require('react-bootstrap').MenuItem;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
-var Breadcrumb = require('../../components/breadcrumb/Breadcrumb');
+var SectionHeader = require('../../components/breadcrumb/SectionHeader');
 var SectionTree = require('../../components/folderTree/SectionTree');
 
 var AuthActions = require('../../actions/AuthActions');
@@ -63,7 +63,7 @@ module.exports = React.createClass({
                         <section className="col-xs-8 col-sm-9 col-md-9 col-lg-10">
                             <div className="header-body row">
                                 <div className="pull-left title">
-                                    <Breadcrumb/>
+                                    <SectionHeader/>
                                 </div>
 
                                 <div className="pull-right title-link">

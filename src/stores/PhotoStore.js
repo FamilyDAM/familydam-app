@@ -7,6 +7,8 @@ var ImageActions = require('./../actions/ImageActions');
 
 module.exports = {
 
+    search: new Rx.BehaviorSubject([]),
+    //filter props
     tags: new Rx.BehaviorSubject([]),
     people: new Rx.BehaviorSubject([]),
     dateTree: new Rx.BehaviorSubject({}),
@@ -34,6 +36,7 @@ module.exports = {
                 val.tags.push(data);
             }
 
+            this.filters.onNext(val);
             ImageActions.search.source.onNext(val);
 
         }.bind(this));
@@ -49,6 +52,11 @@ module.exports = {
         ImageActions.dateTree.sink.subscribe(function(data){
             this.dateTree.onNext(data);
         }.bind(this));
+
+
+        ImageActions.search.sink.onNext(function(data_){
+            this.search.onNext(data_);
+        });
     }
 
 };

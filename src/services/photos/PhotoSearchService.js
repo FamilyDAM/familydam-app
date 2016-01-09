@@ -30,19 +30,52 @@ module.exports = {
     {
         if( filters_ !== undefined )
         {
-
             var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/api/search/dam:image";
+            var _url = PreferenceStore.getBaseUrl() + "/api/search/dam:image?limit=100&offset=0";
+
+            var validateImgSize = function(s_, max)
+            {
+                if( s_ < max ) return s_;
+                var i = Math.ceil(s_ / max);
+                return Math.round(s_ / i);
+            };
 
             return $.ajax({
-                'method': "get",
+                'method': "POST",
                 'url': _url,
+                'contentType': "application/json",
+                'data':  JSON.stringify(filters_),
                 'headers': {
                     'X-Auth-Token': UserStore.token.value
                 }
 
             }).then(function (data_, status_, xhr_) {
-                _this.sink.onNext(data_);
+
+                var imageSet = [];
+                for (var i = 0; i < data_.length; i++)
+                {
+                    var img = data_[i];
+                    img.src = PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.500";
+                    //img.width = validateImgSize(img.width, 300);
+                    //img.height= validateImgSize(img.height, 300);
+                    img.aspectRatio = img.width / img.height
+                    img.lightboxImage = {
+                        src: PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value ,
+                        caption: img.name,
+                        srcset:[
+                            PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.1024" +' 1024w',
+                            PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.800" +' 800w',
+                            PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.500" +' 500w',
+                            PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.320" +' 320w'
+                        ]
+                    };
+                    imageSet.push(img);
+
+                    if( i >= 100 ) break;
+                }
+
+
+                _this.sink.onNext(imageSet);
 
                 // update token
                 var _token = xhr_.getResponseHeader("X-Auth-Token");

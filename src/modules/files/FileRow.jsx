@@ -39,7 +39,7 @@ var FileRow = React.createClass({
         if( $('.device-xs').is(':visible') || $('.device-sm').is(':visible'))
         {
             FileActions.selectFile.onNext(undefined);
-            this.history.pushState(null, "/" +this.props.file.id +"/details", {'id': this.props.file.id});
+            this.history.pushState(null, "/" +this.props.file.id , {'id': this.props.file.id});
         }else{
             FileActions.selectFile.onNext(this.props.file);
         }

@@ -49,9 +49,25 @@ var Tags = React.createClass({
     componentWillReceiveProps: function(nextProps) {
         this.props = nextProps;
 
-        if( nextProps['tags'] != undefined )
+        if( nextProps['tags'] != undefined && nextProps['tags'].constructor == Array )
         {
             $(this.refs.tokenField).tokenfield('setTokens', nextProps['tags']);
+        }
+        if( nextProps['tags'] != undefined && nextProps['tags'].constructor == Object )
+        {
+            var vals = [];
+            for(var key in nextProps['tags'] ){
+                var _items = nextProps['tags'][key];
+                if( _items.constructor == Array)
+                {
+                    for (var i = 0; i < _items.length; i++)
+                    {
+                        var obj = _items[i];
+                        vals.push( obj.type +":" +obj.name );
+                    }
+                }
+            }
+            $(this.refs.tokenField).tokenfield('setTokens', vals);
         }
     },
 

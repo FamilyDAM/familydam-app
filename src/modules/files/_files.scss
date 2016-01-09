@@ -33,6 +33,11 @@
     {
       background-color: #eeeeee;
     }
+
+    .row:hover
+    {
+      background-color: #eeeeee;
+    }
   }
 
   .disabled
@@ -45,11 +50,4 @@
     margin-bottom: 3px;
   }
 
-  .fileRows
-  {
-    .row:hover
-    {
-      background-color: #eeeeee;
-    }
-  }
 }

@@ -2,6 +2,8 @@
 .photosView
 {
   padding: 0px;
+  width:100%;
+  height:100%;
 
   li
   {
@@ -9,6 +11,12 @@
     padding: 5px;
     width:  100%;
   }
+
+  .photo-body{
+    width:100%;
+    height:100%;
+  }
+
 
 }
 
@@ -37,3 +45,5 @@
     padding: 0px;
   }
 }
+
+
