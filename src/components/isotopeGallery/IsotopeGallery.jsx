@@ -22,6 +22,9 @@ module.exports = React.createClass({
             packery: {
                 gutter: 2,
                 isHorizontal: false
+            },
+            masonry: {
+                gutter: 2
             }
         }
     },
@@ -34,6 +37,7 @@ module.exports = React.createClass({
 
     componentWillReceiveProps: function (nextProps) {
         this.props = nextProps;
+        //this.initializeGrid();
     },
 
     componentDidMount: function () {
@@ -57,7 +61,7 @@ module.exports = React.createClass({
         this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
         try
         {
-            console.log("isotope grid = " + $('#' + this.props.id).width());
+            //console.log("isotope grid = " + $('#' + this.props.id).width());
             this.setState({bodyWidth: $('.isotope-grid').width()});
         } catch (err)
         {
@@ -66,13 +70,29 @@ module.exports = React.createClass({
     },
 
     initializeGrid: function () {
+
+        this.state.isotopeGrid = new Isotope('#' + this.props.id, {
+            itemSelector: '.' + this.props.id + '-item',
+            layoutMode: this.props.layoutMode,
+            packery: this.props.packery
+        });
+
+    },
+
+    initializeGrid2: function () {
+
         if (this.state.isotopeGrid == undefined && this.props.images.length > 0)
         {
-            this.state.isotopeGrid = new Isotope('#' + this.props.id, {
-                itemSelector: '.' + this.props.id + '-item',
-                layoutMode: this.props.layoutMode,
-                packery: this.props.packery
+
+            this.state.isotopeGrid = new Isotope('#group1', {
+                itemSelector: '.group1-item',
+                layoutMode: 'packery',
+                packery:  {
+                    gutter: 2,
+                    isHorizontal: false
+                }
             });
+
         } else if (this.props.images.length > 0)
         {
             this.state.isotopeGrid.layout();

@@ -50,4 +50,28 @@
     }
   }
 
+  @media screen and (max-width: 992px) {
+    h3
+    {
+      font-size: 19px;
+      font-size: 1.9rem;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    h3
+    {
+      font-size: 18px;
+      font-size: 1.8rem;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    h3
+    {
+      font-size: 14px;
+      font-size: 1.4rem;
+    }
+  }
+
 }

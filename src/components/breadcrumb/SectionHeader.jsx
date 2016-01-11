@@ -27,8 +27,11 @@ var Breadcrumb = React.createClass({
 
         NavigationActions.currentPath.subscribe(
             function (path_) {
-                _this.state.paths[0] = path_;
-                if( this.isMounted() ) this.forceUpdate();
+                if( path_.level == 1)
+                {
+                    _this.state.paths[0] = path_;
+                    if (this.isMounted()) this.forceUpdate();
+                }
             }.bind(this)
         );
 

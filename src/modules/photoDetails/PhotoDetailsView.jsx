@@ -57,8 +57,9 @@ module.exports = React.createClass({
         NodeActions.getNode.source.onNext(this.props.params.id);
 
         // update the breadcrumb
-        var _pathData = {'label': 'Photo Details', 'navigateTo': "photoDetails", 'params': {id: this.props.params.id}, 'level': 1};
+        var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'level': 1};
         NavigationActions.currentPath.onNext(_pathData);
+
 
         this.registerListeners();
 
@@ -105,6 +106,13 @@ module.exports = React.createClass({
 
         // list for results
         this.currentNodeSubscription = ContentStore.currentNode.subscribe(function (results) {
+
+            var _pathData2 = {
+                'label': results['jcr:name'],
+                'navigateTo': "photos/" + results['jcr:uuid'] + "/details",
+                'level': 2
+            };
+            NavigationActions.currentPath.onNext(_pathData2);
 
             // set defaults for missing props
             if (results['dam:tags'] == undefined)

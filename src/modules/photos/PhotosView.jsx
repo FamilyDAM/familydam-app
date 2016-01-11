@@ -14,6 +14,7 @@ var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var MenuItem = require('react-bootstrap').MenuItem;
+var DropdownButton = require('react-bootstrap').DropdownButton;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 var Dropdown = require('react-bootstrap').Dropdown;
 
@@ -64,8 +65,6 @@ module.exports =  React.createClass({
         var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'params': {}, 'level': 1};
         NavigationActions.currentPath.onNext(_pathData);
 
-
-
         this.filtersSubscription = PhotoStore.filters.subscribe(function(data_){
             this.state.filters = data_;
 
@@ -113,6 +112,61 @@ module.exports =  React.createClass({
     handleLogout:function(event_){
         //todo, logout and redirect back to /
     },
+
+
+
+
+    addFreeFormFilter: function(data){
+        var _type = "tag";
+        var _name = data;
+
+        if( data.indexOf(":") > -1)
+        {
+            _type = data.split(":")[0];
+            _name = data.split(":")[1];
+        }
+
+        var isNew = true;
+        if( _type === "people" )
+        {
+            for (var i = 0; i < this.state.filters.people.length; i++) {
+                var _people = this.state.filters.people[i];
+                if (_people.name == _name) {
+                    isNew = false;
+                    break;
+                }
+            }
+        }
+        else if( _type === "tag" )
+        {
+            for (var i = 0; i < this.state.filters.tags.length; i++) {
+                var _tag = this.state.filters.tags[i];
+                if (_tag.name == _name) {
+                    isNew = false;
+                    break;
+                }
+            }
+        }
+
+        if( isNew )
+        {
+            if( data.indexOf(":") > -1 )
+            {
+                ImageActions.addFilter.onNext({type: _type, name: _name});
+            }else
+            {
+                ImageActions.addFilter.onNext({type: "tag", name: _name});
+                ImageActions.addFilter.onNext({type: "people", name: _name});
+            }
+        }
+    },
+
+
+    removeFilter: function(data){
+        ImageActions.removeFilter.onNext(data);
+    },
+
+
 
     render: function () {
 
@@ -179,9 +233,26 @@ module.exports =  React.createClass({
                         <section className={tableClass} style={sectionStyle}>
                             <div className="container-fluid photo-body">
 
-                                <Tags
-                                    title="Filters"
-                                    tags={this.state.filters}/>
+
+                                <div>
+                                    <DropdownButton id="groupByOptions" title="Group By:" >
+                                        <MenuItem>Group By Day</MenuItem>
+                                        <MenuItem>Group By Month</MenuItem>
+                                        <MenuItem>Group By Year</MenuItem>
+                                        <MenuItem>Group By Location</MenuItem>
+                                        <MenuItem>Group By Person</MenuItem>
+                                        <MenuItem>Group By Tag</MenuItem>
+                                    </DropdownButton>
+
+
+                                    <Tags
+                                        title="Filters"
+                                        tags={this.state.filters}
+                                        onAdd={this.addFreeFormFilter}
+                                        onRemove={this.removeFilter}
+                                    />
+                                </div>
+
 
                                 <IsotopeGallery
                                     id="group1"
