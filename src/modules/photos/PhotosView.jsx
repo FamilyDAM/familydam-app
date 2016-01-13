@@ -51,7 +51,8 @@ module.exports =  React.createClass({
             filters: {},
             selectedItem: undefined,
             state: '100%',
-            showAddFolder: false
+            showAddFolder: false,
+            bodyWidth: 0
         };
     },
 
@@ -104,15 +105,21 @@ module.exports =  React.createClass({
         this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
     },
 
-
-    addFilter: function(data){
-        ImageActions.addFilter.onNext(data);
-    },
-
     handleLogout:function(event_){
         //todo, logout and redirect back to /
     },
 
+
+
+    addFilter: function(data){
+
+        if( data.type == "path" ){
+            data.name = data.path;
+        } else if( data.type == "date" ){
+            data.name = data.key;
+        }
+        ImageActions.addFilter.onNext(data);
+    },
 
 
 
@@ -122,17 +129,37 @@ module.exports =  React.createClass({
 
         if( data.indexOf(":") > -1)
         {
-            _type = data.split(":")[0];
-            _name = data.split(":")[1];
+            _type = data.substr(0, data.indexOf(":"));
+            _name = data.substr(data.indexOf(":")+1);
         }
 
-        var isNew = true;
-        if( _type === "people" )
+        var isNew = false;
+        if( _type === "path" )
+        {
+            for (var k = 0; k < this.state.filters.paths.length; k++) {
+                var _path = this.state.filters.paths[k];
+                if (_path.name == _name) {
+                    isNew = true;
+                    break;
+                }
+            }
+        }
+        else if( _type === "date" )
+        {
+            for (var i = 0; i < this.state.filters.date.length; i++) {
+                var _date = this.state.filters.date[i];
+                if (_date.name == _name) {
+                    isNew = true;
+                    break;
+                }
+            }
+        }
+        else if( _type === "people" )
         {
             for (var i = 0; i < this.state.filters.people.length; i++) {
                 var _people = this.state.filters.people[i];
                 if (_people.name == _name) {
-                    isNew = false;
+                    isNew = true;
                     break;
                 }
             }
@@ -142,13 +169,14 @@ module.exports =  React.createClass({
             for (var i = 0; i < this.state.filters.tags.length; i++) {
                 var _tag = this.state.filters.tags[i];
                 if (_tag.name == _name) {
-                    isNew = false;
+                    isNew = true;
                     break;
                 }
             }
         }
 
-        if( isNew )
+
+        if( !isNew )
         {
             if( data.indexOf(":") > -1 )
             {
@@ -203,12 +231,19 @@ module.exports =  React.createClass({
                             <div className="boxRow content" style={{'minHeight':'200px'}}>
                                 <SidebarSection label="Filter by folder" open={true}>
                                     <Tree
-                                        baseDir="/dam:files/"/>
+                                        baseDir="/dam:files/"
+                                        onSelect={(e_)=>{
+                                            e_.type = "path";
+                                            this.addFilter(e_);
+                                        }}/>
                                 </SidebarSection>
                                 <br/>
                                 <SidebarSection label="Filter by date" open={true}>
                                     <DateTree
-                                        onSelect={this.addFilter}/>
+                                        onSelect={(e_)=>{
+                                            e_.type = "date";
+                                            this.addFilter(e_);
+                                        }}/>
                                 </SidebarSection>
                                 <br/>
                                 <SidebarSection label="Filter by people" open={true}>

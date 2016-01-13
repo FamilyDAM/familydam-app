@@ -275,7 +275,7 @@ module.exports = React.createClass({
         // trigger the file list section
         if( this.props.onSelect !== undefined )
         {
-            this.props.onSelect(node.path);
+            this.props.onSelect(node);
         }
 
     },

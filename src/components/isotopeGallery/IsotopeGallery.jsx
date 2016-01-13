@@ -19,12 +19,9 @@ module.exports = React.createClass({
             id: 'isotope1',
             images: [],
             layoutMode: 'packery',
-            packery: {
-                gutter: 2,
-                isHorizontal: false
-            },
-            masonry: {
-                gutter: 2
+            options: {
+                gutter: 4,
+                isFitWidth: true
             }
         }
     },
@@ -71,11 +68,12 @@ module.exports = React.createClass({
 
     initializeGrid: function () {
 
-        this.state.isotopeGrid = new Isotope('#' + this.props.id, {
+        var args = {
             itemSelector: '.' + this.props.id + '-item',
-            layoutMode: this.props.layoutMode,
-            packery: this.props.packery
-        });
+            layoutMode: this.props.layoutMode
+        };
+        args[this.props.layoutMode] = this.props.options;
+        this.state.isotopeGrid = new Isotope('#' + this.props.id, args);
 
     },
 
@@ -106,31 +104,28 @@ module.exports = React.createClass({
             return (
                 <div id={this.props.id} ref="isotopeGrid" className="isotope-grid">
                     {this.props.images.map(function (item_) {
-                        var _size = 150;
+                        var _size = 200;
                         if (this.state.bodyWidth !== undefined)
                         {
-                            _size = Math.max(150, Math.floor(this.state.bodyWidth * this.state.imgScale))
+                            var _segments = Math.floor(this.state.bodyWidth/_size);
+
+                            _size = Math.max(_size, Math.floor((this.state.bodyWidth-(_segments*5)) / _segments));
+                            //_size = Math.floor(this.state.bodyWidth / 5);
                         }
                         var _class = "isotope-grid-item";
                         var _width = _size;
                         var _height = _size;
                         //portrait
-                        if (item_.aspectRatio < .75)
+                        if (item_.aspectRatio < 1)
                         {
                             _class = this.props.id + '-item' + " isotope-grid-item isotope-grid-item-portrait";
-                            _height = Math.floor(_width * item_.aspectRatio);
+                            _height = Math.floor(_width / item_.aspectRatio);
                         }
                         //landscape
-                        else if (item_.aspectRatio > 1.25)
+                        else if (item_.aspectRatio > 1)
                         {
                             _class = this.props.id + '-item' + " isotope-grid-item isotope-grid-item-wide";
-                            _width = Math.floor(_height * item_.aspectRatio);
-                        } else
-                        {
-                            //make the sq. ones bigger
-                            // todo: pick a better rule to pick which ones are enlarged (5-star rating, favorites, perhaps)
-                            _width = _width * 2;
-                            _height = _height * 2;
+                            _height = Math.floor(_width / item_.aspectRatio);
                         }
 
                         var _imgHeight = _height;// - 40;
@@ -139,6 +134,8 @@ module.exports = React.createClass({
                         return (
                             <div id={this.props.id +'-item'}
                                  key={item_.id}
+                                 data-width={item_.width}
+                                 data-height={item_.height}
                                  className={_class}
                                  style={{'width':_width+'px', 'height':_height+'px'}}>
 

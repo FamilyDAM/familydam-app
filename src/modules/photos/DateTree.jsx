@@ -40,10 +40,10 @@ module.exports =  React.createClass({
     },
 
 
-    selectItem: function(obj, event, id){
+    selectItem: function(node, toggled){
         if( this.props.onSelect !== undefined ){
-            obj.type="date";
-            this.props.onSelect(obj);
+            node.type="date";
+            this.props.onSelect(node);
         }
     },
 
@@ -55,7 +55,7 @@ module.exports =  React.createClass({
                 <div className="dateTree">
                     <Tree
                         data={this.state.tree}
-                        onSelect={()=>{}}/>
+                        onSelect={this.selectItem}/>
                 </div>
             );
         }catch(err_){

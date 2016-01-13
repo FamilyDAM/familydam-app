@@ -15,7 +15,8 @@ module.exports = {
     filters: new Rx.BehaviorSubject({
             tags:[],
             people:[],
-            date:{},
+            date:[],
+            paths:[],
             order:{
                 field:'datecreated',
                 direction:'asc'
@@ -26,18 +27,52 @@ module.exports = {
         console.log("{PhotoStore} init()");
 
         ImageActions.addFilter.subscribe(function(data){
-            var val = this.filters.value;
+            debugger;
+            if( data.type === "undefined"){ return; }
 
-            if( data.type === "date" ){
-                val.date = data;
-            }else if( data.type === "people" ){
-                val.people.push(data);
-            }else if( data.type === "tag" ){
-                val.tags.push(data);
+            var _filters = this.filters.value;
+
+            if( data.type === "path" ){
+
+                var paths = [];
+                for (var l = 0; l < _filters.paths.length; l++)
+                {
+                    var _p = _filters.paths[l];
+                    if( !data.name.startsWith(_p.name) )
+                    {
+                        paths.push(_p);
+                    }
+                }
+                paths.push(data);
+                _filters.paths = paths;
+
+            }
+            else if( data.type === "date" ){
+
+                var dates = [];
+                for (var i = 0; i < _filters.date.length; i++)
+                {
+                    var _d = _filters.date[i];
+                    if( !data.name.startsWith(_d.name) )
+                    {
+                        dates.push(_d);
+                    }
+                }
+                dates.push(data);
+                _filters.date = dates;
+
+            }
+            else if( data.type === "people" )
+            {
+                _filters.people.push(data);
+            }
+            else if( data.type === "tag" )
+            {
+                _filters.tags.push(data);
             }
 
-            this.filters.onNext(val);
-            ImageActions.search.source.onNext(val);
+            this.filters.onNext(_filters);
+            ImageActions.search.source.onNext(_filters);
 
         }.bind(this));
 
@@ -51,11 +86,37 @@ module.exports = {
             var _name = data;
             if( data.indexOf(":") > -1)
             {
-                _type = data.split(":")[0];
-                _name = data.split(":")[1];
+                _type = data.substr(0, data.indexOf(":"));
+                _name = data.substr(data.indexOf(":")+1);
             }
 
-            if( _type === "people" ){
+
+            if( _type === "path" ){
+
+                var _pathList = [];
+                for (var L = 0; L < _filters.paths.length; L++) {
+                    var _path = _filters.paths[L];
+                    if( _path.name !== _name) {
+                        _pathList.push(_path);
+                    }
+                }
+                _filters.paths = _pathList;
+
+            }
+            else if( _type === "date" ){
+
+                var _dateList = [];
+                for (var k = 0; k < _filters.date.length; k++) {
+                    var _date = _filters.date[k];
+                    if( _date.name !== _name) {
+                        _dateList.push(_date);
+                    }
+                }
+                _filters.date = _dateList;
+
+            }
+            else if( _type === "people" )
+            {
 
                 var _peopleList = [];
                 for (var j = 0; j < _filters.people.length; j++) {
@@ -66,7 +127,9 @@ module.exports = {
                 }
                 _filters.people = _peopleList;
 
-            } else if( _type === "tag" ){
+            }
+            else if( _type === "tag" )
+            {
 
                 var _tags = [];
                 for (var i = 0; i < _filters.tags.length; i++) {

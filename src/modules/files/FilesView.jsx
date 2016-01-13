@@ -253,8 +253,8 @@ module.exports = React.createClass({
                                 <Tree
                                     baseDir="/dam:files/"
                                     onSelect={(path_)=>{
-                                        FileActions.getFiles.source.onNext(path_);
-                                        DirectoryActions.selectFolder.onNext({path: path_});
+                                        FileActions.getFiles.source.onNext(path_.path);
+                                        DirectoryActions.selectFolder.onNext({path: path_.path});
                                     }}/>
                             </SidebarSection>
                         </div>
