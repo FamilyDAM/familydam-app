@@ -55,7 +55,7 @@ var Breadcrumb = React.createClass({
                         {this.state.paths.map(function(path_){
                             if( path_.level == 1 )
                             {
-                                return <span>{path_.label}</span>
+                                return <span key={path_.label}>{path_.label}</span>
                             }})}
 
                     </ol>

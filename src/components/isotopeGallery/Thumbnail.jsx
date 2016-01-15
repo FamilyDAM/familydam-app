@@ -27,9 +27,9 @@ module.exports = React.createClass({
     },
 
     handleClick: function (event) {
-        if (this.props.thumbnailEventHandler !== undefined)
+        if (this.props.onImageClick !== undefined)
         {
-            this.props.thumbnailEventHandler(event, this.props.photo);
+            this.props.onImageClick(this.props.photo);
         }
     },
 
@@ -58,7 +58,7 @@ module.exports = React.createClass({
 
 
         return (
-            <div className={this.state.selected?'thumbnail-card active':'thumbnail-card'}
+            <div className={this.props.photo.active?'thumbnail-card active':'thumbnail-card'}
                  onMouseOver={ ()=>{this.setState({'active':true})} }
                  onMouseOut={ ()=>{this.setState({'active':false})} }>
 

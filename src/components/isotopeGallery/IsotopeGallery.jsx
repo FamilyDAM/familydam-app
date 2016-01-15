@@ -28,7 +28,9 @@ module.exports = React.createClass({
 
     getInitialState: function () {
         return {
-            imgScale: 0.10
+            imgScale: 0.10,
+            cntrlPressed:false,
+            shiftPressed:false
         }
     },
 
@@ -43,6 +45,25 @@ module.exports = React.createClass({
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions);
 
+        window.onkeyup = function(e) {
+            var key = e.keyCode ? e.keyCode : e.which;
+            if (key == 91 || key == 17) { //command or control
+                this.state.cntrlPressed = false;
+            }
+            else if (key == 16) { //shift
+                this.state.shiftPressed = false;
+            }
+        }.bind(this);
+
+        window.onkeydown = function(e) {
+            var key = e.keyCode ? e.keyCode : e.which;
+            if (key == 91 || key == 17) { //command or control
+                this.state.cntrlPressed = true;
+            }
+            else if (key == 16) { //shift
+                this.state.shiftPressed = true;
+            }
+        }.bind(this);
     },
 
     componentWillUnmount: function () {
@@ -66,6 +87,53 @@ module.exports = React.createClass({
         }
     },
 
+
+    imageClickedHandler: function(e)
+    {
+        var _lastIndex = -1;
+        var _currentIndex = -1;
+
+        // find last selected photo index
+        for (var i = 0; i < this.props.images.length; i++)
+        {
+            var _file = this.props.images[i];
+            if (_file == this.state.lastSelectedImage)
+            {
+                _lastIndex = i;
+            }
+        }
+
+        // find current selected photo index
+        for (var j = 0; j < this.props.images.length; j++)
+        {
+            var _file = this.props.images[j];
+            if( _file == e ){
+                _currentIndex = j;
+                _file.active = true;
+                this.state.lastSelectedImage = _file;
+            }else if( !this.state.cntrlPressed && !this.state.shiftPressed ) {
+                _file.active = false;
+            }
+        }
+
+
+        //flag everything in between.
+        if( this.state.shiftPressed && _lastIndex > -1 && _currentIndex > -1){
+            for (var x = Math.min(_lastIndex, _currentIndex); x < Math.max(_lastIndex, _currentIndex); x++)
+            {
+                var _file2 = this.props.images[x];
+                _file2.active = true;
+            }
+        }
+
+
+        if( this.props.onToggle !== undefined ){
+            this.props.onToggle();
+        }
+
+        if (this.isMounted()) this.forceUpdate();
+    },
+
     initializeGrid: function () {
 
         var args = {
@@ -77,25 +145,7 @@ module.exports = React.createClass({
 
     },
 
-    initializeGrid2: function () {
 
-        if (this.state.isotopeGrid == undefined && this.props.images.length > 0)
-        {
-
-            this.state.isotopeGrid = new Isotope('#group1', {
-                itemSelector: '.group1-item',
-                layoutMode: 'packery',
-                packery:  {
-                    gutter: 2,
-                    isHorizontal: false
-                }
-            });
-
-        } else if (this.props.images.length > 0)
-        {
-            this.state.isotopeGrid.layout();
-        }
-    },
 
     render: function () {
 
@@ -139,7 +189,10 @@ module.exports = React.createClass({
                                  className={_class}
                                  style={{'width':_width+'px', 'height':_height+'px'}}>
 
-                                <Thumbnail photo={item_} imgWidth={_imgWidth} imgHeight={_imgHeight}/>
+                                <Thumbnail photo={item_}
+                                           imgWidth={_imgWidth} imgHeight={_imgHeight}
+                                           selected={item_.active}
+                                            onImageClick={this.imageClickedHandler}/>
 
                             </div> );
                     }.bind(this))}

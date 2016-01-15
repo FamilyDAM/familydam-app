@@ -54,7 +54,7 @@ module.exports = React.createClass({
                 <div className="col-sm-12">
                     <ol className="breadcrumb" style={{'marginBottom':'0px', 'backgroundColor': 'transparent'}}>
                         {this.state.paths.map(function(path_) {
-                            return <li key={path_.label} ><Link to={path_.navigateTo}  params={path_.params}>{path_.label}</Link></li>;
+                            return <li key={path_.level +'-' +path_.label} ><Link to={path_.navigateTo}  params={path_.params}>{path_.label}</Link></li>;
                         })}
                     </ol>
                 </div>

@@ -7,16 +7,8 @@
 // Used in TodoApp
 var React = require('react');
 var Router = require('react-router');
-var Link = Router.Link;
-
-var ButtonGroup = require('react-bootstrap').ButtonGroup;
-
-var Button = require('react-bootstrap').Button;
-var Glyphicon = require('react-bootstrap').Glyphicon;
 var MenuItem = require('react-bootstrap').MenuItem;
 var DropdownButton = require('react-bootstrap').DropdownButton;
-var LinkContainer = require('react-router-bootstrap').LinkContainer;
-var Dropdown = require('react-bootstrap').Dropdown;
 
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
@@ -40,6 +32,7 @@ var IsotopeGallery = require('../../components/isotopeGallery/IsotopeGallery');
 var TagList = require('./TagList');
 var PeopleList = require('./PeopleList');
 var DateTree = require('./DateTree');
+var PhotoActions = require('./PhotoActions');
 
 
 
@@ -50,6 +43,7 @@ module.exports =  React.createClass({
             files: [],
             filters: {},
             selectedItem: undefined,
+            selectedImages:[],
             state: '100%',
             showAddFolder: false,
             bodyWidth: 0
@@ -110,12 +104,37 @@ module.exports =  React.createClass({
     },
 
 
+    handleActionClose:function(event_){
+
+        this.state.selectedImages = [];
+        for (var i = 0; i < this.state.files.length; i++)
+        {
+            var _file = this.state.files[i];
+            _file.active = false;
+        }
+        if( this.isMounted()) this.forceUpdate();
+    },
+
+
+    handleImageToggle:function(event_){
+        this.state.selectedImages = [];
+        for (var i = 0; i < this.state.files.length; i++)
+        {
+            var _file = this.state.files[i];
+            if( _file.active){
+                this.state.selectedImages.push(_file);
+            }
+        }
+        if( this.isMounted()) this.forceUpdate();
+    },
+
 
     addFilter: function(data){
 
         if( data.type == "path" ){
             data.name = data.path;
         } else if( data.type == "date" ){
+            debugger;
             data.name = data.key;
         }
         ImageActions.addFilter.onNext(data);
@@ -203,7 +222,7 @@ module.exports =  React.createClass({
         var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
         var asideRightClass = "card hidden col-xs-4 col-sm-3 col-md-3";
 
-        if (this.state.selectedItem !== undefined && this.state.selectedItem !== null)
+        if (this.state.selectedImages.length > 0 )
         {
             tableClass = "card main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
             asideClass = "box body-sidebar hidden-xs hidden-sm col-md-3 col-lg-2";
@@ -291,13 +310,16 @@ module.exports =  React.createClass({
 
                                 <IsotopeGallery
                                     id="group1"
+                                    onToggle={this.handleImageToggle}
                                     images={this.state.files}/>
 
                             </div>
                         </section>
 
                         <aside className={asideRightClass}>
-                            <PreviewSidebar file={this.state.selectedItem}/>
+                            <PhotoActions
+                                images={this.state.selectedImages}
+                                onClose={this.handleActionClose}/>
                         </aside>
                     </div>
 

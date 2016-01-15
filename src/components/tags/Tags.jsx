@@ -13,7 +13,7 @@ var TokenField = require('bootstrap-tokenfield');
 var Tags = React.createClass({
 
     propTypes: {
-        tags: React.PropTypes.array,
+        tags: React.PropTypes.object,
         onRemove: React.PropTypes.func,
         onAdd: React.PropTypes.func
     },
