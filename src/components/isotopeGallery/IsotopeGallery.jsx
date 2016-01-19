@@ -27,6 +27,7 @@ module.exports = React.createClass({
     },
 
     getInitialState: function () {
+        console.log("{getInitialState}");
         return {
             imgScale: 0.10,
             cntrlPressed:false,
@@ -53,6 +54,8 @@ module.exports = React.createClass({
             else if (key == 16) { //shift
                 this.state.shiftPressed = false;
             }
+
+            //console.log("{onkeyup} cntrl pressed=" +this.state.cntrlPressed);
         }.bind(this);
 
         window.onkeydown = function(e) {
@@ -63,6 +66,8 @@ module.exports = React.createClass({
             else if (key == 16) { //shift
                 this.state.shiftPressed = true;
             }
+
+            //console.log("{onkeydown} cntrl pressed=" +this.state.cntrlPressed);
         }.bind(this);
     },
 
@@ -92,6 +97,7 @@ module.exports = React.createClass({
     {
         var _lastIndex = -1;
         var _currentIndex = -1;
+        //console.log("{click} cntrl pressed=" +this.state.cntrlPressed);
 
         // find last selected photo index
         for (var i = 0; i < this.props.images.length; i++)

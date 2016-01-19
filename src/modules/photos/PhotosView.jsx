@@ -107,24 +107,33 @@ module.exports =  React.createClass({
     handleActionClose:function(event_){
 
         this.state.selectedImages = [];
-        for (var i = 0; i < this.state.files.length; i++)
+        for( var key in this.state.files)
         {
-            var _file = this.state.files[i];
-            _file.active = false;
+            for (var i = 0; i < this.state.files[key].children.length; i++)
+            {
+                var _file = this.state.files[key].children[i];
+                if( _file.active ) _file.active = false;
+            }
         }
+
         if( this.isMounted()) this.forceUpdate();
     },
 
 
     handleImageToggle:function(event_){
+
         this.state.selectedImages = [];
-        for (var i = 0; i < this.state.files.length; i++)
+        for( var key in this.state.files)
         {
-            var _file = this.state.files[i];
-            if( _file.active){
-                this.state.selectedImages.push(_file);
+            for (var i = 0; i < this.state.files[key].children.length; i++)
+            {
+                var _file = this.state.files[key].children[i];
+                if( _file.active){
+                    this.state.selectedImages.push(_file);
+                }
             }
         }
+
         if( this.isMounted()) this.forceUpdate();
     },
 
@@ -290,7 +299,7 @@ module.exports =  React.createClass({
 
                                 <div>
                                     <DropdownButton id="groupByOptions" title="Group By:" >
-                                        <MenuItem>Group By Day</MenuItem>
+                                        <MenuItem >Group By Day</MenuItem>
                                         <MenuItem>Group By Month</MenuItem>
                                         <MenuItem>Group By Year</MenuItem>
                                         <MenuItem>Group By Location</MenuItem>
@@ -308,10 +317,24 @@ module.exports =  React.createClass({
                                 </div>
 
 
-                                <IsotopeGallery
-                                    id="group1"
-                                    onToggle={this.handleImageToggle}
-                                    images={this.state.files}/>
+                                {this.state.files.map(function(item_, indx_){
+
+                                    return(
+                                        <div>
+                                            <SidebarSection
+                                                style={{'height':'60px'}}
+                                                label={item_.label}/>
+
+
+                                            <div style={{'clear':'left'}}>
+                                                <IsotopeGallery
+                                                    id={'gallery-' +indx_}
+                                                    onToggle={this.handleImageToggle}
+                                                    images={item_.children}/>
+                                            </div>
+                                        </div>
+                                    )
+                                }.bind(this))}
 
                             </div>
                         </section>

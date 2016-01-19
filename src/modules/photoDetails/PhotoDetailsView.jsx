@@ -41,7 +41,7 @@ module.exports = React.createClass({
 
     getInitialState: function () {
         return {
-            'photo': {}
+            photo: undefined
             , datetaken: 'Date Unknown'
             , location: ""
             , prevId:undefined
@@ -82,14 +82,20 @@ module.exports = React.createClass({
     },
 
 
-    componentWillReceiveProps: function (nextProps) {
+    componentWillReceiveProps2: function (nextProps) {
+        debugger;
+        this.props = nextProps;
+
+        this.state.photo={};
+        if( this.isMounted() ) this.forceUpdate();
 
         NodeActions.getNode.source.onNext(nextProps.params.id);
-
     },
 
 
     componentWillUnmount: function (nextProps) {
+        this.state.photo=undefined;
+
         if( this.currentNodeSubscription !== undefined ){
             this.currentNodeSubscription.dispose();
         }
@@ -313,6 +319,10 @@ module.exports = React.createClass({
 
 
     render: function () {
+
+        if( this.state.photo == undefined ) {
+            return(<div/>);
+        }
 
         return (
             <div className="photoDetailsView container">

@@ -17,6 +17,7 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
 
+var Tags = require('./../../components/tags/Tags');
 var SectionTree = require('../../components/folderTree/SectionTree');
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserStore = require('../../stores/UserStore');
@@ -205,6 +206,20 @@ module.exports = React.createClass({
                     <div>{this.state.file['jcr:path']}</div>
                 </div>
 
+
+                <div>
+                    <div style={{'padding': '5px'}}>
+                        <Tags
+                            placeholder="Enter People"
+                            title="People"/>
+                    </div>
+
+                    <div style={{'padding': '5px'}}>
+                        <Tags
+                            placeholder="Enter Tags"
+                            title="&nbsp;&nbsp;&nbsp;Tags"/>
+                    </div>
+                </div>
 
             </div>
         );

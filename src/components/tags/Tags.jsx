@@ -10,7 +10,7 @@ var React = require('react');
 var TokenField = require('bootstrap-tokenfield');
 
 
-var Tags = React.createClass({
+module.exports  = React.createClass({
 
     propTypes: {
         tags: React.PropTypes.object,
@@ -19,7 +19,7 @@ var Tags = React.createClass({
     },
 
     getDefaultProps: function(){
-        return {'tags':[], title:"Tags"}
+        return {'tags':[], title:"Tags", placeholder:"Enter Tags"}
     },
 
     getInitialState: function(){
@@ -87,7 +87,7 @@ var Tags = React.createClass({
             <div className="TagComponent input-group" >
                 <span className="input-group-addon">{this.props.title}:</span>
                 <input type="text" ref="tokenField"
-                    placeholder="Enter Tags"
+                    placeholder={this.props.placeholder}
                     defaultValue={this.props.tags} />
             </div>
 
@@ -96,4 +96,3 @@ var Tags = React.createClass({
 
 });
 
-module.exports = Tags;

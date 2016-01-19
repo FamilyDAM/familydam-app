@@ -45,7 +45,6 @@ module.exports = {
             }).then(function (data_, status_, xhr_) {
 
                 //console.log("{PhotoPeopleList Service} execute() success");
-
                 _this.sink.onNext(data_);
 
                 // update token

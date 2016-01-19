@@ -15,7 +15,7 @@ var FileActions = require('./../actions/FileActions');
 // Logged in user
 module.exports = {
 
-    currentNode:new Rx.BehaviorSubject({}),
+    currentNode:new Rx.Subject({}),
 
 
     subscribe: function()

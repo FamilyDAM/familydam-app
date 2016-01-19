@@ -43,7 +43,7 @@ module.exports = {
                 }
 
             }).then(function (data_, status_, xhr_) {
-
+                
                 _this.sink.onNext(data_);
 
                 // update token

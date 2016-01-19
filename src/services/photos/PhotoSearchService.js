@@ -33,13 +33,6 @@ module.exports = {
             var _this = this;
             var _url = PreferenceStore.getBaseUrl() + "/api/search/dam:image?limit=100&offset=0";
 
-            var validateImgSize = function(s_, max)
-            {
-                if( s_ < max ) return s_;
-                var i = Math.ceil(s_ / max);
-                return Math.round(s_ / i);
-            };
-
             return $.ajax({
                 'method': "POST",
                 'url': _url,
@@ -51,31 +44,32 @@ module.exports = {
 
             }).then(function (data_, status_, xhr_) {
 
-                var imageSet = [];
-                for (var i = 0; i < data_.length; i++)
+                var sortedGroups = [];
+                for(var key in data_)
                 {
-                    var img = data_[i];
-                    img.src = PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.500";
-                    //img.width = validateImgSize(img.width, 300);
-                    //img.height= validateImgSize(img.height, 300);
-                    img.aspectRatio = img.width / img.height
-                    img.lightboxImage = {
-                        src: PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value ,
-                        caption: img.name,
-                        srcset:[
-                            PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.1024" +' 1024w',
-                            PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.800" +' 800w',
-                            PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.500" +' 500w',
-                            PreferenceStore.getBaseUrl() +img.path +"?token=" +UserStore.token.value +"&rendition=web.320" +' 320w'
-                        ]
-                    };
-                    imageSet.push(img);
-
-                    if( i >= 100 ) break;
+                    sortedGroups.push(data_[key]);
+                    // update the images
+                    for (var i = 0; i < data_[key].children.length; i++)
+                    {
+                        var img = data_[key].children[i];
+                        img.src = PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.500";
+                        img.aspectRatio = img.width / img.height
+                        img.lightboxImage = {
+                            src: PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value,
+                            caption: img.name,
+                            srcset: [
+                                PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.1024" + ' 1024w',
+                                PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.800" + ' 800w',
+                                PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.500" + ' 500w',
+                                PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.320" + ' 320w'
+                            ]
+                        };
+                    }
                 }
 
-
-                _this.sink.onNext(imageSet);
+                _this.sink.onNext(sortedGroups.sort(function(a,b){
+                    return a.label - b.label;
+                }));
 
                 // update token
                 var _token = xhr_.getResponseHeader("X-Auth-Token");
