@@ -56,36 +56,19 @@ module.exports =  React.createClass({
 
                     <span className="pull-right">
 
-                        <Button style={{'padding':'5px'}}>
-                            <Glyphicon glyph="plus"
-                                       className="pull-right"
-                                       style={{'fontSize':'1.9rem'}}
-                                       onClick={this.props.onAddFolder}/>
-                        </Button>
 
-
-                        {function(){
-                            if (this.props.showAddFolder == true)
+                        {(() => {
+                            if (this.props.showAddFolder==true)
                             {
-                                return (
-                                    <Button style={{'padding':'5px'}}>
-                                        <Glyphicon glyph="plus"
-                                                   className="pull-right"
-                                                   style={{'fontSize':'1.9rem'}}
-                                                   onClick={this.props.onAddFolder}/>
-                                    </Button>
-                                )
-                            }else{
-                                return (
-                                    <Button style={{'padding':'5px'}}>
-                                        <Glyphicon glyph="plus"
-                                                   className="pull-right"
-                                                   style={{'fontSize':'3.9rem'}}
-                                                   onClick={this.props.onAddFolder}/>
-                                    </Button>
-                                )
+                                return (<Button style={{'padding':'5px'}}>
+                                            <Glyphicon glyph="plus"
+                                                       className="pull-right"
+                                                       style={{'fontSize':'1.9rem'}}
+                                                       onClick={this.props.onAddFolder}/>
+                                        </Button> );
                             }
-                        }.bind(this)}
+                        })()}
+
                     </span>
                 </div>
 

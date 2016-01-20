@@ -11,6 +11,9 @@ var Packery = require('isotope-packery');
 var Isotope = require('isotope-layout');
 var Thumbnail = require('./Thumbnail');
 
+var ImageActions = require('../../actions/ImageActions');
+
+
 module.exports = React.createClass({
 
 
@@ -29,7 +32,6 @@ module.exports = React.createClass({
     getInitialState: function () {
         console.log("{getInitialState}");
         return {
-            imgScale: 0.10,
             cntrlPressed:false,
             shiftPressed:false
         }
@@ -41,38 +43,25 @@ module.exports = React.createClass({
     },
 
     componentDidMount: function () {
+        var _this = this;
         this.initializeGrid();
 
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions);
+        window.addEventListener("keyup", this.handleOnKeyUp);
+        window.addEventListener("keydown", this.handleOnKeyDown);
 
-        window.onkeyup = function(e) {
-            var key = e.keyCode ? e.keyCode : e.which;
-            if (key == 91 || key == 17) { //command or control
-                this.state.cntrlPressed = false;
-            }
-            else if (key == 16) { //shift
-                this.state.shiftPressed = false;
-            }
-
-            //console.log("{onkeyup} cntrl pressed=" +this.state.cntrlPressed);
-        }.bind(this);
-
-        window.onkeydown = function(e) {
-            var key = e.keyCode ? e.keyCode : e.which;
-            if (key == 91 || key == 17) { //command or control
-                this.state.cntrlPressed = true;
-            }
-            else if (key == 16) { //shift
-                this.state.shiftPressed = true;
-            }
-
-            //console.log("{onkeydown} cntrl pressed=" +this.state.cntrlPressed);
-        }.bind(this);
+        this.selectImageSubscription = ImageActions.selectImage.subscribe(this.handleItemClick);
     },
 
     componentWillUnmount: function () {
         window.removeEventListener("resize", this.updateDimensions);
+        window.removeEventListener("keyup", this.handleOnKeyUp);
+        window.removeEventListener("keydown", this.handleOnKeyDown);
+
+        if( this.selectImageSubscription !== undefined ){
+            this.selectImageSubscription.dispose();
+        }
     },
 
     componentDidUpdate: function () {
@@ -93,11 +82,40 @@ module.exports = React.createClass({
     },
 
 
+    handleOnKeyUp:function(e){
+        var key = e.keyCode ? e.keyCode : e.which;
+        if (key == 91 || key == 17) { //command or control
+            this.state.cntrlPressed = false;
+        }
+        else if (key == 16) { //shift
+            this.state.shiftPressed = false;
+        }
+    },
+
+
+    handleOnKeyDown:function(e){
+        var key = e.keyCode ? e.keyCode : e.which;
+        if (key == 91 || key == 17) { //command or control
+            this.state.cntrlPressed = true;
+        }
+        else if (key == 16) { //shift
+            this.state.shiftPressed = true;
+        }
+    },
+
+
+
+
     imageClickedHandler: function(e)
+    {
+        ImageActions.selectImage.onNext(e);
+    },
+
+
+    handleItemClick: function(e)
     {
         var _lastIndex = -1;
         var _currentIndex = -1;
-        //console.log("{click} cntrl pressed=" +this.state.cntrlPressed);
 
         // find last selected photo index
         for (var i = 0; i < this.props.images.length; i++)
@@ -106,6 +124,7 @@ module.exports = React.createClass({
             if (_file == this.state.lastSelectedImage)
             {
                 _lastIndex = i;
+                break;
             }
         }
 

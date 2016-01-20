@@ -8,6 +8,7 @@ module.exports = {
 
     addFilter: new Rx.Subject(),
     removeFilter: new Rx.Subject(),
+    selectImage: new Rx.Subject(), // triggered when item is clicked in photoview
 
     //processors
     search: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},

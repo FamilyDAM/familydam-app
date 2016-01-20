@@ -27,7 +27,7 @@ module.exports = {
         console.log("{PhotoStore} init()");
 
         ImageActions.addFilter.subscribe(function(data){
-            debugger;
+
             if( data.type === "undefined"){ return; }
 
             var _filters = this.filters.value;

@@ -7,6 +7,7 @@ var AuthActions = require('../../actions/AuthActions');
 var FileActions = require('../../actions/FileActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
 var NodeActions = require('../../actions/NodeActions');
+
 var UserStore = require('../../stores/UserStore');
 var PreferenceStore = require('../../stores/PreferenceStore');
 
@@ -136,9 +137,10 @@ module.exports = {
             url: _url,
             type: 'json',
             contentType: "application/json",
-            headers: {
-                "X-Auth-Token": UserStore.token.value
+            'headers': {
+                'X-Auth-Token': UserStore.token.value
             }
+
         }).then(function (data_, status_, xhr_) {
 
             _this.updateSink.onNext(data_);

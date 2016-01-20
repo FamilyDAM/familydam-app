@@ -75,6 +75,12 @@ ReactDOM.render(
         <Route component={DashboardView}>
             <Route path="dashboard" component={Home}/>
             <Route path="files" component={FilesView}/>
+
+
+            <Route path="music" component={FilesView}/>
+            <Route path="movies" component={FilesView}/>
+            <Route path="web" component={FilesView}/>
+            <Route path="email" component={FilesView}/>
             <Route path="upload" component={UploadsView}/>
 
 

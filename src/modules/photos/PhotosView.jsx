@@ -112,7 +112,7 @@ module.exports =  React.createClass({
             for (var i = 0; i < this.state.files[key].children.length; i++)
             {
                 var _file = this.state.files[key].children[i];
-                if( _file.active ) _file.active = false;
+                    _file.active = false;
             }
         }
 
@@ -320,7 +320,7 @@ module.exports =  React.createClass({
                                 {this.state.files.map(function(item_, indx_){
 
                                     return(
-                                        <div>
+                                        <div key={'group-' +indx_}>
                                             <SidebarSection
                                                 style={{'height':'60px'}}
                                                 label={item_.label}/>

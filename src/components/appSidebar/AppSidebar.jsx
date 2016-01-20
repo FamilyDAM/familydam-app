@@ -8,6 +8,12 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
+var Glyphicon = require('react-bootstrap').Glyphicon;
+var ButtonGroup = require('react-bootstrap').ButtonGroup;
+var Button = require('react-bootstrap').Button;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
+
+
 module.exports = React.createClass({
 
 
@@ -42,49 +48,127 @@ module.exports = React.createClass({
 
         try
         {
-            return (
-                <div className="appSidebar container-fluid">
-                    <div className="row" style={_headerStyle}>
-                        <div className="titleBar">
+            if( this.props.style == "list" )
+            {
+                return (
+                    <div className="appSidebar container-fluid">
+                        <div className="row" style={_headerStyle}>
+                            <div className="titleBar">
                         <span>
                             Apps
                         </span>
+                            </div>
+                        </div>
+                        <div className="row list">
+                            <ButtonGroup vertical block>
+                                <LinkContainer to="files">
+                                    <Button style={{'padding':'5px', 'margin':'10px'}}>
+                                        <Glyphicon glyph="file" style={{'color':'#000000', 'fontSize':'21px'}}/>
+                                        <span>Files</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="photos">
+                                    <Button style={{'padding':'5px', 'margin':'10px'}}>
+                                        <Glyphicon glyph="camera" style={{'color':'#000000', 'fontSize':'21px'}}/>
+                                        <span>Photos</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="music">
+                                    <Button style={{'padding':'5px', 'margin':'10px'}}>
+                                        <Glyphicon glyph="music" style={{'color':'#eee', 'fontSize':'21px'}}/>
+                                        <span style={{'color':'#eee'}}>Music</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="movies">
+                                    <Button style={{'padding':'5px', 'margin':'10px'}}>
+                                        <Glyphicon glyph="film" style={{'color':'#eee', 'fontSize':'21px'}}/>
+                                        <span style={{'color':'#eee'}}>Movies</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="web">
+                                    <Button style={{'padding':'5px', 'margin':'10px'}}>
+                                        <Glyphicon glyph="globe" style={{'color':'#eee', 'fontSize':'21px'}}/>
+                                        <span style={{'color':'#eee'}}>Web</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="email">
+                                    <Button style={{'padding':'5px', 'margin':'10px'}}>
+                                        <Glyphicon glyph="inbox" style={{'color':'#eee', 'fontSize':'21px'}}/>
+                                        <span style={{'color':'#eee'}}>Email</span>
+                                    </Button>
+                                </LinkContainer>
+                            </ButtonGroup>
+
                         </div>
                     </div>
-                    <div className="row">
-                        <div className={_class} style={_rowStyle}>
-                            <Link to="files">
-                                <img src="assets/icons/appicon77.png"/>
-                                <span style={_linkStyle}>Files</span></Link>
+                );
+            }
+            else if( this.props.style == "grid" )
+            {
+                return (
+                    <div className="appSidebar container-fluid">
+                        <div className="row" style={_headerStyle}>
+                            <div className="titleBar">
+                        <span>
+                            Apps
+                        </span>
+                            </div>
                         </div>
-                        <div className={_class} style={_rowStyle}>
-                            <Link to="photos">
-                                <img src="assets/icons/appicon77.png"/>
-                                <span style={_linkStyle}>Photos</span></Link>
-                        </div>
-                        <div className={_class} style={_rowStyle}>
-                            <Link to="dashboard">
-                                <img src="assets/icons/appicon77.png"/>
-                                <span style={_linkStyle}>Music</span></Link>
-                        </div>
-                        <div className={_class} style={_rowStyle}>
-                            <Link to="dashboard">
-                                <img src="assets/icons/appicon77.png"/>
-                                <span style={_linkStyle}>Movies</span></Link>
-                        </div>
-                        <div className={_class} style={_rowStyle}>
-                            <Link to="dashboard">
-                                <img src="assets/icons/appicon77.png"/>
-                                <span style={_linkStyle}>Email</span></Link>
-                        </div>
-                        <div className={_class} style={_rowStyle}>
-                            <Link to="dashboard">
-                                <img src="assets/icons/appicon77.png"/>
-                                <span style={_linkStyle}>Web</span></Link>
+                        <div className="row grid">
+                            <ButtonGroup justified>
+                                <LinkContainer to="files">
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="file" style={{'color':'#000000', 'fontSize':'21px'}}/><br/>
+                                        <span>Files</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="photos">
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="camera" style={{'color':'#000000', 'fontSize':'21px'}}/><br/>
+                                        <span>Photos</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="music">
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="music" style={{'color':'#eee', 'fontSize':'21px'}}/><br/>
+                                        <span style={{'color':'#eee'}}>Music</span>
+                                    </Button>
+                                </LinkContainer>
+                            </ButtonGroup>
+
+                            <ButtonGroup justified>
+                                <LinkContainer to="movies" >
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="film" style={{'color':'#eee', 'fontSize':'21px'}}/><br/>
+                                        <span style={{'color':'#eee'}}>Movies</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="web" >
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="globe" style={{'color':'#eee', 'fontSize':'21px'}}/><br/>
+                                        <span style={{'color':'#eee'}}>Web</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="email" >
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="inbox" style={{'color':'#eee', 'fontSize':'21px'}}/><br/>
+                                        <span style={{'color':'#eee'}}>Email</span>
+                                    </Button>
+                                </LinkContainer>
+                            </ButtonGroup>
                         </div>
                     </div>
-                </div>
-            );
+                );
+            }
         }catch(err){
             console.log(err);
         }
