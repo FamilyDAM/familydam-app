@@ -37,14 +37,13 @@ module.exports = React.createClass({
 
         return (
             <div className="row">
-                <div className="col-sm-6">
-                    <p>The FamilyD.A.M System allows you member of the family their own view of the data.
+                <div className="col-sm-offset-3 col-sm-6">
+                    <p className="text-center" style={{'marginTop':'30px', 'width':'100%'}}>
+                        The FamilyD.A.M System allows you member of the family their own view of the data.
                     Allowing everyone to manage the files, photos, and music anyway they want. </p>
-                    <p>(coming soon: ability to modify view and edit settings for each member of the family)</p>
                     <br/>
                 </div>
             </div>
-
         );
     }
 

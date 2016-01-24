@@ -68,7 +68,7 @@ module.exports = {
                 }
 
                 _this.sink.onNext(sortedGroups.sort(function(a,b){
-                    return a.label - b.label;
+                    return b.label - a.label;
                 }));
 
                 // update token

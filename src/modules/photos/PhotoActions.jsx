@@ -185,7 +185,7 @@ module.exports =  React.createClass({
 
                     <hr/>
                     <ButtonGroup vertical block>
-                        <Button disabled="true" block>Share (FB, TWIT)</Button>
+                        <Button disabled="true" block>Share (Facebook, Twitter)</Button>
                         <Button disabled="true" block>Add To Collection</Button>
                         <Button disabled="true" block>Export</Button>
                         <Button disabled="true" block>Zip & Download</Button>

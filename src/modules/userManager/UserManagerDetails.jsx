@@ -12,6 +12,8 @@ var Button = require('react-bootstrap').Button;
 var Tabs = require('react-bootstrap').Tabs;
 var Tab = require('react-bootstrap').Tab;
 var Table = require('react-bootstrap').Table;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
+
 
 var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
@@ -108,10 +110,13 @@ module.exports = React.createClass({
         return (
             <div className="container-fluid userDetailsView">
                 <div className="row">
-                    <div className="col-sm-10">
-                        <h3>User: {this.state.user.firstName}</h3>
+                    <div className="col-sm-8">
+                        <h3>{this.state.user.firstName} {this.state.user.lastName}</h3>
                     </div>
-                    <div className="col-sm-2">
+                    <div className="col-sm-4">
+                        <LinkContainer to="users">
+                            <button className="btn btn-default btn-link">Cancel</button>
+                        </LinkContainer>
                         <Button bsStyle='primary' onClick={this.handleSave}>Save</Button>
                     </div>
                 </div>

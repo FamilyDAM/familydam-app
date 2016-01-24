@@ -138,12 +138,19 @@ module.exports =  React.createClass({
     },
 
 
+    handleGroupByChange:function(event, eventKey)
+    {
+        var data = {};
+        data.type = "group";
+        data.name = eventKey;
+        ImageActions.addFilter.onNext(data);
+    },
+
     addFilter: function(data){
 
         if( data.type == "path" ){
             data.name = data.path;
         } else if( data.type == "date" ){
-            debugger;
             data.name = data.key;
         }
         ImageActions.addFilter.onNext(data);
@@ -298,13 +305,13 @@ module.exports =  React.createClass({
 
 
                                 <div>
-                                    <DropdownButton id="groupByOptions" title="Group By:" >
-                                        <MenuItem >Group By Day</MenuItem>
-                                        <MenuItem>Group By Month</MenuItem>
-                                        <MenuItem>Group By Year</MenuItem>
-                                        <MenuItem>Group By Location</MenuItem>
-                                        <MenuItem>Group By Person</MenuItem>
-                                        <MenuItem>Group By Tag</MenuItem>
+                                    <DropdownButton id="groupByOptions" title="Group By:" onSelect={this.handleGroupByChange}>
+                                        <MenuItem eventKey="date:day">Group By Day</MenuItem>
+                                        <MenuItem eventKey="date:month">Group By Month</MenuItem>
+                                        <MenuItem eventKey="date:year">Group By Year</MenuItem>
+                                        <MenuItem eventKey="gps:location">Group By Location</MenuItem>
+                                        <MenuItem eventKey="tag:person">Group By Person</MenuItem>
+                                        <MenuItem eventKey="tag:tag">Group By Tag</MenuItem>
                                     </DropdownButton>
 
 

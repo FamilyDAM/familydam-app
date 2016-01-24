@@ -56,6 +56,8 @@ module.exports = React.createClass({
         _user.password = this.refs.password.getDOMNode().value;
         _user.userProps = {};
         _user.userProps.firstName = this.refs.firstName.getDOMNode().value;
+        _user.userProps.lastName = this.refs.lastName.getDOMNode().value;
+        _user.userProps.email = this.refs.email.getDOMNode().value;
 
         UserActions.createUser.source.onNext(_user);
 
@@ -81,13 +83,23 @@ module.exports = React.createClass({
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col-xs-12">
-                                        <h2>Create First User</h2><hr/>
+                                        <h2>Create First User (administrator)</h2><hr/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-xs-6">
+                                        <h4>First Name</h4>
+                                        <input type="text" ref="firstName" label="First Name"/>
+                                    </div>
+                                    <div className="col-xs-6">
+                                        <h4>Last Name</h4>
+                                        <input type="text" ref="lastName" label="Last Name"/>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-xs-12">
-                                        <h4>First Name</h4>
-                                        <input type="text" ref="firstName" label="First Name"/>
+                                        <h4>Email</h4>
+                                        <input type="email" ref="email" label="Email"/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -107,10 +119,10 @@ module.exports = React.createClass({
                         <div className="col-md-4">
                             <p className="center-block" style={{'padding':'20px 0px 20px 0px'}}>
                                The first thing we need to do is create an login for you that will be
-                                registered as the 'administrator' of the FamilyDAM system.
+                                registered as the 'Administrator' of this FamilyDAM system.
                             </p>
                             <p className="center-block" >
-                                After you login, you will be able to create accounts for each member of your family.
+                                After you login, you will be able to create accounts for each member of your family, in the User Manager.
                             </p>
                         </div>
                     </div>

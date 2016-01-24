@@ -93,7 +93,7 @@ module.exports = React.createClass({
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
                             <div className="col-sm-6 col-lg-7" style={{'overflow':'hidden'}}>
-                                <Link to={'photos/' +this.state.file.id} params={{'id': this.state.file.id}}>{this.state.file.name}</Link>
+                                <Link to={'photos/' +this.state.file.id} >{this.state.file.name}</Link>
                             </div>
                             <div className="col-sm-6 col-lg-5 text-right">
                                 { this.state.file.mixins.indexOf("dam:image") > -1 ?

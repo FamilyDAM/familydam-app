@@ -5,13 +5,13 @@
 
 var React = require('react');
 var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
+
 var Glyphicon = require('react-bootstrap').Glyphicon;
-var SectionTree = require('../../components/folderTree/SectionTree');
 var Button = require('react-bootstrap').Button;
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Modal = require('react-bootstrap').Modal;
+var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 var ModalHeader = require('react-bootstrap').Modal.Header;
 var ModalTitle = require('react-bootstrap').Modal.Title;
 var ModalBody = require('react-bootstrap').Modal.Body;
@@ -35,7 +35,7 @@ module.exports = React.createClass({
         console.log("{UserManagerView} componentWillMount");
 
         // update the breadcrumb
-        var _pathData = {'label': 'User Manager', 'navigateTo': "userManager", 'params': {}, 'level': 1};
+        var _pathData = {'label': 'User Manager', 'navigateTo': "users", 'params': {}, 'level': 1};
         NavigationActions.currentPath.onNext(_pathData);
 
         // handle get all users
@@ -91,22 +91,43 @@ module.exports = React.createClass({
     render: function () {
         var _this = this;
 
+        var _this = this;
+        var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
+        var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
+        var asideRightClass = "card hidden col-xs-4 col-sm-3 col-md-3";
+
+        if (false)
+        {
+            tableClass = "card main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
+            asideClass = "box body-sidebar hidden-xs hidden-sm col-md-3 col-lg-2";
+            asideRightClass = "card hidden-xs hidden-sm col-md-3 col-lg-3";
+        }
+
+        var asideStyle = {};
+        var sectionStyle = {};
+
         return (
 
             <div>
-                <div className="container-fluid">
+                <div className="usersView container-fluid">
                     <div className="row">
-                        <aside className="col-xs-3">
-                            <SectionTree title="Users" showAdd={true} onAdd={this.handleAddUser}/>
-                            <ul style={{'listStyle':'none'}}>
-                                {this.state.users.map(function (user, index) {
-                                    return <li key={user.username}><Link to="userManagerDetails" params={{'id':user.id}}>{user.firstName}</Link></li>
-                                })}
-                            </ul>
+                        <aside className={asideClass} style={asideStyle}>
+                            <div>
+                                <SidebarSection label="Users" showAddFolder={true} open={true} onAdd={this.handleAddUser}/>
+                                <div style={{'clear':'left'}}>
+                                    <ul style={{'listStyle':'none'}}>
+                                        {this.state.users.map(function (user, index) {
+                                            return <li key={user.username}><Link to={'users/' +user.id}>{user.firstName}</Link></li>
+                                        })}
+                                    </ul>
+                                </div>
+                            </div>
                         </aside>
 
-                        <section className="col-xs-9">
-                            <RouteHandler {...this.props}/>
+                        <section className={tableClass} style={sectionStyle}>
+                            <div className="container-fluid photo-body">
+                                {this.props.children}
+                            </div>
                         </section>
                     </div>
                 </div>

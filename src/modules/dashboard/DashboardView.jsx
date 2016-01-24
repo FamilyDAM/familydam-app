@@ -87,8 +87,8 @@ module.exports = React.createClass({
                                             <Glyphicon glyph='cog'/>
                                         </Dropdown.Toggle>
                                         <Dropdown.Menu className='super-colors'>
-                                            <MenuItem eventKey="1" to="userManager">User Manager</MenuItem>
-                                            <MenuItem eventKey="2" to="login">Logout</MenuItem>
+                                            <LinkContainer to="users"><MenuItem eventKey="1">User Manager</MenuItem></LinkContainer>
+                                            <LinkContainer to="login"><MenuItem eventKey="2">Logout</MenuItem></LinkContainer>
                                         </Dropdown.Menu>
                                     </Dropdown>
                                 </div>

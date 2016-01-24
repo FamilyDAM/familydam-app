@@ -36,9 +36,9 @@ var UploadsView = require('./modules/uploads/UploadsView');
 var PhotosView = require('./modules/photos/PhotosView');
 var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
 //var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
-//var UserManagerView = require('./modules/userManager/UserManagerView');
-//var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
-//var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails');
+var UserManagerView = require('./modules/userManager/UserManagerView');
+var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
+var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails');
 //var SignupView = require('./modules/signup/SignupView');
 
 /**
@@ -71,6 +71,7 @@ var routes = [
 ReactDOM.render(
     <Router history={Router.History}>
         <Route path="/" component={LoginView} />
+        <Route path="login" component={LoginView} />
         <Route path="logout" component={LoginView} />
         <Route component={DashboardView}>
             <Route path="dashboard" component={Home}/>
@@ -89,7 +90,10 @@ ReactDOM.render(
             <Route path="photos/:id/edit" component={Home}/>
 
 
-            <Route path="userManager" component={Home}/>
+            <Route component={UserManagerView}>
+                <Route path="users" component={UserManagerHomeView}/>
+                <Route path="users/:id" component={UserManagerDetailsView}/>
+            </Route>
         </Route>
     </Router>
     , document.getElementById("appBody")

@@ -32,7 +32,10 @@ module.exports = {
 
             var _filters = this.filters.value;
 
-            if( data.type === "path" ){
+            if( data.type === "group" ){
+                _filters.group = data.name;
+            }
+            else if( data.type === "path" ){
 
                 var paths = [];
                 for (var l = 0; l < _filters.paths.length; l++)
