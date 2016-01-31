@@ -25,7 +25,16 @@ module.exports = React.createClass({
 
 
     getInitialState: function(){
-        return { users : undefined, activeUser: undefined };
+        return {
+            users : undefined
+            , activeUser: undefined
+            , backgrounds: [
+                "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933187/graphicstock/lake-marina_GkuzZvKu__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933186/graphicstock/DSC_5803-777__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933181/graphicstock/pebble-stack_XJX4rE__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933172/graphicstock/fire-texture-15_GyOwSEFd__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933171/graphicstock/lake_GyXLZDKu__.jpg"
+            ]};
     },
 
 
@@ -63,6 +72,10 @@ module.exports = React.createClass({
         var _this = this;
         var childNodes;
 
+        var randomBackground = this.state.backgrounds[ Math.floor(Math.random()*this.state.backgrounds.length) ];
+        var style = {"background": "url('" +randomBackground +"') no-repeat"};
+
+
         if( this.state.users !== undefined )
         {
             if (this.state.users !== undefined && this.state.users.length == 0)
@@ -98,7 +111,7 @@ module.exports = React.createClass({
         }
 
         return (
-            <div className="loginView container-fluid" style={{'backgroundColor':'#000'}}>
+            <div className="loginView container-fluid" style={style}>
                 <div className="row logins">
                     <div className="col-sm-8 col-sm-offset-2 login-grid">
                     {childNodes}

@@ -69,19 +69,23 @@ module.exports = React.createClass({
                                 {this.props.dir.name}
                             </div>
                             <div className="col-sm-6 col-lg-5 text-right">
-                                {this.props.dir.mixins.indexOf("dam:userfolder") > -1 ?
-                                    <ButtonGroup bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                        <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}
-                                                style={{'padding':'5px 10px', 'margin':0}}>
-                                            <Glyphicon glyph="eye-open"/> open
-                                        </Button>
-                                        <Button onClick={this.handleNodeDelete}
-                                                data-id={this.props.dir.id} data-path={this.props.dir.path}
-                                                style={{'padding':'5px 10px', 'margin':0}}>
-                                            <Glyphicon glyph="remove"/> delete
-                                        </Button>
-                                    </ButtonGroup>
-                                    : ""}
+                                {(() => {
+                                    if( this.props.dir.mixins.indexOf("dam:userfolder") == -1)  {
+                                        return (
+                                        <ButtonGroup bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
+                                            <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}
+                                                    style={{'padding':'5px 10px', 'margin':0}}>
+                                                <Glyphicon glyph="eye-open"/> open
+                                            </Button>
+                                            <Button onClick={this.handleNodeDelete}
+                                                    data-id={this.props.dir.id} data-path={this.props.dir.path}
+                                                    style={{'padding':'5px 10px', 'margin':0}}>
+                                                <Glyphicon glyph="remove"/> delete
+                                            </Button>
+                                        </ButtonGroup>
+                                        );
+                                    }
+                                })()}
                             </div>
                         </div>
                     </div>

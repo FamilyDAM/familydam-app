@@ -50,7 +50,6 @@ module.exports = React.createClass({
         this.state.isMovie = false;
         this.state.isGenericFile = false;
 
-
         if( nextProps.file.mixins !== undefined && nextProps.file.mixins.indexOf("dam:image") > -1 ){
             this.state.isImage = true;
         }

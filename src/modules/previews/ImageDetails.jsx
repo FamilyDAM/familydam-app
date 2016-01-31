@@ -44,6 +44,7 @@ module.exports = React.createClass({
 
 
     componentWillMount:function(){
+
         //console.log("{FilesView} componentWillMount");
         var _this = this;
         this.state.imagePath = "";
@@ -59,7 +60,7 @@ module.exports = React.createClass({
         // list for results
         this.currentNodeSubscription = ContentStore.currentNode.subscribe(function (results)
         {
-
+debugger;
             if( results == undefined || results == null ) return;
 
             if (results['dam:tags'] == undefined)
@@ -108,8 +109,8 @@ module.exports = React.createClass({
             _this.state.imagePath = imagePath;
 
             // reload
-            if( _this.isMounted() ) _this.forceUpdate();
-        });
+            if( this.isMounted() ) this.forceUpdate();
+        }.bind(this));
     },
 
 
@@ -162,9 +163,14 @@ module.exports = React.createClass({
 
     render: function() {
 
+        debugger;
         var _this = this;
 
-        var previewImage = PreferenceStore.getBaseUrl() + _this.state.file.path + "?token=" + UserStore.token.value + "&rendition=thumbnail.200";
+        if( this.state.file === undefined ){
+            return (<div/>);
+        }
+
+        var previewImage = PreferenceStore.getBaseUrl() + this.state.file.path + "?token=" + UserStore.token.value + "&rendition=thumbnail.200";
 
 
         return (

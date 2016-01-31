@@ -10,6 +10,8 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
+//var CreativeCloudEditor = require('./../../components/creativeCloudEditor/CreativeCloudEditor');
+
 var NavigationActions = require('./../../actions/NavigationActions');
 
 
@@ -42,9 +44,7 @@ var PhotoEditView = React.createClass({
 
         return (
             <div className="container-fluid">
-                <iframe
-                    name="picozu-disable-x-frame-options"
-                    src="https://www.picozu.com/editor/?workspace=0&theme=galaxy&key=c6esIt58tZxx4ANc&i=https://www.picozu.com/u/generic.jpg" width="1172" height="800"></iframe>
+                (Coming Soon)
             </div>
 
         );

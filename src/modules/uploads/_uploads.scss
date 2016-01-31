@@ -1,5 +1,4 @@
 
-
 .FileUploadControls
 {
 
@@ -65,11 +64,16 @@
 {
   padding: 0px;
 
-
-  li
+  ul
   {
-    float:   left;
-    padding: 5px;
-    width:  100%;
+    list-style: none;
+
+    li
+    {
+      float:   left;
+      padding: 5px;
+      width:   100%;
+    }
   }
+
 }

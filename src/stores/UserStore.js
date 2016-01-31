@@ -24,8 +24,8 @@ module.exports = {
         {
             console.log("{UserStore}.subscribe()");
 
+            this.currentUser = new Rx.Subject();
             this.users = new Rx.BehaviorSubject(undefined);
-            this.currentUser = new Rx.BehaviorSubject(undefined);
             this.token = new Rx.BehaviorSubject(window.localStorage.getItem("token"));
 
             UserActions.getUsers.sink.subscribe(this.setUsers.bind(this));

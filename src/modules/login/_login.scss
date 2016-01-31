@@ -10,11 +10,8 @@
   right:            0;
   left:             0;
   bottom:           0;
-  background:       url('assets/images/stock-photo-landscape.jpg');
-  background1:       url('assets/images/map-seq31.jpg');
-  background2:       url('http://lorempixel.com/1900/1000/nature/');
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
 
 
   ul{

@@ -35,6 +35,7 @@ var FilesView = require('./modules/files/FilesView');
 var UploadsView = require('./modules/uploads/UploadsView');
 var PhotosView = require('./modules/photos/PhotosView');
 var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
+var PhotoEditView = require('./modules/photoEdit/PhotoEditView');
 //var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
 var UserManagerView = require('./modules/userManager/UserManagerView');
 var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
@@ -87,7 +88,7 @@ ReactDOM.render(
 
             <Route path="photos" component={PhotosView}/>
             <Route path="photos/:id" component={PhotoDetailView}/>
-            <Route path="photos/:id/edit" component={Home}/>
+            <Route path="photos/:id/edit" component={PhotoEditView}/>
 
 
             <Route component={UserManagerView}>

@@ -31,17 +31,24 @@ module.exports = {
         console.log("{upload single file} " +file_.path);
         console.dir(file_);
 
+
         var _this = this;
         var _currentFile = file_;
 
         //flip start flag
         _currentFile.status = "UPLOADING";
         _currentFile.percentComplete = "0";
-        UploadActions.fileStatusAction.onNext(file_);
+
+        // short circut the check access. If the path is null we know we have to do a regular update
+        if( file_.path == undefined ){
+            _this.uploadFile(file_);
+            return;
+        }
 
         var _action;
         // First check access, can we copy a local file (desktop mode) or do we need to upload the file)
         var _hasAccess = false;
+        UploadActions.fileStatusAction.onNext(file_);
         var _checkAccess = _this.checkAccess(_currentFile)
             .then(function (result_, status_, xhr_) {
                 _hasAccess = result_.visible;

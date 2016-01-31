@@ -23,8 +23,8 @@ module.exports = React.createClass({
 
     componentDidMount: function(){
         // update the breadcrumb
-        var _pathData = {'label':'Home', 'navigateTo':"dashboard", 'params':{}, 'level':1};
-        this.navigationActions = NavigationActions.currentPath.onNext( _pathData );
+        //var _pathData = {'label':'Home', 'navigateTo':"dashboard", 'params':{}, 'level':1};
+        //this.navigationActions = NavigationActions.currentPath.onNext( _pathData );
     },
 
     componentWillUnmount: function(){

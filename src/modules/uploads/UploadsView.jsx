@@ -28,6 +28,12 @@ var FileActions = require('../../actions/FileActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
 var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 
+
+/**
+ * TODO: remove bullet list in css
+ * TODO: hash the path and file name for the key attribute to reduce the chance of unique key errors
+ * TODO: Add file size to display
+ */
 module.exports = React.createClass({
 
     getInitialState: function () {
@@ -82,9 +88,9 @@ module.exports = React.createClass({
                                     <Tree
                                         baseDir="/dam:files/"
                                         onSelect={(path_)=>{
-                                        FileActions.getFiles.source.onNext(path_);
-                                        DirectoryActions.selectFolder.onNext({path: path_});
-                                    }}/>
+                                            FileActions.getFiles.source.onNext(path_.path);
+                                            DirectoryActions.selectFolder.onNext({path: path_.path});
+                                        }}/>
                                 </SidebarSection>
                             </div>
 

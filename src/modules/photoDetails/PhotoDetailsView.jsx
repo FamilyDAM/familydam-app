@@ -23,7 +23,7 @@ var Rating = require('react-rating');
 var Tags = require('./../../components/tags/Tags');
 var ExifMap = require('./../../components/exifMap/ExifMap');
 var ExifData = require('./../../components/exifData/ExifData');
-var CreativeCloudEditor = require('./../../components/creativeCloudEditor/CreativeCloudEditor');
+
 var PicozuEditor = require('./../../components/picozuEditor/PicozuEditor');
 var FolderTree = require('../../components/folderTree/FolderTree');
 var DarkroomImage = require('../../components/darkroomImage/DarkroomImage');
@@ -368,9 +368,6 @@ module.exports = React.createClass({
                                         'width': '36px',
                                         'height': '36px'
                                     }} onClick={this.handleDownloadOriginal}/>
-
-                                    <CreativeCloudEditor
-                                        imageId={this.state.photo['jcr:uuid']}/>
 
 
                                     <img src="assets/icons/ic_delete_24px.svg" style={{

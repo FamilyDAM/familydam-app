@@ -48,13 +48,20 @@ module.exports = React.createClass({
 
 
     render: function () {
+
         return (
             <div className="row">
 
                 <div className="col-sm-12">
                     <ol className="breadcrumb" style={{'marginBottom':'0px', 'backgroundColor': 'transparent'}}>
                         {this.state.paths.map(function(path_) {
-                            return <li key={path_.level +'-' +path_.label} ><Link to={path_.navigateTo}  params={path_.params}>{path_.label}</Link></li>;
+                            if( path_.label > 0 && path_.label == "Home"){
+                                //skip
+                            }else {
+                                return ( <li key={path_.level +'-' +path_.label}>
+                                            <Link to={path_.navigateTo} params={path_.params}>{path_.label}</Link>
+                                        </li> );
+                            }
                         })}
                     </ol>
                 </div>

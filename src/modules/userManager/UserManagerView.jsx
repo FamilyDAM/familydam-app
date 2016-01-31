@@ -103,87 +103,89 @@ module.exports = React.createClass({
             asideRightClass = "card hidden-xs hidden-sm col-md-3 col-lg-3";
         }
 
+
         var asideStyle = {};
         var sectionStyle = {};
 
         return (
 
-            <div>
-                <div className="usersView container-fluid">
-                    <div className="row">
-                        <aside className={asideClass} style={asideStyle}>
-                            <div>
-                                <SidebarSection label="Users" showAddFolder={true} open={true} onAdd={this.handleAddUser}/>
-                                <div style={{'clear':'left'}}>
-                                    <ul style={{'listStyle':'none'}}>
-                                        {this.state.users.map(function (user, index) {
-                                            return <li key={user.username}><Link to={'users/' +user.id}>{user.firstName}</Link></li>
-                                        })}
-                                    </ul>
-                                </div>
+            <div className="usersView container-fluid">
+                <div className="row">
+
+                    <aside className={asideClass} style={asideStyle}>
+                        <div>
+                            <SidebarSection label="Users" showAddFolder={true} open={true} onAddFolder={this.handleAddUser}/>
+                            <div style={{'clear':'left'}}>
+                                <ul style={{'listStyle':'none'}}>
+                                    {this.state.users.map(function (user, index) {
+                                        return <li key={user.username}><Link to={'users/' +user.id}>{user.firstName}</Link></li>
+                                    })}
+                                </ul>
                             </div>
-                        </aside>
-
-                        <section className={tableClass} style={sectionStyle}>
-                            <div className="container-fluid photo-body">
-                                {this.props.children}
-                            </div>
-                        </section>
-                    </div>
-                </div>
-
-
-                <div id="fab-button-group"
-                     style={{'position':'absolute','top': '150px','right': '0px', 'display':'none'}}>
-                    <div className="fab  show-on-hover dropup">
-                        <div data-toggle="tooltip" data-placement="left" title="Compose">
-                            <button type="button" className="btn btn-danger btn-io dropdown-toggle"
-                                    data-toggle="dropdown">
-                                    <span className="fa-stack fa-2x">
-                                        <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
-                                         <Glyphicon glyph="plus"
-                                                    className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
-                                                    style={{'fontSize': '24px'}}></Glyphicon>
-                                        <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
-                                    </span>
-                            </button>
                         </div>
-                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
-                            <li>Add User</li>
-                        </ul>
+                    </aside>
+
+                    <section className={tableClass} style={sectionStyle}>
+                        <div className="container-fluid photo-body">
+                            {this.props.children}
+                        </div>
+                    </section>
+
+
+
+                    <div id="fab-button-group"
+                         style={{'position':'absolute','top': '150px','right': '0px', 'display':'none'}}>
+                        <div className="fab  show-on-hover dropup">
+                            <div data-toggle="tooltip" data-placement="left" title="Compose">
+                                <button type="button" className="btn btn-danger btn-io dropdown-toggle"
+                                        data-toggle="dropdown">
+                                        <span className="fa-stack fa-2x">
+                                            <i className="fa fa-circle fa-stack-2x fab-backdrop"></i>
+                                             <Glyphicon glyph="plus"
+                                                        className="fa fa-plus fa-stack-1x fa-inverse fab-primary"
+                                                        style={{'fontSize': '24px'}}></Glyphicon>
+                                            <i className="fa fa-pencil fa-stack-1x fa-inverse fab-secondary"></i>
+                                        </span>
+                                </button>
+                            </div>
+                            <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                                <li>Add User</li>
+                            </ul>
+                        </div>
                     </div>
+
+
+                    <Modal title="Add User" show={this.state.showCreateUserModal} onHide={this.closeCreateUser}>
+                        <div className="modal-body">
+                            <table>
+                                <tr>
+                                    <td><h4>First Name (username)*</h4></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" ref="username" label="User Name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><h4>Password*</h4></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="password" ref="password" label="Password"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div className="modal-footer">
+                            <ButtonGroup>
+                                <Button onClick={this.closeCreateUser}>Close</Button>
+                                <Button onClick={this.handleCreateUser}>Create</Button>
+                            </ButtonGroup>
+                        </div>
+                    </Modal>
                 </div>
 
-
-                <Modal title="Add Folder" show={this.state.showCreateUserModal} onHide={this.closeCreateUser}>
-                    <div className="modal-body">
-                        <table>
-                            <tr>
-                                <td><h4>First Name (username)*</h4></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="text" ref="username" label="User Name"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><h4>Password*</h4></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="password" ref="password" label="Password"/>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <div className="modal-footer">
-                        <ButtonGroup>
-                            <Button onClick={this.closeCreateUser}>Close</Button>
-                            <Button onClick={this.handleCreateUser}>Create</Button>
-                        </ButtonGroup>
-                    </div>
-                </Modal>
             </div>
         );
     }

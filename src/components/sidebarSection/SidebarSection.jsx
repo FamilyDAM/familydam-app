@@ -16,13 +16,13 @@ module.exports =  React.createClass({
         return {
             'label':'',
             showAddFolder: false,
-            'display':'none'
+            'display':'none',
+            open:false
         };
     },
     
     getInitialState: function(){
         return {
-            open:false
         }
     },
 
@@ -32,9 +32,7 @@ module.exports =  React.createClass({
 
 
     componentWillReceiveProps: function(nextProps_){
-        if( nextProps_.open !== undefined ){
-            this.state.open = nextProps_.open;
-        }
+        this.props = nextProps_;
     },
 
 
@@ -69,10 +67,11 @@ module.exports =  React.createClass({
                             }
                         })()}
 
+
                     </span>
                 </div>
 
-                <div style={{'display': this.state.open?"block":"none"}}>{this.props.children}<br/></div>
+                <div style={{'display': this.props.open?"block":"none"}}>{this.props.children}<br/></div>
             </div>
         );
     }
