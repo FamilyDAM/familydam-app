@@ -73,29 +73,6 @@ module.exports = {
     },
 
 
-    addUser: function( data_ ){
-        var _users = this.users.value;
-        _users.push(data_);
-        this.users.onNext(_users);
-        this.checkValidState();
-    },
-
-
-    removeUser: function( data_ ){
-        var _users = this.users.value.filter(
-            function(u){
-                var fName = data_.split("|")[0];
-                var lName = data_.split("|")[1];
-                return u.firstName !== fName || u.lastName !== lName;
-            }
-        );
-
-
-        this.users.onNext(_users);
-        this.checkValidState();
-    },
-
-
     checkValidState: function()
     {
         var isEmailValid = true;//todo
@@ -127,10 +104,11 @@ module.exports = {
         settings.version = "1.0.0";
         settings.license = "";
         settings.state = "READY";
+        settings.host = "localhost";
         settings.port = "9000";
+        settings.profile = "test";
         settings.defaultLocale = this.locale.value;
         settings.storageLocation = this.storageLocation.value;
-        settings.users = this.users.value;
 
         return JSON.stringify(settings);
     }
