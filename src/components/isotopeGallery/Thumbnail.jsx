@@ -22,9 +22,16 @@ module.exports = React.createClass({
             photo: {
                 id: "",
                 src: ""
-            }
+            },
+            selected:false
         }
     },
+
+
+    shouldComponentUpdate(nextProps) {
+        return this.props.photo.id !== nextProps.photo.id || this.props.selected !== nextProps.selected;
+    },
+
 
     handleClick: function (event) {
         if (this.props.onImageClick !== undefined)
@@ -38,7 +45,8 @@ module.exports = React.createClass({
 
         var styles = {
             images:{
-                zIndex:1
+                zIndex:1,
+                margin: '5px'
             },
             overlays:{
                 zIndex:2,
@@ -58,11 +66,11 @@ module.exports = React.createClass({
 
 
         return (
-            <div className={this.props.photo.active?'thumbnail-card active':'thumbnail-card'}
+            <div className={this.props.selected?'thumbnail-card active':'thumbnail-card'}
                  onMouseOver={ ()=>{this.setState({'active':true})} }
                  onMouseOut={ ()=>{this.setState({'active':false})} }>
 
-                <div style={styles.images}>
+                <div style={styles.images} className="text-center">
                     <img src={this.props.photo.src}
                          data-width={this.props.photo.width}
                          data-height={this.props.photo.height}
@@ -73,7 +81,7 @@ module.exports = React.createClass({
 
                 <div style={styles.overlays}>
                     <div className="pull-left">
-                        <span>{this.props.photo.name}</span>
+                        <span>{this.props.photo.name} </span>
                     </div>
                     <div className="pull-right">
                         <Link to={'photos/' +this.props.photo.id} params={{photoId:this.props.photo.id}}>

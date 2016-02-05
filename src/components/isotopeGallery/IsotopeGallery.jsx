@@ -187,7 +187,7 @@ module.exports = React.createClass({
                             _size = Math.max(_size, Math.floor((this.state.bodyWidth-(_segments*5)) / _segments));
                             //_size = Math.floor(this.state.bodyWidth / 5);
                         }
-                        var _class = "isotope-grid-item";
+                        var _class = this.props.id + '-item' +" isotope-grid-item";
                         var _width = _size;
                         var _height = _size;
                         //portrait
