@@ -66,6 +66,7 @@ module.exports = React.createClass({
 
     componentDidUpdate: function () {
         this.initializeGrid();
+
     },
 
 

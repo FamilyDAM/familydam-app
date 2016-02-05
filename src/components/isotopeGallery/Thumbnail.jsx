@@ -5,6 +5,7 @@
 var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
+var LazyLoad = require('react-lazy-load');
 
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
@@ -71,12 +72,15 @@ module.exports = React.createClass({
                  onMouseOut={ ()=>{this.setState({'active':false})} }>
 
                 <div style={styles.images} className="text-center">
+                    <LazyLoad offset="600" debounce={false}>
                     <img src={this.props.photo.src}
                          data-width={this.props.photo.width}
                          data-height={this.props.photo.height}
                          data-aspectratio={this.props.photo.aspectRatio}
+                         className="lazy"
                          style={{'margin':'0 auto', 'maxWidth':this.props.imgWidth, 'maxHeight':this.props.imgHeight}}
                          onClick={this.handleClick}/>
+                    </LazyLoad>
                 </div>
 
                 <div style={styles.overlays}>
