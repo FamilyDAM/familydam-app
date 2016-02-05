@@ -90,7 +90,7 @@ app.checkServer = function(port){
  */
 app.setupWindows = function(){
     splashWindow = new BrowserWindow({width:600, height:400, center:true, frame:false, show:false, type:"splash"});
-    configWindow = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false, type:"desktop",});
+    configWindow = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false, type:"desktop"});
     mainWindow = new BrowserWindow({
         width:1024,
         height:800,
@@ -112,7 +112,6 @@ app.setupWindows = function(){
         configWindow = null;
     });
 
-
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
         // Dereference the window object, usually you would store windows
@@ -133,7 +132,7 @@ app.setupWindows = function(){
 
 app.startServerApplication = function(_settings){
 
-    console.log("Start Embedded Server");
+    console.log("Start Embedded Repository");
     console.dir(_settings);
     serverManager.startServer(_settings, app, this.splashWindow, this.configWindow, this.mainWindow );
 
@@ -159,9 +158,9 @@ app.loadSplashApplication = function(){
 };
 
 
-app.loadDashboardApplication = function(port){
+app.loadDashboardApplication = function(host, port){
 
-    console.log("{loadDashboardApplication} " +"http://localhost:" +port +"/index.html");
+    console.log("{loadDashboardApplication} " +"http://" +host +":" +port +"/index.html");
 
     splashWindow.hide();
     configWindow.hide();
@@ -173,7 +172,7 @@ app.loadDashboardApplication = function(port){
 
 
     //mainWindow.loadUrl('file://' + __dirname  +'/apps/dashboard/index.html');
-    mainWindow.loadUrl("http://localhost:" +port +"/index.html");
+    mainWindow.loadUrl("http://" +host +":" +port +"/index.html");
 
 
 };

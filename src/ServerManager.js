@@ -40,15 +40,15 @@
 
 
 
-    var checkLoadingStatus = function(port, callback_)
+    var checkLoadingStatus = function(host, port, callback_)
     {
-        //console.log("Check Loading Status");
+        console.log("Check Loading Status | host=" +host +" | port=" +port);
 
         checkServerInterval = setInterval(function ()
         {
             //console.log("checking server");
 
-            http.get("http://localhost:" +port +"/health", function (res, data)
+            http.get("http://" +host +":" +port +"/health", function (res, data)
             {
                 if (res.statusCode == 200 || res.statusCode == 302)
                 {
@@ -100,34 +100,30 @@
     var isStarted = false;
     function processStdOut(_data, logFile_)
     {
-        fs.appendFile(logFile_, _data);
-        //console.log( _data );
         try
         {
-            if (_data.indexOf("Tomcat started") != -1)
-            {
-                //console.log( _data );
-            }
-            else if (_data.indexOf("Started FamilyDAM") > -1)
+            if (_data.indexOf("Started FamilyDAM") > -1)
             {
                 isStarted = true;
-                console.log( _data.toString() );
+                console.log( "[STARTED]" +_data );
             }
             else if (_data.indexOf("ERROR") > -1)
             {
-                console.log( _data.toString() );
+                console.log( "[ERROR] " +_data );
             }
             else if (_data.indexOf("WARN") > -1)
             {
-                console.log( _data.toString() );
+                console.log( "[WARN] " + _data );
             }
-            else if( isStarted ){
-                console.dir( _data.toString() );
+            else{
+                console.log( "--" +_data );
             }
+
+            //fs.appendFile(logFile_, _data);
         }
         catch (err)
         {
-            console.log(err);
+            console.log("[ERROR] ** " +err);
         }
     }
 
@@ -145,39 +141,74 @@
             var outLogFile = settings_['storageLocation'] +'/familydam-out.log';
             var outLogErrFile = settings_['storageLocation'] +'/familydam-err.log';
 
-            var spawn = require('child_process').spawn;
+            console.log("Log File: " +outLogFile);
+            console.log("Log Error File: " +outLogErrFile);
+
+
 
             var jarPath = "FamilyDAM.jar";
+            var jarHost = settings_['host'];
             var jarPort = settings_['port'];
 
-            var cmd = "java";
-            var args = ['-jar',  jarPath, '-p', jarPort, '-Dapp-root', settings_['storageLocation'] ];
 
 
-            app_.sendClientMessage('info', "Starting FamilyDAM Server", false);
-            //console.log("Starting Server: " +jarPath +":" +jarPort, true);
-            ///console.log("resourcePath=" +process.resourcesPath);
+            console.log("Starting Server: " +jarPath +" | port=" +jarPort +" | location=" +settings_['storageLocation'], true);
+            app_.sendClientMessage('info', "Starting FamilyDAM Repository", false);
+            console.log("Resource Path=" +process.resourcesPath);
+
 
             var _cwd = settings_['storageLocation'];
             //console.log(cmd);
-            console.log(args);
-            //console.dir(_cwd);
-            //console.dir(prc);
+            //console.log(args);
+            console.dir(_cwd);
+
+
+            var spawn = require('child_process').spawn;
+
+
+
+            var cmd = "java";
+            var args = ['-jar',  jarPath, '-p', jarPort, '-Dspring.profiles.active='+settings_['profile'], '-Dapp-root', settings_['storageLocation'] ];
+
+            console.log("checking java version");
+            version_prc = spawn("java",["-version"], {
+                cwd: _cwd
+            });
+            version_prc.stdout.on('data', function (data)
+            {
+                console.log("" +data);
+                //processStdOut(data, outLogFile);
+            });
+
+
+
+
+            console.log("start repo");
             prc = spawn(cmd,  args, {
                 cwd: _cwd
             });
             prc.unref();
-            prc.stdout.setEncoding("utf8");
+            //prc.stdout.setEncoding("utf8");
             prc.stdout.on('data', function (data)
             {
+                //console.log("" +data);
                 processStdOut(data, outLogFile);
+            });
+            prc.stderr.on('data', function (data)
+            {
+                console.log("" +data);
+            });
+            prc.on('exit', function (data)
+            {
+                console.dir("exit:" +data);
             });
 
 
 
+
             var isReady = false;
-            checkLoadingStatus(jarPort, function(){
-                appRoot.loadDashboardApplication(jarPort);
+            checkLoadingStatus(jarHost, jarPort, function(){
+                appRoot.loadDashboardApplication(jarHost, jarPort);
             })
 
 

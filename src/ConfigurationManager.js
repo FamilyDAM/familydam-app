@@ -54,7 +54,7 @@
         if( !fs.existsSync( __dirname +"/"  +settingsFile) )
         {
             //todo: create default file
-            console.warn("settings file does not exists");
+            console.warn("settings file does not exists, loading App Config wizard.");
             loadConfigApplication();
             return false;
         }
@@ -115,7 +115,7 @@
      */
     var copyResourceDir = function(settings_, root_, path_)
     {
-        console.log("{copy resource dir} root=" +root_ +"  |  path=" +path_);
+        console.log("{copy resource dir} source=" +root_ +"  |  dest=" +path_);
         var path = root_ +path_;
         var _dirList = fs.readdirSync(path);
 
@@ -128,7 +128,7 @@
             console.log("{checking file} source=" +source +"  |  target=" +target);
 
             var stats =  fs.statSync(source);
-            if( stats.isFile() && !fs.existsSync(target) ){
+            if( stats.isFile()  ){
                 console.log('info', "Copying '" +source +"' to "+settings_.storageLocation, false);
                 fs.writeFileSync(target, fs.readFileSync(source));
             }else if( stats.isDirectory() ){
@@ -148,7 +148,7 @@
      */
     var loadConfigApplication = function()
     {
-        console.log("Load configuration window (" +new Date() +")");
+        console.log("Load configuration window (" +new Date() +")  file://" + __dirname + "/apps/config/index.html");
         //this.configWindow = new BrowserWindow({width:900, height:600, center:true, frame:true, show:false, title:'FamilyDAM Configuration Wizard'});
 
         configWindow.loadUrl('file://' + __dirname + '/apps/config/index.html');
@@ -188,11 +188,12 @@
             // write back to file in package
             fs.writeFile( __dirname +'/resources/systemprops.json',  encodedSettings, {'encoding':'utf8'}, function (err, data)
             {
+                console.dir(settings);
                 console.log("** Initialize Storage");
                 initializeStorageLocation(settings);
-                console.log("** Start Server");
+                console.log("** Start JCR Server");
                 app.startServerApplication(settings);
-                console.log("** load splash");
+                console.log("** load splash screen");
                 app.loadSplashApplication();
 
             });
