@@ -22,17 +22,17 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 var PhotoStore = require('./../../stores/PhotoStore');
 
-var Tags = require('./../../components/tags/Tags');
-var PreviewSidebar = require("./../previews/PreviewSidebar");
-var Tree = require('../../components/folderTree/Tree');
-var SidebarSection = require('../../components/sidebarSection/SidebarSection');
-var AppSidebar = require('../../components/appSidebar/AppSidebar');
-var Fab = require('../../components/fab/UploadFab');
-var IsotopeGallery = require('../../components/isotopeGallery/IsotopeGallery');
-var TagList = require('./TagList');
-var PeopleList = require('./PeopleList');
-var DateTree = require('./DateTree');
-var PhotoActions = require('./PhotoActions');
+var Tags = require('./../../components/tags/Tags.jsx');
+var PreviewSidebar = require("./../previews/PreviewSidebar.jsx");
+var Tree = require('../../components/folderTree/Tree.jsx');
+var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
+var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
+var Fab = require('../../components/fab/UploadFab.jsx');
+var IsotopeGallery = require('../../components/isotopeGallery/IsotopeGallery.jsx');
+var TagList = require('./TagList.jsx');
+var PeopleList = require('./PeopleList.jsx');
+var DateTree = require('./DateTree.jsx');
+var PhotoActions = require('./PhotoActions.jsx');
 
 
 

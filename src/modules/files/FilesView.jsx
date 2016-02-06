@@ -30,14 +30,14 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 
 
-var FileRow = require("./FileRow");
-var DirectoryRow = require("./DirectoryRow");
-var BackFolder = require("./BackFolder");
-var PreviewSidebar = require("./../previews/PreviewSidebar");
-var Tree = require('../../components/folderTree/Tree');
-var AppSidebar = require('../../components/appSidebar/AppSidebar');
-var SidebarSection = require('../../components/sidebarSection/SidebarSection');
-var Fab = require('../../components/fab/UploadFab');
+var FileRow = require("./FileRow.jsx");
+var DirectoryRow = require("./DirectoryRow.jsx");
+var BackFolder = require("./BackFolder.jsx");
+var PreviewSidebar = require("./../previews/PreviewSidebar.jsx");
+var Tree = require('../../components/folderTree/Tree.jsx');
+var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
+var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
+var Fab = require('../../components/fab/UploadFab.jsx');
 
 module.exports = React.createClass({
 

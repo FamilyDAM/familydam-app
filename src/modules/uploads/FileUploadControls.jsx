@@ -10,12 +10,15 @@
 var Rx = require('rx');
 var React = require('react');
 var UUID = require('uuid-js');
-var UploadActions = require("../../actions/UploadActions");
-var UploadStore = require("../../stores/UploadStore");
-var DirectoryStore = require("../../stores/DirectoryStore");
-var DirectoryActions = require("../../actions/DirectoryActions");
 
 var Button = require('react-bootstrap').Button;
+
+var UploadActions = require("../../actions/UploadActions");
+var DirectoryActions = require("../../actions/DirectoryActions");
+
+var UploadStore = require("../../stores/UploadStore");
+var DirectoryStore = require("../../stores/DirectoryStore");
+
 
 
 var FileUploadControls = React.createClass({

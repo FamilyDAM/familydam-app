@@ -11,10 +11,10 @@ var Router = require('react-router');
 var IS = require('is_js');
 var Link = Router.Link;
 
-var FileDetails = require('./FileDetails');
-var MusicDetails = require('./MusicDetails');
-var ImageDetails = require('./ImageDetails');
-var SectionTree = require('../../components/folderTree/SectionTree');
+var FileDetails = require('./FileDetails.jsx');
+var MusicDetails = require('./MusicDetails.jsx');
+var ImageDetails = require('./ImageDetails.jsx');
+var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 
 module.exports = React.createClass({
 

@@ -20,13 +20,11 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var Rating = require('react-rating');
 
 
-var Tags = require('./../../components/tags/Tags');
-var ExifMap = require('./../../components/exifMap/ExifMap');
-var ExifData = require('./../../components/exifData/ExifData');
+var Tags = require('./../../components/tags/Tags.jsx');
+var ExifMap = require('./../../components/exifMap/ExifMap.jsx');
+var ExifData = require('./../../components/exifData/ExifData.jsx');
 
-var PicozuEditor = require('./../../components/picozuEditor/PicozuEditor');
-var FolderTree = require('../../components/folderTree/FolderTree');
-var DarkroomImage = require('../../components/darkroomImage/DarkroomImage');
+var FolderTree = require('../../components/folderTree/FolderTree.jsx');
 
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');

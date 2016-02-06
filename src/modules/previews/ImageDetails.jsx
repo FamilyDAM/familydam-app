@@ -17,8 +17,9 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
 
-var Tags = require('./../../components/tags/Tags');
-var SectionTree = require('../../components/folderTree/SectionTree');
+var Tags = require('./../../components/tags/Tags.jsx');
+var SectionTree = require('../../components/folderTree/SectionTree.jsx');
+
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserStore = require('../../stores/UserStore');
 var ContentStore = require('../../stores/ContentStore');

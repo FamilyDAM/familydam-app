@@ -12,7 +12,7 @@ var IS = require('is_js');
 var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 
-var SectionTree = require('../../components/folderTree/SectionTree');
+var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 
 module.exports = React.createClass({
 

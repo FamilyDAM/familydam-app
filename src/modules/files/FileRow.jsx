@@ -20,8 +20,8 @@ var NodeActions = require('../../actions/NodeActions');
 var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 
-var ImageRow = require('./ImageRow');
-var MusicRow = require('./MusicRow');
+var ImageRow = require('./ImageRow.jsx');
+var MusicRow = require('./MusicRow.jsx');
 
 var FileRow = React.createClass({
 

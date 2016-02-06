@@ -10,6 +10,8 @@ var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
 
+//var ImglyKit = require('imglykit-sdk');
+//var ImglyKit = require('./../../assets/js/imglykit/js/imglykit.js');
 //var CreativeCloudEditor = require('./../../components/creativeCloudEditor/CreativeCloudEditor');
 
 var NavigationActions = require('./../../actions/NavigationActions');
@@ -38,13 +40,35 @@ var PhotoEditView = React.createClass({
             }
         }, false);
 
+
+        debugger;
+        var image, container, kit;
+
+        image = new Image();
+        image.src = "image.jpg";
+
+        image.onload = function () {
+            container = document.querySelector("#imgCanvas");
+            /**
+            kit = new ImglyKit({
+                image: image,
+                container: container,
+                assetsUrl: "/assets/js/imglykit", // Change this to where your assets are
+                ui: {
+                    enabled: true // UI is disabled per default
+                }
+            });
+            kit.run();
+             **/
+        };
+
     },
 
     render: function() {
 
         return (
-            <div className="container-fluid">
-                (Coming Soon)
+            <div id="imgCanvas" className="container-fluid" style="width: 640px; height: 480px;">
+
             </div>
 
         );

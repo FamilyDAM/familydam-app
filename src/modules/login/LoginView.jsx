@@ -11,9 +11,9 @@ var Router = require('react-router');
 var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
 
-var LoginCard = require('./LoginCard');
-var SignupCard = require('./SignupCard');
-var Clock = require('./../../components/clock/Clock');
+var LoginCard = require('./LoginCard.jsx');
+var SignupCard = require('./SignupCard.jsx');
+var Clock = require('./../../components/clock/Clock.jsx');
 
 var AuthActions = require('./../../actions/AuthActions');
 var UserActions = require('./../../actions/UserActions');

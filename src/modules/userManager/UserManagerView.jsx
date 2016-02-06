@@ -11,7 +11,6 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var Button = require('react-bootstrap').Button;
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Modal = require('react-bootstrap').Modal;
-var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 var ModalHeader = require('react-bootstrap').Modal.Header;
 var ModalTitle = require('react-bootstrap').Modal.Title;
 var ModalBody = require('react-bootstrap').Modal.Body;
@@ -21,6 +20,7 @@ var ModalFooter = require('react-bootstrap').Modal.Footer;
 var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
 
+var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
 
 module.exports = React.createClass({
 

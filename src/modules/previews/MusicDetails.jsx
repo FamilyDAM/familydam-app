@@ -20,10 +20,13 @@ var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var NodeActions = require('../../actions/NodeActions');
-var SectionTree = require('../../components/folderTree/SectionTree');
+
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserStore = require('../../stores/UserStore');
 var ContentStore = require('../../stores/ContentStore');
+
+var SectionTree = require('../../components/folderTree/SectionTree.jsx');
+
 
 module.exports = React.createClass({
 

@@ -17,16 +17,16 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var Dropdown = require('react-bootstrap').Dropdown;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
-var FileUploadView = require('./FileUploadView');
-var AppSidebar = require('../../components/appSidebar/AppSidebar');
-var Tree = require('../../components/folderTree/Tree');
-var FolderTree = require('../../components/folderTree/FolderTree');
-var UploadActions = require('../../actions/UploadActions');
+var FileUploadView = require('./FileUploadView.jsx');
+var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
+var Tree = require('../../components/folderTree/Tree.jsx');
+var FolderTree = require('../../components/folderTree/FolderTree.jsx');
+var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
 
+var UploadActions = require('../../actions/UploadActions');
 var NavigationActions = require('./../../actions/NavigationActions');
 var FileActions = require('../../actions/FileActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
-var SidebarSection = require('../../components/sidebarSection/SidebarSection');
 
 
 /**

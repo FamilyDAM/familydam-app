@@ -19,9 +19,9 @@ var Dropdown = require('react-bootstrap').Dropdown;
 var MenuItem = require('react-bootstrap').MenuItem;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
-var Breadcrumb = require('../../components/breadcrumb/Breadcrumb');
-var SectionHeader = require('../../components/breadcrumb/SectionHeader');
-var SectionTree = require('../../components/folderTree/SectionTree');
+var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
+var SectionHeader = require('../../components/breadcrumb/SectionHeader.jsx');
+var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 
 var AuthActions = require('../../actions/AuthActions');
 

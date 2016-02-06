@@ -28,18 +28,18 @@ var services = require('./services/_services').subscribe();
 
 
 //load compiled jsx views
-var LoginView = require('./modules/login/LoginView');
-var DashboardView = require('./modules/dashboard/DashboardView');
-var Home = require('./modules/home/Home');
-var FilesView = require('./modules/files/FilesView');
-var UploadsView = require('./modules/uploads/UploadsView');
-var PhotosView = require('./modules/photos/PhotosView');
-var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView');
-var PhotoEditView = require('./modules/photoEdit/PhotoEditView');
+var LoginView = require('./modules/login/LoginView.jsx');
+var DashboardView = require('./modules/dashboard/DashboardView.jsx');
+var Home = require('./modules/home/Home.jsx');
+var FilesView = require('./modules/files/FilesView.jsx');
+var UploadsView = require('./modules/uploads/UploadsView.jsx');
+var PhotosView = require('./modules/photos/PhotosView.jsx');
+var PhotoDetailView = require('./modules/photoDetails/PhotoDetailsView.jsx');
+var PhotoEditView = require('./modules/photoEdit/PhotoEditView.jsx');
 //var PhotosThumbnail = require('./modules/photos/PhotoThumbnail');
-var UserManagerView = require('./modules/userManager/UserManagerView');
-var UserManagerHomeView = require('./modules/userManager/UserManagerHome');
-var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails');
+var UserManagerView = require('./modules/userManager/UserManagerView.jsx');
+var UserManagerHomeView = require('./modules/userManager/UserManagerHome.jsx');
+var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails.jsx');
 //var SignupView = require('./modules/signup/SignupView');
 
 /**
@@ -70,6 +70,8 @@ var routes = [
 });
  **/
 ReactDOM.render(
+
+
     <Router history={Router.History}>
         <Route path="/" component={LoginView} />
         <Route path="login" component={LoginView} />

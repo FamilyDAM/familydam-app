@@ -12,7 +12,8 @@ var React = require('react');
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var Button = require('react-bootstrap').Button;
 
-var FileUploadControls = require("./FileUploadControls");
+var FileUploadControls = require("./FileUploadControls.jsx");
+
 var UploadActions = require("./../../actions/UploadActions");
 var UploadStore = require("./../../stores/UploadStore");
 var DirectoryStore = require("./../../stores/DirectoryStore");

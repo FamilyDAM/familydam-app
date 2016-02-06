@@ -8,7 +8,7 @@ var Route = Router.Route;
 
 var ImageActions = require('../../actions/ImageActions');
 var PhotoStore = require('./../../stores/PhotoStore');
-var Tree = require('../../components/folderTree/Tree');
+var Tree = require('../../components/folderTree/Tree.jsx');
 
 module.exports =  React.createClass({
     mixins: [ Router.Navigation ],

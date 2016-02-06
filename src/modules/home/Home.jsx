@@ -14,10 +14,10 @@ var Dropdown = require('react-bootstrap').Dropdown;
 var MenuItem = require('react-bootstrap').MenuItem;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
-var SectionTree = require('../../components/folderTree/SectionTree');
 var NavigationActions = require('../../actions/NavigationActions');
 
-var AppSidebar = require('../../components/appSidebar/AppSidebar');
+var SectionTree = require('../../components/folderTree/SectionTree.jsx');
+var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 
 module.exports = React.createClass({
 

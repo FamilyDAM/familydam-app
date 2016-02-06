@@ -9,7 +9,7 @@
 var React = require('react');
 var Packery = require('isotope-packery');
 var Isotope = require('isotope-layout');
-var Thumbnail = require('./Thumbnail');
+var Thumbnail = require('./Thumbnail.jsx');
 
 var ImageActions = require('../../actions/ImageActions');
 

@@ -14,6 +14,5 @@ module.exports = {
 
 };
 
-//di.annotate(AuthActions, new di.Inject());
 
 

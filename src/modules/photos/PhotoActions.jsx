@@ -11,8 +11,8 @@ var Button = require('react-bootstrap').Button;
 
 var NodeActions = require('./../../actions/NodeActions');
 
-var Tags = require('./../../components/tags/Tags');
-var SectionTree = require('../../components/folderTree/SectionTree');
+var Tags = require('./../../components/tags/Tags.jsx');
+var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 
 module.exports =  React.createClass({
 

@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
 
+    require('babelify');
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     grunt.registerTask('default', ['build-babel-dev', 'watch']);//, 'connect'
@@ -7,14 +8,14 @@ module.exports = function(grunt) {
 
 
     grunt.registerTask('build-css', ['compass']);
-    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify2:dashboard']);
+    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify']);
 
 
     grunt.registerTask('build-babel-dev', [
-        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
+        'clean:dist', 'jshint', 'browserify', 'build-css', 'copy'
     ]); /*, 'build-atom-shell-app'*/
     grunt.registerTask('build-babel-prod', [
-        'clean:dist',  'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard','uglify'
+        'clean:dist', 'jshint', 'browserify', 'build-css', 'copy','uglify'
     ]); /*, 'build-atom-shell-app'*/
 
 
@@ -153,6 +154,17 @@ module.exports = function(grunt) {
                         '.htaccess'
                     ]
                 }]
+            },
+            tmp: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= options.app %>',
+                    dest: '<%= options.tmp %>',
+                    src: [
+                        'assets/**'
+                    ]
+                }]
             }
         },
 
@@ -165,20 +177,13 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         cwd: '<%= options.app %>',
-                        src: ['**/*.jsx', 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
+                        src: ['**/*.jsx', 'assets/js/**/*.js', 'stores/**/*.js', 'actions/**/*.js', 'services/**/*.js'],
                         dest: '<%= options.tmp %>',
                         ext: '.js'
                     }
                 ]
             }
         },
-
-        "6to5": {
-            options: {
-                sourceMap: true
-            }
-        },
-
 
 
         uglify: {
@@ -205,37 +210,18 @@ module.exports = function(grunt) {
         },
 
 
-        browserify2: {
-            'dashboard': {
-                entry: './<%= options.tmp %>/app.js',
-                compile: './<%= options.dist %>/app.js',
-                debug: true
-            },
-            'shared-lib': {
-                entry: './<%= options.app %>/shared-lib.js',
-                compile: './<%= options.dist %>/shared-lib.js',
-                debug: false,
-
+        "browserify": {
+            'dist':{
+                options: {
+                    debug: true,
+                    fullPaths:true,
+                    transform: [["babelify"]]
+                },
+                files: {
+                    './<%= options.dist %>/app.js' : ['src/*.jsx']
+                }
             }
-        },
-
-        "babel": {
-            options: {
-                sourceMap: true,
-                nonStandard: true,
-                optional: ["utility.inlineEnvironmentVariables"],
-                code:{ optional: ["utility.inlineEnvironmentVariables"] }
-            },
-            dist: {
-                files: [{
-                    "expand": true,
-                    "cwd": "src",
-                    "src": ["**/*.jsx", 'locales/*.js', 'assets/js/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
-                    "dest": ".tmp",
-                    "ext": ".js"
-                }]
-            }
-        },
+        }
 
 
     });
