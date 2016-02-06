@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 
 
     grunt.registerTask('build-css', ['compass']);
-    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify']);
+    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'browserify']);
 
 
     grunt.registerTask('build-babel-dev', [
@@ -83,6 +83,10 @@ module.exports = function(grunt) {
                 options: {
                     livereload: true
                 }
+            },
+            dist: {
+                files: '<%= options.dist %>/**',
+                tasks: ['newer:copy:maven']
             }
         },
 
@@ -155,14 +159,14 @@ module.exports = function(grunt) {
                     ]
                 }]
             },
-            tmp: {
+            maven: {
                 files: [{
                     expand: true,
                     dot: true,
-                    cwd: '<%= options.app %>',
-                    dest: '<%= options.tmp %>',
+                    cwd: '<%= options.dist %>',
+                    dest: './../server-content-repository/target/classes/static',
                     src: [
-                        'assets/**'
+                        '**/*.*'
                     ]
                 }]
             }
@@ -209,7 +213,6 @@ module.exports = function(grunt) {
             }
         },
 
-
         "browserify": {
             'dist':{
                 options: {
@@ -218,8 +221,41 @@ module.exports = function(grunt) {
                     transform: [["babelify"]]
                 },
                 files: {
-                    './<%= options.dist %>/app.js' : ['src/*.jsx']
+                    './<%= options.dist %>/app.js' : ['src/app.jsx']
                 }
+            }
+        },
+
+
+        /************
+         * Old way - run babel then browserify2, keeping it around for reference, for now
+         */
+        browserify2: {
+            'dashboard': {
+                entry: './<%= options.tmp %>/app.js',
+                compile: './<%= options.dist %>/app.js',
+                debug: true
+            },
+            'shared-lib': {
+                entry: './<%= options.app %>/shared-lib.js',
+                compile: './<%= options.dist %>/shared-lib.js',
+                debug: false,
+            }
+        },
+        "babel": {
+            options: {
+                sourceMap: true,
+                presets: ["es2015"],
+                plugins: ["transform-es2015-modules-commonjs"]
+            },
+            tmp: {
+                files: [{
+                    "expand": true,
+                    "cwd": "src",
+                    "src": ["**/*.jsx", 'locales/*.js', 'stores/*.js', 'actions/**/*.js', 'services/**/*.js'],
+                    "dest": ".tmp",
+                    "ext": ".js"
+                }]
             }
         }
 

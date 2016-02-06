@@ -80,7 +80,7 @@ module.exports = React.createClass({
     },
 
 
-    componentWillReceiveProps2: function (nextProps) {
+    componentWillReceivePropsOLD: function (nextProps) {
         debugger;
         this.props = nextProps;
 
@@ -367,6 +367,12 @@ module.exports = React.createClass({
                                         'height': '36px'
                                     }} onClick={this.handleDownloadOriginal}/>
 
+                                    <Link to={'photos/' +this.state.photo['jcr:uuid'] +'/edit'} params={{id: '123'}}>
+                                        <img src="assets/icons/ic_mode_edit_24px.svg" style={{
+                                            'width': '36px',
+                                            'height': '36px'
+                                        }}/>
+                                    </Link>
 
                                     <img src="assets/icons/ic_delete_24px.svg" style={{
                                         'width': '36px',
