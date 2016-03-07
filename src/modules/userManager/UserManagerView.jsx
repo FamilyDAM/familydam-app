@@ -77,8 +77,8 @@ module.exports = React.createClass({
 
     handleCreateUser: function (event_) {
 
-        var _username = this.refs.username.getDOMNode().value;
-        var _password = this.refs.password.getDOMNode().value;
+        var _username = this.refs.username.value;
+        var _password = this.refs.password.value;
         var _userProps = {'firstName':_username};
 
         UserActions.createUser.source.onNext({

@@ -97,6 +97,8 @@ module.exports = React.createClass({
                 kit.run();
             };
 
+
+            /**
             var button = document.querySelector("#render");
             button.addEventListener("onExportClick", function () {
                 kit.render("data-url", "image/png")
@@ -111,6 +113,7 @@ module.exports = React.createClass({
                         document.body.appendChild(imageTag);
                     });
             });
+             **/
 
         }
     },

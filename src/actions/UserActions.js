@@ -13,7 +13,9 @@ module.exports = {
 
     loadUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
-    saveUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
+    saveUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+
+    changePassword: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
 
 };
 

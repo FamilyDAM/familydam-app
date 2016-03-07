@@ -6,14 +6,8 @@
 var React = require('react');
 var Router = require('react-router');
 var Link = Router.Link;
-var History = Router.History;
 
-
-var Navbar = require('react-bootstrap').Navbar;
-var Nav = require('react-bootstrap').Nav;
-var NavItem = require('react-bootstrap').NavItem;
 var Button = require('react-bootstrap').Button;
-var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var Dropdown = require('react-bootstrap').Dropdown;
 var MenuItem = require('react-bootstrap').MenuItem;
@@ -25,8 +19,18 @@ var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 
 var AuthActions = require('../../actions/AuthActions');
 
+var UserStore = require('./../../stores/UserStore');
+
 
 module.exports = React.createClass({
+
+    getInitialState:function()
+    {
+        return {
+            user:{}
+        };
+    },
+
 
     componentWillMount: function () {
         var _this = this;
@@ -35,8 +39,22 @@ module.exports = React.createClass({
             this.props.history.pushState(null, '/', null);
         }.bind(this));
 
+
+        this.currentUserStoreSubscription = UserStore.currentUser.subscribe(function(data_){
+            if( data_ !== undefined )
+            {
+                this.state.user = data_;
+                if( this.isMounted() ) this.forceUpdate();
+            }
+        }.bind(this));
     },
 
+
+    componentWillUnmount: function(){
+        if( this.currentUserStoreSubscription !== undefined ){
+            this.currentUserStoreSubscription.dispose();
+        }
+    },
 
 
     handleDropDownToggle: function(e){
@@ -57,7 +75,7 @@ module.exports = React.createClass({
                     <div className="row">
                         <aside ref="headerSidebar" className="header-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2">
                             <div className="box">
-                                <span className="name text-center">MIKE NIMER</span>
+                                <span className="name text-center">{this.state.user.firstName} {this.state.user.lastName}</span>
                             </div>
                         </aside>
 

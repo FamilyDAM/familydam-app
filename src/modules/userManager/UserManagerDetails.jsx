@@ -13,6 +13,7 @@ var Tabs = require('react-bootstrap').Tabs;
 var Tab = require('react-bootstrap').Tab;
 var Table = require('react-bootstrap').Table;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
+var Ladda = require('ladda');
 
 
 var NavigationActions = require('../../actions/NavigationActions');
@@ -27,14 +28,20 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {
             user: {},
+            savePasswordLoading: false
         }
     },
 
-    statics:{
-        willTransitionTo:function(transition, params, query, callback){
+    statics: {
+        willTransitionTo: function (transition, params, query, callback) {
 
             // update the breadcrumb
-            var _pathData = {'label': params.id, 'navigateTo': "userManagerDetails", 'params': {id:params.id}, 'level': 2};
+            var _pathData = {
+                'label': params.id,
+                'navigateTo': "userManagerDetails",
+                'params': {id: params.id},
+                'level': 2
+            };
             NavigationActions.currentPath.onNext(_pathData);
             callback();
         }
@@ -44,9 +51,26 @@ module.exports = React.createClass({
         console.log("{UserManagerDetailView} componentWillMount");
 
 
+        this.loadUserSubscription = UserActions.loadUser.sink.subscribe(function (data_) {
+            this.setState({'user': data_});
+            debugger;
+            this.setState({savePasswordLoading: true});
+        }.bind(this));
 
-        this.loadUserSubscription = UserActions.loadUser.sink.subscribe(function(data_){
-            this.setState({'user':data_});
+
+        UserActions.saveUser.sink.subscribe(function(data_){
+            setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
+        }.bind(this), function(data_){
+            //error
+            setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
+        }.bind(this));
+
+
+        UserActions.changePassword.sink.subscribe(function(data_){
+            setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
+        }.bind(this), function(data_){
+            //error
+            setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
         }.bind(this));
 
         // pull
@@ -54,54 +78,70 @@ module.exports = React.createClass({
         UserActions.loadUser.source.onNext(this.props.params.id);
 
 
-        $(this.refs.googleDriveToggle.getDOMNode()).bootstrapSwitch({'state':false});
-        $(this.refs.googleDriveToggle.getDOMNode()).on('switchChange.bootstrapSwitch', function(event, state) {
+        $(this.refs.googleDriveToggle).bootstrapSwitch({'state': false});
+        $(this.refs.googleDriveToggle).on('switchChange.bootstrapSwitch', function (event, state) {
             //MetricActions.enableAutoRefresh.onNext(state);
         });
-        $(this.refs.dropboxToggle.getDOMNode()).bootstrapSwitch({'state':false});
-        $(this.refs.dropboxToggle.getDOMNode()).on('switchChange.bootstrapSwitch', function(event, state) {
+        $(this.refs.dropboxToggle).bootstrapSwitch({'state': false});
+        $(this.refs.dropboxToggle).on('switchChange.bootstrapSwitch', function (event, state) {
             //MetricActions.enableAutoRefresh.onNext(state);
         });
-        $(this.refs.facebookToggle.getDOMNode()).bootstrapSwitch({'state':false});
-        $(this.refs.facebookToggle.getDOMNode()).on('switchChange.bootstrapSwitch', function(event, state) {
+        $(this.refs.facebookToggle).bootstrapSwitch({'state': false});
+        $(this.refs.facebookToggle).on('switchChange.bootstrapSwitch', function (event, state) {
             //MetricActions.enableAutoRefresh.onNext(state);
         });
-        $(this.refs.twitterToggle.getDOMNode()).bootstrapSwitch({'state':false});
-        $(this.refs.twitterToggle.getDOMNode()).on('switchChange.bootstrapSwitch', function(event, state) {
+        $(this.refs.twitterToggle).bootstrapSwitch({'state': false});
+        $(this.refs.twitterToggle).on('switchChange.bootstrapSwitch', function (event, state) {
             //MetricActions.enableAutoRefresh.onNext(state);
         });
     },
 
-    componentDidUpdate:function(prevProps, prevState)
-    {
-        $(this.refs.googleDriveToggle.getDOMNode()).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
-        $(this.refs.dropboxToggle.getDOMNode()).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
-        $(this.refs.facebookToggle.getDOMNode()).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
-        $(this.refs.twitterToggle.getDOMNode()).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
+    componentDidUpdate: function (prevProps, prevState) {
+        $(this.refs.googleDriveToggle).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
+        $(this.refs.dropboxToggle).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
+        $(this.refs.facebookToggle).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
+        $(this.refs.twitterToggle).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
+
+        this.saveBtn = Ladda.create( document.querySelector( '#saveBtn' ) );
+        this.savePasswordBtn = Ladda.create( document.querySelector( '#savePasswordBtn' ) );
     },
 
 
     componentWillUnmount: function () {
-        if( this.loadUserSubscription !== undefined ){
+        if (this.loadUserSubscription !== undefined)
+        {
             this.loadUserSubscription.dispose();
         }
     },
 
-    componentWillReceiveProps:function(nextProps){
+    componentWillReceiveProps: function (nextProps) {
         UserActions.loadUser.source.onNext(nextProps.params.id);
     },
 
-    handleChange:function(event_) {
+    handleResetPasswordClick: function (event_) {
+
+        if( this.savePasswordBtn !== undefined ) {
+            this.savePasswordBtn.start();
+        }
+
+        UserActions.changePassword.source.onNext(this.state.user);
+    },
+
+    handleChange: function (event_) {
         var _field = event_.currentTarget.id;
         var _val = event_.currentTarget.value;
         this.state.user[_field] = _val;
-        if( this.isMounted() ) this.forceUpdate();
+        if (this.isMounted()) this.forceUpdate();
     },
 
-    handleSave:function(event_) {
+    handleSave: function (event_) {
+
+        if( this.saveBtn !== undefined ) {
+            this.saveBtn.start();
+        }
+
         UserActions.saveUser.source.onNext(this.state.user);
     },
-
 
 
     render: function () {
@@ -117,7 +157,13 @@ module.exports = React.createClass({
                         <LinkContainer to="users">
                             <button className="btn btn-default btn-link">Cancel</button>
                         </LinkContainer>
-                        <Button bsStyle='primary' onClick={this.handleSave}>Save</Button>
+                        <Button ref="saveBtn" id="saveBtn"
+                                data-style="expand-left"
+                                data-spinner-size={30}
+                                data-spinner-color="#000"
+                                bsStyle='primary'
+                                className="ladda-button"
+                                onClick={this.handleSave}>Save</Button>
                     </div>
                 </div>
 
@@ -133,18 +179,18 @@ module.exports = React.createClass({
                                                ref="firstName"
                                                id="firstName" name="firstName"
                                                value={this.state.user.firstName}
-                                                onChange={this.handleChange}/>
+                                               onChange={this.handleChange}/>
                                     </label>
                                 </div>
                                 <div className="col-sm-6">
-                                        <label htmlFor="firstName">
-                                            Last Name:&nbsp;<br/>
-                                            <input type="text"
-                                                   ref="lastName"
-                                                   id="lastName" name="lastName"
-                                                   value={this.state.user.lastName}
-                                                   onChange={this.handleChange}/>
-                                        </label>
+                                    <label htmlFor="firstName">
+                                        Last Name:&nbsp;<br/>
+                                        <input type="text"
+                                               ref="lastName"
+                                               id="lastName" name="lastName"
+                                               value={this.state.user.lastName}
+                                               onChange={this.handleChange}/>
+                                    </label>
                                 </div>
                             </div>
                             <div className="row" style={{'marginTop': '10px'}}>
@@ -169,14 +215,25 @@ module.exports = React.createClass({
                                 New Password:<br/>
                                 <input type="password"
                                        ref="password"
-                                       id="password" name="password"/>
-                                <Button bsSize="xsmall">reset password</Button>
+                                       id="password" name="password"
+                                       onChange={this.handleChange}/>
                             </label>
+
+                            <Button ref="savePasswordBtn"
+                                    id="savePasswordBtn"
+                                    onClick={this.handleResetPasswordClick}
+                                    data-color="#fff"
+                                    data-style="expand-left"
+                                    data-spinner-size={20}
+                                    data-spinner-color="#000"
+                                    className="ladda-button">
+                                <span className="ladda-label">Save Password</span>
+                            </Button>
+
                         </fieldset>
                         <br/><br/>
                     </div>
                 </div>
-
 
 
                 <div className="row">
@@ -185,6 +242,7 @@ module.exports = React.createClass({
                             <Tab eventKey={1} title='Services'>
 
                                 <Table className="userDetailsTable">
+                                    <tbody>
                                     <tr>
                                         <td style={{'width':'100%'}}>
                                             Google Drive (coming soon)
@@ -245,6 +303,7 @@ module.exports = React.createClass({
                                             <Button bsSize='xsmall' disabled>Authorize</Button>
                                         </td>
                                     </tr>
+                                    </tbody>
                                 </Table>
 
 

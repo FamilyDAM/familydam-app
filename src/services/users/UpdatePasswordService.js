@@ -6,6 +6,7 @@
 var Rx = require('rx');
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserActions = require('../../actions/UserActions');
+var UserStore = require('../../stores/UserStore');
 
 
 
@@ -19,9 +20,9 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{saveUser Service} subscribe");
-        this.sink = UserActions.saveUser.sink;
-        UserActions.saveUser.source.subscribe(this.saveUser.bind(this));
+        console.log("{changePassword Service} subscribe");
+        this.sink = UserActions.changePassword.sink;
+        UserActions.changePassword.source.subscribe(this.saveUser.bind(this));
     },
 
     /**
@@ -35,9 +36,7 @@ module.exports = {
         var _data = {};
         _data.username = data_.username;
         _data.userProps = JSON.stringify({
-            'firstName':data_.firstName,
-            'lastName':data_.lastName,
-            'email':data_.email
+            'password':data_.password
         });
 
         var _this = this;
@@ -49,6 +48,7 @@ module.exports = {
             , 'headers': {
                 'X-Auth-Token': UserStore.token.value
             }
+
         }).then(function(results, status_, xhr_){
 
             debugger;

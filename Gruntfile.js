@@ -223,6 +223,15 @@ module.exports = function(grunt) {
                 files: {
                     './<%= options.dist %>/app.js' : ['src/app.jsx']
                 }
+            },
+            'shared':{
+                options: {
+                    debug: true,
+                    fullPaths:true,
+                },
+                files: {
+                    './<%= options.dist %>/shared-lib.js' : ['src/shared-lib.js']
+                }
             }
         },
 
