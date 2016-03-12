@@ -1,0 +1,7 @@
+{
+  "jcr:primaryType": "nt:folder",
+  "jcr:mixinTypes": ["dam:systemfolder"],
+  "thumbnails": {
+    "jcr:primaryType": "nt:folder",
+  }
+}
