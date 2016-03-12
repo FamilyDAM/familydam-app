@@ -53,7 +53,7 @@ module.exports = React.createClass({
 
         this.loadUserSubscription = UserActions.loadUser.sink.subscribe(function (data_) {
             this.setState({'user': data_});
-            debugger;
+            
             this.setState({savePasswordLoading: true});
         }.bind(this));
 

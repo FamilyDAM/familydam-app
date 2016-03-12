@@ -75,7 +75,6 @@ module.exports = React.createClass({
         var randomBackground = this.state.backgrounds[ Math.floor(Math.random()*this.state.backgrounds.length) ];
         var style = {"background": "url('" +randomBackground +"') no-repeat"};
 
-
         if( this.state.users !== undefined )
         {
             if (this.state.users !== undefined && this.state.users.length == 0)

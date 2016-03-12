@@ -61,7 +61,6 @@ module.exports = React.createClass({
         // list for results
         this.currentNodeSubscription = ContentStore.currentNode.subscribe(function (results)
         {
-debugger;
             if( results == undefined || results == null ) return;
 
             if (results['dam:tags'] == undefined)
@@ -164,7 +163,6 @@ debugger;
 
     render: function() {
 
-        debugger;
         var _this = this;
 
         if( this.state.file === undefined ){

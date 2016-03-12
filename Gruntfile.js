@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default-prod', ['build-babel-prod', 'watch']);//, 'connect'
 
 
-    grunt.registerTask('build-css', ['compass']);
+    grunt.registerTask('build-css', ['copy:cssAsScss','compass']);
     grunt.registerTask('build-babel-js-dashboard', ['jshint', 'browserify']);
 
 
@@ -140,6 +140,26 @@ module.exports = function(grunt) {
         },
 
         copy: {
+            cssAsScss: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'bower_components',
+                        src: ['**/*.css', '!**/*.min.css'],
+                        dest: 'src/assets/bower_components',
+                        filter: 'isFile',
+                        ext: ".scss"
+                    },
+                    {
+                        expand: true,
+                        cwd: 'node_modules',
+                        src: ['ladda-bootstrap/**/*.css', '!ladda-bootstrap/**/*.min.css'],
+                        dest: 'src/assets/node_modules/',
+                        filter: 'isFile',
+                        ext: ".scss"
+                    }
+                ]
+            },
             dashboard: {
                 files: [{
                     expand: true,
@@ -148,6 +168,8 @@ module.exports = function(grunt) {
                     dest: '<%= options.dist %>',
                     src: [
                         '*.js',
+                        '!app.js',
+                        '!shared-lib.js',
                         '**/*.json',
                         'apps/splash/**',
                         'apps/setup/**',
@@ -227,7 +249,7 @@ module.exports = function(grunt) {
             'shared':{
                 options: {
                     debug: true,
-                    fullPaths:true,
+                    fullPaths:true
                 },
                 files: {
                     './<%= options.dist %>/shared-lib.js' : ['src/shared-lib.js']

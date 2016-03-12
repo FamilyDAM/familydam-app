@@ -35,21 +35,28 @@ module.exports = {
     getUsers: function()
     {
         var _this = this;
+
         return $.ajax({
                     'method':'get'
-                    ,'url': PreferenceStore.getBaseUrl() +'/api/users'
+                    ,'url': PreferenceStore.getBaseUrl() +'/system/userManager/user.tidy.1.json'
                     , cache: false
+
                 }).then(function(results, status_, xhr_){
                     var list = [];
 
-                    results.map(function(item) {
-
-                        if( item.firstName === undefined )
+                    for(var key in results)
+                    {
+                        if( key != "admin" && key != "anonymous" )
                         {
-                            item.firstName = item.username;
+                            var item = results[key];
+                            item.username = key;
+                            if (item.firstName === undefined)
+                            {
+                                item.firstName = item.username;
+                            }
+                            list.push(item);
                         }
-                        list.push(item);
-                    });
+                    }
 
                     var _sortedUsers = list.sort(function (a, b) { return b.username - a.username; });
                     _this.sink.onNext(_sortedUsers);
@@ -59,7 +66,7 @@ module.exports = {
                         AuthActions.saveToken.onNext(_token);
                     }
                 }, function (xhr_, status_, errorThrown_){
-
+            
                     //send the error to the store (through the sink observer
                     if( xhr_.status == 401){
                         AuthActions.loginRedirect.onNext(true);

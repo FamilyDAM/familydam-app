@@ -29,7 +29,7 @@ module.exports = {
             console.log("{GetFiles Service} getFiles()");
 
             var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/api/files/";
+            var _url = PreferenceStore.getBaseUrl() + "/content/dam-files/";
 
             return $.ajax({
                 'method': "get",
@@ -42,7 +42,7 @@ module.exports = {
             }).then(function (data_, status_, xhr_) {
 
                 console.log("{GetFiles Service} getFiles() success");
-
+debugger;
                 _this.sink.onNext(data_);
 
                 // update token

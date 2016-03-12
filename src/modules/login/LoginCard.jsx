@@ -52,6 +52,7 @@ module.exports = React.createClass({
      */
     handleSubmit: function(event)
     {
+
         var _this = this;
         var _username = this.props.user.username;
         var _password = this.state.password;

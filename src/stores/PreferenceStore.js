@@ -10,11 +10,18 @@ var Rx = require('rx');
 module.exports = {
 
     // Logged in user
-    _baseUrl : "http://localhost:9000",
+    //_baseUrl : "http://localhost:9000",
+    _baseUrl : "",
+
     //_baseUrl : "",
-    _rootDirectory : "/dam:files/",
+    _rootDirectory : "/content/dam-files/",
     _documentRootDirectory : "/documents/",
 
+    //logged in user, start with default admin/admin 
+    //admin/admin is changed on the system after the first user has been created so 
+    //this will be reset after user login
+    username : "admin",
+    password : "admin",
 
     subscribe: function() {
         console.log("{PreferenceStore}.init()");

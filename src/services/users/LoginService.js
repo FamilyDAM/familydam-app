@@ -34,14 +34,14 @@ module.exports = {
         console.log("{Login Service} login(" +data_.username +"," +data_.password +")");
         var _this = this;
         var _salt = new Date().getTime();
-        var _url = PreferenceStore.getBaseUrl() +'/api/users/login';
+        var _url = PreferenceStore.getBaseUrl() +'/j_security_check?';
 
         //TODO: hash the password & salt
-
         return $.ajax({
                     'method':'post'
                     ,'url': _url
-                    ,'data':{'username':data_.username, 'password':data_.password, 'salt':_salt}
+                    ,'data':{'j_username':data_.username, 'j_password':data_.password, 'j_validate':'true'}
+                
                 }).then(function(data_, status_, xhr_){
                     //send results to the store
                     _this.sink.onNext(data_);

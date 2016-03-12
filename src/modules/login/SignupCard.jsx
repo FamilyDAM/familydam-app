@@ -130,7 +130,7 @@ module.exports = React.createClass({
 
 
                     <div className="row">
-                        <div className="col-sm-12" style={{'text-align':'right'}}>
+                        <div className="col-sm-12" style={{'textAlign':'right'}}>
                             <hr/>
                             <button className="btn btn-primary" onClick={this.handleSubmit} onTouch={this.handleSubmit}>create</button>
                         </div>
