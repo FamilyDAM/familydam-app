@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.familydam.apps.photos;
+package com.familydam.apps.photos.servlets;
 
+import com.familydam.apps.photos.FamilyDAMConstants;
 import com.familydam.apps.photos.services.ImageRenditionsService;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;

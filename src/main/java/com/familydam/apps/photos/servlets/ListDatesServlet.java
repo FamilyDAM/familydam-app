@@ -16,20 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.familydam.apps.photos;
+package com.familydam.apps.photos.servlets;
 
+import com.familydam.apps.photos.daos.TreeDao;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.io.Writer;
+import java.util.Map;
 
 /**
  * Hello World Servlet registered by path
@@ -44,34 +49,45 @@ import java.io.Writer;
  *     @Property(name="sling.servlet.paths", value="/hello-world-servlet")
  * })
  */
-@SlingServlet(paths="/photo-servlet")
+@SlingServlet(paths="/api/dam:image/list/dates")
 @Properties({
     @Property(name="service.description", value="Hello World Path Servlet"),
     @Property(name="service.vendor", value="The Apache Software Foundation")
 })
 @SuppressWarnings("serial")
-public class ByPathServlet extends SlingSafeMethodsServlet {
+public class ListDatesServlet extends SlingSafeMethodsServlet {
     
-    private final Logger log = LoggerFactory.getLogger(ByPathServlet.class);
+    private final Logger log = LoggerFactory.getLogger(ListDatesServlet.class);
+
+
 
     @Override
     protected void doGet(SlingHttpServletRequest request,
             SlingHttpServletResponse response) throws ServletException,
-            IOException {
-        
-        Writer w = response.getWriter();
-        w.write("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML 2.0//EN\">");
-        w.write("<html>");
-        w.write("<head>");
-        w.write("<title>photo-servlet</title>");
-        w.write("</head>");
-        w.write("<body>");
-        w.write("<h1>Hello World PHOTOS!</h1>");
-        w.write("</body>");
-        w.write("</html>");
-        
-        log.info("Hello World PHOTOS");
-        
+            IOException
+    {
+        Session session = request.getResourceResolver().adaptTo(Session.class);
+
+        try {
+            TreeDao treeDao = new TreeDao();
+            Map dateTree = treeDao.dateTree(session);
+
+
+
+            JSONObject jsonResponse = new JSONObject();
+            for (Object key : dateTree.keySet()) {
+                jsonResponse.put(key.toString(), dateTree.get(key));
+            }
+
+            String results = jsonResponse.toString(2);//JSONObject.valueToString(dateTree);
+            response.setContentType("application/json");
+            //response.getOutputStream().write(results.getBytes());
+            response.getWriter().write(results);
+
+        }catch(RepositoryException|JSONException re){
+            log.error(re.getMessage(), re);
+            response.setStatus(500);
+        }
     }
 
 }
