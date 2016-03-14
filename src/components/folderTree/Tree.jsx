@@ -160,7 +160,7 @@ module.exports = React.createClass({
         return {
             addNodeRefs: [],
             treeData: [],
-            selectedPath: "/dam:files/"
+            selectedPath: "/content/dam-files"
         }
     },
 

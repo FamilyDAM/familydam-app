@@ -86,7 +86,7 @@ module.exports = React.createClass({
                             <div className="boxRow content" style={{'minHeight':'200px'}}>
                                 <SidebarSection label="Files" open={true} showAddFolder={true} onAddFolder={this.handleAddFolder}>
                                     <Tree
-                                        baseDir="/dam:files/"
+                                        baseDir="/content/dam-files"
                                         onSelect={(path_)=>{
                                             FileActions.getFiles.source.onNext(path_.path);
                                             DirectoryActions.selectFolder.onNext({path: path_.path});

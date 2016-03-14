@@ -10,7 +10,7 @@ var DirectoryActions = require('./../actions/DirectoryActions');
 
 module.exports = {
 
-    root: "/dam:files/",
+    //root: "/content/dam-files/",
 
     /**
      * List of directories
@@ -22,7 +22,7 @@ module.exports = {
      * A simple property, stored in a behavior subject.
      * Note: the value is pushed from the DirectoryAction
      */
-    currentFolder: new Rx.BehaviorSubject( {'path':"/dam:files/"} ),
+    currentFolder: new Rx.BehaviorSubject( {'path':"/content/dam-files"} ),
 
 
     subscribe: function() {

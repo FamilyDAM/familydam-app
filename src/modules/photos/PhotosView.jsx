@@ -266,7 +266,7 @@ module.exports =  React.createClass({
                             <div className="boxRow content" style={{'minHeight':'200px'}}>
                                 <SidebarSection label="Filter by folder" open={true}>
                                     <Tree
-                                        baseDir="/dam:files/"
+                                        baseDir="/content/dam-files"
                                         onSelect={(e_)=>{
                                             e_.type = "path";
                                             this.addFilter(e_);

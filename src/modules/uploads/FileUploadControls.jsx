@@ -43,7 +43,7 @@ var FileUploadControls = React.createClass({
             {
                 _this.state.uploadPath = d_.path +"/";
             }
-            _this.state.uploadPathFriendly = d_.path.replace("/dam:files/", "/home/");
+            _this.state.uploadPathFriendly = d_.path.replace("/content/dam-files", "/home/");
             if( _this.isMounted() ) _this.forceUpdate();
         });
     },

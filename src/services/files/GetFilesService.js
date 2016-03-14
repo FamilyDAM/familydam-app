@@ -29,7 +29,7 @@ module.exports = {
             console.log("{GetFiles Service} getFiles()");
 
             var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/content/dam-files/";
+            var _url =  path_ +".graph.1.json/nt:file,nt:folder,sling:Folder/name,path,index,parent,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
             return $.ajax({
                 'method': "get",
@@ -37,12 +37,15 @@ module.exports = {
                 'data': {'path': path_},
                 'headers': {
                     'X-Auth-Token': UserStore.token.value
+                },
+                'xhrFields': {
+                    withCredentials: true
                 }
 
             }).then(function (data_, status_, xhr_) {
 
-                console.log("{GetFiles Service} getFiles() success");
-debugger;
+                
+                //console.log("{GetFiles Service} getFiles() success");
                 _this.sink.onNext(data_);
 
                 // update token

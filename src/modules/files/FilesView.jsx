@@ -47,7 +47,7 @@ module.exports = React.createClass({
             selectedItem: undefined,
             state: '100%',
             showAddFolder: false,
-            selectedPath: "/dam:files/"
+            selectedPath: "/content/dam-files"
         };
     },
 
@@ -62,7 +62,7 @@ module.exports = React.createClass({
         NavigationActions.currentPath.onNext(_pathData);
 
 
-        this.state.path = "/dam:files/";
+        this.state.path = "/content/dam-files";
         if (this.props.query && this.props.query.path)
         {
             this.state.path = this.props.query.path;
@@ -82,14 +82,20 @@ module.exports = React.createClass({
 
         // rx callbacks
         this.fileStoreSubscription = FileStore.files.subscribe(function (data_) {
-            _this.state.files = data_;
-            if (this.isMounted()) this.forceUpdate();
+
+            if( data_ !== undefined && data_["__children__"] !== undefined )
+            {
+                this.setState({'files':data_["__children__"]});
+            }else{
+                this.setState({'files':[]});
+            }
         }.bind(this));
 
 
         // listen for trigger to reload for files in directory
         this.refreshFilesSubscription = FileActions.refreshFiles.subscribe(function (data_) {
             var _path = this.state.selectedPath;
+
             FileActions.getFiles.source.onNext(undefined);
             FileActions.getFiles.source.onNext(_path);
         }.bind(this));
@@ -97,7 +103,6 @@ module.exports = React.createClass({
         // Refresh the file list when someone changes the directory
         this.selectFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
             FileActions.getFiles.source.onNext(data_.path);
-
 
             _this.state.selectedPath = data_.path;
             if (this.isMounted()) this.forceUpdate();
@@ -206,13 +211,13 @@ module.exports = React.createClass({
     render: function () {
 
         var _this = this;
-        var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
+        var tableClass = "main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
         var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
         var asideRightClass = "card hidden col-xs-4 col-sm-3 col-md-3";
 
         if (this.state.selectedItem !== undefined && this.state.selectedItem !== null)
         {
-            tableClass = "card main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
+            tableClass = "main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
             asideClass = "box body-sidebar hidden-xs hidden-sm col-md-3 col-lg-2";
             asideRightClass = "card hidden-xs hidden-sm col-md-3 col-lg-3";
         }
@@ -223,21 +228,19 @@ module.exports = React.createClass({
         var sectionStyle = {};
         //sectionStyle['overflow'] = 'scroll';
         //sectionStyle['height'] = this.state.height;
-
-
         var _folders = this.state.files
-            .filter(function (dir_) {
-                return dir_._class == "com.familydam.core.models.Directory";
+            .filter(function (data_) {
+                return data_["jcr:primaryType"] === "nt:folder" || data_["jcr:primaryType"] === "sling:Folder";
             }).map(function (dir_, indx) {
-                return <DirectoryRow key={dir_.id} dir={dir_}/>
+                return <DirectoryRow key={dir_.path} dir={dir_}/>
             });
 
 
         var _files = this.state.files
-            .filter(function (file_) {
-                return file_._class == "com.familydam.core.models.File" || file_._class == "com.familydam.core.models.DamImage";
+            .filter(function (data_) {
+                return data_["jcr:primaryType"] === "nt:file";
             }).map(function (file_, index_) {
-                return <FileRow key={file_.id} file={file_}/>
+                return <FileRow key={file_.path} file={file_}/>
             });
 
 
@@ -251,7 +254,7 @@ module.exports = React.createClass({
                         <div className="boxRow content" style={{'minHeight':'200px'}}>
                             <SidebarSection label="Files" open={true} showAddFolder={true} onAddFolder={this.handleAddFolder}>
                                 <Tree
-                                    baseDir="/dam:files/"
+                                    baseDir="/content/dam-files"
                                     onSelect={(path_)=>{
                                         FileActions.getFiles.source.onNext(path_.path);
                                         DirectoryActions.selectFolder.onNext({path: path_.path});
@@ -271,13 +274,10 @@ module.exports = React.createClass({
 
                             <BackFolder path={this.state.selectedPath}/>
 
-                            <div>
-                            {_folders}
-                            </div>
 
-                            <div>
+                            {_folders}
+
                             {_files}
-                            </div>
 
                         </div>
 

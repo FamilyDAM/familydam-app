@@ -47,46 +47,61 @@ module.exports = function(grunt) {
             }
         },
 
+        slingPost: {
+            options: {
+                exclude: [".svn", "*.txt", "*.svg", "*.jpg", "*.png", "assets/*.*"]
+            },
+            root: {
+                src: "dist",
+                dest: "/",
+                host:'localhost',
+                port:8080,
+                user:'admin',
+                pass:'admin',
+                replace:true
+            }
+        },
+
         watch: {
 
             styles: {
                 files: ['<%= options.app %/**/*.scss'],
-                tasks: ['compass:dashboard', 'newer:copy:dashboard' ],
+                tasks: ['compass:dashboard', 'newer:copy:dashboard', 'slingPost' ],
                 options: {
                     livereload: true
                 }
             },
             css: {
                 files: ['<%= options.app %>/**/*.css'],
-                tasks: ['compass:dashboard', 'copy:dashboard'],
+                tasks: ['compass:dashboard', 'copy:dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
             },
             js: {
                 files: ['<%= options.app %>/**/*.js'],
-                tasks: ['build-babel-js-dashboard'],
+                tasks: ['build-babel-js-dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
             },
             html: {
                 files: ['<%= options.app %>/*.html'],
-                tasks: ['newer:copy:dashboard'],
+                tasks: ['newer:copy:dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
             },
             react: {
                 files: '<%= options.app %>/**/*.jsx',
-                tasks: ['build-babel-js-dashboard'],
+                tasks: ['build-babel-js-dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
             },
             dist: {
                 files: '<%= options.dist %>/**',
-                tasks: ['newer:copy:maven']
+                tasks: ['newer:copy:maven', 'slingPost']
             }
         },
 

@@ -31,7 +31,7 @@ var AddFolderModal = React.createClass({
 
     getInitialState: function(){
         return {
-            'parent':"/dam:files/"
+            'parent':"/content/dam-files"
         }
     },
 

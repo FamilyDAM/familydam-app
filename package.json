@@ -91,6 +91,7 @@
     "grunt-open": "^0.2.3",
     "grunt-react": "^0.12.2",
     "grunt-rev": "~0.1.0",
+    "grunt-sling-content": "^0.1.1",
     "grunt-svgmin": "~2.0.1",
     "grunt-usemin": "~3.0.0",
     "jshint-stylish": "~2.0.1",

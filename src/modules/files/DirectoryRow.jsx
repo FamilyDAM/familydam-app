@@ -50,12 +50,17 @@ module.exports = React.createClass({
     },
 
 
+    render2:function(){
+        console.log("Directory Row renderer")
+        return (<div>path: {this.props.dir.path}<br/></div>)
+    },
+
     render:function(){
         try
         {
             return (<div key={this.props.dir.id}
                         className="row"
-                        style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'50px', 'cursor': 'pointer'}}
+                        style={{'border':'1px solid #eee', 'padding':'5px', 'minHeight':'50px', 'cursor': 'pointer'}}
                         onClick={this.handleDirClick}
                         data-id={this.props.dir.id} data-path={this.props.dir.path}>
 
@@ -68,32 +73,40 @@ module.exports = React.createClass({
                             <div className="col-sm-6 col-lg-7" style={{'marginTop': '15px'}}>
                                 {this.props.dir.name}
                             </div>
+
                             <div className="col-sm-6 col-lg-5 text-right">
                                 {(() => {
-                                    if( this.props.dir.mixins.indexOf("dam:userfolder") == -1)  {
+                                    debugger;
+
+                                    if( (this.props.dir['jcr:mixinTypes'] !== undefined  &&  this.props.dir['jcr:mixinTypes'].indexOf("dam:userfolder") == -1)
+                                        || this.props.dir["jcr:primaryType"] == "nt:Folder"
+                                        || this.props.dir["jcr:primaryType"] == "sling:Folder" )
+                                    {
                                         return (
-                                        <ButtonGroup bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                            <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}
-                                                    style={{'padding':'5px 10px', 'margin':0}}>
-                                                <Glyphicon glyph="eye-open"/> open
-                                            </Button>
-                                            <Button onClick={this.handleNodeDelete}
-                                                    data-id={this.props.dir.id} data-path={this.props.dir.path}
-                                                    style={{'padding':'5px 10px', 'margin':0}}>
-                                                <Glyphicon glyph="remove"/> delete
-                                            </Button>
-                                        </ButtonGroup>
+                                            <ButtonGroup bsSize="small"
+                                                         style={{'width':'250px','verticalAlign':'middle'}}>
+                                                <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}
+                                                        style={{'padding':'5px 10px', 'margin':0}}>
+                                                    <Glyphicon glyph="eye-open"/> open
+                                                </Button>
+                                                <Button onClick={this.handleNodeDelete}
+                                                        data-id={this.props.dir.id} data-path={this.props.dir.path}
+                                                        style={{'padding':'5px 10px', 'margin':0}}>
+                                                    <Glyphicon glyph="remove"/> delete
+                                                </Button>
+                                            </ButtonGroup>
                                         );
                                     }
+
                                 })()}
                             </div>
                         </div>
                     </div>
                 </div>);
         }catch(err){
-            console.log(err);
+            console.dir(err);
         }
-    }
+    },
 
 });
 

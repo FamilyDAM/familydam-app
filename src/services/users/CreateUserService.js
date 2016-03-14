@@ -46,10 +46,13 @@ module.exports = {
 
         return $.ajax({
             'method': 'post'
-            , 'url': PreferenceStore.getBaseUrl() + '/familydam/api/v1/users'
+            , 'url': '/familydam/api/v1/users'
             , cache: false
             , dataType: "json"
-            , data: _data
+            , data: _data,
+            'xhrFields': {
+                withCredentials: true
+            }
         }).then(function (results, status_, xhr_) {
 
             debugger;

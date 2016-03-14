@@ -1,17 +1,16 @@
 @font-face
 {
   font-family: 'Glyphicons Halflings';
-  src:         url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.eot');
-  src:         url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.woff') format('woff'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.ttf') format('truetype'), url('bower_components/bootstrap-sass-official/assets/fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+  src:         url('assets/fonts/bootstrap/glyphicons-halflings-regular.eot');
+  src:         url('assets/fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('assets/fonts/bootstrap/glyphicons-halflings-regular.woff') format('woff'), url('assets/fonts/bootstrap/glyphicons-halflings-regular.ttf') format('truetype'), url('assets/fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
 }
-
 
 
 @import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/variables"; //set for defaults
 @import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap-sprockets";
 @import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
 @import "./assets/bower_components/bootstrap-material-design/dist/css/ripples.scss"; //set for defaults
-@import "./assets/bower_components/bootstrap-material-design/dist/css/material.scss"; //set for defaults
+//@import "./assets/bower_components/bootstrap-material-design/dist/css/material.scss"; //set for defaults
 @import "./assets/bower_components/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.scss"; //set for defaults
 @import "./assets/bower_components/bootstrap-tokenfield/dist/css/tokenfield-typeahead.scss"; //set for defaults
 
@@ -44,6 +43,13 @@ body
   margin:            0;
   background-color:  #ffffff;
 }
+
+
+
+.btn-group {
+  box-shadow: 0 !important
+}
+
 
 
 @import "modules/login/login";
