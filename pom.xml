@@ -189,7 +189,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Private-Package>
-                            com.familydam.*
+                            com.familydam.apps.photos.*
                         </Private-Package>
                         <Export-Package />
                         <Embed-Dependency>metadata-extractor,xmpcore,imgscalr-lib</Embed-Dependency>
