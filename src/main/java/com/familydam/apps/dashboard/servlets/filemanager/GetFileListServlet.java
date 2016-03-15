@@ -6,9 +6,6 @@ package com.familydam.apps.dashboard.servlets.filemanager;
 
 import com.familydam.apps.dashboard.helpers.NodeMapper;
 import com.familydam.apps.dashboard.models.INode;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -29,15 +26,16 @@ import java.util.List;
 
 /**
  * Created by mnimer on 3/11/16.
- */
+
 @SlingServlet(
-        paths = {"/familydam/api/v1/users"}
+        paths = {"/familydam/api/v1/filemanager"}
 )
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.filemanager.GetFileListServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CreateUserServlet  Description", propertyPrivate = false),
         @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
 })
+ */
 public class GetFileListServlet extends SlingAllMethodsServlet
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());

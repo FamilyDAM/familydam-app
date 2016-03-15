@@ -82,11 +82,13 @@ public class SimpleCORSFilter implements Filter {
 
             if( origin != null && origin.contains("localhost")) {
                 slingResponse.setHeader("Access-Control-Allow-Origin", origin);
-                slingResponse.setHeader("Access-Control-Allow-Credentials", "true");
-                slingResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-                slingResponse.addHeader("Access-Control-Allow-Headers", "Authorization,Content-Type,Accept,X-PINGOTHER,Origin,X-Requested-With");
-                //LOG.debug("Set response header for origin {} and flowing through filter chain",origin);
+            }else{
+                slingResponse.setHeader("Access-Control-Allow-Origin", "*");
             }
+            slingResponse.setHeader("Access-Control-Allow-Credentials", "true");
+            slingResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            slingResponse.addHeader("Access-Control-Allow-Headers", "Authorization,Content-Type,Accept,X-PINGOTHER,Origin,X-Requested-With");
+            //LOG.debug("Set response header for origin {} and flowing through filter chain",origin);
 
         }
 

@@ -10,7 +10,6 @@ import com.familydam.apps.dashboard.models.DamImage;
 import com.familydam.apps.dashboard.models.Directory;
 import com.familydam.apps.dashboard.models.File;
 import com.familydam.apps.dashboard.models.INode;
-import com.sun.javafx.fxml.PropertyNotFoundException;
 import org.apache.jackrabbit.JcrConstants;
 
 import javax.jcr.Node;
@@ -76,7 +75,7 @@ public class NodeMapper
             if (node.getProperty("loading") != null) {
                 directory.setLoading(true);
             }
-        }catch(PathNotFoundException|PropertyNotFoundException pe){
+        }catch(PathNotFoundException pe){
             directory.setLoading(false);
         }
 

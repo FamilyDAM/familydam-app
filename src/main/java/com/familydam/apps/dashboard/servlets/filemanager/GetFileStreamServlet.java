@@ -78,6 +78,7 @@ public class GetFileStreamServlet extends SlingAllMethodsServlet
 
 
 
+
             response.setStatus(200);
         }
         catch ( Exception  ex) {

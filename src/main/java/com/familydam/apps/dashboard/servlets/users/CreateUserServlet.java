@@ -72,7 +72,7 @@ import static com.familydam.apps.dashboard.FamilyDAMDashboardConstants.IS_ROOT_A
  * Annotations below are short version of:
  */
 @SlingServlet(
-        paths = {"/familydam/api/v1/users"}
+        paths = {"/familydam/api/v1/users"}, metatype = true
 )
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.CreateUserServlet", propertyPrivate = false),
@@ -125,7 +125,8 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             createDefaultFolders(adminSession, user);
 
             response.setStatus(201);
-
+            response.setContentType("application/text");
+            response.setContentType(user.getPath());
         }
         catch ( AuthorizableExistsException aee ){
             response.setStatus(409);

@@ -22,7 +22,7 @@
     <groupId>com.familydam.app</groupId>
     <artifactId>dashboard</artifactId>
     <packaging>bundle</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>FamilyDAM-Dashboard</name>
     <description></description>
 
@@ -164,11 +164,8 @@
                         <!-- Stop bnd complaining about unused Private-Package instructions -->
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Private-Package></Private-Package>
-                        <Sling-Nodetypes>
-                            SLING-INF/nodetypes/nodetypes.cnd
-                        </Sling-Nodetypes>
                         <Sling-Initial-Content>
-                            SLING-INF/content/dashboard;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg"path:=/content/dashboard,
+                            SLING-INF/content/dashboard;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg"path:=/,
                         </Sling-Initial-Content>
                     </instructions>
                 </configuration>

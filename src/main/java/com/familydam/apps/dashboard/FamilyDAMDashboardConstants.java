@@ -32,6 +32,11 @@ public class FamilyDAMDashboardConstants
     public static final String DAM_VIDEO = "dam:video";
     public static final String DAM_DATECREATED = "dam:datecreated";
 
+    //Hateoas
+    public static final String HATEAOS_CONTENTTYPE = "application/hal+json";
+    public static final String HATEAOS_EMBEDDED = "_embedded";
+    public static final String HATEAOS_LINKS = "_links";
+
     //Node props
     public static final String CHILDREN = "children";
     public static final String FIRST_NAME = "firstName";
