@@ -12,14 +12,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by mnimer on 3/5/16.
  */
-public interface IImageRenditionService
+public interface IImageRotateService
 {
-    BufferedImage scaleImage(InputStream is, int longSize) throws RepositoryException, IOException;
-
     BufferedImage rotateImage(Session session, Node node) throws RepositoryException, IOException, ImageProcessingException, MetadataException;
 }
