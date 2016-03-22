@@ -4,6 +4,7 @@
 
 package com.familydam.core.helpers;
 
+import com.familydam.core.FamilyDAMCoreConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.slf4j.Logger;
@@ -120,8 +121,12 @@ public class TreeWalker
 
                     if( _prop.equals("name") ){
                         treeMap.put("name", _startNode.getName());
+                    } else if( _prop.equals("links")  && _startMap.containsKey(FamilyDAMCoreConstants.HATEAOS_LINKS)){
+                        treeMap.put(FamilyDAMCoreConstants.HATEAOS_LINKS, _startMap.get(FamilyDAMCoreConstants.HATEAOS_LINKS));
                     } else if( _prop.equals("path") ){
                         treeMap.put("path", _startNode.getPath());
+                    } else if( _prop.equals("links") && _startNode.hasProperty(FamilyDAMCoreConstants.HATEAOS_LINKS) ){
+                        treeMap.put(FamilyDAMCoreConstants.HATEAOS_LINKS, _startNode.getProperty(FamilyDAMCoreConstants.HATEAOS_LINKS));
                     } else if( _prop.equals("index") ){
                         treeMap.put("index", _startNode.getIndex());
                     } else if( _prop.equals("parent") ){
