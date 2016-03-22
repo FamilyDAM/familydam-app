@@ -42,7 +42,11 @@ public class HateaosDecorator implements ResourceDecorator
         linksMap.put("self", resource.getPath() +".json");
 
         if (isFile(resource)) {
-            linksMap.put("download", resource.getPath());
+            linksMap.put("delete", resource.getPath()); //todo check permission
+            linksMap.put("download", resource.getPath());  //todo check permission
+        }
+        if (isFolder(resource)) {
+            linksMap.put("delete", resource.getPath()); //todo check permission
         }
         if (isDamImage(resource)) {
             linksMap.put("thumb", resource.getPath() + ".resize.250.250.jpg");
@@ -63,20 +67,33 @@ public class HateaosDecorator implements ResourceDecorator
         catch (RepositoryException re) {
             return false;
         }
-
     }
 
-    private boolean isFileOrFolder(Resource resource)
+    private boolean isFolder(Resource resource)
     {
         try {
-            return resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:file")
-                    || resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:folder")
-                    || resource.adaptTo(javax.jcr.Node.class).isNodeType("sling:Folder") ;
+            return resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:folder")
+                    || resource.adaptTo(javax.jcr.Node.class).isNodeType("sling:Folder");
         }
         catch (RepositoryException re) {
             return false;
         }
+    }
 
+
+    private boolean isFileOrFolder(Resource resource)
+    {
+        try {
+            if( !resource.isResourceType("sling:syntheticStarResource") ) {
+                return resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:file")
+                        || resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:folder")
+                        || resource.adaptTo(javax.jcr.Node.class).isNodeType("sling:Folder");
+            }
+        }
+        catch (Exception re) {
+            return false;
+        }
+        return false;
     }
 
 

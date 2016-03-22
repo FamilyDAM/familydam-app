@@ -71,9 +71,7 @@ import static com.familydam.apps.dashboard.FamilyDAMDashboardConstants.IS_ROOT_A
  * <p>
  * Annotations below are short version of:
  */
-@SlingServlet(
-        paths = {"/familydam/api/v1/users"}, metatype = true
-)
+@SlingServlet(paths = {"/familydam/api/v1/users"}, metatype = true)
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.CreateUserServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CreateUserServlet  Description", propertyPrivate = false),
