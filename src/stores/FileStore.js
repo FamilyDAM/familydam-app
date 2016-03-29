@@ -20,14 +20,16 @@ module.exports = {
     },
 
     setFiles: function(data_){
-        
-        if( data_.__children__ === undefined ){
+
+        if( data_._embedded.children === undefined ){
             this.files.onNext([]);
         }else
         {
-            for (var i = 0; i < data_.__children__.length; i++)
+            var _objects = [];
+            var _children = data_._embedded.children;
+            for (var i = 0; i < _children.length; i++)
             {
-                var obj = data_.__children__[i];
+                var obj = _children[i];
                 if (obj['jcr:uuid'] !== undefined)
                 {
                     obj.id = obj['jcr:uuid'];
@@ -35,8 +37,10 @@ module.exports = {
                 {
                     obj.id = obj.path;
                 }
+
+                _objects.push(obj);
             }
-            this.files.onNext(data_);
+            this.files.onNext(_objects);
         }
     }
 

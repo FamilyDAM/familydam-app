@@ -76,27 +76,31 @@ module.exports = React.createClass({
 
                             <div className="col-sm-6 col-lg-5 text-right">
                                 {(() => {
-                                    debugger;
-
-                                    if( (this.props.dir['jcr:mixinTypes'] !== undefined  &&  this.props.dir['jcr:mixinTypes'].indexOf("dam:userfolder") == -1)
-                                        || this.props.dir["jcr:primaryType"] == "nt:Folder"
-                                        || this.props.dir["jcr:primaryType"] == "sling:Folder" )
-                                    {
+                                    
                                         return (
                                             <ButtonGroup bsSize="small"
                                                          style={{'width':'250px','verticalAlign':'middle'}}>
+
                                                 <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}
                                                         style={{'padding':'5px 10px', 'margin':0}}>
                                                     <Glyphicon glyph="eye-open"/> open
                                                 </Button>
-                                                <Button onClick={this.handleNodeDelete}
-                                                        data-id={this.props.dir.id} data-path={this.props.dir.path}
-                                                        style={{'padding':'5px 10px', 'margin':0}}>
-                                                    <Glyphicon glyph="remove"/> delete
-                                                </Button>
+
+
+                                                {(() => {
+                                                    if( this.props.dir._links !== undefined &&  this.props.dir._links.delete !== undefined )
+                                                    {
+                                                        //console.log("delete link:" + this.props.file._links.delete);
+                                                        return (<Button onClick={this.handleNodeDelete}
+                                                                        data-path={this.props.dir._links.delete}>
+                                                            <Glyphicon glyph="remove"/> delete
+                                                        </Button>);
+                                                    }
+                                                })()}
+
                                             </ButtonGroup>
                                         );
-                                    }
+                                    
 
                                 })()}
                             </div>

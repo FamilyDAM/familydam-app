@@ -87,8 +87,23 @@ module.exports = React.createClass({
         return  <div className="row" onClick={this.handleRowClick} style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'60px'}}>
                     <div style={{'display': 'table-cell', 'width': '50px'}}>
                         <Link to="photoDetails" params={{'id': this.state.file.id}}>
-                            <img src={PreferenceStore.getBaseUrl() +this.state.file.path +"?rendition=thumbnail.200&token=" +UserStore.token.value}
-                                 style={{'width':'50px', 'height':'50px'}}/></Link>
+                            {(() => {
+
+                                if( this.props.file._links !== undefined && this.props.file._links.thumb !== undefined )
+                                {
+                                    return(
+                                        <img src={this.state.file._links.thumb} style={{'width':'50px', 'height':'50px'}}/>
+                                    );
+
+                                }else{
+                                    return(
+                                        <img src="assets/icons/ic_insert_drive_file_black_48px.svg"
+                                                style={{'width':'48px', 'height':'48px', 'margin':'auto', 'cursor': 'pointer'}}/>
+                                    );
+                                }
+
+                            })()}
+                        </Link>
                     </div>
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
@@ -97,36 +112,49 @@ module.exports = React.createClass({
                             </div>
                             <div className="col-sm-6 col-lg-5 text-right">
                                 {(() => {
-                                    if( this.state.file.mixins.indexOf("dam:image") > -1 )
-                                    {
-                                        return(
-                                        <ButtonGroup bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                            <LinkContainer to={'photos/' +this.state.file.id}>
+
+                                    return(
+                                        <ButtonGroup bsSize="small" style={{'verticalAlign':'middle'}}>
+                                            <LinkContainer to="photos/details" query={{'path':this.state.file.path}}>
                                                 <Button style={{'padding':'5px 10px', 'margin':0}}>
                                                     <Glyphicon glyph="eye-open"/> view
                                                 </Button>
                                             </LinkContainer>
-                                            <LinkContainer to={'photos/' +this.state.file.id +'/edit'} >
+                                            
+                                            <LinkContainer to="photos/edit" query={{'path':this.state.file.path}}>
                                                 <Button style={{'padding':'5px 10px', 'margin':0}}>
                                                     <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
                                                 </Button>
                                             </LinkContainer>
-                                            <Button onClick={this.handleNodeDelete} data-id={this.state.file.id}
-                                                    data-path={this.state.file.path}
-                                                    style={{'padding':'5px 10px', 'margin':0}}>
-                                                <Glyphicon glyph="remove"/> delete
-                                            </Button>
+
+
+                                            {(() => {
+                                                if( this.props.file._links !== undefined &&  this.props.file._links.download !== undefined )
+                                                {
+                                                    //console.log("download link:" + this.props.file._links.download);
+                                                    return (
+                                                        <Button onClick={this.handleDownloadOriginal} data-path={this.props.file._links.download}>
+                                                            <Glyphicon glyph="download"/> download
+                                                        </Button>
+                                                    );
+                                                }
+                                            })()}
+
+                                            {(() => {
+                                                if( this.props.file._links !== undefined &&  this.props.file._links.delete !== undefined )
+                                                {
+                                                    //console.log("delete link:" + this.props.file._links.delete);
+                                                    return (
+                                                        <Button onClick={this.handleNodeDelete}
+                                                                    data-path={this.props.file._links.delete}>
+                                                            <Glyphicon glyph="remove"/> delete
+                                                        </Button>
+                                                    );
+                                                }
+                                            })()}
+
                                         </ButtonGroup>
-                                        );
-                                    }else{
-                                        return (
-                                        <ButtonGroup  bsSize="small">
-                                            <Button onClick={this.handleNodeDelete} data-id={this.state.file.id} data-path={this.state.file.path}>
-                                                <Glyphicon glyph="remove"/> delete
-                                            </Button>
-                                        </ButtonGroup>
-                                        );
-                                    }
+                                    );
                                 })()}
 
                             </div>

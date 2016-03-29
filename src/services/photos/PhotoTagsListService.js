@@ -33,13 +33,13 @@ module.exports = {
             //console.log("{PhotoTagsList Service} execute()");
 
             var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/api/photos/list/tags";
+            var _url = "/content/dam-files.tags.json";
 
             return $.ajax({
                 'method': "get",
                 'url': _url,
-                'headers': {
-                    'X-Auth-Token': UserStore.token.value
+                'xhrFields': {
+                    withCredentials: true
                 }
 
             }).then(function (data_, status_, xhr_) {

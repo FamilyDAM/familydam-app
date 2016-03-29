@@ -33,7 +33,8 @@ module.exports = {
         }.bind(this) );
 
         DirectoryActions.getDirectories.sink.subscribe( function(data_){
-            this.directories.onNext(data_);
+            var _children = data_._embedded.children;
+            this.directories.onNext(_children);
         }.bind(this)  );
     },
 

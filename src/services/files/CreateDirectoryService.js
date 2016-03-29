@@ -35,16 +35,15 @@ module.exports = {
     createDirectory: function(data_)
     {
         var _this = this;
-        var _name = data_.name;
-        var _dir = data_.path;
-        var _url = PreferenceStore.getBaseUrl() +"/api/directory/";
+        var _name = data_.name ;
+        var _dir = data_.path +"/*";
 
         return $.ajax({
                     method: "post",
-                    url: _url,
-                    data: {'path':_dir, 'name':_name},
-                    headers: {
-                        "X-Auth-Token":  UserStore.token.value
+                    url: _dir,
+                    data: {':name':_name, 'jcr:primaryType':'nt:folder'},
+                    'xhrFields': {
+                        withCredentials: true
                     }
                 }).then(function(data_, status_, xhr_){
 

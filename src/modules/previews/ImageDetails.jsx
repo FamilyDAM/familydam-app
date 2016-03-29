@@ -169,17 +169,17 @@ module.exports = React.createClass({
             return (<div/>);
         }
 
-        var previewImage = PreferenceStore.getBaseUrl() + this.state.file.path + "?token=" + UserStore.token.value + "&rendition=thumbnail.200";
-
+        var previewImage = this.state.file._links.thumb;
+debugger;   
 
         return (
             <div className="fileDetailsView" >
                 <SectionTree title="Image Info" buttonGlyph="remove" buttonClick={this.onClose}/>
 
                 <div>
-                <img src={this.state.imagePath}
-                     style={{'maxHeight': '250px', 'maxWidth':'80%'}}
-                     className="center-block" />
+                    <img src={previewImage}
+                         style={{'maxHeight': '250px', 'maxWidth':'80%'}}
+                         className="center-block" />
                 </div>
 
                 <br/>

@@ -54,7 +54,7 @@ module.exports = React.createClass({
 
     componentWillMount: function () {
         var _this = this;
-        console.log("{FilesView} componentWillMount");
+        //console.log("{FilesView} componentWillMount");
 
 
         // update the breadcrumb
@@ -82,10 +82,9 @@ module.exports = React.createClass({
 
         // rx callbacks
         this.fileStoreSubscription = FileStore.files.subscribe(function (data_) {
-
-            if( data_ !== undefined && data_["__children__"] !== undefined )
+            if( data_ !== undefined && data_ !== undefined )
             {
-                this.setState({'files':data_["__children__"]});
+                this.setState({'files':data_});
             }else{
                 this.setState({'files':[]});
             }
@@ -135,6 +134,7 @@ module.exports = React.createClass({
 
 
     componentWillReceiveProps: function (nextProps) {
+        
         //console.log("{FilesView} componentWillReceiveProps");
         if( nextProps.query !== undefined && nextProps.query.path !== undefined )
         {
@@ -142,9 +142,11 @@ module.exports = React.createClass({
 
             // upload local state, and reset list to prepare for new files
             this.setState({'path': _path, 'files': []});
-
+            
             // load files
             FileActions.getFiles.source.onNext(_path);
+        }else{
+            FileActions.getFiles.source.onNext(PreferenceStore.getRootDirectory());
         }
     },
 
@@ -228,6 +230,7 @@ module.exports = React.createClass({
         var sectionStyle = {};
         //sectionStyle['overflow'] = 'scroll';
         //sectionStyle['height'] = this.state.height;
+
         var _folders = this.state.files
             .filter(function (data_) {
                 return data_["jcr:primaryType"] === "nt:folder" || data_["jcr:primaryType"] === "sling:Folder";

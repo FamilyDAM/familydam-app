@@ -46,11 +46,6 @@ module.exports = {
                     //send results to the store
                     _this.sink.onNext(data_);
 
-                    // update token
-                    var _token = xhr_.getResponseHeader("X-Auth-Token");
-                    if( _token != null && _token !== undefined ){
-                        AuthActions.saveToken.onNext(_token);
-                    }
                 }, function (xhr_, status_, errorThrown_){
 
                     //send the error to the store (through the sink observer

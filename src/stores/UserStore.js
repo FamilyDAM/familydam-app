@@ -72,7 +72,6 @@ module.exports = {
     },
 
     setCurrentUser: function (data_) {
-        debugger;
         this.currentUser.onNext(data_);
     }
 

@@ -39,11 +39,13 @@ module.exports = {
         _currentFile.status = "UPLOADING";
         _currentFile.percentComplete = "0";
 
+
         // short circut the check access. If the path is null we know we have to do a regular update
         if( file_.path == undefined ){
-            _this.uploadFile(file_);
+            this.uploadFile(file_);
             return;
         }
+
 
         var _action;
         // First check access, can we copy a local file (desktop mode) or do we need to upload the file)
@@ -53,6 +55,7 @@ module.exports = {
             .then(function (result_, status_, xhr_) {
                 _hasAccess = result_.visible;
 
+                debugger;
                 if (!_hasAccess)
                 {
                     _this.uploadFile(file_);
@@ -63,6 +66,7 @@ module.exports = {
             }, function (result_, status_, xhr_) {
                 _this.uploadFile(file_);
             });
+
 
     },
 
@@ -79,7 +83,7 @@ module.exports = {
 
         return $.ajax({
             method: "post",
-            url: PreferenceStore.getBaseUrl() + "/api/import/info/",
+            url: "/bin/familydam/api/v1/upload/info",
             data: {'dir': file_.uploadPath, 'path': file_.path},
             headers: {
                 "X-Auth-Token":  UserStore.token.value
@@ -118,9 +122,9 @@ module.exports = {
                 method: "post",
                 url: PreferenceStore.getBaseUrl() + "/api/import/file/copy/",
                 data: {'dir': file_.uploadPath, 'path': file_.path, 'recursive': file_.recursive},
-                headers: {
-                    "X-Auth-Token":  UserStore.token.value
-                }
+                 'xhrFields': {
+                     withCredentials: true
+                 }
             }).then(function(data_, status_, xhr_){
 
                  file_.status = "COMPLETE";
@@ -157,21 +161,24 @@ module.exports = {
     uploadFile: function (file_) {
         var _this = this;
         var data = new FormData();
-        data.append("path", file_.uploadPath);
         data.append("file", file_);
+        data.append("name", file_.name);
+        data.append("path", file_.uploadPath);
+        //data.append("lastModified", file_.lastModified);
+        //data.append("lastModifiedDate", file_.lastModifiedDate);
 
         return $.ajax({
-            url: PreferenceStore.getBaseUrl() + "/api/import/file/upload/?format=json",
+            url: '/bin/familydam/api/v1/upload/',
             type: 'POST',
             data: data,
             cache: false,
             processData: false, // Don't process the files
             contentType: false, // Set content type to false as jQuery will tell the server its a query string request
             headers: {
-                "X-Auth-Token":  UserStore.token.value,
                 Accept : "application/json; charset=utf-8"
             },
             xhrFields: {
+                withCredentials: true,
                 onprogress: function (e) {
                     if (e.lengthComputable) {
                         console.log(e.loaded / e.total * 100 + '%');
@@ -184,11 +191,6 @@ module.exports = {
             UploadActions.fileStatusAction.onNext(file_);
             UploadActions.removeFileAction.onNext(file_);
 
-
-            var _token = xhr_.getResponseHeader("X-Auth-Token");
-            if( _token != null && _token !== undefined ){
-                AuthActions.saveToken.onNext(_token);
-            }
             return data_;
         }, function (xhr_, status_, errorThrown_){
 

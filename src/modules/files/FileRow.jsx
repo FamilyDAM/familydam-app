@@ -55,18 +55,16 @@ var FileRow = React.createClass({
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
 
-        var _id = $("[data-reactid='" + component + "']").attr("data-id");
+        //var _id = $("[data-reactid='" + component + "']").attr("data-id");
         var _path = $("[data-reactid='" + component + "']").attr("data-path");
 
-        NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
+        NodeActions.deleteNode.source.onNext({'path':_path});
     },
 
 
     handleDownloadOriginal:function(event, component){
-        var _id = $("[data-reactid='" + component + "']").attr("data-id");
-        var _location = PreferenceStore.getBaseUrl() +"/api/files/" +_id +"?token=" +UserStore.token.value;
-
-        window.open(_location);//, "_blank");
+        var _path = $("[data-reactid='" + component + "']").attr("data-path");
+        window.open(_path);//, "_blank");
     },
 
 
@@ -74,10 +72,10 @@ var FileRow = React.createClass({
 
     render:function(){
 
-        if( this.props.file.mixins !== undefined && this.props.file.mixins.indexOf("dam:image") > -1 ){
+        if( this.props.file !== undefined && this.props.file['jcr:mixinTypes'] !== undefined && this.props.file['jcr:mixinTypes'].indexOf("dam:image") > -1 ){
             return <ImageRow file={this.props.file}></ImageRow>
         }
-        else if( this.props.file.mixins !== undefined && this.props.file.mixins.indexOf("dam:music") > -1 ){
+        else if( this.props.file !== undefined && this.props.file['jcr:mixinTypes'] !== undefined && this.props.file['jcr:mixinTypes'].indexOf("dam:music") > -1 ){
             return <MusicRow file={this.props.file}></MusicRow>
         }
         //else if( this.props.file.mixins !== undefined && this.props.file.mixins.indexOf("dam:movie") > -1  ){}
@@ -98,15 +96,30 @@ var FileRow = React.createClass({
                             <Link to="photoDetails" params={{'id': this.props.file.id}}>{this.props.file.name}</Link>
                         </div>
                         <div className="col-sm-6 col-lg-5 text-right">
-                            <ButtonGroup  bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                <Button onClick={this.handleDownloadOriginal} data-id={this.props.file.id}
-                                        data-path={this.props.file.path}>
-                                    <Glyphicon glyph="download"/> download
-                                </Button>
-                                <Button onClick={this.handleNodeDelete} data-id={this.props.file.id}
-                                        data-path={this.props.file.path}>
-                                    <Glyphicon glyph="remove"/> delete
-                                </Button>
+                            <ButtonGroup  bsSize="small" style={{'verticalAlign':'middle'}}>
+
+                                {(() => {
+                                    if( this.props.file._links !== undefined &&  this.props.file._links.download !== undefined )
+                                    {
+                                        //console.log("download link:" + this.props.file._links.download);
+                                        return (<Button onClick={this.handleDownloadOriginal}
+                                                data-path={this.props.file._links.download}>
+                                            <Glyphicon glyph="download"/> download
+                                        </Button>);
+                                    }
+                                })()}
+
+                                {(() => {
+                                    if( this.props.file._links !== undefined &&  this.props.file._links.delete !== undefined )
+                                    {
+                                        //console.log("delete link:" + this.props.file._links.delete);
+                                        return (<Button onClick={this.handleNodeDelete}
+                                                data-path={this.props.file._links.delete}>
+                                            <Glyphicon glyph="remove"/> delete
+                                        </Button>);
+                                    }
+                                })()}
+                                
                             </ButtonGroup>
 
                         </div>

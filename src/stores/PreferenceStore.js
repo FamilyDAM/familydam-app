@@ -14,8 +14,7 @@ module.exports = {
     _baseUrl : "",
 
     //_baseUrl : "",
-    _rootDirectory : "/content/dam-files/",
-    _documentRootDirectory : "/documents/",
+    _rootFileDirectory : "/content/dam-files/",
 
     //logged in user, start with default admin/admin 
     //admin/admin is changed on the system after the first user has been created so 
@@ -32,11 +31,7 @@ module.exports = {
     },
 
     getRootDirectory: function () {
-        return this._rootDirectory;
-    },
-
-    getDocumentRootDirectory: function () {
-        return this._rootDirectory +this._documentRootDirectory;
+        return this._rootFileDirectory;
     }
 
 };

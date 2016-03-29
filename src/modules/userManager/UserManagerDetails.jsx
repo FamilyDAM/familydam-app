@@ -50,10 +50,16 @@ module.exports = React.createClass({
     componentDidMount: function () {
         console.log("{UserManagerDetailView} componentWillMount");
 
+        // pull
+        this.state.user = {};
 
-        this.loadUserSubscription = UserActions.loadUser.sink.subscribe(function (data_) {
+        var userid = this.props.params.id;
+        UserActions.getUser.source.onNext(userid);
+
+
+
+        this.loadUserSubscription = UserActions.getUser.sink.subscribe(function (data_) {
             this.setState({'user': data_});
-            
             this.setState({savePasswordLoading: true});
         }.bind(this));
 
@@ -73,9 +79,6 @@ module.exports = React.createClass({
             setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
         }.bind(this));
 
-        // pull
-        this.state.user = {};
-        UserActions.loadUser.source.onNext(this.props.params.id);
 
 
         $(this.refs.googleDriveToggle).bootstrapSwitch({'state': false});
@@ -115,7 +118,10 @@ module.exports = React.createClass({
     },
 
     componentWillReceiveProps: function (nextProps) {
-        UserActions.loadUser.source.onNext(nextProps.params.id);
+        
+        var userid = this.props.params.id;
+        UserActions.getUser.source.onNext(userid);
+
     },
 
     handleResetPasswordClick: function (event_) {
@@ -163,7 +169,7 @@ module.exports = React.createClass({
                                 data-spinner-color="#000"
                                 bsStyle='primary'
                                 className="ladda-button"
-                                onClick={this.handleSave}>Save</Button>
+                                onClick={this.handleSave} >Save</Button>
                     </div>
                 </div>
 
@@ -208,6 +214,7 @@ module.exports = React.createClass({
                         </fieldset>
                     </div>
 
+
                     <div className="col-sm-6">
                         <fieldset>
                             <legend>Reset Login Info:</legend>
@@ -226,7 +233,7 @@ module.exports = React.createClass({
                                     data-style="expand-left"
                                     data-spinner-size={20}
                                     data-spinner-color="#000"
-                                    className="ladda-button">
+                                    className="ladda-button" >
                                 <span className="ladda-label">Save Password</span>
                             </Button>
 
@@ -239,7 +246,7 @@ module.exports = React.createClass({
                 <div className="row">
                     <div className="col-sm-12">
                         <Tabs defaultActiveKey={1}>
-                            <Tab eventKey={1} title='Services'>
+                            <Tab eventKey={1} title='Cloud Drives'>
 
                                 <Table className="userDetailsTable">
                                     <tbody>
@@ -273,6 +280,15 @@ module.exports = React.createClass({
                                             <Button bsSize='xsmall' disabled>Authorize</Button>
                                         </td>
                                     </tr>
+                                    </tbody>
+                                </Table>
+                            </Tab>
+
+
+
+                            <Tab eventKey={2} title='Web Sites'>
+                                <Table className="userDetailsTable">
+                                    <tbody>
                                     <tr>
                                         <td style={{'width':'100%'}}>
                                             Facebook (coming soon)
@@ -305,10 +321,63 @@ module.exports = React.createClass({
                                     </tr>
                                     </tbody>
                                 </Table>
-
-
                             </Tab>
-                            <Tab eventKey={2} title='Permissions'>
+
+
+                            <Tab eventKey={3} title='Email Accounts'>
+                                <Table className="userDetailsTable">
+                                    <tbody>
+                                    <tr>
+                                        <td style={{'width':'100%'}}>
+                                            Gmail (coming soon)
+                                        </td>
+                                        <td>
+                                            <input ref="facebookToggle"
+                                                   type="checkbox"
+                                                   data-size="small"
+                                                   disabled
+                                                   checked={false}/>
+                                        </td>
+                                        <td>
+                                            <Button bsSize='xsmall' disabled>Authorize</Button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{'width':'100%'}}>
+                                            Yahoo (coming soon)
+                                        </td>
+                                        <td>
+                                            <input ref="twitterToggle"
+                                                   type="checkbox"
+                                                   data-size="small"
+                                                   disabled
+                                                   checked={false}/>
+                                        </td>
+                                        <td>
+                                            <Button bsSize='xsmall' disabled>Authorize</Button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{'width':'100%'}}>
+                                            POP (coming soon)
+                                        </td>
+                                        <td>
+                                            <input ref="twitterToggle"
+                                                   type="checkbox"
+                                                   data-size="small"
+                                                   disabled
+                                                   checked={false}/>
+                                        </td>
+                                        <td>
+                                            <Button bsSize='xsmall' disabled>Authorize</Button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </Table>
+                            </Tab>
+
+
+                            <Tab eventKey={4} title='Permissions'>
                                 <br/>(Coming Soon)<br/>
 
                             </Tab>

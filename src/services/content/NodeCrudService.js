@@ -43,16 +43,17 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    getNode: function (id_) {
+    getNode: function (path_) {
+        
         var _this = this;
-        var _url = PreferenceStore.getBaseUrl() + "/api/data/" + id_;
+        var _url = path_ +".graph.-1.json/nt:file/jcr:uuid,name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes,dam:metadata,dam:tags,dam:people,dam:note";
 
 
         $.ajax({
             method: "get",
             url: _url,
-            headers: {
-                "X-Auth-Token": UserStore.token.value
+            'xhrFields': {
+                withCredentials: true
             }
         }).then(function (data_, status_, xhr_) {
 
@@ -80,7 +81,7 @@ module.exports = {
 
     createNode: function (data_) {
         var _this = this;
-        var _url = PreferenceStore.getBaseUrl() + "/api/data/" + data_.id;
+        var _url = data_.path;
         var _data = JSON.stringify(data_);
 
         $.ajax({
@@ -90,8 +91,8 @@ module.exports = {
             processData: false,
             type: 'json',
             contentType: "application/json",
-            headers: {
-                "X-Auth-Token": UserStore.token.value
+            'xhrFields': {
+                withCredentials: true
             }
         }).then(function (data_, status_, xhr_) {
 
@@ -126,19 +127,18 @@ module.exports = {
 
     updateNode: function (data_) {
         var _this = this;
-        var _data = JSON.stringify(data_);
-        var _url = PreferenceStore.getBaseUrl() + "/api/data/" + data_['jcr:uuid'];
+        var _data = JSON.stringify(data_.props);
+        var _url = data_.path;
 
 
         $.ajax({
             method: "post",
+            url: data_.path,
             data: _data,
             processData: false,
-            url: _url,
-            type: 'json',
             contentType: "application/json",
-            'headers': {
-                'X-Auth-Token': UserStore.token.value
+            'xhrFields': {
+                withCredentials: true
             }
 
         }).then(function (data_, status_, xhr_) {
@@ -175,14 +175,14 @@ module.exports = {
 
     deleteNode: function (data_) {
         var _this = this;
-        var _url = PreferenceStore.getBaseUrl() + "/api/data/" + data_.id;
+        var _url = data_.path;
 
 
         return $.ajax({
             method: "delete",
             url: _url,
-            headers: {
-                "X-Auth-Token": UserStore.token.value
+            'xhrFields': {
+                withCredentials: true
             }
         }).then(function (data_, status_, xhr_) {
 

@@ -52,11 +52,17 @@ $font-family-base: 'Roboto Light', 'Roboto', "Helvetica Neue", Helvetica, Arial,
 
 
 /******************************
+* Ladda Overrides
+******************************/
+.ladda-button .ladda-spinner {
+  margin-top: 0px;
+}
+
+
+
+/******************************
 * Bootstrap Overrides
 ******************************/
-
-
-
 .navbar-default {
   background-color: #303F9F;
   border-color: #303F9F;

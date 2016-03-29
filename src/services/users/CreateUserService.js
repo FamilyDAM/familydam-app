@@ -40,33 +40,23 @@ module.exports = {
         _data[':name'] = data_.username;
         _data['pwd'] = data_.password;
         _data['pwdConfirm'] = data_.password;
-        _data['isSuperAdmin'] = true;
+        _data['isFamilyAdmin'] = true;
 
         //, 'url': PreferenceStore.getBaseUrl() + '/system/userManager/user.create.json'
 
         return $.ajax({
             'method': 'post'
-            , 'url': '/familydam/api/v1/users'
+            , 'url': '/bin/familydam/api/v1/users'
             , cache: false
-            , dataType: "json"
             , data: _data,
             'xhrFields': {
                 withCredentials: true
             }
         }).then(function (results, status_, xhr_) {
 
-            debugger;
             _this.sink.onNext(results);
-
-            var _token = xhr_.getResponseHeader("X-Auth-Token");
-            if (_token != null && _token !== undefined)
-            {
-                AuthActions.saveToken.onNext(_token);
-            }
-
+            
         }, function (xhr_, status_, errorThrown_) {
-
-            debugger;
             //send the error to the store (through the sink observer
             if (xhr_.status == 401)
             {

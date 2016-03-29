@@ -44,7 +44,7 @@ var BackFolder = React.createClass({
 
     render:function(){
 
-        if( this.props.path !== "/content/dam-files" && this.props.path !== "/content/dam-files" )
+        if( this.props.path !== "/content/dam-files" && this.props.path !== "/content/dam-files/" )
         {
             return (<div
                 className="row"

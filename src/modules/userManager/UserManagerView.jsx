@@ -118,7 +118,7 @@ module.exports = React.createClass({
                             <div style={{'clear':'left'}}>
                                 <ul style={{'listStyle':'none'}}>
                                     {this.state.users.map(function (user, index) {
-                                        return <li key={user.username}><Link to={'users/' +user.id}>{user.firstName}</Link></li>
+                                        return <li key={user.username}><Link to={'users/' +user.username}>{user.firstName} {user.lastName}</Link></li>
                                     })}
                                 </ul>
                             </div>

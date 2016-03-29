@@ -89,8 +89,8 @@ ReactDOM.render(
 
 
             <Route path="photos" component={PhotosView}/>
-            <Route path="photos/:id" component={PhotoDetailView}/>
-            <Route path="photos/:id/edit" component={PhotoEditView}/>
+            <Route path="photos/details" component={PhotoDetailView}/>
+            <Route path="photos/edit" component={PhotoEditView}/>
 
 
             <Route component={UserManagerView}>

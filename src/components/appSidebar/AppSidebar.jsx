@@ -25,7 +25,7 @@ module.exports = React.createClass({
     componentDidMount: function(){
         var _this = this;
 
-        console.log("AppSidebar");
+        //console.log("AppSidebar");
     },
 
 
@@ -61,14 +61,14 @@ module.exports = React.createClass({
                         </div>
                         <div className="row list">
                             <ButtonGroup vertical block>
-                                <LinkContainer to="files">
+                                <LinkContainer to="/files">
                                     <Button style={{'padding':'5px', 'margin':'10px'}}>
                                         <Glyphicon glyph="file" style={{'color':'#000000', 'fontSize':'21px'}}/>
                                         <span>Files</span>
                                     </Button>
                                 </LinkContainer>
 
-                                <LinkContainer to="photos">
+                                <LinkContainer to="/photos">
                                     <Button style={{'padding':'5px', 'margin':'10px'}}>
                                         <Glyphicon glyph="camera" style={{'color':'#000000', 'fontSize':'21px'}}/>
                                         <span>Photos</span>
