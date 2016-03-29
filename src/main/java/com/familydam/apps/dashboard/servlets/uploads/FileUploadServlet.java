@@ -6,7 +6,6 @@ package com.familydam.apps.dashboard.servlets.uploads;
 
 import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -33,7 +32,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +87,8 @@ public class FileUploadServlet extends SlingAllMethodsServlet
         try {
             session = request.getResourceResolver().adaptTo(Session.class);
 
-            final boolean isMultipart = org.apache.commons.fileupload.servlet.ServletFileUpload.isMultipartContent(request);
+            boolean isMultipart = org.apache.commons.fileupload.servlet.ServletFileUpload.isMultipartContent(request);
+            isMultipart = true;
             PrintWriter out = null;
 
             out = response.getWriter();
@@ -118,6 +117,7 @@ public class FileUploadServlet extends SlingAllMethodsServlet
 
                 if (_uploadPath == null || _fileName == null) {
                     response.setStatus(500); //bad requeust, missing path param
+                    response.getOutputStream().write("Missing Upload Path or File Name".getBytes());
                     return;
                 }
 

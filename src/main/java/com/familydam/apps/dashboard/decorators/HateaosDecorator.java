@@ -4,9 +4,6 @@
 
 package com.familydam.apps.dashboard.decorators;
 
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceDecorator;
 
@@ -20,9 +17,9 @@ import static com.familydam.apps.dashboard.FamilyDAMDashboardConstants.HATEAOS_L
 /**
  * Created by mnimer on 3/13/16.
  */
-@Component(metatype = true)
-@Service
-@Property(name = "service.description", value = "Add Hateaos Links to Resources before being returned")
+//@Component(metatype = true)
+//@Service
+//@Property(name = "service.description", value = "Add Hateaos Links to Resources before being returned")
 public class HateaosDecorator implements ResourceDecorator
 {
     @Override public Resource decorate(Resource resource)

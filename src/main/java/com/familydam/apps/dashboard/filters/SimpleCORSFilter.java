@@ -94,6 +94,7 @@ public class SimpleCORSFilter implements Filter {
 
         chain.doFilter(request, response);
 
+
     }
     /**
      * Component Activation.

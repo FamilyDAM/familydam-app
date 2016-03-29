@@ -9,7 +9,7 @@ package com.familydam.apps.dashboard;
  */
 public class FamilyDAMDashboardConstants
 {
-    public static final String IS_ROOT_ADMIN = "isRootAdmin";
+    public static final String IS_FAMILY_ADMIN = "isFamilyAdmin";
 
     // Security Groups
     public static final String FAMILY_ADMIN_GROUP = "family_admin_group";
@@ -17,13 +17,13 @@ public class FamilyDAMDashboardConstants
 
 
     // paths
-    public static final String CONTENT_ROOT = "dam:files";
-    public static final String CLOUD_ROOT = "dam:cloud";
+    public static final String CONTENT_ROOT = "dam-files";
+    public static final String CLOUD_ROOT = "dam-cloud";
     public static final String SYSTEM_ROOT = "dam:system";
     public static final String SYSTEM_JOBQUEUE_FOLDER = "job-queue";
     public static final String SYSTEM_ASSETS_FOLDER = "assets";
-    public static final String EMAIL_ROOT = "dam:email";
-    public static final String WEB_ROOT = "dam:web";
+    public static final String EMAIL_ROOT = "dam-email";
+    public static final String WEB_ROOT = "dam-web";
     public static final String KEYWORDS = "dam:tags";
     public static final String METADATA = "dam:metadata";
     public static final String RENDITIONS = "dam:renditions";

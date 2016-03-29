@@ -19,8 +19,6 @@
 package com.familydam.apps.dashboard.servlets.users;
 
 import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.JcrConstants;
@@ -39,8 +37,6 @@ import org.apache.jackrabbit.value.LongValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.LoginException;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.jcr.base.util.AccessControlUtil;
@@ -69,14 +65,12 @@ import java.util.Set;
  * <p>
  * Annotations below are short version of:
  */
-@SlingServlet(paths = {"/bin/familydam/api/v1/users"}, metatype = true)
-@Properties({
-        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.CreateUserServlet", propertyPrivate = false),
-        @Property(name = "service.description", value = "CreateUserServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
-})
-@SuppressWarnings("serial")
-public class CreateUserServlet extends SlingAllMethodsServlet
+@SlingServlet(
+        resourceTypes = "sling/servlet/default",
+        selectors = "password",
+        extensions = "json",
+        methods = "POST")
+public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 {
 
     private final Logger log = LoggerFactory.getLogger(CreateUserServlet.class);
@@ -97,37 +91,39 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             IOException
     {
 
-        //String[] selectors = request.getRequestPathInfo().getSelectors();
-        //String extension = request.getRequestPathInfo().getExtension();
-        //String resourcePath = request.getRequestPathInfo().getResourcePath();
+        String[] selectors = request.getRequestPathInfo().getSelectors();
+        String extension = request.getRequestPathInfo().getExtension();
+        String resourcePath = request.getRequestPathInfo().getResourcePath();
 
 
         try {
 
             Session session = request.getResourceResolver().adaptTo(Session.class);
-            ResourceResolver adminResolver = resolverFactory.getAdministrativeResourceResolver(null);
-            Session adminSession = adminResolver.adaptTo(Session.class);
 
-            boolean isFirstUser = checkFirstUser(adminSession);
-
-            Session activeSession = session;
-            if (isFirstUser) {
-                // this is the first user of the system so we'll trust them and use the admin session to create the first user
-                activeSession = adminSession;
+            UserManager userManager = ((JackrabbitSession) session).getUserManager();
+            Authorizable sessionUser = userManager.getAuthorizable(session.getUserID());
+            Authorizable user = userManager.getAuthorizableByPath(resourcePath);
+            Authorizable group = userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_ADMIN_GROUP);
+            if( group.isGroup() ) {
+                if( ((Group) group).isMember(sessionUser) || sessionUser.getID().equalsIgnoreCase(user.getID()) ) {
+                    ((User) user).changePassword(request.getParameter("newPwd"));
+                    response.setStatus(200);
+                    response.setContentType("application/json");
+                }
+                else
+                {
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                }
             }
 
-            User user = createUser(activeSession, request);
-            assignToGroup(activeSession, user, request);
-            createDefaultFolders(adminSession, user);
+            session.save();
 
-            response.setStatus(201);
-            response.setContentType("application/text");
-            response.setContentType(user.getPath());
         }
         catch ( AuthorizableExistsException aee ){
             response.setStatus(409);
         }
-        catch ( LoginException | RepositoryException ex) {
+        catch ( RepositoryException ex) {
             log.error(ex.getMessage(), ex);
             response.setStatus(500);
         }
