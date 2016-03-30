@@ -7,7 +7,7 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var History = require('react-router').History;
+import { Router, Link } from 'react-router';
 
 var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
@@ -19,8 +19,7 @@ var UserActions = require('./../../actions/UserActions');
 var UserStore = require('./../../stores/UserStore');
 
 module.exports = React.createClass({
-    mixins : [History],
-
+    
     propTypes: {
         // You can declare that a prop is a specific JS primitive. By default, these
         // are all optional.

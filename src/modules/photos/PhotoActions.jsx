@@ -3,7 +3,7 @@
  */
 /** jsx React.DOM */
 var React = require('react');
-var Router = require('react-router');
+import { Router, Link } from 'react-router';
 
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var ButtonGroup = require('react-bootstrap').ButtonGroup;

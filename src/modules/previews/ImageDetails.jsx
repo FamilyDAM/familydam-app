@@ -7,7 +7,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
+import { Router, Link } from 'react-router';
+
 var moment = require('moment');
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
@@ -28,7 +29,7 @@ module.exports = React.createClass({
 
     getDefaultProps:function(){
         return {
-            file:{},
+            file:{}
         };
     },
 

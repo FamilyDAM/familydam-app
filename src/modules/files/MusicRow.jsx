@@ -7,9 +7,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
-var Navigation = Router.Navigation;
+import { Router, Link } from 'react-router';
+
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
@@ -22,8 +21,7 @@ var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 
 var FileRow = React.createClass({
-    mixins : [Navigation],
-
+    
     handleRowClick: function(event, component)
     {
 

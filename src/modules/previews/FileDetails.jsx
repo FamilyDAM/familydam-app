@@ -7,10 +7,9 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
-var IS = require('is_js');
-var RouteHandler = Router.RouteHandler;
-var Link = Router.Link;
+import { Router, Link } from 'react-router';
+
+
 
 var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 
