@@ -4,13 +4,13 @@
 
 package com.familydam.core.helpers;
 
-import com.familydam.core.FamilyDAMCoreConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -19,6 +19,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.familydam.core.FamilyDAMCoreConstants.HATEAOS_LINKS;
+
 
 /**
  * Created by mnimer on 3/12/16.
@@ -117,16 +120,18 @@ public class TreeWalker
                 log.trace("Convert node {} to simple Map with the request properties {}", resource_.getPath(), includeProperties);
                 Map _startMap = resource_.adaptTo(ValueMap.class);
                 Node _startNode = resource_.adaptTo(Node.class);
+
+                treeMap.put("_links", hateosDecorator(resource_));
                 for (String _prop : includeProperties) {
 
                     if( _prop.equals("name") ){
                         treeMap.put("name", _startNode.getName());
-                    } else if( _prop.equals("links")  && _startMap.containsKey(FamilyDAMCoreConstants.HATEAOS_LINKS)){
-                        treeMap.put(FamilyDAMCoreConstants.HATEAOS_LINKS, _startMap.get(FamilyDAMCoreConstants.HATEAOS_LINKS));
+                    } else if( _prop.equals("links")  && _startMap.containsKey(HATEAOS_LINKS)){
+                        treeMap.put(HATEAOS_LINKS, _startMap.get(HATEAOS_LINKS));
                     } else if( _prop.equals("path") ){
                         treeMap.put("path", _startNode.getPath());
-                    } else if( _prop.equals("links") && _startNode.hasProperty(FamilyDAMCoreConstants.HATEAOS_LINKS) ){
-                        treeMap.put(FamilyDAMCoreConstants.HATEAOS_LINKS, _startNode.getProperty(FamilyDAMCoreConstants.HATEAOS_LINKS));
+                    } else if( _prop.equals("links") && _startNode.hasProperty(HATEAOS_LINKS) ){
+                        treeMap.put(HATEAOS_LINKS, _startNode.getProperty(HATEAOS_LINKS));
                     } else if( _prop.equals("index") ){
                         treeMap.put("index", _startNode.getIndex());
                     } else if( _prop.equals("parent") ){
@@ -135,10 +140,19 @@ public class TreeWalker
                         treeMap.put("jcr:mixinTypes", resource_.getValueMap().get("jcr:mixinTypes"));
                     } else {
                         Object val = _startMap.get(_prop);
-                        if( val instanceof Calendar){
-                            treeMap.put(_prop, ((Calendar)val).getTime().toGMTString() );
-                        }else {
-                            treeMap.put(_prop, val);
+                        if( val != null ) {
+                            if (val instanceof Calendar) {
+                                treeMap.put(_prop, ((Calendar) val).getTime().toGMTString());
+                            } else {
+                                treeMap.put(_prop, val);
+                            }
+                        }else{
+                            Resource childResource = resource_.getChild(_prop);
+                            if( childResource != null && childResource.hasChildren() ){
+                                treeMap.put(_prop, mapChild(childResource));
+                            } else if( childResource != null && !childResource.hasChildren() ){
+                                treeMap.put(_prop, childResource.adaptTo(Map.class));
+                            }
                         }
                         /**
                         if( val.getType() == PropertyType.DATE ){
@@ -151,12 +165,94 @@ public class TreeWalker
                     }
                 }
             } else {
-                treeMap = startNode.adaptTo(Map.class);
+                treeMap = new HashMap();
+                treeMap.putAll(startNode.adaptTo(Map.class));
+                treeMap.put(HATEAOS_LINKS, hateosDecorator(resource_));
             }
             return treeMap;
         }catch(Exception re){
             return startNode.adaptTo(Map.class);
         }
     }
+
+
+    private Object hateosDecorator(Resource resource_)
+    {
+        Map linksMap = new HashMap();
+        linksMap.put("self", resource_.getPath());
+
+        if (isFile(resource_)) {
+            linksMap.put("delete", resource_.getPath()); //todo check permission
+            linksMap.put("download", resource_.getPath());  //todo check permission
+        }
+        if (isFolder(resource_)) {
+            linksMap.put("delete", resource_.getPath()); //todo check permission
+        }
+        if (isDamImage(resource_)) {
+            linksMap.put("thumb", resource_.getPath() + ".resize.250.250.jpg");
+            linksMap.put("resize", resource_.getPath() + ".resize.{width}.{height}.{format}");
+        }
+
+        return linksMap;
+    }
+
+
+    private Object mapChild(Resource resource_)
+    {
+        String resourceType = resource_.getResourceType();
+        if(resource_.hasChildren() ) {
+            Map props = new HashMap();
+            props.putAll(resource_.adaptTo(Map.class));
+
+            for (Resource resource : resource_.getChildren()) {
+                if( resource.getResourceType().equalsIgnoreCase("nt:unstructured") ) {
+                    props.put(resource.getName(), mapChild(resource));
+                }else{
+                    props.put(resource.getName(), resource.getValueMap());
+                }
+            }
+
+            return props;
+        }else{
+            return resource_.getValueMap();
+        }
+    }
+
+
+
+
+
+    private boolean isFile(Resource resource)
+    {
+        try {
+            return resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:file");
+        }
+        catch (RepositoryException re) {
+            return false;
+        }
+    }
+
+    private boolean isFolder(Resource resource)
+    {
+        try {
+            return resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:folder")
+                    || resource.adaptTo(javax.jcr.Node.class).isNodeType("sling:Folder");
+        }
+        catch (RepositoryException re) {
+            return false;
+        }
+    }
+
+
+    private boolean isDamImage(Resource resource)
+    {
+        try {
+            return resource.adaptTo(javax.jcr.Node.class).isNodeType("dam:image");
+        }
+        catch (RepositoryException re) {
+            return false;
+        }
+    }
+
 
 }
