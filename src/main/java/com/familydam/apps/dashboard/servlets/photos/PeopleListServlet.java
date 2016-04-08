@@ -5,12 +5,12 @@
 package com.familydam.apps.dashboard.servlets.photos;
 
 import com.familydam.apps.dashboard.daos.TreeDao;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.apache.sling.commons.json.JSONArray;
 
 import javax.jcr.Session;
 import javax.servlet.ServletException;
@@ -30,6 +30,8 @@ public class PeopleListServlet extends SlingSafeMethodsServlet
 {
     @Reference
     private TreeDao treeDao;
+    private ObjectMapper objectMapper = new ObjectMapper();
+
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
@@ -45,9 +47,12 @@ public class PeopleListServlet extends SlingSafeMethodsServlet
 
             List<Map> tree = treeDao.peopleList(session, resourcePath);
 
+            String json = objectMapper.writeValueAsString(tree);
+
+
             response.setStatus(200);
             response.setContentType("application/json");
-            response.getOutputStream().write(new JSONArray(tree).toString().getBytes());
+            response.getOutputStream().write(json.getBytes());
         }
         catch (Exception ae) {
             ae.printStackTrace();
@@ -58,6 +63,7 @@ public class PeopleListServlet extends SlingSafeMethodsServlet
             if (session != null) {
                 session.logout();
             }
+
         }
     }
 }
