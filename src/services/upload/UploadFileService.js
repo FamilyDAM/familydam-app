@@ -55,7 +55,6 @@ module.exports = {
             .then(function (result_, status_, xhr_) {
                 _hasAccess = result_.visible;
 
-                debugger;
                 if (!_hasAccess)
                 {
                     _this.uploadFile(file_);

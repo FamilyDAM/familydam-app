@@ -361,7 +361,6 @@ module.exports =  React.createClass({
                 </div>
             );
         }catch(err_){
-            debugger;
             console.log(err_);
             return(<div>{err_}</div>);
         }

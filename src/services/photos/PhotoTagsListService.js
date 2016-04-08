@@ -33,7 +33,7 @@ module.exports = {
             //console.log("{PhotoTagsList Service} execute()");
 
             var _this = this;
-            var _url = "/content/dam-files.tags.json";
+            var _url = "/content.tags.json";
 
             return $.ajax({
                 'method': "get",
@@ -46,12 +46,6 @@ module.exports = {
 
                 //console.log("{PhotoTagsList Service} execute() success");
                 _this.sink.onNext(data_);
-
-                // update token
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    AuthActions.saveToken.onNext(_token);
-                }
 
             }, function (xhr_, status_, errorThrown_){
 

@@ -168,6 +168,7 @@ module.exports = React.createClass({
                                 data-spinner-color="#000"
                                 bsStyle='primary'
                                 className="ladda-button"
+                                style={{'color':'#fff'}}
                                 onClick={this.handleSave} >Save</Button>
                     </div>
                 </div>

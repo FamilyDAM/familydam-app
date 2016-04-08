@@ -33,24 +33,19 @@ module.exports = {
             //console.log("{PhotoDateTree Service} execute()");
 
             var _this = this;
-            var _url = '/content/dam-files.datetree.json';
+            var _url = '/content.datetree.json';
 
             return $.ajax({
                 'method': "get",
                 'url': _url,
+                'contentType':"application/json; charset=utf-8",
+                'dataType':"json",
                 'xhrFields': {
                     withCredentials: true
                 }
 
             }).then(function (data_, status_, xhr_) {
-                
                 _this.sink.onNext(data_);
-
-                // update token
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    AuthActions.saveToken.onNext(_token);
-                }
 
             }, function (xhr_, status_, errorThrown_){
 

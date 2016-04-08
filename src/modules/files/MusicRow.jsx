@@ -52,10 +52,9 @@ var FileRow = React.createClass({
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
 
-        var _id = $("[data-reactid='" + component + "']").attr("data-id");
-        var _path = $("[data-reactid='" + component + "']").attr("data-path");
+        var _path = $(event.currentTarget).attr("data-path");
 
-        NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
+        NodeActions.deleteNode.source.onNext({'path':_path});
     },
 
 

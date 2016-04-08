@@ -48,7 +48,6 @@ module.exports =  React.createClass({
 
 
     render: function() {
-
         try{
             return (
                 <div className="dateTree">

@@ -31,7 +31,7 @@ module.exports = {
         if( filters_ !== undefined )
         {
             var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/api/search/dam:image?limit=100&offset=0";
+            var _url = "/content.image.search.json?type=dam:image&limit=100&offset=0";
 
             return $.ajax({
                 'method': "POST",
@@ -71,11 +71,6 @@ module.exports = {
                     return b.label - a.label;
                 }));
 
-                // update token
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    AuthActions.saveToken.onNext(_token);
-                }
 
             }, function (xhr_, status_, errorThrown_){
 

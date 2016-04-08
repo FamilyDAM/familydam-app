@@ -22,7 +22,7 @@ module.exports = {
      * A simple property, stored in a behavior subject.
      * Note: the value is pushed from the DirectoryAction
      */
-    currentFolder: new Rx.BehaviorSubject( {'path':"/content/dam-files"} ),
+    currentFolder: new Rx.Subject(),//BehaviorSubject( {'path':"/content/dam-files"} ),
 
 
     subscribe: function() {
@@ -36,7 +36,7 @@ module.exports = {
             var _children = data_._embedded.children;
             this.directories.onNext(_children);
         }.bind(this)  );
-    },
+    }
 
 
 };

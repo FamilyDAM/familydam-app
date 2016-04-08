@@ -32,7 +32,7 @@ var AddFolderModal = React.createClass({
 
         DirectoryStore.createFolder(
             _this.activeDir,
-            _this.refs.folderName.getDOMNode().value
+            _this.refs.folderName.value
         ).subscribe(function(results_){
             _this.props.onRequestHide();
             DirectoryActions.refreshDirectories.onNext(true);

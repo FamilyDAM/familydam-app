@@ -31,9 +31,8 @@ module.exports = {
         if( id_ !== undefined )
         {
             //console.log("{PhotoPeopleList Service} execute()");
-debugger;
             var _this = this;
-            var _url = "/content/dam-files.people.json";
+            var _url = "/content.people.json";
 
             return $.ajax({
                 'method': "get",

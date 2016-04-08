@@ -13,8 +13,6 @@ var moment = require('moment');
 
 var Tab = require('react-bootstrap').Tab;
 var Tabs = require('react-bootstrap').Tabs;
-var Carousel = require('react-bootstrap').Carousel;
-var CarouselItem = require('react-bootstrap').CarouselItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var Rating = require('react-rating');
 
@@ -84,10 +82,10 @@ module.exports = React.createClass({
     componentWillReceiveProps: function (nextProps) {
         this.props = nextProps;
 
-        this.state.photo={};
+        this.state.photo=undefined;
         if( this.isMounted() ) this.forceUpdate();
 
-        var _path = nextProps.params.location.query.path;
+        var _path = nextProps.location.query.path;
         NodeActions.getNode.source.onNext(_path);
     },
 
@@ -160,7 +158,7 @@ module.exports = React.createClass({
             }
 
 
-            var _location = PreferenceStore.getBaseUrl() +"/api/files/" +results['jcr:uuid'] +"?token=" +UserStore.token.value;
+            var _location = results._links.self;
 
             var _datetaken = moment(datetaken, "YYYYMMDD HH:mm:ss").format("LLL");
             if( _datetaken == "Invalid date" ){
@@ -169,6 +167,7 @@ module.exports = React.createClass({
 
 
             this.subscribe(results);
+
 
             var _state = {
                 'photo': results,
@@ -184,7 +183,6 @@ module.exports = React.createClass({
             this.setState(_state);
 
         }.bind(this), function (error) {
-            debugger;
             console.dir(error);
         });
 
@@ -372,7 +370,7 @@ module.exports = React.createClass({
                                         'height': '36px'
                                     }} onClick={this.handleDownloadOriginal}/>
 
-                                    <Link to={'photos/edit'} params={{path: this.state.photo._links.self}}>
+                                    <Link to={'photos/edit'} query={{path: this.state.photo._links.self}}>
                                         <img src="assets/icons/ic_mode_edit_24px.svg" style={{
                                             'width': '36px',
                                             'height': '36px'

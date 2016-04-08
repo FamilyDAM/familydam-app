@@ -21,6 +21,7 @@ module.exports = {
 
     setFiles: function(data_){
 
+        
         if( data_._embedded.children === undefined ){
             this.files.onNext([]);
         }else

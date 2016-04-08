@@ -9,6 +9,8 @@ var Rx = require('rx');
 
 module.exports = {
 
+    locale:new Rx.BehaviorSubject("en_us"),
+
     // Logged in user
     //_baseUrl : "http://localhost:9000",
     _baseUrl : "",
@@ -32,6 +34,30 @@ module.exports = {
 
     getRootDirectory: function () {
         return this._rootFileDirectory;
-    }
+    },
+
+
+    getLocale: function(){
+        var _locale = window.localStorage.getItem("locale");
+        if( _locale === undefined || _locale === null ){
+            _locale = "en_us";
+        }
+        return _locale;
+    },
+
+
+    getSimpleLocale: function(){
+        var _locale = window.localStorage.getItem("locale");
+        if( _locale === undefined || _locale === null ){
+            _locale = "en";
+        }
+        return _locale.substr(0,2);
+    },
+
+
+    setLocale: function(data_){
+        window.localStorage.setItem("locale", data_);
+        this.locale.onNext(data_);
+    },
 
 };

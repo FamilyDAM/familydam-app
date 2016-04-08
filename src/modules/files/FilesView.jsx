@@ -56,18 +56,18 @@ module.exports = React.createClass({
         var _this = this;
         //console.log("{FilesView} componentWillMount");
 
-
-        // update the breadcrumb
-        var _pathData = {'label': 'Files', 'navigateTo': "files", 'params': {}, 'level': 1};
-        NavigationActions.currentPath.onNext(_pathData);
-
-
         this.state.path = "/content/dam-files";
-        if (this.props.query && this.props.query.path)
+        if (this.props.location && this.props.location.query && this.props.location.query.path)
         {
-            this.state.path = this.props.query.path;
+            this.state.path = this.props.location.query.path;
         }
         this.state.selectedPath = this.state.path;
+
+
+
+        // update the breadcrumb
+        var _pathData = {'label': 'Files', 'navigateTo': "files", 'params': {path:this.state.selectedPath}, 'level': 1};
+        NavigationActions.currentPath.onNext(_pathData);
 
 
         // save current dir
@@ -134,11 +134,10 @@ module.exports = React.createClass({
 
 
     componentWillReceiveProps: function (nextProps) {
-        
         //console.log("{FilesView} componentWillReceiveProps");
-        if( nextProps.query !== undefined && nextProps.query.path !== undefined )
+        if( nextProps.location.query !== undefined && nextProps.location.query.path !== undefined )
         {
-            var _path = nextProps.query.path;
+            var _path = nextProps.location.query.path;
 
             // upload local state, and reset list to prepare for new files
             this.setState({'path': _path, 'files': []});
@@ -205,7 +204,7 @@ module.exports = React.createClass({
 
     handleCreateFolder: function (event_) {
         var _path = this.state.selectedPath;
-        var _name = this.refs.folderName.getDOMNode().value;
+        var _name = this.refs.folderName.value;
         DirectoryActions.createFolder.source.onNext({'path': _path, 'name': _name})
     },
 

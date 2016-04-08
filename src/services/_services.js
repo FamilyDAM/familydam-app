@@ -11,7 +11,7 @@ var GetFilesService = require('./files/GetFilesService');
 var GetDirectoriesService = require('./files/GetDirectoriesService');
 var CreateDirectoriesService = require('./files/CreateDirectoryService');
 var UploadFileService = require('./upload/UploadFileService');
-var GetBase64UrlService = require('./images/GetBase64UrlService');
+//var GetBase64UrlService = require('./images/GetBase64UrlService');
 var PhotoTagsListService = require('./photos/PhotoTagsListService');
 var PhotoPeopleListService = require('./photos/PhotoPeopleListService');
 var PhotoDateTreeService = require('./photos/PhotoDateTreeService');
@@ -31,7 +31,7 @@ module.exports = {
         GetDirectoriesService.subscribe();
         CreateDirectoriesService.subscribe();
         UploadFileService.subscribe();
-        GetBase64UrlService.subscribe();
+        //GetBase64UrlService.subscribe();
         PhotoTagsListService.subscribe();
         PhotoPeopleListService.subscribe();
         PhotoDateTreeService.subscribe();

@@ -21,7 +21,11 @@ var UserStore = require('./../../stores/UserStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 
 module.exports = React.createClass({
-    
+
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
+
     getInitialState:function()
     {
         return{
@@ -51,13 +55,15 @@ module.exports = React.createClass({
         {
             $(".active").removeClass("active");
             $(event.currentTarget).addClass("active");
-            var _id = $("[data-reactid='" + component + "']").attr("data-id");
+            var _path = $(event.currentTarget).attr("data-path");
         }
 
         if( $('.device-xs').is(':visible') || $('.device-sm').is(':visible'))
         {
             FileActions.selectFile.onNext(undefined);
-            this.history.pushState(null, "photos/" +this.props.file.id );
+            
+            this.context.router.push({pathname: '/photos/details', query:{'path':_path}});
+
         }else{
             FileActions.selectFile.onNext(this.props.file);
             //load the data
@@ -76,10 +82,9 @@ module.exports = React.createClass({
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
 
-        var _id = $("[data-reactid='" + component + "']").attr("data-id");
-        var _path = $("[data-reactid='" + component + "']").attr("data-path");
+        var _path = $(event.currentTarget).attr("data-path");
 
-        NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
+        NodeActions.deleteNode.source.onNext({'path':_path});
     },
 
     render:function(){
@@ -108,7 +113,7 @@ module.exports = React.createClass({
                     <div className="container-fluid" style={{'display': 'table-cell', 'width':'100%'}}>
                         <div className="row">
                             <div className="col-sm-6 col-lg-7" style={{'overflow':'hidden'}}>
-                                <Link to={'photos/' +this.state.file.id} >{this.state.file.name}</Link>
+                                <LinkContainer to="photos/details" query={{'path':this.state.file.path}}><label>{this.state.file.name}</label></LinkContainer>
                             </div>
                             <div className="col-sm-6 col-lg-5 text-right">
                                 {(() => {
@@ -116,13 +121,13 @@ module.exports = React.createClass({
                                     return(
                                         <ButtonGroup bsSize="small" style={{'verticalAlign':'middle'}}>
                                             <LinkContainer to="photos/details" query={{'path':this.state.file.path}}>
-                                                <Button style={{'padding':'5px 10px', 'margin':0}}>
+                                                <Button >
                                                     <Glyphicon glyph="eye-open"/> view
                                                 </Button>
                                             </LinkContainer>
                                             
                                             <LinkContainer to="photos/edit" query={{'path':this.state.file.path}}>
-                                                <Button style={{'padding':'5px 10px', 'margin':0}}>
+                                                <Button >
                                                     <img src="assets/icons/ic_mode_edit_24px.svg" style={{'width':'14px', 'height':'14px', 'margin':'auto'}}/> edit
                                                 </Button>
                                             </LinkContainer>

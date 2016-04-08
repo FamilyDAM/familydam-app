@@ -45,7 +45,6 @@ module.exports =  React.createClass({
     render: function() {
 
         var list = [];
-
         try
         {
             this.state.tags.forEach(function(item){

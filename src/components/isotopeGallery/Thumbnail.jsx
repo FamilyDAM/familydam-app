@@ -8,6 +8,7 @@ var Link = Router.Link;
 var LazyLoad = require('react-lazy-load');
 
 var Glyphicon = require('react-bootstrap').Glyphicon;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 module.exports = React.createClass({
 
@@ -57,7 +58,7 @@ module.exports = React.createClass({
                 left:'0px',
                 height:'50px',
                 marginTop:'20px',
-                padding:'10px',
+                padding:'4px',
                 color:'#ffffff',
                 backgroundColor:'#000000',
                 opacity:.7,
@@ -86,10 +87,10 @@ module.exports = React.createClass({
                 <div style={styles.overlays}>
                     <div className="pull-left">
                         <span>{this.props.photo.name} </span>
-                    </div>
-                    <div className="pull-right">
-                        <Link to={'photos/' +this.props.photo.id} params={{photoId:this.props.photo.id}}>
-                            <Glyphicon glyph="eye-open" style={{'color':'#ffffff', 'fontSize':'24px'}}/></Link>
+                    </div><br/>
+                    <div className="pull-left">
+                        <LinkContainer to="photos/details" query={{'path':this.props.photo.path}}>
+                            <Glyphicon glyph="eye-open" style={{'color':'#ffffff', 'fontSize':'24px'}}/></LinkContainer>
                     </div>
                 </div>
             </div>

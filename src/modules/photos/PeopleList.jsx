@@ -40,7 +40,6 @@ module.exports =  React.createClass({
     render: function() {
 
         var list = [];
-
         try
         {
             this.state.people.forEach(function(item){

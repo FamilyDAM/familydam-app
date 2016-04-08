@@ -42,11 +42,13 @@ module.exports = {
                     ,'url': _url
                     ,'data':{'j_username':data_.username, 'j_password':data_.password, 'j_validate':'true'}
                 
-                }).then(function(data_, status_, xhr_){
-                    //send results to the store
-                    _this.sink.onNext(data_);
+                }).then(function(result_, status_, xhr_){
 
-                }, function (xhr_, status_, errorThrown_){
+                    UserActions.getUser.source.onNext(data_.username);
+                    //send results to the store
+                    //_this.sink.onNext(data_);
+
+                }.bind(this), function (xhr_, status_, errorThrown_){
 
                     //send the error to the store (through the sink observer
                     if( xhr_.status == 401){

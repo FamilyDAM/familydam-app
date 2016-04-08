@@ -29,7 +29,7 @@ module.exports = {
             this.token = new Rx.BehaviorSubject(window.localStorage.getItem("token"));
 
             UserActions.getUsers.sink.subscribe(this.setUsers.bind(this));
-            AuthActions.login.sink.subscribe(this.setCurrentUser.bind(this));
+            UserActions.getUser.sink.subscribe(this.setCurrentUser.bind(this));
             AuthActions.saveToken.subscribe(this.setToken.bind(this));
             AuthActions.logout.subscribe(function () {
                 this.setToken(null);

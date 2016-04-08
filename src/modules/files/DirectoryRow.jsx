@@ -22,10 +22,14 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 
 module.exports = React.createClass({
 
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
+
     handleDirClick: function(event, component)
     {
         // get path from element in the list
-        var _path =  $("[data-reactid='" + component + "']").attr("data-path");
+        var _path =  $(event.currentTarget).attr("data-path");
 
         if( _path !== undefined )
         {
@@ -34,6 +38,7 @@ module.exports = React.createClass({
             FileActions.selectFile.onNext(undefined);
 
             //this.transitionTo('files', {}, {'path': _path})
+            this.context.router.push({pathname: '/files', query:{'path':_path}});
         }
     },
 
@@ -43,10 +48,9 @@ module.exports = React.createClass({
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
 
-        var _id = $("[data-reactid='" + component + "']").attr("data-id");
-        var _path = $("[data-reactid='" + component + "']").attr("data-path");
+        var _path = $(event.currentTarget).attr("data-path");
 
-        NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
+        NodeActions.deleteNode.source.onNext({'path':_path});
     },
 
 
@@ -81,8 +85,7 @@ module.exports = React.createClass({
                                             <ButtonGroup bsSize="small"
                                                          style={{'width':'250px','verticalAlign':'middle'}}>
 
-                                                <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}
-                                                        style={{'padding':'5px 10px', 'margin':0}}>
+                                                <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}>
                                                     <Glyphicon glyph="eye-open"/> open
                                                 </Button>
 

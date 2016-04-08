@@ -96,9 +96,7 @@ module.exports = React.createClass({
 
 
                                 <div className="pull-right title-link">
-
-                                    <Button style={{'padding':'10px'}} disabled={true}><Glyphicon glyph='search'/></Button>
-
+                                    
                                     <Dropdown id="settings" pullRight >
                                         <Dropdown.Toggle style={{'padding':'10px'}}>
                                             <Glyphicon glyph='cog'/>

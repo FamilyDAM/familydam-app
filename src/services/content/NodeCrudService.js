@@ -46,7 +46,7 @@ module.exports = {
     getNode: function (path_) {
         
         var _this = this;
-        var _url = path_ +".graph.-1.json/nt:file/jcr:uuid,name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes,dam:metadata,dam:tags,dam:people,dam:note";
+        var _url = path_ +".graph.-1.json/nt:file/jcr:uuid,name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes,dam:metadata,dam:tags,dam:people,dam:note,dam:rating";
 
 
         $.ajax({
@@ -127,16 +127,14 @@ module.exports = {
 
     updateNode: function (data_) {
         var _this = this;
-        var _data = JSON.stringify(data_.props);
         var _url = data_.path;
 
 
         $.ajax({
             method: "post",
             url: data_.path,
-            data: _data,
+            data: $.param(data_.props, true),
             processData: false,
-            contentType: "application/json",
             'xhrFields': {
                 withCredentials: true
             }

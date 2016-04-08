@@ -171,7 +171,6 @@ module.exports = React.createClass({
         }
 
         var previewImage = this.state.file._links.thumb;
-debugger;   
 
         return (
             <div className="fileDetailsView" >
