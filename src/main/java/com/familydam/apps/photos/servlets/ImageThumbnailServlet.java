@@ -42,6 +42,7 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -150,7 +151,15 @@ public class ImageThumbnailServlet extends SlingSafeMethodsServlet
             }
 
         }
-        catch (Exception ex) {
+        catch (InvalidItemStateException iise) {
+
+            ResourceResolver resolver = request.getResourceResolver();
+            Resource resource = resolver.getResource(resourcePath);
+
+            returnInputStream(response, resource.getResourceMetadata().getContentType(), resource.adaptTo(InputStream.class));
+
+        }catch (Exception ex) {
+            response.getOutputStream().write(ex.getMessage().getBytes());
             response.setStatus(500);
         }
         finally{

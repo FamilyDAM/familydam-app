@@ -88,19 +88,25 @@ public class ImageResizeService implements IImageResizeService
 
     public File resizeImage(Resource resource, String uri, String mimeTypeExt, InputStream is, int longSize) throws RepositoryException, IOException
     {
-        if( this.resizeLibrary.equalsIgnoreCase("image-magick") ) {
+        try {
+            if (this.resizeLibrary.equalsIgnoreCase("image-magick")) {
 
-            File tempImage = scaleWithImageMagik(resource, is, longSize);
-            return tempImage;
+                File tempImage = scaleWithImageMagik(resource, is, longSize);
+                return tempImage;
 
-        }else{
+            } else {
 
-            BufferedImage bufImage = scaleWithScalr(is, longSize);
+                BufferedImage bufImage = scaleWithScalr(is, longSize);
 
-            File tempFile = File.createTempFile(uri.substring(uri.lastIndexOf("/")+1), mimeTypeExt);
-            ImageIO.write(bufImage, mimeTypeExt, tempFile);
+                File tempFile = File.createTempFile(uri.substring(uri.lastIndexOf("/") + 1), mimeTypeExt);
+                ImageIO.write(bufImage, mimeTypeExt, tempFile);
 
-            return tempFile;
+                return tempFile;
+            }
+        }catch(Throwable ex){
+            //ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
+            throw ex;
         }
     }
 
@@ -113,10 +119,26 @@ public class ImageResizeService implements IImageResizeService
      * @throws RepositoryException
      * @throws IOException
      */
-    public BufferedImage scaleWithScalr(InputStream is, int longSize) throws RepositoryException, IOException
+    public BufferedImage scaleWithScalr(InputStream is, int longSize) throws IOException
     {
         BufferedImage newImage = ScaleWithScalr(is, longSize, Scalr.Method.AUTOMATIC);
         return newImage;
+    }
+
+
+
+
+    private BufferedImage ScaleWithScalr(InputStream is, int longSize, Scalr.Method quality) throws IOException
+    {
+        try {
+            BufferedImage bufferedImage = ImageIO.read(is);
+            BufferedImage scaledImage = Scalr.resize(bufferedImage, quality, longSize);
+            return scaledImage;
+        }catch(Throwable ex){
+            //ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
+            throw ex;
+        }
     }
 
 
@@ -174,7 +196,8 @@ public class ImageResizeService implements IImageResizeService
 
         }
         catch (Exception ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
             return null;
         }
         finally {
@@ -290,15 +313,6 @@ public class ImageResizeService implements IImageResizeService
      **/
 
 
-
-    private BufferedImage ScaleWithScalr(InputStream is, int longSize, Scalr.Method quality) throws RepositoryException, IOException
-    {
-        BufferedImage bufferedImage = ImageIO.read(is);
-
-        BufferedImage scaledImage = Scalr.resize(bufferedImage, quality, longSize);
-
-        return scaledImage;
-    }
 
 
     /****
