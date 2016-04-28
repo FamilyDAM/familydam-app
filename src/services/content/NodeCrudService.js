@@ -128,8 +128,7 @@ module.exports = {
     updateNode: function (data_) {
         var _this = this;
         var _url = data_.path;
-
-
+        
         $.ajax({
             method: "post",
             url: data_.path,

@@ -24,7 +24,7 @@ module.exports = {
         {
             console.log("{UserStore}.subscribe()");
 
-            this.currentUser = new Rx.BehaviorSubject(undefined);
+            this.currentUser = new Rx.BehaviorSubject(this.getCurrentUser());
             this.users = new Rx.BehaviorSubject(undefined);
             this.token = new Rx.BehaviorSubject(window.localStorage.getItem("token"));
 
@@ -32,6 +32,8 @@ module.exports = {
             UserActions.getUser.sink.subscribe(this.setCurrentUser.bind(this));
             AuthActions.saveToken.subscribe(this.setToken.bind(this));
             AuthActions.logout.subscribe(function () {
+                this.currentUser.onNext(null);
+                window.localStorage.setItem("currentUser", undefined);
                 this.setToken(null);
             }.bind(this));
 
@@ -67,11 +69,19 @@ module.exports = {
 
     },
 
+
     setUsers: function (data_) {
         this.users.onNext(data_);
     },
 
+    getCurrentUser:function(){
+        var _user = window.localStorage.getItem("currentUser");
+        if( _user === null  || _user === undefined || _user === "undefined" ){ return undefined; }
+        return JSON.parse(_user);
+    },
+
     setCurrentUser: function (data_) {
+        window.localStorage.setItem("currentUser", JSON.stringify(data_));
         this.currentUser.onNext(data_);
     }
 

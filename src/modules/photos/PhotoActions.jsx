@@ -88,17 +88,18 @@ module.exports =  React.createClass({
         for (var i = 0; i < this.props.images.length; i++)
         {
             var _img = this.props.images[i];
-            var _data = {'jcr:uuid':_img.id};
-            _data['dam:' +prop_] = _img[prop_];
+            var _data = {'path':_img.path, props:{}};
+            _data.props['dam:' +prop_] = _img[prop_];
 
             for (var j = 0; j < vals_.length; j++)
             {
                 var obj = vals_[j];
-                if( _data['dam:' +prop_].indexOf( obj ) == -1 )
+                if( _data.props['dam:' +prop_].indexOf( obj ) == -1 )
                 {
-                    _data['dam:' +prop_].push(obj);
+                    _data.props['dam:' +prop_].push(obj);
                 }
             }
+
 
             NodeActions.updateNode.source.onNext(_data);
 
@@ -112,6 +113,27 @@ module.exports =  React.createClass({
     },
 
 
+
+    save2: function (property_) {
+        var _path = this.state.photo.path;
+        var _val = this.state.photo[property_];
+
+        var _data = {'path':_path, props:{}};
+        _data.props[property_] = _val;
+
+        //$(this.refs.savingLabel.getDOMNode()).show();
+        //window.status = "Saving Changes";
+
+        NodeActions.updateNode.source.onNext(_data);
+
+        NodeActions.updateNode.sink.subscribe(
+            function (id_) {
+                //do nothing on successful save
+                //$(this.refs.savingLabel.getDOMNode()).hide();
+            }.bind(this), function(err_){
+                alert(err_.status +":" +err_.statusText +"\n" +err_.responseText);
+            }.bind(this));
+    },
 
 
     render: function() {
@@ -139,6 +161,7 @@ module.exports =  React.createClass({
                 }
             }
         }
+        
 
         try{
             return (

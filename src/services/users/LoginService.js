@@ -43,7 +43,7 @@ module.exports = {
                     ,'data':{'j_username':data_.username, 'j_password':data_.password, 'j_validate':'true'}
                 
                 }).then(function(result_, status_, xhr_){
-
+            
                     UserActions.getUser.source.onNext(data_.username);
                     //send results to the store
                     //_this.sink.onNext(data_);

@@ -40,10 +40,9 @@ module.exports = React.createClass({
 
 
         this.currentUserStoreSubscription = UserStore.currentUser.subscribe(function(data_){
-            if( data_ !== undefined )
+            if( data_ !== null && data_ !== undefined )
             {
-                this.state.user = data_;
-                if( this.isMounted() ) this.forceUpdate();
+                this.setState({'user':data_});
             }
         }.bind(this));
     },

@@ -16,6 +16,7 @@ var Button = require('react-bootstrap').Button;
 var UploadActions = require("../../actions/UploadActions");
 var DirectoryActions = require("../../actions/DirectoryActions");
 
+var UserStore = require("../../stores/UserStore");
 var UploadStore = require("../../stores/UploadStore");
 var DirectoryStore = require("../../stores/DirectoryStore");
 
@@ -29,7 +30,7 @@ var FileUploadControls = React.createClass({
     },
 
     getInitialState: function(){
-        return {"uploadPath":"/", "uploadPathFriendly":"< SELECT FOLDER ON LEFT >"}
+        return {"uploadPath":"/content/dam-files" +"/" +UserStore.currentUser.username, "uploadPathFriendly":"< SELECT FOLDER ON LEFT >"}
     },
 
     componentWillMount: function(){
@@ -38,12 +39,20 @@ var FileUploadControls = React.createClass({
 
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(d_){
 
+            if( d_.path == DirectoryStore.contentFileRoot )
+            {
+                d_.path = d_.path +UserStore.getCurrentUser().username
+            }
+
+
             _this.state.uploadPath = d_.path;
             if( d_.path.substring(d_.path.length-1) != "/")
             {
                 _this.state.uploadPath = d_.path +"/";
             }
-            _this.state.uploadPathFriendly = d_.path.replace("/content/dam-files", "/home/");
+
+
+            _this.state.uploadPathFriendly = d_.path;
             if( _this.isMounted() ) _this.forceUpdate();
         });
     },

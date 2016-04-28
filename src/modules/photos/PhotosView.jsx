@@ -47,7 +47,8 @@ module.exports =  React.createClass({
             selectedImages:[],
             state: '100%',
             showAddFolder: false,
-            bodyWidth: 0
+            bodyWidth: 0,
+            isLoading:true
         };
     },
 
@@ -72,8 +73,10 @@ module.exports =  React.createClass({
 
 
         this.searchSubscription = ImageActions.search.sink.subscribe(function(data_){
-            this.state.files = data_;
-            if( this.isMounted()) this.forceUpdate();
+            this.setState({'files':data_, isLoading:false});
+            //this.state.isLoading = false;
+            //this.state.files = data_;
+            //if( this.isMounted()) this.forceUpdate();
         }.bind(this));
 
     },
@@ -108,6 +111,7 @@ module.exports =  React.createClass({
     handleActionClose:function(event_){
 
         this.state.selectedImages = [];
+
         for( var key in this.state.files)
         {
             for (var i = 0; i < this.state.files[key].children.length; i++)
@@ -124,6 +128,7 @@ module.exports =  React.createClass({
     handleImageToggle:function(event_){
 
         this.state.selectedImages = [];
+
         for( var key in this.state.files)
         {
             for (var i = 0; i < this.state.files[key].children.length; i++)
@@ -139,15 +144,29 @@ module.exports =  React.createClass({
     },
 
 
+
+
+
+
     handleGroupByChange:function(event, eventKey)
     {
+        this.setState({'files':[], 'isLoading':true});
+
         var data = {};
         data.type = "group";
         data.name = eventKey;
         ImageActions.addFilter.onNext(data);
     },
 
+    removeFilter: function(data){
+        this.setState({'files':[], 'isLoading':true});
+
+        ImageActions.removeFilter.onNext(data);
+    },
+
     addFilter: function(data){
+
+        this.setState({'files':[], 'isLoading':true});
 
         if( data.type == "path" ){
             data.name = data.path;
@@ -156,8 +175,6 @@ module.exports =  React.createClass({
         }
         ImageActions.addFilter.onNext(data);
     },
-
-
 
     addFreeFormFilter: function(data){
         var _type = "tag";
@@ -214,6 +231,8 @@ module.exports =  React.createClass({
 
         if( !isNew )
         {
+            this.setState({'files':[], 'isLoading':true});
+
             if( data.indexOf(":") > -1 )
             {
                 ImageActions.addFilter.onNext({type: _type, name: _name});
@@ -225,10 +244,6 @@ module.exports =  React.createClass({
         }
     },
 
-
-    removeFilter: function(data){
-        ImageActions.removeFilter.onNext(data);
-    },
 
 
 
@@ -324,9 +339,19 @@ module.exports =  React.createClass({
                                     />
                                 </div>
 
+                                {(() => {
+                                    if( this.state.isLoading )
+                                    {
+                                        return (
+                                            <div className="loadingPanel text-center">
+                                                <i className="fa fa-spinner fa-spin fa-4x fa-fw margin-bottom" style={{'marginTop':'50px'}}></i>
+                                            </div>
+                                        );
+                                    }
+                                })()}
+
 
                                 {this.state.files.map(function(item_, indx_){
-
                                     return(
                                         <div key={'group-' +indx_}>
                                             <SidebarSection

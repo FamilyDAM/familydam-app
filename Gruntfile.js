@@ -55,7 +55,7 @@ module.exports = function(grunt) {
                 src: "dist",
                 dest: "/",
                 host:'localhost',
-                port:8080,
+                port:9000,
                 user:'admin',
                 pass:'admin',
                 replace:true

@@ -58,6 +58,6 @@ module.exports = {
     setLocale: function(data_){
         window.localStorage.setItem("locale", data_);
         this.locale.onNext(data_);
-    },
+    }
 
 };

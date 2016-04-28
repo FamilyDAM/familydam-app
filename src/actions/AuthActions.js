@@ -21,9 +21,7 @@ module.exports = {
      * Call service to login the user
      */
     login: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
-
-
-
+    
 };
 
 

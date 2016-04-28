@@ -51,12 +51,12 @@ module.exports = React.createClass({
     handleSubmit: function(event)
     {
         var _user = {};
-        _user.username = this.refs.firstName.getDOMNode().value.toLowerCase();
-        _user.password = this.refs.password.getDOMNode().value;
+        _user.username = this.refs.firstName.value.toLowerCase();
+        _user.password = this.refs.password.value;
         _user.userProps = {};
-        _user.userProps.firstName = this.refs.firstName.getDOMNode().value;
-        _user.userProps.lastName = this.refs.lastName.getDOMNode().value;
-        _user.userProps.email = this.refs.email.getDOMNode().value;
+        _user.userProps.firstName = this.refs.firstName.value;
+        _user.userProps.lastName = this.refs.lastName.value;
+        _user.userProps.email = this.refs.email.value;
 
         UserActions.createUser.source.onNext(_user);
 
