@@ -4,9 +4,7 @@
 /** jsx React.DOM */
 
 var React = require('react');
-var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
-var Link = Router.Link;
+import { Router, Link } from 'react-router';
 
 
 var NavigationActions = require('../../actions/NavigationActions');
@@ -39,7 +37,7 @@ module.exports = React.createClass({
             <div className="row">
                 <div className="col-sm-offset-3 col-sm-6">
                     <p className="text-center" style={{'marginTop':'30px', 'width':'100%'}}>
-                        The FamilyD.A.M System allows you member of the family their own view of the data.
+                        The FamilyD.A.M System allows members of your family their own view of the data.
                     Allowing everyone to manage the files, photos, and music anyway they want. </p>
                     <br/>
                 </div>

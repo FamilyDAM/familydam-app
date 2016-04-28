@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- ImglyKit CSS / JS -->
+    <link rel="stylesheet" href="css/imglykit-night-ui.css" />
+    <script src="js/imglykit.js"></script>
+  </head>
+  <body>
+    <div id="container" style="width: 640px; height: 480px;"></div>
+    <button id="render">Render an image</button>
+    <script>
+      window.onload = function() {
+        var image, container, kit;
+
+        container = document.querySelector("div#container");
+        kit = new ImglyKit({
+          container: container,
+          assetsUrl: "./assets", // Change this to where your assets are
+          ui: {
+            enabled: true // UI is disabled per default
+          }
+        });
+        kit.run();
+
+        var button = document.querySelector("button#render");
+        button.addEventListener("click", function () {
+          kit.render("image", "image/png")
+            .then(function (image) {
+              document.body.appendChild(image);
+            });
+        });
+      };
+    </script>
+  </body>
+</html>

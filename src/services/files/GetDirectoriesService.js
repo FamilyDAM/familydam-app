@@ -36,21 +36,21 @@ module.exports = {
         console.log("{GetDirectoryService} getDirectories()" );
 
         var _this = this;
-        var _url = PreferenceStore.getBaseUrl() +"/api/directory/";
+        var _url =  PreferenceStore.getRootDirectory() +".graph.-1.json/nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
+
 
         console.dir(UserStore.token.value);
 
         return $.ajax({
             method: "get",
-            url: PreferenceStore.getBaseUrl() +"/api/directory/",
+            url: _url,
             data: {'path':path_},
-            headers: {
-                "X-Auth-Token":  UserStore.token.value
+            'xhrFields': {
+                withCredentials: true
             }
         }).then(function(data_, status_, xhr_){
 
-            console.log("{GetDirectoriesService} getDirectories() success" );
-
+            //console.log("{GetDirectoriesService} getDirectories() success" );
             _this.sink.onNext(data_);
 
             // update token

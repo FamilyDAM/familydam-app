@@ -19,12 +19,14 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{GetUsers Service} subscribe");
-        this.sink = UserActions.getUsers.sink;
-        UserActions.getUsers.source.subscribe(this.getUsers.bind(this));
+        console.log("{GetUser Service} subscribe");
+        this.sink = UserActions.getUser.sink;
+
 
         //refresh the list after any user data is saved
-        UserActions.saveUser.sink.subscribe(this.getUsers.bind(this));
+        UserActions.getUser.source.subscribe(function (user_){
+            this.getUsers(user_);
+        }.bind(this));
     },
 
     /**
@@ -32,36 +34,23 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    getUsers: function()
+    getUsers: function(user_)
     {
         var _this = this;
+        var _url = "/home/users/" +user_.substr(0,1) +"/" +user_  +".tidy.-1.json";
 
         return $.ajax({
                     'method':'get'
-                    ,'url': PreferenceStore.getBaseUrl() +'/system/userManager/user.tidy.1.json'
+                    ,'url': _url
                     , cache: false
-
-                }).then(function(results, status_, xhr_){
-                    var list = [];
-
-                    for(var key in results)
-                    {
-                        if( key != "admin" && key != "anonymous" )
-                        {
-                            var item = results[key];
-                            item.username = key;
-                            if (item.firstName === undefined)
-                            {
-                                item.firstName = item.username;
-                            }
-
-                            item.username = key;
-                            list.push(item);
-                        }
+                    ,'xhrFields': {
+                        withCredentials: true
                     }
 
-                    var _sortedUsers = list.sort(function (a, b) { return b.username - a.username; });
-                    _this.sink.onNext(_sortedUsers);
+                }).then(function(results, status_, xhr_){
+
+                    results.username = user_;
+                    _this.sink.onNext(results);
 
                 }, function (xhr_, status_, errorThrown_){
             

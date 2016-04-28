@@ -7,7 +7,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var History = require('react-router').History;
+import { Router, Link } from 'react-router';
+
 
 var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
@@ -19,7 +20,11 @@ var UserStore = require('./../../stores/UserStore');
 var intlData = require("./../../locales/en-us");
 
 module.exports = React.createClass({
-    mixins : [History, IntlMixin],
+    mixins : [IntlMixin],
+
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
 
     propTypes: {
         // You can declare that a prop is a specific JS primitive. By default, these
@@ -52,6 +57,7 @@ module.exports = React.createClass({
      */
     handleSubmit: function(event)
     {
+
         var _this = this;
         var _username = this.props.user.username;
         var _password = this.state.password;
@@ -63,7 +69,7 @@ module.exports = React.createClass({
             if( data_ !== undefined )
             {
                 //_this.transitionTo("dashboard");
-                this.history.pushState(null, 'dashboard');
+                this.context.router.push({pathname: '/dashboard'});
             }
         }.bind(this));
 

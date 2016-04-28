@@ -34,24 +34,21 @@ module.exports = {
         console.log("{Login Service} login(" +data_.username +"," +data_.password +")");
         var _this = this;
         var _salt = new Date().getTime();
-        var _url = PreferenceStore.getBaseUrl() +'/api/users/login';
+        var _url = PreferenceStore.getBaseUrl() +'/j_security_check?';
 
         //TODO: hash the password & salt
-
         return $.ajax({
                     'method':'post'
                     ,'url': _url
-                    ,'data':{'username':data_.username, 'password':data_.password, 'salt':_salt}
-                }).then(function(data_, status_, xhr_){
+                    ,'data':{'j_username':data_.username, 'j_password':data_.password, 'j_validate':'true'}
+                
+                }).then(function(result_, status_, xhr_){
+            
+                    UserActions.getUser.source.onNext(data_.username);
                     //send results to the store
-                    _this.sink.onNext(data_);
+                    //_this.sink.onNext(data_);
 
-                    // update token
-                    var _token = xhr_.getResponseHeader("X-Auth-Token");
-                    if( _token != null && _token !== undefined ){
-                        AuthActions.saveToken.onNext(_token);
-                    }
-                }, function (xhr_, status_, errorThrown_){
+                }.bind(this), function (xhr_, status_, errorThrown_){
 
                     //send the error to the store (through the sink observer
                     if( xhr_.status == 401){

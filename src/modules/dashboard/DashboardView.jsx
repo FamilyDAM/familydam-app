@@ -4,8 +4,7 @@
 
 /** jsx React.DOM */
 var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+import { Router, Link } from 'react-router';
 
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
@@ -41,10 +40,9 @@ module.exports = React.createClass({
 
 
         this.currentUserStoreSubscription = UserStore.currentUser.subscribe(function(data_){
-            if( data_ !== undefined )
+            if( data_ !== null && data_ !== undefined )
             {
-                this.state.user = data_;
-                if( this.isMounted() ) this.forceUpdate();
+                this.setState({'user':data_});
             }
         }.bind(this));
     },
@@ -97,9 +95,7 @@ module.exports = React.createClass({
 
 
                                 <div className="pull-right title-link">
-
-                                    <Button style={{'padding':'10px'}} disabled={true}><Glyphicon glyph='search'/></Button>
-
+                                    
                                     <Dropdown id="settings" pullRight >
                                         <Dropdown.Toggle style={{'padding':'10px'}}>
                                             <Glyphicon glyph='cog'/>

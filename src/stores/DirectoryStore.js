@@ -10,7 +10,7 @@ var DirectoryActions = require('./../actions/DirectoryActions');
 
 module.exports = {
 
-    root: "/dam:files/",
+    contentFileRoot: "/content/dam-files/",
 
     /**
      * List of directories
@@ -21,8 +21,8 @@ module.exports = {
      * the last folder selected by a user in the sidebar folder tree.
      * A simple property, stored in a behavior subject.
      * Note: the value is pushed from the DirectoryAction
-     */
-    currentFolder: new Rx.BehaviorSubject( {'path':"/dam:files/"} ),
+     */ //todo: convert to an es6 class with a constructor and set this to the const path + username
+    currentFolder: new Rx.BehaviorSubject( {'path':"/content/dam-files/"} ),
 
 
     subscribe: function() {
@@ -33,9 +33,10 @@ module.exports = {
         }.bind(this) );
 
         DirectoryActions.getDirectories.sink.subscribe( function(data_){
-            this.directories.onNext(data_);
+            var _children = data_._embedded.children;
+            this.directories.onNext(_children);
         }.bind(this)  );
-    },
+    }
 
 
 };

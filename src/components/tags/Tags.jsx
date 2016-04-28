@@ -12,11 +12,7 @@ var TokenField = require('bootstrap-tokenfield');
 
 module.exports  = React.createClass({
 
-    propTypes: {
-        tags: React.PropTypes.object,
-        onRemove: React.PropTypes.func,
-        onAdd: React.PropTypes.func
-    },
+
 
     getDefaultProps: function(){
         return {'tags':[], title:"Tags", placeholder:"Enter Tags"}
@@ -28,7 +24,7 @@ module.exports  = React.createClass({
 
     componentDidMount: function(){
         var _this = this;
-        $(this.refs.tokenField).tokenfield()
+        $(this.refs.tokenField).tokenfield();
         $(this.refs.tokenField).on('tokenfield:createdtoken', function(event_){
             //console.dir(event_.attrs.value);
 

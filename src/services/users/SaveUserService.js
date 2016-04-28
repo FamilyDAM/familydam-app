@@ -21,7 +21,9 @@ module.exports = {
     subscribe : function(){
         console.log("{saveUser Service} subscribe");
         this.sink = UserActions.saveUser.sink;
-        UserActions.saveUser.source.subscribe(this.saveUser.bind(this));
+        UserActions.saveUser.source.subscribe(function(data_){
+            this.saveUser(data_);
+        }.bind(this));
     },
 
     /**
@@ -31,33 +33,27 @@ module.exports = {
      */
     saveUser: function(data_)
     {
-        debugger;
         var _data = {};
         _data.username = data_.username;
-        _data.userProps = JSON.stringify({
+       var _props = {
             'firstName':data_.firstName,
             'lastName':data_.lastName,
             'email':data_.email
-        });
+        };
 
         var _this = this;
         return $.ajax({
             'method':'post'
-            ,'url': PreferenceStore.getBaseUrl() +'/api/users/' +data_.username
-            , 'data': _data
+            ,'url': "/home/users/" +data_.username.substr(0,1) +"/" +data_.username +".json"
+            , 'data': _props
             , cache: false
-            , 'headers': {
-                'X-Auth-Token': UserStore.token.value
+            ,'xhrFields': {
+                withCredentials: true
             }
         }).then(function(results, status_, xhr_){
 
-            debugger;
             _this.sink.onNext(true);
 
-            var _token = xhr_.getResponseHeader("X-Auth-Token");
-            if( _token != null && _token !== undefined ){
-                AuthActions.saveToken.onNext(_token);
-            }
         }, function (xhr_, status_, errorThrown_){
 
             //send the error to the store (through the sink observer

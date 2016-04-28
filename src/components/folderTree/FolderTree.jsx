@@ -24,7 +24,7 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 
 var AddFolderModal = React.createClass({
 
-    activeDir: "/dam:files/",
+    activeDir: "/content/dam-files/",
 
     
     handleCreateFolder:function(event_){
@@ -32,7 +32,7 @@ var AddFolderModal = React.createClass({
 
         DirectoryStore.createFolder(
             _this.activeDir,
-            _this.refs.folderName.getDOMNode().value
+            _this.refs.folderName.value
         ).subscribe(function(results_){
             _this.props.onRequestHide();
             DirectoryActions.refreshDirectories.onNext(true);
@@ -85,7 +85,7 @@ var FolderTree = React.createClass({
         return {
             'folders':[],
             mode:'browse',
-            activeFolder: {'path':'/dam:files/', 'children':[]}
+            activeFolder: {'path':'/content/dam-files', 'children':[]}
         }
     },
 
@@ -93,7 +93,7 @@ var FolderTree = React.createClass({
     componentDidMount: function(){
         var _this = this;
 
-        this.directoryStore = DirectoryStore.getDirectories("/dam:files/").subscribe(function(results_){
+        this.directoryStore = DirectoryStore.getDirectories("/content/dam-files").subscribe(function(results_){
             console.log("get directories subscription");
             if (_this.isMounted())
             {
@@ -105,7 +105,7 @@ var FolderTree = React.createClass({
 
         // When we get a refresh dir event (after new folder is created) reload the dir tree
         this.directoryAction = DirectoryActions.refreshDirectories.subscribe(function(data_){
-            DirectoryStore.getDirectories("/dam:files/").subscribe(function(results_){
+            DirectoryStore.getDirectories("/content/dam-files").subscribe(function(results_){
                 console.log("refresh directories subscription");
                 if (_this.isMounted())
                 {
@@ -153,7 +153,7 @@ var FolderTree = React.createClass({
     render: function() {
 
         var _this = this;
-        var _boundClick = _this.handleSelectDir.bind(this, {'path':'/dam:files/'});
+        var _boundClick = _this.handleSelectDir.bind(this, {'path':'/content/dam-files'});
 
         var listItems = function(_folders)
         {
@@ -193,7 +193,7 @@ var FolderTree = React.createClass({
 
                 <ListGroup>
                     <ListGroupItem key="home">
-                        <div className={_this.state.activeFolder.path=="/dam:files/"?'folderItem active':'folderItem'}
+                        <div className={_this.state.activeFolder.path=="/content/dam-files/"?'folderItem active':'folderItem'}
                             style={{'cursor':'pointer'}}
                             onClick={_boundClick}>
                             <Glyphicon glyph="chevron-right"/>

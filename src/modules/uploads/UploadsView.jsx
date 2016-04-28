@@ -7,8 +7,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+import { Router, Link } from 'react-router';
+
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Button = require('react-bootstrap').Button;
@@ -86,7 +86,7 @@ module.exports = React.createClass({
                             <div className="boxRow content" style={{'minHeight':'200px'}}>
                                 <SidebarSection label="Files" open={true} showAddFolder={true} onAddFolder={this.handleAddFolder}>
                                     <Tree
-                                        baseDir="/dam:files/"
+                                        baseDir="/content/dam-files"
                                         onSelect={(path_)=>{
                                             FileActions.getFiles.source.onNext(path_.path);
                                             DirectoryActions.selectFolder.onNext({path: path_.path});

@@ -11,7 +11,7 @@ module.exports = {
 
     createUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
-    loadUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+    getUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
     saveUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 

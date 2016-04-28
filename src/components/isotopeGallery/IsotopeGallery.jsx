@@ -30,12 +30,17 @@ module.exports = React.createClass({
     },
 
     getInitialState: function () {
-        console.log("{getInitialState}");
         return {
             cntrlPressed:false,
             shiftPressed:false
         }
     },
+
+    shouldComponentUpdate(nextProps, nextState)
+    {
+        return this.props.images.length !== nextProps.images.length;
+    },
+
 
     componentWillReceiveProps: function (nextProps) {
         this.props = nextProps;

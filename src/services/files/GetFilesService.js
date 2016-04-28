@@ -29,20 +29,19 @@ module.exports = {
             console.log("{GetFiles Service} getFiles()");
 
             var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/api/files/";
+            var _url =  path_ +".graph.1.json/nt:file,nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
             return $.ajax({
                 'method': "get",
                 'url': _url,
                 'data': {'path': path_},
-                'headers': {
-                    'X-Auth-Token': UserStore.token.value
+                'xhrFields': {
+                    withCredentials: true
                 }
 
             }).then(function (data_, status_, xhr_) {
-
-                console.log("{GetFiles Service} getFiles() success");
-
+                
+                //console.log("{GetFiles Service} getFiles() success");
                 _this.sink.onNext(data_);
 
                 // update token

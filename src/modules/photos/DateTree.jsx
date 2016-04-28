@@ -3,15 +3,14 @@
  */
 /** jsx React.DOM */
 var React = require('react');
-var Router = require('react-router');
-var Route = Router.Route;
+import { Router, Link } from 'react-router';
 
 var ImageActions = require('../../actions/ImageActions');
 var PhotoStore = require('./../../stores/PhotoStore');
 var Tree = require('../../components/folderTree/Tree.jsx');
 
 module.exports =  React.createClass({
-    mixins: [ Router.Navigation ],
+   
 
     getDefaultProps: function(){
         return {
@@ -49,7 +48,6 @@ module.exports =  React.createClass({
 
 
     render: function() {
-
         try{
             return (
                 <div className="dateTree">

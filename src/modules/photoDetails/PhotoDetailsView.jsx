@@ -6,16 +6,13 @@
 /** jsx React.DOM */
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+import { Router, Link } from 'react-router';
 
 var Keymaster = require('keymaster');
 var moment = require('moment');
 
 var Tab = require('react-bootstrap').Tab;
 var Tabs = require('react-bootstrap').Tabs;
-var Carousel = require('react-bootstrap').Carousel;
-var CarouselItem = require('react-bootstrap').CarouselItem;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var Rating = require('react-rating');
 
@@ -52,7 +49,9 @@ module.exports = React.createClass({
      */
     componentWillMount: function () {
         var _this = this;
-        NodeActions.getNode.source.onNext(this.props.params.id);
+
+        var _path = this.props.location.query.path;
+        NodeActions.getNode.source.onNext(_path);
 
         // update the breadcrumb
         var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'level': 1};
@@ -80,14 +79,14 @@ module.exports = React.createClass({
     },
 
 
-    componentWillReceivePropsOLD: function (nextProps) {
-        debugger;
+    componentWillReceiveProps: function (nextProps) {
         this.props = nextProps;
 
-        this.state.photo={};
+        this.state.photo=undefined;
         if( this.isMounted() ) this.forceUpdate();
 
-        NodeActions.getNode.source.onNext(nextProps.params.id);
+        var _path = nextProps.location.query.path;
+        NodeActions.getNode.source.onNext(_path);
     },
 
 
@@ -111,9 +110,12 @@ module.exports = React.createClass({
         // list for results
         this.currentNodeSubscription = ContentStore.currentNode.subscribe(function (results) {
 
+
+            results = results._embedded;
+
             var _pathData2 = {
-                'label': results['jcr:name'],
-                'navigateTo': "photos/" + results['jcr:uuid'] + "/details",
+                'label': results.name,
+                'navigateTo': "photos/details?path=" +results.path,
                 'level': 2
             };
             NavigationActions.currentPath.onNext(_pathData2);
@@ -132,8 +134,9 @@ module.exports = React.createClass({
                 results['dam:note'] = "";
             }
 
+
             // set some local props for easier rendering
-            var imagePath = PreferenceStore.getBaseUrl() + results['jcr:path'] + "?token=" + UserStore.token.value + "&rendition=web.1024";
+            var imagePath = results._links.resize.replace("{width}", 1024).replace("{height}", 1024).replace("{format}", "jpg");
             var rating = results['dam:rating'] ? results['dam:rating'] : 0;
             var datetaken = results['jcr:created'];
 
@@ -155,7 +158,7 @@ module.exports = React.createClass({
             }
 
 
-            var _location = PreferenceStore.getBaseUrl() +"/api/files/" +results['jcr:uuid'] +"?token=" +UserStore.token.value;
+            var _location = results._links.self;
 
             var _datetaken = moment(datetaken, "YYYYMMDD HH:mm:ss").format("LLL");
             if( _datetaken == "Invalid date" ){
@@ -166,7 +169,7 @@ module.exports = React.createClass({
             this.subscribe(results);
 
 
-            _this.state = {
+            var _state = {
                 'photo': results,
                 'location': _location,
                 'imagePath': imagePath,
@@ -177,7 +180,7 @@ module.exports = React.createClass({
                 'nextId': undefined
             };
 
-            if( this.isMounted() ) this.forceUpdate();
+            this.setState(_state);
 
         }.bind(this), function (error) {
             console.dir(error);
@@ -216,11 +219,11 @@ module.exports = React.createClass({
 
 
     save: function (property_) {
-        var _id = this.state.photo['jcr:uuid'];
+        var _path = this.state.photo.path;
         var _val = this.state.photo[property_];
 
-        var _data = {'jcr:uuid':_id};
-        _data[property_] = _val;
+        var _data = {'path':_path, props:{}};
+        _data.props[property_] = _val;
 
         //$(this.refs.savingLabel.getDOMNode()).show();
         //window.status = "Saving Changes";
@@ -367,7 +370,7 @@ module.exports = React.createClass({
                                         'height': '36px'
                                     }} onClick={this.handleDownloadOriginal}/>
 
-                                    <Link to={'photos/' +this.state.photo['jcr:uuid'] +'/edit'} params={{id: '123'}}>
+                                    <Link to={{pathname:'photos/edit', query:{path: this.state.photo._links.self}}} >
                                         <img src="assets/icons/ic_mode_edit_24px.svg" style={{
                                             'width': '36px',
                                             'height': '36px'

@@ -7,7 +7,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
+import { Router, Link } from 'react-router';
+
 var moment = require('moment');
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
@@ -28,7 +29,7 @@ module.exports = React.createClass({
 
     getDefaultProps:function(){
         return {
-            file:{},
+            file:{}
         };
     },
 
@@ -61,7 +62,6 @@ module.exports = React.createClass({
         // list for results
         this.currentNodeSubscription = ContentStore.currentNode.subscribe(function (results)
         {
-debugger;
             if( results == undefined || results == null ) return;
 
             if (results['dam:tags'] == undefined)
@@ -164,24 +164,22 @@ debugger;
 
     render: function() {
 
-        debugger;
         var _this = this;
 
         if( this.state.file === undefined ){
             return (<div/>);
         }
 
-        var previewImage = PreferenceStore.getBaseUrl() + this.state.file.path + "?token=" + UserStore.token.value + "&rendition=thumbnail.200";
-
+        var previewImage = this.state.file._links.thumb;
 
         return (
             <div className="fileDetailsView" >
                 <SectionTree title="Image Info" buttonGlyph="remove" buttonClick={this.onClose}/>
 
                 <div>
-                <img src={this.state.imagePath}
-                     style={{'maxHeight': '250px', 'maxWidth':'80%'}}
-                     className="center-block" />
+                    <img src={previewImage}
+                         style={{'maxHeight': '250px', 'maxWidth':'80%'}}
+                         className="center-block" />
                 </div>
 
                 <br/>

@@ -33,25 +33,19 @@ module.exports = {
             //console.log("{PhotoTagsList Service} execute()");
 
             var _this = this;
-            var _url = PreferenceStore.getBaseUrl() + "/api/photos/list/tags";
+            var _url = "/content.tags.json";
 
             return $.ajax({
                 'method': "get",
                 'url': _url,
-                'headers': {
-                    'X-Auth-Token': UserStore.token.value
+                'xhrFields': {
+                    withCredentials: true
                 }
 
             }).then(function (data_, status_, xhr_) {
 
                 //console.log("{PhotoTagsList Service} execute() success");
                 _this.sink.onNext(data_);
-
-                // update token
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    AuthActions.saveToken.onNext(_token);
-                }
 
             }, function (xhr_, status_, errorThrown_){
 

@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default-prod', ['build-babel-prod', 'watch']);//, 'connect'
 
 
-    grunt.registerTask('build-css', ['compass']);
+    grunt.registerTask('build-css', ['copy:cssAsScss','compass']);
     grunt.registerTask('build-babel-js-dashboard', ['jshint', 'browserify']);
 
 
@@ -47,46 +47,61 @@ module.exports = function(grunt) {
             }
         },
 
+        slingPost: {
+            options: {
+                exclude: [".svn", "*.txt", "*.svg", "*.jpg", "*.png", "assets/*.*"]
+            },
+            root: {
+                src: "dist",
+                dest: "/",
+                host:'localhost',
+                port:9000,
+                user:'admin',
+                pass:'admin',
+                replace:true
+            }
+        },
+
         watch: {
 
             styles: {
                 files: ['<%= options.app %/**/*.scss'],
-                tasks: ['compass:dashboard', 'newer:copy:dashboard' ],
+                tasks: ['compass:dashboard', 'newer:copy:dashboard', 'slingPost' ],
                 options: {
                     livereload: true
                 }
             },
             css: {
                 files: ['<%= options.app %>/**/*.css'],
-                tasks: ['compass:dashboard', 'copy:dashboard'],
+                tasks: ['compass:dashboard', 'copy:dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
             },
             js: {
                 files: ['<%= options.app %>/**/*.js'],
-                tasks: ['build-babel-js-dashboard'],
+                tasks: ['build-babel-js-dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
             },
             html: {
                 files: ['<%= options.app %>/*.html'],
-                tasks: ['newer:copy:dashboard'],
+                tasks: ['newer:copy:dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
             },
             react: {
                 files: '<%= options.app %>/**/*.jsx',
-                tasks: ['build-babel-js-dashboard'],
+                tasks: ['build-babel-js-dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
             },
             dist: {
                 files: '<%= options.dist %>/**',
-                tasks: ['newer:copy:maven']
+                tasks: ['newer:copy:maven', 'slingPost']
             }
         },
 
@@ -140,6 +155,26 @@ module.exports = function(grunt) {
         },
 
         copy: {
+            cssAsScss: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'bower_components',
+                        src: ['**/*.css', '!**/*.min.css'],
+                        dest: 'src/assets/bower_components',
+                        filter: 'isFile',
+                        ext: ".scss"
+                    },
+                    {
+                        expand: true,
+                        cwd: 'node_modules',
+                        src: ['ladda-bootstrap/**/*.css', '!ladda-bootstrap/**/*.min.css'],
+                        dest: 'src/assets/node_modules/',
+                        filter: 'isFile',
+                        ext: ".scss"
+                    }
+                ]
+            },
             dashboard: {
                 files: [{
                     expand: true,
@@ -148,6 +183,8 @@ module.exports = function(grunt) {
                     dest: '<%= options.dist %>',
                     src: [
                         '*.js',
+                        '!app.js',
+                        '!shared-lib.js',
                         '**/*.json',
                         'apps/splash/**',
                         'apps/setup/**',
@@ -227,7 +264,7 @@ module.exports = function(grunt) {
             'shared':{
                 options: {
                     debug: true,
-                    fullPaths:true,
+                    fullPaths:true
                 },
                 files: {
                     './<%= options.dist %>/shared-lib.js' : ['src/shared-lib.js']

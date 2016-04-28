@@ -6,7 +6,7 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
+import { Router, Link } from 'react-router';
 
 var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
@@ -74,7 +74,6 @@ module.exports = React.createClass({
 
         var randomBackground = this.state.backgrounds[ Math.floor(Math.random()*this.state.backgrounds.length) ];
         var style = {"background": "url('" +randomBackground +"') no-repeat"};
-
 
         if( this.state.users !== undefined )
         {

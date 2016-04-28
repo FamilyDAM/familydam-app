@@ -7,8 +7,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+import { Router, Link } from 'react-router';
+
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Button = require('react-bootstrap').Button;
@@ -22,10 +22,14 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 
 module.exports = React.createClass({
 
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
+
     handleDirClick: function(event, component)
     {
         // get path from element in the list
-        var _path =  $("[data-reactid='" + component + "']").attr("data-path");
+        var _path =  $(event.currentTarget).attr("data-path");
 
         if( _path !== undefined )
         {
@@ -34,6 +38,7 @@ module.exports = React.createClass({
             FileActions.selectFile.onNext(undefined);
 
             //this.transitionTo('files', {}, {'path': _path})
+            this.context.router.push({pathname: '/files', query:{'path':_path}});
         }
     },
 
@@ -43,19 +48,23 @@ module.exports = React.createClass({
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
 
-        var _id = $("[data-reactid='" + component + "']").attr("data-id");
-        var _path = $("[data-reactid='" + component + "']").attr("data-path");
+        var _path = $(event.currentTarget).attr("data-path");
 
-        NodeActions.deleteNode.source.onNext({'id':_id, 'path':_path});
+        NodeActions.deleteNode.source.onNext({'path':_path});
     },
 
+
+    render2:function(){
+        console.log("Directory Row renderer")
+        return (<div>path: {this.props.dir.path}<br/></div>)
+    },
 
     render:function(){
         try
         {
             return (<div key={this.props.dir.id}
                         className="row"
-                        style={{'borderBottom':'1px solid #eee', 'padding':'5px', 'minHeight':'50px', 'cursor': 'pointer'}}
+                        style={{'border':'1px solid #eee', 'padding':'5px', 'minHeight':'50px', 'cursor': 'pointer'}}
                         onClick={this.handleDirClick}
                         data-id={this.props.dir.id} data-path={this.props.dir.path}>
 
@@ -68,32 +77,43 @@ module.exports = React.createClass({
                             <div className="col-sm-6 col-lg-7" style={{'marginTop': '15px'}}>
                                 {this.props.dir.name}
                             </div>
+
                             <div className="col-sm-6 col-lg-5 text-right">
                                 {(() => {
-                                    if( this.props.dir.mixins.indexOf("dam:userfolder") == -1)  {
+                                    
                                         return (
-                                        <ButtonGroup bsSize="small" style={{'width':'250px','verticalAlign':'middle'}}>
-                                            <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}
-                                                    style={{'padding':'5px 10px', 'margin':0}}>
-                                                <Glyphicon glyph="eye-open"/> open
-                                            </Button>
-                                            <Button onClick={this.handleNodeDelete}
-                                                    data-id={this.props.dir.id} data-path={this.props.dir.path}
-                                                    style={{'padding':'5px 10px', 'margin':0}}>
-                                                <Glyphicon glyph="remove"/> delete
-                                            </Button>
-                                        </ButtonGroup>
+                                            <ButtonGroup bsSize="small"
+                                                         style={{'width':'250px','verticalAlign':'middle'}}>
+
+                                                <Button onClick={this.handleDirClick} params={{'id': this.props.dir.id}}>
+                                                    <Glyphicon glyph="eye-open"/> open
+                                                </Button>
+
+
+                                                {(() => {
+                                                    if( this.props.dir._links !== undefined &&  this.props.dir._links.delete !== undefined )
+                                                    {
+                                                        //console.log("delete link:" + this.props.file._links.delete);
+                                                        return (<Button onClick={this.handleNodeDelete}
+                                                                        data-path={this.props.dir._links.delete}>
+                                                            <Glyphicon glyph="remove"/> delete
+                                                        </Button>);
+                                                    }
+                                                })()}
+
+                                            </ButtonGroup>
                                         );
-                                    }
+                                    
+
                                 })()}
                             </div>
                         </div>
                     </div>
                 </div>);
         }catch(err){
-            console.log(err);
+            console.dir(err);
         }
-    }
+    },
 
 });
 

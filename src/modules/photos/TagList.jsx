@@ -3,15 +3,14 @@
  */
 /** jsx React.DOM */
 var React = require('react');
-var Router = require('react-router');
-var Route = Router.Route;
+import { Router, Link } from 'react-router';
+
 
 var ImageActions = require('../../actions/ImageActions');
 var PhotoStore = require('./../../stores/PhotoStore');
 
 module.exports =  React.createClass({
-    mixins: [ Router.Navigation ],
-
+    
     getDefaultProps: function(){
         return {
             tags:{}
@@ -46,7 +45,6 @@ module.exports =  React.createClass({
     render: function() {
 
         var list = [];
-
         try
         {
             this.state.tags.forEach(function(item){

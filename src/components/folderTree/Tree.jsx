@@ -160,7 +160,7 @@ module.exports = React.createClass({
         return {
             addNodeRefs: [],
             treeData: [],
-            selectedPath: "/dam:files/"
+            selectedPath: "/content/dam-files"
         }
     },
 
@@ -233,7 +233,7 @@ module.exports = React.createClass({
                 }
             }
 
-            if (!isChild && data_.length > 0)
+            if (!isChild && data_ !== undefined && data_.length > 0)
             {
                 this.state.treeData = data_;
                 for (var i = 0; i < data_.length; i++)

@@ -31,7 +31,7 @@ var AddFolderModal = React.createClass({
 
     getInitialState: function(){
         return {
-            'parent':"/dam:files/"
+            'parent':"/content/dam-files"
         }
     },
 
@@ -60,7 +60,7 @@ var AddFolderModal = React.createClass({
         var _this = this;
 
         var _parent = this.state.parent;
-        var _name = _this.refs.folderName.getDOMNode().value;
+        var _name = _this.refs.folderName.value;
         DirectoryActions.createFolder.source.onNext({'parent': _parent, 'name': _name})
 
     },

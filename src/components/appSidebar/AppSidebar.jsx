@@ -25,7 +25,7 @@ module.exports = React.createClass({
     componentDidMount: function(){
         var _this = this;
 
-        console.log("AppSidebar");
+        //console.log("AppSidebar");
     },
 
 
@@ -54,21 +54,19 @@ module.exports = React.createClass({
                     <div className="appSidebar container-fluid">
                         <div className="row" style={_headerStyle}>
                             <div className="titleBar">
-                        <span>
-                            Apps
-                        </span>
+                                <span>Apps</span>
                             </div>
                         </div>
                         <div className="row list">
                             <ButtonGroup vertical block>
-                                <LinkContainer to="files">
+                                <LinkContainer to="/files">
                                     <Button style={{'padding':'5px', 'margin':'10px'}}>
                                         <Glyphicon glyph="file" style={{'color':'#000000', 'fontSize':'21px'}}/>
                                         <span>Files</span>
                                     </Button>
                                 </LinkContainer>
 
-                                <LinkContainer to="photos">
+                                <LinkContainer to="/photos">
                                     <Button style={{'padding':'5px', 'margin':'10px'}}>
                                         <Glyphicon glyph="camera" style={{'color':'#000000', 'fontSize':'21px'}}/>
                                         <span>Photos</span>
@@ -104,6 +102,59 @@ module.exports = React.createClass({
                                 </LinkContainer>
                             </ButtonGroup>
 
+                        </div>
+                    </div>
+                );
+            }
+            else if( this.props.style == "icon-list" )
+            {
+                return (
+                    <div className="appSidebar container-fluid">
+
+                        <div className="row">
+                            <ButtonGroup vertical>
+                                <LinkContainer to="files">
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="file" style={{'color':'#000000', 'fontSize':'21px'}}/><br/>
+                                        <span>Files</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="photos">
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="camera" style={{'color':'#000000', 'fontSize':'21px'}}/><br/>
+                                        <span>Photos</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="music">
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="music" style={{'color':'#eee', 'fontSize':'21px'}}/><br/>
+                                        <span style={{'color':'#eee'}}>Music</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="movies" >
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="film" style={{'color':'#eee', 'fontSize':'21px'}}/><br/>
+                                        <span style={{'color':'#eee'}}>Movies</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="web" >
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="globe" style={{'color':'#eee', 'fontSize':'21px'}}/><br/>
+                                        <span style={{'color':'#eee'}}>Web</span>
+                                    </Button>
+                                </LinkContainer>
+
+                                <LinkContainer to="email" >
+                                    <Button style={{'padding':'3px', 'margin':'3px'}}>
+                                        <Glyphicon glyph="inbox" style={{'color':'#eee', 'fontSize':'21px'}}/><br/>
+                                        <span style={{'color':'#eee'}}>Email</span>
+                                    </Button>
+                                </LinkContainer>
+                            </ButtonGroup>
                         </div>
                     </div>
                 );

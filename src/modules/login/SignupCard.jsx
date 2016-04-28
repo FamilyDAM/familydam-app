@@ -7,7 +7,7 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var History = require('react-router').History;
+import { Router, Link } from 'react-router';
 
 var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
@@ -19,8 +19,7 @@ var UserActions = require('./../../actions/UserActions');
 var UserStore = require('./../../stores/UserStore');
 
 module.exports = React.createClass({
-    mixins : [History],
-
+    
     propTypes: {
         // You can declare that a prop is a specific JS primitive. By default, these
         // are all optional.
@@ -52,12 +51,12 @@ module.exports = React.createClass({
     handleSubmit: function(event)
     {
         var _user = {};
-        _user.username = this.refs.firstName.getDOMNode().value.toLowerCase();
-        _user.password = this.refs.password.getDOMNode().value;
+        _user.username = this.refs.firstName.value.toLowerCase();
+        _user.password = this.refs.password.value;
         _user.userProps = {};
-        _user.userProps.firstName = this.refs.firstName.getDOMNode().value;
-        _user.userProps.lastName = this.refs.lastName.getDOMNode().value;
-        _user.userProps.email = this.refs.email.getDOMNode().value;
+        _user.userProps.firstName = this.refs.firstName.value;
+        _user.userProps.lastName = this.refs.lastName.value;
+        _user.userProps.email = this.refs.email.value;
 
         UserActions.createUser.source.onNext(_user);
 
@@ -130,7 +129,7 @@ module.exports = React.createClass({
 
 
                     <div className="row">
-                        <div className="col-sm-12" style={{'text-align':'right'}}>
+                        <div className="col-sm-12" style={{'textAlign':'right'}}>
                             <hr/>
                             <button className="btn btn-primary" onClick={this.handleSubmit} onTouch={this.handleSubmit}>create</button>
                         </div>

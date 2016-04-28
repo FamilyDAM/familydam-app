@@ -20,7 +20,29 @@ module.exports = {
     },
 
     setFiles: function(data_){
-        this.files.onNext(data_);
+
+        
+        if( data_._embedded.children === undefined ){
+            this.files.onNext([]);
+        }else
+        {
+            var _objects = [];
+            var _children = data_._embedded.children;
+            for (var i = 0; i < _children.length; i++)
+            {
+                var obj = _children[i];
+                if (obj['jcr:uuid'] !== undefined)
+                {
+                    obj.id = obj['jcr:uuid'];
+                } else
+                {
+                    obj.id = obj.path;
+                }
+
+                _objects.push(obj);
+            }
+            this.files.onNext(_objects);
+        }
     }
 
 

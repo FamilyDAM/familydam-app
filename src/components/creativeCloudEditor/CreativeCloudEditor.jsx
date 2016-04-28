@@ -59,6 +59,7 @@ module.exports = React.createClass({
         }.bind(this));
     },
 
+    
     launchEditor: function(){
 
         // invoke action to call server and get base64 for the full size image

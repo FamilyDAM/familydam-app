@@ -4,8 +4,7 @@
 /** jsx React.DOM */
 
 var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+import { Router, Link } from 'react-router';
 
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var Button = require('react-bootstrap').Button;
@@ -118,7 +117,7 @@ module.exports = React.createClass({
                             <div style={{'clear':'left'}}>
                                 <ul style={{'listStyle':'none'}}>
                                     {this.state.users.map(function (user, index) {
-                                        return <li key={user.username}><Link to={'users/' +user.id}>{user.firstName}</Link></li>
+                                        return <li key={user.username}><Link to={'users/' +user.username}>{user.firstName} {user.lastName}</Link></li>
                                     })}
                                 </ul>
                             </div>

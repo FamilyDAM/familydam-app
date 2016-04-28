@@ -7,8 +7,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+import { Router, Link } from 'react-router';
+
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var ButtonLink = require('react-router-bootstrap').ButtonLink;
@@ -44,7 +44,7 @@ var BackFolder = React.createClass({
 
     render:function(){
 
-        if( this.props.path !== "/dam:files" && this.props.path !== "/dam:files/" )
+        if( this.props.path !== "/content/dam-files" && this.props.path !== "/content/dam-files/" )
         {
             return (<div
                 className="row"

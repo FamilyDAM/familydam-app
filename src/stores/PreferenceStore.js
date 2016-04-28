@@ -9,12 +9,20 @@ var Rx = require('rx');
 
 module.exports = {
 
-    // Logged in user
-    _baseUrl : "http://localhost:9000",
-    //_baseUrl : "",
-    _rootDirectory : "/dam:files/",
-    _documentRootDirectory : "/documents/",
+    locale:new Rx.BehaviorSubject("en_us"),
 
+    // Logged in user
+    //_baseUrl : "http://localhost:9000",
+    _baseUrl : "",
+
+    //_baseUrl : "",
+    _rootFileDirectory : "/content/dam-files/",
+
+    //logged in user, start with default admin/admin 
+    //admin/admin is changed on the system after the first user has been created so 
+    //this will be reset after user login
+    username : "admin",
+    password : "admin",
 
     subscribe: function() {
         console.log("{PreferenceStore}.init()");
@@ -25,11 +33,31 @@ module.exports = {
     },
 
     getRootDirectory: function () {
-        return this._rootDirectory;
+        return this._rootFileDirectory;
     },
 
-    getDocumentRootDirectory: function () {
-        return this._rootDirectory +this._documentRootDirectory;
+
+    getLocale: function(){
+        var _locale = window.localStorage.getItem("locale");
+        if( _locale === undefined || _locale === null ){
+            _locale = "en_us";
+        }
+        return _locale;
+    },
+
+
+    getSimpleLocale: function(){
+        var _locale = window.localStorage.getItem("locale");
+        if( _locale === undefined || _locale === null ){
+            _locale = "en";
+        }
+        return _locale.substr(0,2);
+    },
+
+
+    setLocale: function(data_){
+        window.localStorage.setItem("locale", data_);
+        this.locale.onNext(data_);
     }
 
 };
