@@ -48,10 +48,11 @@
         {
             //console.log("checking server");
 
-            http.get("http://" +host +":" +port +"/health", function (res, data)
+            http.get("http://" +host +":" +port +"/bin/familydam/api/v1/health", function (res, data)
             {
                 if (res.statusCode == 200 || res.statusCode == 302)
                 {
+                    console.log("Health Check Cleared");
                     var body = '';
                     res.on('data', function(d) {
                         body += d;
@@ -60,7 +61,7 @@
                         // Data reception is done, do whatever with it!
                         var parsed = JSON.parse(body);
 
-                        if( parsed.status == "UP")
+                        if( parsed.status == "OK")
                         {
                             callback_();
                             clearInterval(checkServerInterval);
@@ -146,13 +147,13 @@
 
 
 
-            var jarPath = "FamilyDAM.jar";
+            var jarPath = "repository-" +settings_['version'] +".jar";
             var jarHost = settings_['host'];
             var jarPort = settings_['port'];
 
 
 
-            console.log("Starting Server: " +jarPath +" | port=" +jarPort +" | location=" +settings_['storageLocation'], true);
+            console.log("Starting Server!: " +jarPath +" | port=" +jarPort +" | location=" +settings_['storageLocation'], true);
             app_.sendClientMessage('info', "Starting FamilyDAM Repository", false);
             console.log("Resource Path=" +process.resourcesPath);
 
@@ -168,7 +169,8 @@
 
 
             var cmd = "java";
-            var args = ['-jar',  jarPath, '-p', jarPort, '-Dspring.profiles.active='+settings_['profile'], '-Dapp-root', settings_['storageLocation'] ];
+            //var args = ['-jar',  jarPath, '-p', jarPort, '-Dspring.profiles.active='+settings_['profile'], '-Dapp-root', settings_['storageLocation'] ];
+            var args = ['-jar',  jarPath, '-p',  jarPort, '-c', settings_['storageLocation'], '-Dspring.profiles.active='+settings_['profile'] ];
 
             console.log("checking java version");
             version_prc = spawn("java",["-version"], {
@@ -209,7 +211,8 @@
             var isReady = false;
             checkLoadingStatus(jarHost, jarPort, function(){
                 appRoot.loadDashboardApplication(jarHost, jarPort);
-            })
+            });
+
 
 
 

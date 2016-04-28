@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('default', ['clean:dist', 'build-js', 'copy:app', 'copy:splash', 'copy:app-configwizard', 'copy:embeddedServer', 'watch']);
+    grunt.registerTask('default', ['clean:dist', 'build-js', 'copy:app', 'copy:splash', 'copy:app-configwizard', 'copy:repository', 'watch']);
 
     grunt.registerTask('build-js', ['jshint']);
 
@@ -14,7 +14,8 @@ module.exports = function(grunt) {
         port: 8081,
         app: "src",
         dist: "dist",
-        tmp: ".tmp"
+        tmp: ".tmp",
+        repoVersion: "0.1.0"
     };
 
     grunt.initConfig({
@@ -114,10 +115,10 @@ module.exports = function(grunt) {
                     }
                 ]
             },
-            'embeddedServer': {
+            'repository': {
                 files:[{
-                    src: '../server-content-repository/target/FamilyDAM.jar',
-                    dest: './dist/resources',
+                    src: '../osgi-bundles/standalone/target/repository-<%= options.repoVersion %>.jar',
+                    dest: './dist/resources/',
                     expand: true,
                     flatten:true,
                     verbose:true
@@ -128,11 +129,11 @@ module.exports = function(grunt) {
                     {
                         cwd: './dist/',
                         src: '**',
-                        dest: './binary-dist/FamilyDAM.app/Contents/Resources/app/',
+                        dest: './binary-dist/FamilyDAM-darwin-x64/FamilyDAM.app/Contents/Resources/app/',
                         expand: true
                     }
                 ]
-            },
+            }
         },
 
 
@@ -159,11 +160,11 @@ module.exports = function(grunt) {
                     name: 'FamilyDAM',
                     dir: 'dist',
                     out: 'binary-dist',
-                    version: '0.28.2',
+                    version: '0.37.6',
                     platform: 'darwin',
                     arch: 'x64',
                     'app-bundle-id': 'com.familydam',
-                    'app-version': '0.0.1'
+                    'app-version': '0.1.0'
                 }
             },
             winBuild: {
@@ -171,11 +172,11 @@ module.exports = function(grunt) {
                     name: 'FamilyDAM',
                     dir: 'dist',
                     out: 'binary-dist',
-                    version: '0.28.2',
+                    version: '0.37.6',
                     platform: 'win32',
                     arch: 'x64',
                     'app-bundle-id': 'com.familydam',
-                    'app-version': '0.0.1'
+                    'app-version': '0.1.0'
                 }
             }
         }

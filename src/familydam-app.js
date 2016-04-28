@@ -89,8 +89,8 @@ app.checkServer = function(port){
  * Setup all of the primary windows here, so we will also have a reference to close them.
  */
 app.setupWindows = function(){
-    splashWindow = new BrowserWindow({width:600, height:400, center:true, frame:false, show:false, type:"splash"});
-    configWindow = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false, type:"desktop"});
+    splashWindow = new BrowserWindow({width:600, height:400, center:true, frame:true, show:false});//, type:"splash"});
+    configWindow = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false});//, type:"desktop"});
     mainWindow = new BrowserWindow({
         width:1024,
         height:800,
@@ -143,7 +143,7 @@ app.loadSplashApplication = function(){
     configWindow.hide();
 
     // and load the index.html of the app.
-    splashWindow.loadUrl('file://' + __dirname + '/apps/splash/index.html');
+    splashWindow.loadURL('file://' + __dirname + '/apps/splash/index.html');
     splashWindow.show();
     splashWindow.focus();
 
@@ -172,7 +172,7 @@ app.loadDashboardApplication = function(host, port){
 
 
     //mainWindow.loadUrl('file://' + __dirname  +'/apps/dashboard/index.html');
-    mainWindow.loadUrl("http://" +host +":" +port +"/index.html");
+    mainWindow.loadURL("http://" +host +":" +port +"/");
 
 
 };
@@ -211,7 +211,7 @@ app.on('open-url', function(event, path) {
     var childWindow = new BrowserWindow({width:1024, height:800, frame:true});
 
     // and load the index.html of the app.
-    childWindow.loadUrl(path);
+    childWindow.loadURL(path);
 
     // Emitted when the window is closed.
     childWindow.on('closed', function() {

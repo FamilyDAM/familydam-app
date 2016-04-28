@@ -37,6 +37,7 @@
     var configWindow;
     var splashWindow;
     var mainWindow;
+    var repoVersion = "0.1.0";
 
     var link = function (app_, configWindow_, splashWindow_, mainWindow_)
     {
@@ -148,12 +149,16 @@
      */
     var loadConfigApplication = function()
     {
+
+
         console.log("Load configuration window (" +new Date() +")  file://" + __dirname + "/apps/config/index.html");
         //this.configWindow = new BrowserWindow({width:900, height:600, center:true, frame:true, show:false, title:'FamilyDAM Configuration Wizard'});
 
-        configWindow.loadUrl('file://' + __dirname + '/apps/config/index.html');
+        configWindow.openDevTools();
+        configWindow.loadURL('file://' + __dirname + '/apps/config/index.html');
         configWindow.webContents.on('did-finish-load', function()
             {
+                //console.log("{did-finish-load} empty!");
                 configWindow.webContents.send('settingConfig', settings);
             });
 
@@ -181,9 +186,12 @@
             //update settings
             settings.state = "READY";
 
+            //fix version of the repository
+            settings.version = "0.1.0";
 
             //serialize
             var encodedSettings = JSON.stringify(settings);
+
 
             // write back to file in package
             fs.writeFile( __dirname +'/resources/systemprops.json',  encodedSettings, {'encoding':'utf8'}, function (err, data)

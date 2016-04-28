@@ -60,7 +60,7 @@
     "grunt-contrib-watch": "~0.5.2",
     "grunt-dalek": "~0.1.0",
     "grunt-download-atom-shell": "^0.10.0",
-    "grunt-electron": "^1.0.0",
+    "grunt-electron": "^3.0.0",
     "grunt-mocha": "~0.4.0",
     "grunt-modernizr": "~0.4.0",
     "grunt-newer": "~0.6.0",
