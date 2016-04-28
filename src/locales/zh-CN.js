@@ -23,7 +23,8 @@ module.exports = {
         },
         welcome: {
             intro: "之前，我们可以启动应用程序，我们需要知道一些事情。首先，是将所有我们要管理的文件的地方。这可能是一个大的硬盘驱动器， USB驱动器或网络驱动器。第二项是家庭的谁将会使用此应用程序的成员。",
-            selectDefaultLanguage:"选择默认的语言"
+            selectDefaultLanguage:"选择默认的语言",
+            moreComingSoon:"(More languages coming soon)"
         },
         register: {
             intro1: "让我们知道您的使用FamilyD.AM桌面分享你的电子邮件和你的家人注册一个唯一的名称。您的电子邮件，将永远不会被共享或出售。我们只需要它，所以我们可以给你发信息的更新和新功能。",

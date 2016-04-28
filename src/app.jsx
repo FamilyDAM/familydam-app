@@ -46,6 +46,11 @@ var routes = [
 //Router.run(routes, Router.HistoryLocation, function (Handler, state) {
 Router.run(routes, function (Handler, state) {
 
+    React.render(
+        <div>loading...</div>
+        , document.body);
+
+
     this.localSubscription = SettingsStore.locale.subscribe(function (locale_) {
         var i18n;
         if (locale_ === "es-ES")
@@ -65,5 +70,6 @@ Router.run(routes, function (Handler, state) {
 
 
     }.bind(this));
+
     //this.localSubscription.dispose();
 });

@@ -32,8 +32,8 @@ module.exports = {
         ConfigActions.emailChange.subscribe( this.setEmail.bind(this) );
         //ConfigActions.familyNameChange.sink
         ConfigActions.storageFolderChange.subscribe( this.setStorageLocation.bind(this) );
-        ConfigActions.addUser.subscribe( this.addUser.bind(this) );
-        ConfigActions.removeUser.subscribe( this.removeUser.bind(this) );
+        ConfigActions.addUser.subscribe( this.addUser );
+        ConfigActions.removeUser.subscribe( this.removeUser );
 
 
         ConfigActions.saveSettings.subscribe( function(){
@@ -41,7 +41,7 @@ module.exports = {
             console.log("Calling Save Config : " +_json);
             var result = ipc.sendSync('saveConfig', _json );
             console.log("RESULT=" +result);
-        }.bind(this) );
+        }.bind(this));
 
     },
 
@@ -101,7 +101,7 @@ module.exports = {
     buildJson:function()
     {
         var settings = {};
-        settings.version = "1.0.0";
+        settings.version = "0.1.0";
         settings.license = "";
         settings.state = "READY";
         settings.host = "localhost";

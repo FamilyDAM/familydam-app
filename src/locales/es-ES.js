@@ -23,7 +23,8 @@ module.exports = {
         },
         welcome: {
             intro: "Antes de que podamos iniciar la aplicación que necesitamos saber algunas cosas. El primero , es un lugar para almacenar todos los archivos que vamos a manejar. Esto podría ser un gran disco duro , una unidad USB o una unidad de red . El segundo elemento son los miembros de la familia que va a utilizar esta aplicación.",
-            selectDefaultLanguage:"Seleccione un idioma predeterminado"
+            selectDefaultLanguage:"Seleccione un idioma predeterminado",
+            moreComingSoon:"(More languages coming soon)"
         },
         register: {
             intro1: "Háganos saber su uso del escritorio FamilyD.AM compartiendo su correo electrónico y el registro de un nombre único para su familia. Tu email nunca será compartida o vendida . Sólo lo necesitamos para que podamos enviarle información sobre actualizaciones y nuevas características",
