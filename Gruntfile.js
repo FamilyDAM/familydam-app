@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 
         slingPost: {
             options: {
-                exclude: [".svn", "*.txt", "*.svg", "*.jpg", "*.png", "assets/*.*"]
+                exclude: [".svn", "*.txt", "*.svg", "*.jpg", "*.png", "shared-lib.js", "assets", "assets/*.*"]
             },
             root: {
                 src: "dist",
@@ -273,21 +273,6 @@ module.exports = function(grunt) {
         },
 
 
-        /************
-         * Old way - run babel then browserify2, keeping it around for reference, for now
-         */
-        browserify2: {
-            'dashboard': {
-                entry: './<%= options.tmp %>/app.js',
-                compile: './<%= options.dist %>/app.js',
-                debug: true
-            },
-            'shared-lib': {
-                entry: './<%= options.app %>/shared-lib.js',
-                compile: './<%= options.dist %>/shared-lib.js',
-                debug: false,
-            }
-        },
         "babel": {
             options: {
                 sourceMap: true,
@@ -303,7 +288,25 @@ module.exports = function(grunt) {
                     "ext": ".js"
                 }]
             }
-        }
+        },
+
+
+        /************
+         * Old way - run babel then browserify2, keeping it around for reference, for now
+         */
+        browserify2: {
+            'dashboard': {
+                entry: './<%= options.tmp %>/app.js',
+                compile: './<%= options.dist %>/app.js',
+                debug: true
+            },
+            'shared-lib': {
+                entry: './<%= options.app %>/shared-lib.js',
+                compile: './<%= options.dist %>/shared-lib.js',
+                debug: false,
+            }
+        },
+
 
 
     });

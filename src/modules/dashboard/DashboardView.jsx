@@ -4,13 +4,20 @@
 
 /** jsx React.DOM */
 var React = require('react');
-import { Router, Link } from 'react-router';
+import {Router, Link} from 'react-router';
 
-var Button = require('react-bootstrap').Button;
-var Glyphicon = require('react-bootstrap').Glyphicon;
-var Dropdown = require('react-bootstrap').Dropdown;
-var MenuItem = require('react-bootstrap').MenuItem;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
+
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {cyan500} from 'material-ui/styles/colors';
+import {lightBaseTheme} from 'material-ui/styles/baseThemes/lightBaseTheme';
+//import {darkBaseTheme} from 'material-ui/styles/baseThemes/darkBaseTheme';
+import {AppBar, IconMenu, IconButton, MenuItem, Divider, Drawer, Paper, Toolbar, ToolbarGroup} from 'material-ui';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+
+var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
+
 
 var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
 var SectionHeader = require('../../components/breadcrumb/SectionHeader.jsx');
@@ -20,13 +27,63 @@ var AuthActions = require('../../actions/AuthActions');
 
 var UserStore = require('./../../stores/UserStore');
 
+const muiThemeLight = getMuiTheme(lightBaseTheme);
+//const muiThemeDark = getMuiTheme(darkBaseTheme);
+/**************************
+ import {
+cyan500, cyan700,
+grey100, grey300, grey400, grey500,
+pinkA200,
+white, darkBlack, fullBlack,
+} from 'material-ui/lib/styles/colors';
+ import ColorManipulator from 'material-ui/lib/utils/color-manipulator';
+
+ const lightBaseTheme = {
+  spacing: {
+    iconSize: 24,
+    desktopGutter: 24,
+    desktopGutterMore: 32,
+    desktopGutterLess: 16,
+    desktopGutterMini: 8,
+    desktopKeylineIncrement: 64,
+    desktopDropDownMenuItemHeight: 32,
+    desktopDropDownMenuFontSize: 15,
+    desktopLeftNavMenuItemHeight: 48,
+    desktopSubheaderHeight: 48,
+    desktopToolbarHeight: 56,
+  },
+  fontFamily: 'Roboto, sans-serif',
+  palette: {
+    primary1Color: cyan500,
+    primary2Color: cyan700,
+    primary3Color: grey400,
+    accent1Color: pinkA200,
+    accent2Color: grey100,
+    accent3Color: grey500,
+    textColor: darkBlack,
+    alternateTextColor: white,
+    canvasColor: white,
+    borderColor: grey300,
+    disabledColor: ColorManipulator.fade(darkBlack, 0.3),
+    pickerHeaderColor: cyan500,
+    clockCircleColor: ColorManipulator.fade(darkBlack, 0.07),
+    shadowColor: fullBlack,
+  },
+};
+**************************/
+
+
 
 module.exports = React.createClass({
 
-    getInitialState:function()
-    {
+    childContextTypes: {
+        muiTheme: React.PropTypes.object
+    },
+
+    getInitialState: function () {
         return {
-            user:{}
+            user: {},
+            showAppSidebar:false
         };
     },
 
@@ -39,94 +96,106 @@ module.exports = React.createClass({
         }.bind(this));
 
 
-        this.currentUserStoreSubscription = UserStore.currentUser.subscribe(function(data_){
-            if( data_ !== null && data_ !== undefined )
+        this.currentUserStoreSubscription = UserStore.currentUser.subscribe(function (data_) {
+            if (data_ !== null && data_ !== undefined)
             {
-                this.setState({'user':data_});
+                this.setState({'user': data_});
             }
         }.bind(this));
     },
 
 
-    componentWillUnmount: function(){
-        if( this.currentUserStoreSubscription !== undefined ){
+    componentWillUnmount: function () {
+        if (this.currentUserStoreSubscription !== undefined)
+        {
             this.currentUserStoreSubscription.dispose();
         }
     },
 
 
-    handleDropDownToggle: function(e){
-
+    handleHamburgerClick: function (e) {
+        this.setState({'showAppSidebar': !this.state.showAppSidebar})
     },
 
-    render: function () {
 
-        var clear_style = {clear: "left"};
-        var flex_style = {width: "100%"};
+
+
+    render: function () {
 
         try
         {
             return (
+                <MuiThemeProvider muiTheme={muiThemeLight}>
+                    <div className="dashboardView" style={{'display':'flex', 'flexDirection':'column'}}>
 
-                <div id="wrapper" className="dashboardView container-fluid">
+                        <header>
+                            <AppBar
+                                title={<span>Family<i>D.A.M</i></span>}
+                                onLeftIconButtonTouchTap={this.handleHamburgerClick}
+                                iconElementRight={
+                                    <IconMenu
+                                        iconButtonElement={ <IconButton><MoreVertIcon/></IconButton>}
+                                        anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+                                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                                    >
+                                        <LinkContainer to="users"><MenuItem primaryText="User Manager" /></LinkContainer>
+                                        <LinkContainer to="login"><MenuItem primaryText="Logout" /></LinkContainer>
+                                        <Divider />
+                                        <MenuItem primaryText="System Console" />
+                                    </IconMenu>
+                                }
+                            />
+                        </header>
 
-                    <div className="row">
-                        <aside ref="headerSidebar" className="header-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2">
-                            <div className="box">
-                                <span className="name text-center">{this.state.user.firstName} {this.state.user.lastName}</span>
-                            </div>
-                        </aside>
 
-                        <section className="col-xs-8 col-sm-9 col-md-9 col-lg-10">
-                            <div className="header-body row">
-                                <div className="pull-left title">
-                                    <SectionHeader/>
+
+
+                        <div
+                            style={{'display':'flex', 'flexDirection':'row', 'alignItems':'stretch', 'width':'100%', 'height':'calc(100vh - 65px)'}}>
+
+
+
+                            {(() => {
+                                if( !this.state.showAppSidebar)
+                                {
+                                    return (
+                                        <Paper className="" style={{'display':'flex', 'flexGrow':0, 'width':'75px'}} zDepth={1}>
+                                            <AppSidebar style="icon-list"/>
+                                        </Paper>
+                                    );
+                                }else{
+                                    return (
+                                        <Paper className="" style={{'display':'flex', 'flexGrow':0, 'width':'240px'}} zDepth={1}>
+                                            <AppSidebar style="list"/>
+                                        </Paper>
+                                    );
+                                }
+                            })()}
+
+
+
+                            <Paper zDepth={1}
+                                   style={{'display':'flex', 'flexDirection':'column', 'flexGrow':1, 'flexBasis':'auto', 'alignItems':'auto', 'backgroundColor':'#eee'}}>
+                                
+                                <div style={{'alignItems':'center'}}>
+                                    {this.props.children}
                                 </div>
-
-                                <div className="pull-right title-link">
-                                    <Link to="/">logout</Link>
-                                </div>
-                            </div>
-                            <div className="header-alternative row">
-
-                                <div className="pull-left title-link" style={{'marginLeft':'20px'}}>
-                                    <Breadcrumb/>
-                                </div>
-
-
-                                <div className="pull-right title-link">
-                                    
-                                    <Dropdown id="settings" pullRight >
-                                        <Dropdown.Toggle style={{'padding':'10px'}}>
-                                            <Glyphicon glyph='cog'/>
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu className='super-colors'>
-                                            <LinkContainer to="users"><MenuItem eventKey="1">User Manager</MenuItem></LinkContainer>
-                                            <LinkContainer to="login"><MenuItem eventKey="2">Logout</MenuItem></LinkContainer>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                    <div className="row dashboardBody">
-                        <div className="container-fluid child-content">
-                            {this.props.children}
+                                <div className="device-xs visible-xs"></div>
+                                <div className="device-sm visible-sm"></div>
+                                <div className="device-md visible-md"></div>
+                                <div className="device-lg visible-lg"></div>
+                            </Paper>
                         </div>
-                        <div className="device-xs visible-xs"></div>
-                        <div className="device-sm visible-sm"></div>
-                        <div className="device-md visible-md"></div>
-                        <div className="device-lg visible-lg"></div>
                     </div>
-                </div>
-
+                </MuiThemeProvider>
             );
-        }catch(err){
+        } catch (err)
+        {
             debugger;
             console.log(err);
         }
     }
+
 });
 
 

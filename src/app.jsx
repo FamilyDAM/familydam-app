@@ -6,11 +6,18 @@ var ReactIntl  = require('react-intl');
 var ReactDOM = require('react-dom');
 
 
+// React-Router
 import ReactRouter from 'react-router';
 import { Router,Route,Link,IndexRoute,useRouterHistory } from 'react-router';
 import { createHashHistory } from 'history'
 
-
+// Material-ui
+import injectTapEventPlugin from 'react-tap-event-plugin';
+//Needed for onTouchTap
+//Can go away when react 1.0 release
+//Check this repo:
+//https://github.com/zilverline/react-tap-event-plugin
+injectTapEventPlugin();
 
 
 // register the different Actions
@@ -38,34 +45,35 @@ var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails.j
 
 const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
 
+
 ReactDOM.render(
-    <Router history={appHistory}>
-        <Route path="/" component={LoginView}/>
-        <Route path="login" component={LoginView} />
-        <Route path="logout" component={LoginView} />
+        <Router history={appHistory}>
+            <Route path="/tmp"  component={LoginView}/>
+            <Route path="login" component={LoginView} />
+            <Route path="logout" component={LoginView} />
 
-        <Route component={DashboardView}>
-            <Route path="dashboard" component={Home}/>
-            <Route path="files" component={FilesView}/>
+            <Route path="/"  component={DashboardView}>
+                <Route path="dashboard" component={Home}/>
+                <Route path="files" component={FilesView}/>
 
-            <Route path="music" component={FilesView}/>
-            <Route path="movies" component={FilesView}/>
-            <Route path="web" component={FilesView}/>
-            <Route path="email" component={FilesView}/>
-            <Route path="upload" component={UploadsView}/>
-
-
-            <Route path="photos" component={PhotosView}/>
-            <Route path="photos/details" component={PhotoDetailView}/>
-            <Route path="photos/edit" component={PhotoEditView}/>
+                <Route path="music" component={FilesView}/>
+                <Route path="movies" component={FilesView}/>
+                <Route path="web" component={FilesView}/>
+                <Route path="email" component={FilesView}/>
+                <Route path="upload" component={UploadsView}/>
 
 
-            <Route path="/users" component={UserManagerView}>
-                <IndexRoute component={UserManagerHomeView}/>
-                <Route path="users/:id" component={UserManagerDetailsView}/>
+                <Route path="photos" component={PhotosView}/>
+                <Route path="photos/details" component={PhotoDetailView}/>
+                <Route path="photos/edit" component={PhotoEditView}/>
+
+
+                <Route path="/users" component={UserManagerView}>
+                    <IndexRoute component={UserManagerHomeView}/>
+                    <Route path="users/:id" component={UserManagerDetailsView}/>
+                </Route>
             </Route>
-        </Route>
-    </Router>
+        </Router>
     , document.getElementById("appBody")
 );
 

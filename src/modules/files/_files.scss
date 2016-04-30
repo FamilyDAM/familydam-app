@@ -1,53 +1,5 @@
 
 .filesView
 {
-  padding: 0px;
-
-  tr
-  {
-    :hover
-    {
-      font-weight: bold;
-    }
-  }
-
-  li
-  {
-    float:   left;
-    padding: 5px;
-    width:  100%;
-  }
-
-  .previewButtonBar
-  {
-    .btn
-    {
-      padding: 8px 15px;
-      margin:  0px 0px;
-    }
-  }
-
-  .fileRows
-  {
-    .active
-    {
-      background-color: #eeeeee;
-    }
-
-    .row:hover
-    {
-      background-color: #eeeeee;
-    }
-  }
-
-  .disabled
-  {
-    color: #eeeeee;
-  }
-
-  .list-group
-  {
-    margin-bottom: 3px;
-  }
 
 }

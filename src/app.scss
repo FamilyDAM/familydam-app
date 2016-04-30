@@ -9,16 +9,14 @@
 @import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/variables"; //set for defaults
 @import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap-sprockets";
 @import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
-@import "./assets/bower_components/bootstrap-material-design/dist/css/ripples.scss"; //set for defaults
-//@import "./assets/bower_components/bootstrap-material-design/dist/css/material.scss"; //set for defaults
 @import "./assets/bower_components/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.scss"; //set for defaults
 @import "./assets/bower_components/bootstrap-tokenfield/dist/css/tokenfield-typeahead.scss"; //set for defaults
 
-@import "./assets/node_modules/ladda-bootstrap/dist/ladda-themeless.scss";
+//@import "./assets/node_modules/ladda-bootstrap/dist/ladda-themeless.scss";
 @import "./assets/js/imgly-sdk-html5-v2.0.3-13/css/imglykit-night-ui.css";
 //@import "./../node_modules/darkroom/lib/css/darkroom";
-@import "./_colors"; //override bootstrap themes
-@import "./_theme"; //override bootstrap themes
+//@import "./_colors"; //override bootstrap themes
+//@import "./_theme"; //override bootstrap themes
 
 /***************************************
  * Defaults

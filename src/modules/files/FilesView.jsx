@@ -6,8 +6,26 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-import { Router, Link } from 'react-router';
+import {Router, Link} from 'react-router';
 
+import {
+    Paper,
+    List,
+    ListItem,
+    Subheader,
+    Toolbar,
+    ToolbarGroup,
+    IconButton,
+    Avatar,
+    Table,
+    TableHeader,
+    TableHeaderColumn,
+    TableBody,
+    TableRow,
+    TableRowColumn
+} from 'material-ui';
+import ActionInfo from 'material-ui/svg-icons/action/info';
+import ActionAssignment from 'material-ui/svg-icons/action/assignment';
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 
@@ -29,7 +47,7 @@ var DirectoryStore = require('./../../stores/DirectoryStore');
 var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 
-
+var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
 var FileRow = require("./FileRow.jsx");
 var DirectoryRow = require("./DirectoryRow.jsx");
 var BackFolder = require("./BackFolder.jsx");
@@ -64,9 +82,13 @@ module.exports = React.createClass({
         this.state.selectedPath = this.state.path;
 
 
-
         // update the breadcrumb
-        var _pathData = {'label': 'Files', 'navigateTo': "files", 'params': {path:this.state.selectedPath}, 'level': 1};
+        var _pathData = {
+            'label': 'Files',
+            'navigateTo': "files",
+            'params': {path: this.state.selectedPath},
+            'level': 1
+        };
         NavigationActions.currentPath.onNext(_pathData);
 
 
@@ -82,11 +104,12 @@ module.exports = React.createClass({
 
         // rx callbacks
         this.fileStoreSubscription = FileStore.files.subscribe(function (data_) {
-            if( data_ !== undefined && data_ !== undefined )
+            if (data_ !== undefined && data_ !== undefined)
             {
-                this.setState({'files':data_});
-            }else{
-                this.setState({'files':[]});
+                this.setState({'files': data_});
+            } else
+            {
+                this.setState({'files': []});
             }
         }.bind(this));
 
@@ -117,7 +140,7 @@ module.exports = React.createClass({
         /**
          * Add Folder Modal
          */
-            // listen for the selected dir.
+        // listen for the selected dir.
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
             _this.state.parent = data_;
             if (_this.isMounted()) _this.forceUpdate();
@@ -135,16 +158,17 @@ module.exports = React.createClass({
 
     componentWillReceiveProps: function (nextProps) {
         //console.log("{FilesView} componentWillReceiveProps");
-        if( nextProps.location.query !== undefined && nextProps.location.query.path !== undefined )
+        if (nextProps.location.query !== undefined && nextProps.location.query.path !== undefined)
         {
             var _path = nextProps.location.query.path;
 
             // upload local state, and reset list to prepare for new files
             this.setState({'path': _path, 'files': []});
-            
+
             // load files
             FileActions.getFiles.source.onNext(_path);
-        }else{
+        } else
+        {
             FileActions.getFiles.source.onNext(PreferenceStore.getRootDirectory());
         }
     },
@@ -211,6 +235,75 @@ module.exports = React.createClass({
 
     render: function () {
 
+        return (
+            <div style={{'display':'flex', 'flexDirection':'column', 'height':'calc(100vh - 65px)'}}>
+                <Toolbar style={{'display':'flex', 'height':'50px'}}>
+                    <ToolbarGroup firstChild={true} float="left">
+                        <IconButton iconClassName="material-icons">folder</IconButton>
+                        <Breadcrumb/>
+                    </ToolbarGroup>
+                    <ToolbarGroup float="right">
+                        <IconButton iconClassName="material-icons">sort</IconButton>
+                        <IconButton iconClassName="material-icons">cloud-download</IconButton>
+                    </ToolbarGroup>
+                </Toolbar>
+
+
+                <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1}}>
+                    <Paper style={{'display':'flex', 'flexGrow':0, 'flexShrink':0, 'width':'240px'}} zDepth={0}>
+                        <Subheader>Files</Subheader>
+                        <Tree
+                            baseDir="/content/dam-files"
+                            onSelect={(path_)=>{
+                                    FileActions.getFiles.source.onNext(path_.path);
+                                    DirectoryActions.selectFolder.onNext({path: path_.path});
+                                }}/>
+                    </Paper>
+
+
+                    <Paper style={{'display':'flex', 'flexBasis':'auto'}}>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHeaderColumn>ID</TableHeaderColumn>
+                                    <TableHeaderColumn>Name</TableHeaderColumn>
+                                    <TableHeaderColumn>Status</TableHeaderColumn>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <TableRow>
+                                    <TableRowColumn>1</TableRowColumn>
+                                    <TableRowColumn>John Smith</TableRowColumn>
+                                    <TableRowColumn>Employed</TableRowColumn>
+                                </TableRow>
+                                <TableRow>
+                                    <TableRowColumn>2</TableRowColumn>
+                                    <TableRowColumn>Randal White</TableRowColumn>
+                                    <TableRowColumn>Unemployed</TableRowColumn>
+                                </TableRow>
+                                <TableRow>
+                                    <TableRowColumn>3</TableRowColumn>
+                                    <TableRowColumn>Stephanie Sanders</TableRowColumn>
+                                    <TableRowColumn>Employed</TableRowColumn>
+                                </TableRow>
+                                <TableRow>
+                                    <TableRowColumn>4</TableRowColumn>
+                                    <TableRowColumn>Steve Brown</TableRowColumn>
+                                    <TableRowColumn>Employed</TableRowColumn>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Paper>
+                </div>
+            </div>
+
+        )
+    }
+
+
+    /***
+     renderOld: function () {
+
         var _this = this;
         var tableClass = "main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
         var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
@@ -246,7 +339,6 @@ module.exports = React.createClass({
             });
 
 
-
         return (
 
             <div className="filesView container-fluid">
@@ -254,7 +346,8 @@ module.exports = React.createClass({
 
                     <aside className={asideClass} style={asideStyle}>
                         <div className="boxRow content" style={{'minHeight':'200px'}}>
-                            <SidebarSection label="Files" open={true} showAddFolder={true} onAddFolder={this.handleAddFolder}>
+                            <SidebarSection label="Files" open={true} showAddFolder={true}
+                                            onAddFolder={this.handleAddFolder}>
                                 <Tree
                                     baseDir="/content/dam-files"
                                     onSelect={(path_)=>{
@@ -314,6 +407,7 @@ module.exports = React.createClass({
 
         );
     }
+     *****/
 
 });
 
