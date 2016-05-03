@@ -9,6 +9,12 @@
 var React = require('react');
 import { Router, Link } from 'react-router';
 
+import {
+    TableRow,
+    TableRowColumn,
+    IconButton
+} from 'material-ui';
+
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Button = require('react-bootstrap').Button;
@@ -60,6 +66,18 @@ module.exports = React.createClass({
     },
 
     render:function(){
+        return (
+            <TableRow>
+                <TableRowColumn>directory name</TableRowColumn>
+                <TableRowColumn></TableRowColumn>
+                <TableRowColumn></TableRowColumn>
+                <TableRowColumn></TableRowColumn>
+            </TableRow>
+        );
+    },
+
+
+    render2:function(){
         try
         {
             return (<div key={this.props.dir.id}

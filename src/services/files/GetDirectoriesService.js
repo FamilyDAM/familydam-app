@@ -36,10 +36,9 @@ module.exports = {
         console.log("{GetDirectoryService} getDirectories()" );
 
         var _this = this;
-        var _url =  PreferenceStore.getRootDirectory() +".graph.-1.json/nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
+        var _url =  path_ +".graph.-1.json/nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
-
-        console.dir(UserStore.token.value);
+        //console.dir(UserStore.token.value);
 
         return $.ajax({
             method: "get",

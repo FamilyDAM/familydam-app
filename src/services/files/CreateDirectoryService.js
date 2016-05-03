@@ -46,7 +46,6 @@ module.exports = {
                         withCredentials: true
                     }
                 }).then(function(data_, status_, xhr_){
-
                     _this.sink.onNext(data_);
                     // refresh the overall directories list
                     DirectoryActions.refreshDirectories.onNext(true);

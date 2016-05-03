@@ -24,6 +24,7 @@ var SectionHeader = require('../../components/breadcrumb/SectionHeader.jsx');
 var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 
 var AuthActions = require('../../actions/AuthActions');
+var NavigationActions = require('../../actions/NavigationActions');
 
 var UserStore = require('./../../stores/UserStore');
 
@@ -83,7 +84,7 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {
             user: {},
-            showAppSidebar:false
+            openAppSidebar:false
         };
     },
 
@@ -92,7 +93,11 @@ module.exports = React.createClass({
         var _this = this;
 
         AuthActions.loginRedirect.subscribe(function () {
-            this.props.history.pushState(null, '/', null);
+            this.state.history.pushState(null, '/', null);
+        }.bind(this));
+
+        this.openAppSidebarSubscription = NavigationActions.openAppSidebar.subscribe(function(data_){
+            this.setState({'openAppSidebar':data_})
         }.bind(this));
 
 
@@ -106,15 +111,17 @@ module.exports = React.createClass({
 
 
     componentWillUnmount: function () {
-        if (this.currentUserStoreSubscription !== undefined)
-        {
+        if( this.currentUserStoreSubscription )  {
             this.currentUserStoreSubscription.dispose();
+        }
+        if( this.openAppSidebarSubscription ){
+            this.openAppSidebarSubscription.dispose();
         }
     },
 
 
     handleHamburgerClick: function (e) {
-        this.setState({'showAppSidebar': !this.state.showAppSidebar})
+        NavigationActions.openAppSidebar.onNext(!this.state.openAppSidebar);
     },
 
 
@@ -122,6 +129,7 @@ module.exports = React.createClass({
 
     render: function () {
 
+        var bodyWidth = "100%";
         try
         {
             return (
@@ -151,32 +159,28 @@ module.exports = React.createClass({
 
 
                         <div
-                            style={{'display':'flex', 'flexDirection':'row', 'alignItems':'stretch', 'width':'100%', 'height':'calc(100vh - 65px)'}}>
+                            style={{'display':'flex', 'flexDirection':'row', 'alignItems':'stretch', 'width':'100%', 'minHeight':'calc(100vh - 65px)'}}>
 
 
 
                             {(() => {
-                                if( !this.state.showAppSidebar)
+                                var _appWidth = "75px";
+                                if( this.state.openAppSidebar)
                                 {
-                                    return (
-                                        <Paper className="" style={{'display':'flex', 'flexGrow':0, 'width':'75px'}} zDepth={1}>
-                                            <AppSidebar style="icon-list"/>
-                                        </Paper>
-                                    );
-                                }else{
-                                    return (
-                                        <Paper className="" style={{'display':'flex', 'flexGrow':0, 'width':'240px'}} zDepth={1}>
-                                            <AppSidebar style="list"/>
-                                        </Paper>
-                                    );
+                                    _appWidth = "240px";
                                 }
+                                return (
+                                    <Paper className="" style={{'display':'flex', 'flexGrow':0, 'width':_appWidth}} transitionEnabled={false} zDepth={1}>
+                                        <AppSidebar open={this.state.openAppSidebar}/>
+                                    </Paper>
+                                );
                             })()}
 
 
 
                             <Paper zDepth={1}
-                                   style={{'display':'flex', 'flexDirection':'column', 'flexGrow':1, 'flexBasis':'auto', 'alignItems':'auto', 'backgroundColor':'#eee'}}>
-                                
+                                   style={{'display':'flex', 'flexDirection':'column', 'flexGrow':1, 'flexBasis':'auto', 'alignItems':'auto', 'width': bodyWidth, 'backgroundColor':'#eee'}}>
+
                                 <div style={{'alignItems':'center'}}>
                                     {this.props.children}
                                 </div>

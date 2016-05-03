@@ -7,35 +7,35 @@
 // Used in TodoApp
 var React = require('react');
 import {Router, Link} from 'react-router';
+var Moment = require('moment');
 
 import {
-    Paper,
+    Avatar,
+    Dialog,
+    FlatButton,
     List,
     ListItem,
+    Paper,
     Subheader,
     Toolbar,
     ToolbarGroup,
     IconButton,
-    Avatar,
     Table,
     TableHeader,
     TableHeaderColumn,
     TableBody,
     TableRow,
-    TableRowColumn
+    TableRowColumn,
+    TextField,
+    ToolbarSeparator
 } from 'material-ui';
+import FolderIcon from 'material-ui/svg-icons/file/folder';
+import FileIcon from 'material-ui/svg-icons/action/description';
 import ActionInfo from 'material-ui/svg-icons/action/info';
 import ActionAssignment from 'material-ui/svg-icons/action/assignment';
 
-var ButtonGroup = require('react-bootstrap').ButtonGroup;
-
-var Button = require('react-bootstrap').Button;
-var Glyphicon = require('react-bootstrap').Glyphicon;
-var Dropdown = require('react-bootstrap').Dropdown;
-var MenuItem = require('react-bootstrap').MenuItem;
-
-var Modal = require('react-bootstrap').Modal;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
+
 
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
@@ -52,19 +52,24 @@ var FileRow = require("./FileRow.jsx");
 var DirectoryRow = require("./DirectoryRow.jsx");
 var BackFolder = require("./BackFolder.jsx");
 var PreviewSidebar = require("./../previews/PreviewSidebar.jsx");
-var Tree = require('../../components/folderTree/Tree.jsx');
+var TreeList = require('../../components/folderTree/TreeList.jsx');
 var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
 var Fab = require('../../components/fab/UploadFab.jsx');
 
 module.exports = React.createClass({
 
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
+
+
     getInitialState: function () {
         return {
             files: [],
             selectedItem: undefined,
             state: '100%',
-            showAddFolder: false,
+            showAddFolderDialog: false,
             selectedPath: "/content/dam-files"
         };
     },
@@ -72,7 +77,6 @@ module.exports = React.createClass({
 
     componentWillMount: function () {
         var _this = this;
-        //console.log("{FilesView} componentWillMount");
 
         this.state.path = "/content/dam-files";
         if (this.props.location && this.props.location.query && this.props.location.query.path)
@@ -81,16 +85,8 @@ module.exports = React.createClass({
         }
         this.state.selectedPath = this.state.path;
 
-
-        // update the breadcrumb
-        var _pathData = {
-            'label': 'Files',
-            'navigateTo': "files",
-            'params': {path: this.state.selectedPath},
-            'level': 1
-        };
-        NavigationActions.currentPath.onNext(_pathData);
-
+        //Show sidebar
+        NavigationActions.openAppSidebar.onNext(false);
 
         // save current dir
         //DirectoryActions.selectFolder.onNext(this.state.path);
@@ -99,6 +95,39 @@ module.exports = React.createClass({
 
         var getFilesSubscription = FileActions.getFiles.source.subscribe(function (path_) {
             this.state.selectedPath = path_;
+
+            if( this.state.selectedPath )
+            {
+                var parts = this.state.selectedPath.split("/");
+                var currentPath = "";
+
+                for (var i = 0; i < parts.length; i++)
+                {
+                    var _part = parts[i];
+                    currentPath += _part + "/";
+
+                    // update the breadcrumb
+                    if (_part == "content")
+                    {
+                        var _pathData = {
+                            'label': _part,
+                            'level': i
+                        }
+                    } else
+                    {
+                        var _pathData = {
+                            'label': _part,
+                            'navigateTo': '/files?path=' + currentPath,
+                            'params': {path: currentPath},
+                            'level': i
+                        }
+                    }
+                    ;
+
+                    NavigationActions.currentPath.onNext(_pathData);
+                }
+            }
+
         }.bind(this));
 
 
@@ -113,6 +142,7 @@ module.exports = React.createClass({
             }
         }.bind(this));
 
+        
 
         // listen for trigger to reload for files in directory
         this.refreshFilesSubscription = FileActions.refreshFiles.subscribe(function (data_) {
@@ -123,17 +153,14 @@ module.exports = React.createClass({
         }.bind(this));
 
         // Refresh the file list when someone changes the directory
-        this.selectFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
+        this.selectFolderSubscription = DirectoryStore.currentFolder.distinctUntilChanged().subscribe(function (data_) {
             FileActions.getFiles.source.onNext(data_.path);
-
-            _this.state.selectedPath = data_.path;
-            if (this.isMounted()) this.forceUpdate();
+            _this.setState({'selectedPath':data_.path});
         }.bind(this));
 
         // Refresh the file list when someone changes the directory
         this.selectedFileSubscription = FileActions.selectFile.subscribe(function (data_) {
-            _this.state.selectedItem = data_;
-            if (this.isMounted()) this.forceUpdate();
+            _this.setState({'selectedItem':data_});
         }.bind(this));
 
 
@@ -142,16 +169,16 @@ module.exports = React.createClass({
          */
         // listen for the selected dir.
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
-            _this.state.parent = data_;
-            if (_this.isMounted()) _this.forceUpdate();
+            _this.setState({'parent':data_});
         }.bind(this));
 
         // listen for save complete, then hide
         this.createFolderSubscription = DirectoryActions.createFolder.sink.subscribe(function (data_) {
-            _this.closeAddFolderModal();
             if (_this.isMounted()) _this.forceUpdate();
         }, function (error_) {
-            alert(error_.statusText);
+            debugger;
+            //todo show toast
+            //console.dir(error_);
         }.bind(this));
     },
 
@@ -174,32 +201,25 @@ module.exports = React.createClass({
     },
 
     componentWillUnmount: function () {
-        if (this.getFilesSubscription !== undefined)
-        {
+        if (this.getFilesSubscription !== undefined) {
             this.getFilesSubscription.dispose();
         }
-        if (this.fileStoreSubscription !== undefined)
-        {
+        if (this.fileStoreSubscription !== undefined) {
             this.fileStoreSubscription.dispose();
         }
-        if (this.refreshFilesSubscription !== undefined)
-        {
+        if (this.refreshFilesSubscription !== undefined) {
             this.refreshFilesSubscription.dispose();
         }
-        if (this.selectFolderSubscription !== undefined)
-        {
+        if (this.selectFolderSubscription !== undefined) {
             this.selectFolderSubscription.dispose();
         }
-        if (this.selectedFileSubscription !== undefined)
-        {
+        if (this.selectedFileSubscription !== undefined) {
             this.selectedFileSubscription.dispose();
         }
-        if (this.currentFolderSubscription !== undefined)
-        {
+        if (this.currentFolderSubscription !== undefined) {
             this.currentFolderSubscription.dispose();
         }
-        if (this.createFolderSubscription !== undefined)
-        {
+        if (this.createFolderSubscription !== undefined) {
             this.createFolderSubscription.dispose();
         }
 
@@ -215,44 +235,192 @@ module.exports = React.createClass({
         this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
     },
 
+    _onNodeDelete: function (event, component) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
 
-    handleAddFolder: function (event_) {
-        this.setState({showAddFolder: true});
+        var _path = $(event.currentTarget).attr("data-path");
+
+        NodeActions.deleteNode.source.onNext({'path': _path});
     },
 
 
-    closeAddFolderModal: function (event_) {
-        this.setState({showAddFolder: false});
+    _onDirClick: function(e){
+        e.preventDefault();
+        //<Link to={{pathname: '/files', query:{'path':dir_.path}}}>
+        this.context.router.transitionTo( {pathname: '/files', query:{'path':dir_.path}} );
     },
 
+    _onAddFolder: function(e){
+        var _name = this.refs.newFolderName.getValue().trim();
+        if( _name.length > 0 )
+        {
+            this.refs.newFolderName.getInputNode().value=""
+            this.setState({'showAddFolderDialog': false});
 
-    handleCreateFolder: function (event_) {
-        var _path = this.state.selectedPath;
-        var _name = this.refs.folderName.value;
-        DirectoryActions.createFolder.source.onNext({'path': _path, 'name': _name})
+            var _path = this.state.selectedPath;
+            DirectoryActions.createFolder.source.onNext({'path': _path, 'name': _name})
+        }else{
+            //todo show error message
+        }
     },
-
 
     render: function () {
 
+        const actions = [
+            <FlatButton
+                label="Cancel"
+                secondary={true}
+                onTouchTap={()=>{this.setState({'showAddFolderDialog':false})}}
+            />,
+            <FlatButton
+                label="Create"
+                primary={true}
+                onTouchTap={this._onAddFolder}
+            />,
+        ];
+
+
+
+        var folderRows = this.state.files
+            .filter(function (data_) {
+                return data_["jcr:primaryType"] === "nt:folder" || data_["jcr:primaryType"] === "sling:Folder";
+            }).map(function (dir_, index_) {
+                //return <DirectoryRow key={dir_.path} dir={dir_}/>
+                return (
+                    <TableRow  key={'dir-' +index_} >
+                        <TableRowColumn
+                            onTouchTap={() => {this.context.router.push({pathname:'/files', query:{'path':dir_.path}}) }}
+                            style={{'display':'flex','alignItems':'center', 'cursor':'pointer'}}>
+                            <FolderIcon style={{'width':'25px', 'height':'25px', 'minWidth':'25px', 'minHeight':'25px'}}/>
+                            <span style={{'paddingLeft':'10px'}}><Link to={{pathname: '/files', query:{'path':dir_.path}}}>{dir_.name}</Link></span>
+                        </TableRowColumn>
+                        <TableRowColumn></TableRowColumn>
+                        <TableRowColumn></TableRowColumn>
+                        <TableRowColumn>
+                            {(() => {
+                                if( dir_._links.delete )
+                                {
+                                    return (<IconButton iconClassName="material-icons"
+                                                        onClick={this._onNodeDelete}
+                                                        data-path={dir_._links.delete}>delete</IconButton> );
+                                }
+                            })()}
+                        </TableRowColumn>
+                    </TableRow>
+                );
+            }.bind(this));
+
+
+
+
+        var fileRows = this.state.files
+            .filter(function (data_) {
+                return data_["jcr:primaryType"] === "nt:file";
+            }).map(function (file_, index_) {
+
+
+                if( file_ !== undefined && file_['jcr:mixinTypes'] !== undefined && file_['jcr:mixinTypes'].indexOf("dam:image") > -1 ){
+
+                    var _dt = Moment(file_['jcr:created']).format("MM/DD/YYYY");
+
+                    return (
+                        <TableRow key={file_.path}>
+                            <TableRowColumn style={{'display':'flex','alignItems':'center'}}>
+                                <LinkContainer to={ {pathname:'photos/details',query:{'path': file_.path}} }><img src={file_._links.thumb} style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></LinkContainer>
+                                <span style={{'paddingLeft':'10px','cursor':'pointer'}}><Link to={{pathname: 'photos/details', query:{'path':file_.path}}}>{file_.name}</Link></span>
+                            </TableRowColumn>
+                            <TableRowColumn>---</TableRowColumn>
+                            <TableRowColumn>{_dt}</TableRowColumn>
+                            <TableRowColumn>
+
+                                <IconButton iconClassName="material-icons"
+                                            onClick={() => {this.context.router.push({pathname:'photos/details', query:{path:file_.path}}) }}>launch</IconButton>
+
+                                <IconButton iconClassName="material-icons"
+                                            onClick={()=>{this.context.router.push({pathname:'photos/edit', query:{path:file_.path}}) }}>edit</IconButton>
+
+                                <a href={file_.path} download><IconButton iconClassName="material-icons"
+                                            data-path={file_._links.download}>file_download</IconButton></a>
+
+                                {(() => {
+                                    if( file_._links.delete )
+                                    {
+                                        return (<IconButton iconClassName="material-icons"
+                                                            onClick={this._onNodeDelete}
+                                                            data-path={file_._links.delete}>delete</IconButton> );
+                                    }
+                                })()}
+                            </TableRowColumn>
+                        </TableRow>
+                    );
+                }
+                else
+                {
+                    return (
+                        <TableRow key={file_.path}>
+                            <TableRowColumn style={{'display':'flex','alignItems':'center'}}>
+                                <FileIcon/>
+                                <span style={{'paddingLeft':'10px'}}>{file_.name}</span>
+                            </TableRowColumn>
+                            <TableRowColumn></TableRowColumn>
+                            <TableRowColumn></TableRowColumn>
+                            <TableRowColumn>
+                                <a href={file_.path} download><IconButton iconClassName="material-icons"
+                                                                          data-path={file_._links.download}>file_download</IconButton></a>
+
+                                {(() => {
+                                    if( file_._links.delete )
+                                    {
+                                        return (<IconButton iconClassName="material-icons"
+                                                            onClick={this._onNodeDelete}
+                                                            data-path={file_._links.delete}>delete</IconButton> );
+                                    }
+                                })()}
+                            </TableRowColumn>
+                        </TableRow>
+                    );
+                }
+
+            }.bind(this));
+
+
+
         return (
-            <div style={{'display':'flex', 'flexDirection':'column', 'height':'calc(100vh - 65px)'}}>
-                <Toolbar style={{'display':'flex', 'height':'50px'}}>
+            <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
+                <Toolbar style={{'display':'flex', 'height':'50px', 'alignItems':'center'}}>
                     <ToolbarGroup firstChild={true} float="left">
                         <IconButton iconClassName="material-icons">folder</IconButton>
                         <Breadcrumb/>
                     </ToolbarGroup>
                     <ToolbarGroup float="right">
-                        <IconButton iconClassName="material-icons">sort</IconButton>
-                        <IconButton iconClassName="material-icons">cloud-download</IconButton>
+                        <ToolbarSeparator/>
+                        <LinkContainer to="upload"><IconButton iconClassName="material-icons">file_upload</IconButton></LinkContainer>
+                        <IconButton iconClassName="material-icons"
+                                    onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}>create_new_folder</IconButton>
+
+                        <Dialog
+                            title="Add Folder"
+                            actions={actions}
+                            modal={true}
+                            open={this.state.showAddFolderDialog}
+                        >
+                            <TextField
+                                ref="newFolderName"
+                                hintText="Hint Text"
+                                floatingLabelText="Folder Name"
+                            />
+                        </Dialog>
+
                     </ToolbarGroup>
                 </Toolbar>
 
 
                 <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1}}>
-                    <Paper style={{'display':'flex', 'flexGrow':0, 'flexShrink':0, 'width':'240px'}} zDepth={0}>
-                        <Subheader>Files</Subheader>
-                        <Tree
+                    <Paper style={{'display':'flex', 'flexDirection':'column', 'flexGrow':0, 'flexShrink':0, 'minWidth':'240px'}} zDepth={0}>
+                        <TreeList
+                            title="Files"
                             baseDir="/content/dam-files"
                             onSelect={(path_)=>{
                                     FileActions.getFiles.source.onNext(path_.path);
@@ -262,35 +430,31 @@ module.exports = React.createClass({
 
 
                     <Paper style={{'display':'flex', 'flexBasis':'auto'}}>
-                        <Table>
+                        <Table
+                            fixedHeader={true}
+                            fixedFooter={true}
+                            selectable={true}
+                            multiSelectable={true}
+                            onRowSelection={this._onRowSelection}
+                            >
                             <TableHeader>
                                 <TableRow>
-                                    <TableHeaderColumn>ID</TableHeaderColumn>
                                     <TableHeaderColumn>Name</TableHeaderColumn>
-                                    <TableHeaderColumn>Status</TableHeaderColumn>
+                                    <TableHeaderColumn>Owner</TableHeaderColumn>
+                                    <TableHeaderColumn>Created</TableHeaderColumn>
+                                    <TableHeaderColumn>Actions</TableHeaderColumn>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableRowColumn>1</TableRowColumn>
-                                    <TableRowColumn>John Smith</TableRowColumn>
-                                    <TableRowColumn>Employed</TableRowColumn>
-                                </TableRow>
-                                <TableRow>
-                                    <TableRowColumn>2</TableRowColumn>
-                                    <TableRowColumn>Randal White</TableRowColumn>
-                                    <TableRowColumn>Unemployed</TableRowColumn>
-                                </TableRow>
-                                <TableRow>
-                                    <TableRowColumn>3</TableRowColumn>
-                                    <TableRowColumn>Stephanie Sanders</TableRowColumn>
-                                    <TableRowColumn>Employed</TableRowColumn>
-                                </TableRow>
-                                <TableRow>
-                                    <TableRowColumn>4</TableRowColumn>
-                                    <TableRowColumn>Steve Brown</TableRowColumn>
-                                    <TableRowColumn>Employed</TableRowColumn>
-                                </TableRow>
+                            <TableBody
+                                displayRowCheckbox={true}
+                                deselectOnClickaway={false}
+                                showRowHover={true}
+                                stripedRows={false}>
+                                
+                                {folderRows}
+                                
+                                {fileRows}
+                                
                             </TableBody>
                         </Table>
                     </Paper>
@@ -300,114 +464,6 @@ module.exports = React.createClass({
         )
     }
 
-
-    /***
-     renderOld: function () {
-
-        var _this = this;
-        var tableClass = "main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
-        var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
-        var asideRightClass = "card hidden col-xs-4 col-sm-3 col-md-3";
-
-        if (this.state.selectedItem !== undefined && this.state.selectedItem !== null)
-        {
-            tableClass = "main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
-            asideClass = "box body-sidebar hidden-xs hidden-sm col-md-3 col-lg-2";
-            asideRightClass = "card hidden-xs hidden-sm col-md-3 col-lg-3";
-        }
-
-        var asideStyle = {};
-        asideStyle['height'] = this.state.height;
-
-        var sectionStyle = {};
-        //sectionStyle['overflow'] = 'scroll';
-        //sectionStyle['height'] = this.state.height;
-
-        var _folders = this.state.files
-            .filter(function (data_) {
-                return data_["jcr:primaryType"] === "nt:folder" || data_["jcr:primaryType"] === "sling:Folder";
-            }).map(function (dir_, indx) {
-                return <DirectoryRow key={dir_.path} dir={dir_}/>
-            });
-
-
-        var _files = this.state.files
-            .filter(function (data_) {
-                return data_["jcr:primaryType"] === "nt:file";
-            }).map(function (file_, index_) {
-                return <FileRow key={file_.path} file={file_}/>
-            });
-
-
-        return (
-
-            <div className="filesView container-fluid">
-                <div className="row">
-
-                    <aside className={asideClass} style={asideStyle}>
-                        <div className="boxRow content" style={{'minHeight':'200px'}}>
-                            <SidebarSection label="Files" open={true} showAddFolder={true}
-                                            onAddFolder={this.handleAddFolder}>
-                                <Tree
-                                    baseDir="/content/dam-files"
-                                    onSelect={(path_)=>{
-                                        FileActions.getFiles.source.onNext(path_.path);
-                                        DirectoryActions.selectFolder.onNext({path: path_.path});
-                                    }}/>
-                            </SidebarSection>
-                        </div>
-
-
-                        <div className=" boxRow footer">
-                            <AppSidebar />
-                        </div>
-
-                    </aside>
-
-                    <section className={tableClass} style={sectionStyle}>
-                        <div className="container-fluid fileRows">
-
-                            <BackFolder path={this.state.selectedPath}/>
-
-
-                            {_folders}
-
-                            {_files}
-
-                        </div>
-
-                    </section>
-
-                    <aside className={asideRightClass} style={{'marginTop':'-25px'}}>
-                        <PreviewSidebar file={this.state.selectedItem}/>
-                    </aside>
-                </div>
-
-
-                <Fab glyph="plus" linkTo="upload"/>
-
-
-                <Modal title="Add Folder"
-                       animation={false}
-                       show={this.state.showAddFolder}
-                       onHide={this.closeAddFolderModal}>
-                    <div className="modal-body">
-                        <h4>Create a new sub folder</h4>
-                        {this.state.selectedPath} <input type="text" ref="folderName" label="Folder Name"/>
-                    </div>
-                    <div className="modal-footer">
-                        <ButtonGroup>
-                            <Button onClick={this.closeAddFolderModal}>Close</Button>
-                            <Button onClick={this.handleCreateFolder}>Create</Button>
-                        </ButtonGroup>
-                    </div>
-                </Modal>
-            </div>
-
-
-        );
-    }
-     *****/
 
 });
 

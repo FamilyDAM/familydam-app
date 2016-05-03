@@ -1,15 +1,6 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-var React = require('react');
-var ReactIntl  = require('react-intl');
-var ReactDOM = require('react-dom');
-
-
-// React-Router
-import ReactRouter from 'react-router';
-import { Router,Route,Link,IndexRoute,useRouterHistory } from 'react-router';
-import { createHashHistory } from 'history'
 
 // Material-ui
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -19,6 +10,17 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 //https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
 
+
+
+var jQuery = require('jquery');
+var React = require('react');
+var Intl  = require('react-intl');
+var ReactDOM = require('react-dom');
+
+
+// React-Router
+import { Router,Route,Link,IndexRoute,useRouterHistory } from 'react-router';
+import { createHashHistory } from 'history'
 
 // register the different Actions
 var actions = require('./actions/_actions').subscribe();
@@ -48,11 +50,11 @@ const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
 
 ReactDOM.render(
         <Router history={appHistory}>
-            <Route path="/tmp"  component={LoginView}/>
+            <Route path="/"  component={LoginView}/>
             <Route path="login" component={LoginView} />
             <Route path="logout" component={LoginView} />
 
-            <Route path="/"  component={DashboardView}>
+            <Route component={DashboardView}>
                 <Route path="dashboard" component={Home}/>
                 <Route path="files" component={FilesView}/>
 

@@ -66,7 +66,7 @@ module.exports = React.createClass({
 
         UserStore.currentUser.subscribe(function(data_){
             // redirect to dashboard
-            if( data_ !== undefined )
+            if( data_ )
             {
                 //_this.transitionTo("dashboard");
                 this.context.router.push({pathname: '/dashboard'});

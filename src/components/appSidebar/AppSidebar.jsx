@@ -6,30 +6,60 @@
 /** jsx React.DOM */
 var React = require('react');
 var Router = require('react-router');
-var Link = Router.Link;
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
-import {List, ListItem, Subheader, Avatar, Paper} from 'material-ui';
-import {ActionHome} from 'material-ui/svg-icons';
-import {FileFolder} from 'material-ui/svg-icons';
-import {ImagePhoto} from 'material-ui/svg-icons';
-import {SocialPerson} from 'material-ui/svg-icons';
+import {
+    List,
+    ListItem,
+    Subheader,
+    Avatar,
+    Paper,
+    FlatButton
+} from 'material-ui';
+import ActionHome from 'material-ui/svg-icons/action/home';
+import FileFolder from 'material-ui/svg-icons/file/folder';
+import ImagePhoto from 'material-ui/svg-icons/image/photo';
+import SocialPerson from 'material-ui/svg-icons/social/person';
 
 
+var UserStore = require('./../../stores/UserStore');
+var AuthActions = require('./../../actions/AuthActions');
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 
 module.exports = React.createClass({
 
 
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
+
     getDefaultProps: function () {
-        return {'style': 'grid'}
+        return {'open': false}
+    },
+
+    getInitialState:function(){
+        return{
+            currentUser:{firstName:'',lastName:'', username:''}
+        }
     },
 
 
     componentDidMount: function () {
         var _this = this;
 
+        var user = UserStore.getCurrentUser();
+        if( user ) {
+            this.state.currentUser = user;
+        }else{
+            //this.context.router.go({pathname:'/login', query:{}, state:{}});
+        }
         //console.log("AppSidebar");
+    },
+
+
+    shouldComponentUpdate:function(nextProps, nextState){
+        return nextProps.open != this.props.open;
     },
 
 
@@ -54,19 +84,22 @@ module.exports = React.createClass({
 
         try
         {
-            if (this.props.style == "list")
+            if ( this.props.open )
             {
                 return (
-                    <div style={{'display':'flex', 'flexDirection':'column', 'width':'100%'}}>
-                        <Paper zDepth={1}>
-                            <div style={{'display':'flex', 'flexDirection':'column', 'justifyContent':'center', 'alignItems':'center', 'height':'125px'}}>
+                    <div style={{'display':'flex', 'flexDirection':'column', 'width':'240px'}}>
+                        <Paper zDepth={1} style={{'width':'100%'}}>
+                            <div style={{'display':'flex', 'flexDirection':'column', 'justifyContent':'center', 'alignItems':'center', 'height':'125px','width':'100%'}}>
                                 <div style={{'display':'flex', 'flexDirection':'row','alignItems':'center'}}>
-                                    <Avatar icon={<SocialPerson/>} /> <span>[FirstName LastName]</span>
+                                    <Avatar icon={<SocialPerson/>} />
+                                    <span style={{'paddingLeft':'10px'}}>{this.state.currentUser.firstName +' ' +this.state.currentUser.lastName}</span>
                                 </div>
                                 <br/>
                                 <div style={{'display':'flex', 'flexDirection':'row', 'alignItems':'flex-end'}}>
-                                    <span>[L]</span>
-                                    <span>[S]</span>
+                                    <LinkContainer to="login"><FlatButton label="Logout"
+                                                style={{'justifyContent':'flex-start'}}/></LinkContainer>
+                                    <LinkContainer to="users"><FlatButton label="Profile"
+                                                style={{'justifyContent':'flex-end'}} /></LinkContainer>
                                 </div>
                             </div>
                         </Paper>
@@ -95,7 +128,7 @@ module.exports = React.createClass({
                     </div>
                 );
             }
-            else if (this.props.style == "icon-list")
+            else 
             {
                 return (
 

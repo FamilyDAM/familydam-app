@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     require('babelify');
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
@@ -7,18 +7,18 @@ module.exports = function(grunt) {
     grunt.registerTask('default-prod', ['build-babel-prod', 'watch']);//, 'connect'
 
 
-    grunt.registerTask('build-css', ['copy:cssAsScss','compass']);
-    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'browserify']);
+    grunt.registerTask('build-css', ['copy:cssAsScss', 'compass']);
+    grunt.registerTask('build-babel-js-dashboard', ['jshint', 'browserify:dist']);
 
 
     grunt.registerTask('build-babel-dev', [
         'clean:dist', 'jshint', 'browserify', 'build-css', 'copy'
-    ]); /*, 'build-atom-shell-app'*/
+    ]);
+    /*, 'build-atom-shell-app'*/
     grunt.registerTask('build-babel-prod', [
-        'clean:dist', 'jshint', 'browserify', 'build-css', 'copy','uglify'
-    ]); /*, 'build-atom-shell-app'*/
-
-
+        'clean:dist', 'jshint', 'browserify', 'build-css', 'copy', 'uglify'
+    ]);
+    /*, 'build-atom-shell-app'*/
 
 
     var options = {
@@ -54,11 +54,11 @@ module.exports = function(grunt) {
             root: {
                 src: "dist",
                 dest: "/",
-                host:'localhost',
-                port:9000,
-                user:'admin',
-                pass:'admin',
-                replace:true
+                host: 'localhost',
+                port: 9000,
+                user: 'admin',
+                pass: 'admin',
+                replace: true
             }
         },
 
@@ -66,7 +66,7 @@ module.exports = function(grunt) {
 
             styles: {
                 files: ['<%= options.app %/**/*.scss'],
-                tasks: ['compass:dashboard', 'newer:copy:dashboard', 'slingPost' ],
+                tasks: ['compass:dashboard', 'newer:copy:dashboard', 'slingPost'],
                 options: {
                     livereload: true
                 }
@@ -210,7 +210,7 @@ module.exports = function(grunt) {
         },
 
         react: {
-            options:{
+            options: {
                 'options.harmony': true
             },
             dashboard: {
@@ -233,41 +233,70 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
             },
             dashboard: {
-                options:{
+                options: {
                     beautify: false,
-                    screwIE8:true,
+                    screwIE8: true,
                     sourceMap: true,
-                    sourceMapIncludeSources:true,
+                    sourceMapIncludeSources: true,
                     compress: {
-                        'drop_debugger':true,
-                        'drop_console':true,
+                        'drop_debugger': true,
+                        'drop_console': true,
                         dead_code: true
                     }
                 },
                 files: {
-                    '<%= options.dist %>/app.js': [  '<%= options.dist %>/app.js']
+                    '<%= options.dist %>/app.js': ['<%= options.dist %>/app.js']
+                }
+            },
+            shared: {
+                options: {
+                    beautify: false,
+                    screwIE8: false,
+                    sourceMap: false,
+                    sourceMapIncludeSources: false,
+                    compress: {
+                        'drop_debugger': false,
+                        'drop_console': false,
+                        dead_code: false
+                    }
+                },
+                files: {
+                    '<%= options.dist %>/shared-lib.js': ['<%= options.dist %>/shared-lib.js']
                 }
             }
         },
 
         "browserify": {
-            'dist':{
+            'dist': {
                 options: {
                     debug: true,
-                    fullPaths:true,
+                    fullPaths: false,
                     transform: [["babelify"]]
                 },
                 files: {
-                    './<%= options.dist %>/app.js' : ['src/app.jsx']
+                    './<%= options.dist %>/app.js': ['src/app.jsx']
                 }
             },
-            'shared':{
+            libs: {
+                // External modules that don't need to be constantly re-compiled
+                src: ['.'],
+                dest: 'dist/libs.js',
                 options: {
-                    debug: true,
-                    fullPaths:true
+                    alias: [ // modules we want to require and export
+                        'react:',
+                        'react-router:'
+                    ]
+                }
+            },
+            'shared': {
+                options: {
+                    debug: false,
+                    shim: {
+                        jquery: {path: "node_modules/jquery/jquery.js", exports: "$"}
+                    }
                 },
                 files: {
-                    './<%= options.dist %>/shared-lib.js' : ['src/shared-lib.js']
+                    './<%= options.dist %>/shared-lib.js': ['src/shared-lib.js']
                 }
             }
         },
@@ -306,7 +335,6 @@ module.exports = function(grunt) {
                 debug: false,
             }
         },
-
 
 
     });

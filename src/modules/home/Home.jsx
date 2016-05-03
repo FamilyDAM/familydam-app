@@ -19,6 +19,8 @@ module.exports = React.createClass({
         // update the breadcrumb
         //var _pathData = {'label':'Home', 'navigateTo':"dashboard", 'params':{}, 'level':1};
         //this.navigationActions = NavigationActions.currentPath.onNext( _pathData );
+
+        NavigationActions.openAppSidebar.onNext(true);
     },
 
     componentWillUnmount: function(){
@@ -30,8 +32,8 @@ module.exports = React.createClass({
 
         return (
             <div className="homesView" style={{'display':'flex', 'flexDirection':'row', 'alignItems':'stretch', 'width':'100%', 'height':'calc(100vh - 65px)'}}>
-                <div style={{'display':'flex', 'alignItems':'center'}}>
-                    <h3 className="text-center">Select an App To Start</h3>
+                <div style={{'display':'flex', 'alignItems':'center', 'width':'100%'}}>
+                    <h3 style={{'margin':'0px auto'}}>Select an App To Start</h3>
                 </div>
             </div>
 

@@ -9,6 +9,11 @@
 var React = require('react');
 import { Router, Link } from 'react-router';
 
+import {
+    TableRow,
+    TableRowColumn,
+    IconButton
+} from 'material-ui';
 
 var ButtonGroup = require('react-bootstrap').ButtonGroup;
 var Button = require('react-bootstrap').Button;
@@ -70,6 +75,31 @@ var FileRow = React.createClass({
 
 
     render:function(){
+        if( this.props.file !== undefined && this.props.file['jcr:mixinTypes'] !== undefined && this.props.file['jcr:mixinTypes'].indexOf("dam:image") > -1 ){
+            return <ImageRow file={this.props.file}></ImageRow>
+        }
+        else if( this.props.file !== undefined && this.props.file['jcr:mixinTypes'] !== undefined && this.props.file['jcr:mixinTypes'].indexOf("dam:music") > -1 ){
+            return <MusicRow file={this.props.file}></MusicRow>
+        }
+        //else if( this.props.file.mixins !== undefined && this.props.file.mixins.indexOf("dam:movie") > -1  ){}
+        else
+        {
+            return (
+                <TableRow key={this.props.file.path}>
+                    <TableRowColumn><Link to={{pathname:'photos/details',query:{'id': this.props.file.id}}}>{this.props.file.name}</Link></TableRowColumn>
+                    <TableRowColumn></TableRowColumn>
+                    <TableRowColumn></TableRowColumn>
+                    <TableRowColumn>
+                        <IconButton iconClassName="material-icons">download</IconButton>
+                        <IconButton iconClassName="material-icons">delete</IconButton>
+                    </TableRowColumn>
+                </TableRow>
+            );
+        }
+    },
+
+
+    render2:function(){
 
         if( this.props.file !== undefined && this.props.file['jcr:mixinTypes'] !== undefined && this.props.file['jcr:mixinTypes'].indexOf("dam:image") > -1 ){
             return <ImageRow file={this.props.file}></ImageRow>

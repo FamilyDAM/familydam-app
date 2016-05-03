@@ -18,7 +18,12 @@ module.exports = {
     /**
      * Call this when you want to change the route (after login, or on logout go to login)
      */
-    redirect: new Rx.Subject()
+    redirect: new Rx.Subject(),
+    
+    /**
+     * Call this when you want to change the route (after login, or on logout go to login)
+     */
+    openAppSidebar: new Rx.BehaviorSubject(false)
 
 };
 

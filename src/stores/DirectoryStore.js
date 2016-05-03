@@ -7,6 +7,7 @@
 
 var Rx = require('rx');
 var DirectoryActions = require('./../actions/DirectoryActions');
+var FileActions = require('./../actions/FileActions');
 
 module.exports = {
 
@@ -27,6 +28,10 @@ module.exports = {
 
     subscribe: function() {
         console.log("{DirectoryStore}.init()");
+
+        FileActions.getFiles.source.subscribe(function (data_) {
+            this.currentFolder.onNext({path:data_});
+        }.bind(this));
 
         DirectoryActions.selectFolder.subscribe( function(data_){
             this.currentFolder.onNext(data_);
