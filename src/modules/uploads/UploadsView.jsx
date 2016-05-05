@@ -9,13 +9,22 @@
 var React = require('react');
 import { Router, Link } from 'react-router';
 
+import {
+    IconButton,
+    Paper,
+    Table,
+    TableHeader,
+    TableHeaderColumn,
+    TableBody,
+    TableRow,
+    TableRowColumn,
+    TextField,
+    Toolbar,
+    ToolbarGroup,
+    ToolbarSeparator
+} from 'material-ui';
 
-var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var Button = require('react-bootstrap').Button;
-var MenuItem = require('react-bootstrap').MenuItem;
-var Glyphicon = require('react-bootstrap').Glyphicon;
-var Dropdown = require('react-bootstrap').Dropdown;
-var LinkContainer = require('react-router-bootstrap').LinkContainer;
+var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
 
 var FileUploadView = require('./FileUploadView.jsx');
 var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
@@ -28,6 +37,9 @@ var NavigationActions = require('./../../actions/NavigationActions');
 var FileActions = require('../../actions/FileActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
 
+var DirectoryStore = require("../../stores/DirectoryStore");
+var UserStore = require("../../stores/UserStore");
+
 
 /**
  * TODO: remove bullet list in css
@@ -36,9 +48,17 @@ var DirectoryActions = require('../../actions/DirectoryActions');
  */
 module.exports = React.createClass({
 
+
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
+
     getInitialState: function () {
+        var _defaultPath = DirectoryStore.contentFileRoot +UserStore.getCurrentUser().username;
+
         return {
             state: '100%',
+            uploadPath:_defaultPath,
             showAddFolder:false
         };
     },
@@ -46,27 +66,61 @@ module.exports = React.createClass({
     componentWillMount: function(){
         var _this = this;
 
-        // update the breadcrumb
-        var _pathData = {'label': 'Upload Files', 'navigateTo': "upload", 'params': {}, 'level': 1};
-        NavigationActions.currentPath.onNext(_pathData);
+        // update the Title
+        NavigationActions.updateTitle.onNext({'label': 'Upload Files'});
 
+        this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(d_){
+
+            var _uploadPath = d_.path;
+            if( d_.path.substring(d_.path.length-1) != "/")
+            {
+                _uploadPath = d_.path +"/";
+            }
+
+
+            this.setState({'currentFolder':d_.path, "uploadPath":_uploadPath});
+        }.bind(this));
     },
 
-    componentDidMount: function () {
-        this.updateDimensions();
+    componentWillUnmount: function(){
+        if( this.currentFolderSubscription !== undefined ){
+            this.currentFolderSubscription.dispose();
+        }
     },
 
-    updateDimensions: function () {
-        this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
-    },
-
-
-    handleAddFolder: function (event_) {
-        this.setState({showAddFolder: true});
-    },
 
 
     render: function() {
+
+        return (
+            <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
+                <Toolbar style={{'display':'flex', 'height':'50px', 'alignItems':'center'}}>
+                    <ToolbarGroup firstChild={true} float="left">
+                        <IconButton iconClassName="material-icons">folder</IconButton>
+                        <Breadcrumb path={this.state.currentFolder}/>
+                    </ToolbarGroup>
+                    <ToolbarGroup float="right">
+
+                    </ToolbarGroup>
+                </Toolbar>
+
+
+                <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'width':'100%', 'justifyContent':'center'}}>
+
+                    <FileUploadView
+                        currentFolder={this.state.currentFolder}
+                        uploadPath={this.state.uploadPath}/>
+
+                </div>
+            </div>
+
+        )
+    },
+
+
+
+
+    renderOld: function() {
 
         var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
         var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";

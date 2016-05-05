@@ -16,9 +16,6 @@ import {
     List,
     ListItem,
     Paper,
-    Subheader,
-    Toolbar,
-    ToolbarGroup,
     IconButton,
     Table,
     TableHeader,
@@ -27,6 +24,9 @@ import {
     TableRow,
     TableRowColumn,
     TextField,
+    Subheader,
+    Toolbar,
+    ToolbarGroup,
     ToolbarSeparator
 } from 'material-ui';
 import FolderIcon from 'material-ui/svg-icons/file/folder';
@@ -78,6 +78,10 @@ module.exports = React.createClass({
     componentWillMount: function () {
         var _this = this;
 
+        // update the Title
+        NavigationActions.updateTitle.onNext({'label': 'File Browser'});
+
+
         this.state.path = "/content/dam-files";
         if (this.props.location && this.props.location.query && this.props.location.query.path)
         {
@@ -96,38 +100,6 @@ module.exports = React.createClass({
         var getFilesSubscription = FileActions.getFiles.source.subscribe(function (path_) {
             this.state.selectedPath = path_;
 
-            if( this.state.selectedPath )
-            {
-                var parts = this.state.selectedPath.split("/");
-                var currentPath = "";
-
-                for (var i = 0; i < parts.length; i++)
-                {
-                    var _part = parts[i];
-                    currentPath += _part + "/";
-
-                    // update the breadcrumb
-                    if (_part == "content")
-                    {
-                        var _pathData = {
-                            'label': _part,
-                            'level': i
-                        }
-                    } else
-                    {
-                        var _pathData = {
-                            'label': _part,
-                            'navigateTo': '/files?path=' + currentPath,
-                            'params': {path: currentPath},
-                            'level': i
-                        }
-                    }
-                    ;
-
-                    NavigationActions.currentPath.onNext(_pathData);
-                }
-            }
-
         }.bind(this));
 
 
@@ -142,7 +114,6 @@ module.exports = React.createClass({
             }
         }.bind(this));
 
-        
 
         // listen for trigger to reload for files in directory
         this.refreshFilesSubscription = FileActions.refreshFiles.subscribe(function (data_) {
@@ -155,12 +126,12 @@ module.exports = React.createClass({
         // Refresh the file list when someone changes the directory
         this.selectFolderSubscription = DirectoryStore.currentFolder.distinctUntilChanged().subscribe(function (data_) {
             FileActions.getFiles.source.onNext(data_.path);
-            _this.setState({'selectedPath':data_.path});
+            _this.setState({'selectedPath': data_.path});
         }.bind(this));
 
         // Refresh the file list when someone changes the directory
         this.selectedFileSubscription = FileActions.selectFile.subscribe(function (data_) {
-            _this.setState({'selectedItem':data_});
+            _this.setState({'selectedItem': data_});
         }.bind(this));
 
 
@@ -169,7 +140,7 @@ module.exports = React.createClass({
          */
         // listen for the selected dir.
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
-            _this.setState({'parent':data_});
+            _this.setState({'parent': data_});
         }.bind(this));
 
         // listen for save complete, then hide
@@ -201,25 +172,32 @@ module.exports = React.createClass({
     },
 
     componentWillUnmount: function () {
-        if (this.getFilesSubscription !== undefined) {
+        if (this.getFilesSubscription !== undefined)
+        {
             this.getFilesSubscription.dispose();
         }
-        if (this.fileStoreSubscription !== undefined) {
+        if (this.fileStoreSubscription !== undefined)
+        {
             this.fileStoreSubscription.dispose();
         }
-        if (this.refreshFilesSubscription !== undefined) {
+        if (this.refreshFilesSubscription !== undefined)
+        {
             this.refreshFilesSubscription.dispose();
         }
-        if (this.selectFolderSubscription !== undefined) {
+        if (this.selectFolderSubscription !== undefined)
+        {
             this.selectFolderSubscription.dispose();
         }
-        if (this.selectedFileSubscription !== undefined) {
+        if (this.selectedFileSubscription !== undefined)
+        {
             this.selectedFileSubscription.dispose();
         }
-        if (this.currentFolderSubscription !== undefined) {
+        if (this.currentFolderSubscription !== undefined)
+        {
             this.currentFolderSubscription.dispose();
         }
-        if (this.createFolderSubscription !== undefined) {
+        if (this.createFolderSubscription !== undefined)
+        {
             this.createFolderSubscription.dispose();
         }
 
@@ -246,22 +224,23 @@ module.exports = React.createClass({
     },
 
 
-    _onDirClick: function(e){
+    _onDirClick: function (e) {
         e.preventDefault();
         //<Link to={{pathname: '/files', query:{'path':dir_.path}}}>
-        this.context.router.transitionTo( {pathname: '/files', query:{'path':dir_.path}} );
+        this.context.router.transitionTo({pathname: '/files', query: {'path': dir_.path}});
     },
 
-    _onAddFolder: function(e){
+    _onAddFolder: function (e) {
         var _name = this.refs.newFolderName.getValue().trim();
-        if( _name.length > 0 )
+        if (_name.length > 0)
         {
-            this.refs.newFolderName.getInputNode().value=""
+            this.refs.newFolderName.getInputNode().value = ""
             this.setState({'showAddFolderDialog': false});
 
             var _path = this.state.selectedPath;
             DirectoryActions.createFolder.source.onNext({'path': _path, 'name': _name})
-        }else{
+        } else
+        {
             //todo show error message
         }
     },
@@ -282,25 +261,26 @@ module.exports = React.createClass({
         ];
 
 
-
         var folderRows = this.state.files
             .filter(function (data_) {
                 return data_["jcr:primaryType"] === "nt:folder" || data_["jcr:primaryType"] === "sling:Folder";
             }).map(function (dir_, index_) {
                 //return <DirectoryRow key={dir_.path} dir={dir_}/>
                 return (
-                    <TableRow  key={'dir-' +index_} >
+                    <TableRow key={'dir-' +index_}>
                         <TableRowColumn
                             onTouchTap={() => {this.context.router.push({pathname:'/files', query:{'path':dir_.path}}) }}
                             style={{'display':'flex','alignItems':'center', 'cursor':'pointer'}}>
-                            <FolderIcon style={{'width':'25px', 'height':'25px', 'minWidth':'25px', 'minHeight':'25px'}}/>
-                            <span style={{'paddingLeft':'10px'}}><Link to={{pathname: '/files', query:{'path':dir_.path}}}>{dir_.name}</Link></span>
+                            <FolderIcon
+                                style={{'width':'25px', 'height':'25px', 'minWidth':'25px', 'minHeight':'25px'}}/>
+                            <span style={{'paddingLeft':'10px'}}><Link
+                                to={{pathname: '/files', query:{'path':dir_.path}}}>{dir_.name}</Link></span>
                         </TableRowColumn>
                         <TableRowColumn></TableRowColumn>
                         <TableRowColumn></TableRowColumn>
                         <TableRowColumn>
                             {(() => {
-                                if( dir_._links.delete )
+                                if (dir_._links.delete)
                                 {
                                     return (<IconButton iconClassName="material-icons"
                                                         onClick={this._onNodeDelete}
@@ -313,23 +293,25 @@ module.exports = React.createClass({
             }.bind(this));
 
 
-
-
         var fileRows = this.state.files
             .filter(function (data_) {
                 return data_["jcr:primaryType"] === "nt:file";
             }).map(function (file_, index_) {
 
 
-                if( file_ !== undefined && file_['jcr:mixinTypes'] !== undefined && file_['jcr:mixinTypes'].indexOf("dam:image") > -1 ){
+                if (file_ !== undefined && file_['jcr:mixinTypes'] !== undefined && file_['jcr:mixinTypes'].indexOf("dam:image") > -1)
+                {
 
-                    var _dt = Moment(file_['jcr:created']).format("MM/DD/YYYY");
+                    var _dt = Moment(Date.parse(file_['jcr:created'])).format("MM/DD/YYYY");
 
                     return (
                         <TableRow key={file_.path}>
                             <TableRowColumn style={{'display':'flex','alignItems':'center'}}>
-                                <LinkContainer to={ {pathname:'photos/details',query:{'path': file_.path}} }><img src={file_._links.thumb} style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></LinkContainer>
-                                <span style={{'paddingLeft':'10px','cursor':'pointer'}}><Link to={{pathname: 'photos/details', query:{'path':file_.path}}}>{file_.name}</Link></span>
+                                <LinkContainer to={ {pathname:'photos/details',query:{'path': file_.path}} }><img
+                                    src={file_._links.thumb}
+                                    style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></LinkContainer>
+                                <span style={{'paddingLeft':'10px','cursor':'pointer'}}><Link
+                                    to={{pathname: 'photos/details', query:{'path':file_.path}}}>{file_.name}</Link></span>
                             </TableRowColumn>
                             <TableRowColumn>---</TableRowColumn>
                             <TableRowColumn>{_dt}</TableRowColumn>
@@ -342,10 +324,10 @@ module.exports = React.createClass({
                                             onClick={()=>{this.context.router.push({pathname:'photos/edit', query:{path:file_.path}}) }}>edit</IconButton>
 
                                 <a href={file_.path} download><IconButton iconClassName="material-icons"
-                                            data-path={file_._links.download}>file_download</IconButton></a>
+                                                                          data-path={file_._links.download}>file_download</IconButton></a>
 
                                 {(() => {
-                                    if( file_._links.delete )
+                                    if (file_._links.delete)
                                     {
                                         return (<IconButton iconClassName="material-icons"
                                                             onClick={this._onNodeDelete}
@@ -371,7 +353,7 @@ module.exports = React.createClass({
                                                                           data-path={file_._links.download}>file_download</IconButton></a>
 
                                 {(() => {
-                                    if( file_._links.delete )
+                                    if (file_._links.delete)
                                     {
                                         return (<IconButton iconClassName="material-icons"
                                                             onClick={this._onNodeDelete}
@@ -387,77 +369,102 @@ module.exports = React.createClass({
 
 
 
+        // todo for mobile, use these
+        //<LinkContainer to="upload"><IconButton iconClassName="material-icons">file_upload</IconButton></LinkContainer>
+        //<IconButton iconClassName="material-icons" onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}>create_new_folder</IconButton>
+
+
         return (
             <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
                 <Toolbar style={{'display':'flex', 'height':'50px', 'alignItems':'center'}}>
-                    <ToolbarGroup firstChild={true} float="left">
+                    <ToolbarGroup firstChild={true} float="left" style={{'flexGrow':1, 'justifyContent':'flex-start'}}>
                         <IconButton iconClassName="material-icons">folder</IconButton>
-                        <Breadcrumb/>
+                        <Breadcrumb path={this.state.selectedPath}/>
                     </ToolbarGroup>
-                    <ToolbarGroup float="right">
-                        <ToolbarSeparator/>
-                        <LinkContainer to="upload"><IconButton iconClassName="material-icons">file_upload</IconButton></LinkContainer>
-                        <IconButton iconClassName="material-icons"
-                                    onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}>create_new_folder</IconButton>
+                    <ToolbarGroup float="right"  style={{'flexGrow':0, 'justifyContent':'flex-end'}}>
 
-                        <Dialog
-                            title="Add Folder"
-                            actions={actions}
-                            modal={true}
-                            open={this.state.showAddFolderDialog}
-                        >
-                            <TextField
-                                ref="newFolderName"
-                                hintText="Hint Text"
-                                floatingLabelText="Folder Name"
-                            />
-                        </Dialog>
+                        <ToolbarSeparator/>
+
+                        <FlatButton
+                            label="Upload"
+                            linkButton={true}
+                            primary={true}
+                            onTouchTap={()=>{ this.context.router.push('/upload')}}
+                            icon={<IconButton iconClassName="material-icons">file_upload</IconButton>}
+                        />
+
+                        <FlatButton
+                            label="Add Folder"
+                            linkButton={true}
+                            primary={true}
+                            onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}
+                            icon={<IconButton iconClassName="material-icons">create_new_folder</IconButton>}
+                        />
 
                     </ToolbarGroup>
                 </Toolbar>
 
+                <Dialog
+                    title="Add Folder"
+                    actions={actions}
+                    modal={true}
+                    open={this.state.showAddFolderDialog}
+                >
+                    <TextField
+                        ref="newFolderName"
+                        hintText="Hint Text"
+                        floatingLabelText="Folder Name"
+                    />
+                </Dialog>
 
-                <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1}}>
-                    <Paper style={{'display':'flex', 'flexDirection':'column', 'flexGrow':0, 'flexShrink':0, 'minWidth':'240px'}} zDepth={0}>
-                        <TreeList
-                            title="Files"
-                            baseDir="/content/dam-files"
-                            onSelect={(path_)=>{
-                                    FileActions.getFiles.source.onNext(path_.path);
-                                    DirectoryActions.selectFolder.onNext({path: path_.path});
-                                }}/>
-                    </Paper>
+
+                <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around', }}>
+                    <div
+                        style={{'display':'flex', 'flexDirection':'column', 'flexGrow':0, 'flexShrink':0, 'minWidth':'240px', 'margin':'20px'}}
+                        zDepth={0}>
+                        <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
+                            <TreeList
+                                title="Files"
+                                baseDir="/content/dam-files"
+                                onSelect={(path_)=>{
+                                        FileActions.getFiles.source.onNext(path_.path);
+                                        DirectoryActions.selectFolder.onNext({path: path_.path});
+                                    }}/>
+                        </Paper>
+                    </div>
 
 
-                    <Paper style={{'display':'flex', 'flexBasis':'auto'}}>
-                        <Table
-                            fixedHeader={true}
-                            fixedFooter={true}
-                            selectable={true}
-                            multiSelectable={true}
-                            onRowSelection={this._onRowSelection}
+                    <div style={{'display':'flex', 'flexGrow':1, 'margin':'20px'}}>
+                        <Paper zDepth={2}>
+                            <Table
+                                fixedHeader={true}
+                                fixedFooter={true}
+                                selectable={true}
+                                multiSelectable={true}
+                                onRowSelection={this._onRowSelection}
                             >
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHeaderColumn>Name</TableHeaderColumn>
-                                    <TableHeaderColumn>Owner</TableHeaderColumn>
-                                    <TableHeaderColumn>Created</TableHeaderColumn>
-                                    <TableHeaderColumn>Actions</TableHeaderColumn>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody
-                                displayRowCheckbox={true}
-                                deselectOnClickaway={false}
-                                showRowHover={true}
-                                stripedRows={false}>
-                                
-                                {folderRows}
-                                
-                                {fileRows}
-                                
-                            </TableBody>
-                        </Table>
-                    </Paper>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHeaderColumn>Name</TableHeaderColumn>
+                                        <TableHeaderColumn>Owner</TableHeaderColumn>
+                                        <TableHeaderColumn>Created</TableHeaderColumn>
+                                        <TableHeaderColumn>Actions</TableHeaderColumn>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody
+                                    displayRowCheckbox={true}
+                                    deselectOnClickaway={false}
+                                    showRowHover={true}
+                                    stripedRows={false}>
+
+                                    {folderRows}
+
+                                    {fileRows}
+
+                                </TableBody>
+                            </Table>
+                        </Paper>
+                    </div>
                 </div>
             </div>
 

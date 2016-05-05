@@ -9,6 +9,24 @@
 // Used in TodoApp
 var React = require('react');
 
+
+
+import {
+    IconButton,
+    Paper,
+    RaisedButton,
+    Table,
+    TableHeader,
+    TableHeaderColumn,
+    TableBody,
+    TableRow,
+    TableRowColumn,
+    TextField,
+    Toolbar,
+    ToolbarGroup,
+    ToolbarSeparator
+} from 'material-ui';
+
 var Glyphicon = require('react-bootstrap').Glyphicon;
 var Button = require('react-bootstrap').Button;
 
@@ -78,39 +96,83 @@ var FileUploadView = React.createClass({
         var _fileListSize = _fileList.length;
 
 
-        var _fileControlsStyle  = {};
-        if( _fileListSize == 0 ){
-            _fileControlsStyle = {'top': '100px', 'position':'relative'};
-        }
 
         return (
-            <div className="FileUploadViews" >
-                <div style={_fileControlsStyle}>
-                    <FileUploadControls/>
+            <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around' }}>
+
+                <Paper zDepth={1} style={{'display':'flex', 'flexGrow':1, 'margin':'12px'}}>
+                    <span>Hello</span>
+                    <Table>
+                        <TableRow>
+                            <TableHeaderColumn colSpan="3" style={{textAlign: 'center'}}>
+                                <span>test 123</span>
+                                <div className="file-wrapper" onClick={this.clickFileInputField}
+                                     style={{'width':'200px', 'margin':'10px'}}>
+                                    <input type="file"
+                                           ref="fileInputField"
+                                           onChange={this.handleFileChange}
+                                           style={{'display':'none'}}
+                                           multiple="true"/>
+
+                                    <RaisedButton label="Select Files" primary={true} style={{'width':'100%'}}/>
+                                </div>
+                                <div className="file-wrapper" onClick={this.clickFolderInputField}
+                                     style={{'width':'200px', 'margin':'10px'}}>
+                                    <input type="file"
+                                           ref="folderInputField"
+                                           onChange={this.handleFolderChange}
+                                           style={{'display':'none'}}
+                                           multiple="true" webkitdirectory="webkitdirectory" directory="true"/>
+
+                                    <RaisedButton label="Select Folder" primary={true} style={{'width':'100%'}}/>
+                                </div>
+                            </TableHeaderColumn>
+                        </TableRow>
+                        <TableRow>
+                            <TableHeaderColumn tooltip="The ID">ID</TableHeaderColumn>
+                            <TableHeaderColumn tooltip="The Name">Name</TableHeaderColumn>
+                            <TableHeaderColumn tooltip="The Status">Status</TableHeaderColumn>
+                        </TableRow>
+                        <TableBody
+                            displayRowCheckbox={false}
+                            showRowHover={true}
+                            stripedRows={false}
+                        >
+
+                        </TableBody>
+                    </Table>
+
+                </Paper>
+
+                <div style={{'display':'flex', 'flexGrow':0, 'flexShrink':0, 'margin':'12px'}} >
+                    <FileUploadControls
+                        currentFolder={this.props.currentFolder}
+                        uploadPath={this.props.uploadPath}/>
                 </div>
-                
-                {_fileListSize>0?
-                <hr style={{'width':'100%'}}/>
-                :""}
-                
-                <ul className="fileList">
-                    {_fileList.map(function (result_) {
-                        return <li key={result_.name}  style={{'height': '50px'}}>
-                                    <div style={{'width': '100px', 'float':'left'}}>
-                                        <Glyphicon glyph="remove"  style={{'padding': '8px 8px;', 'margin':'0px 0px'}}  className="btn" onClick={_this.handleRemoveFile.bind(_this, result_)}/>
-                                        <Glyphicon glyph="cloud-upload" style={{'padding': '8px 8px;', 'margin':'0px 0px'}} className="btn" onClick={_this.handleUploadSingleFile.bind(_this, result_)}/>
-                                    </div>
-                                    <div style={{'float':'left', 'paddingTop': '8px'}}>
-                                           <div style={{'verticalAlign':'middle'}}>{result_.name}</div>
-                                           <div style={{'verticalAlign':'middle'}}><strong>copy to:</strong> {result_.uploadPath}</div>
-                                    </div>
-                                </li>;
-                    })}
-                </ul>
+
             </div>
         )
     }
 });
+
+/****
+ *
+ *
+ <ul className="fileList">
+ {_fileList.map(function (result_) {
+     return <li key={result_.name}  style={{'height': '50px'}}>
+                 <div style={{'width': '100px', 'float':'left'}}>
+                     <Glyphicon glyph="remove"  style={{'padding': '8px 8px;', 'margin':'0px 0px'}}  className="btn" onClick={_this.handleRemoveFile.bind(_this, result_)}/>
+                     <Glyphicon glyph="cloud-upload" style={{'padding': '8px 8px;', 'margin':'0px 0px'}} className="btn" onClick={_this.handleUploadSingleFile.bind(_this, result_)}/>
+                 </div>
+                 <div style={{'float':'left', 'paddingTop': '8px'}}>
+                        <div style={{'verticalAlign':'middle'}}>{result_.name}</div>
+                        <div style={{'verticalAlign':'middle'}}><strong>copy to:</strong> {result_.uploadPath}</div>
+                 </div>
+             </li>;
+ })}
+ </ul>
+ */
 
 module.exports = FileUploadView;
 

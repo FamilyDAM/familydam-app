@@ -14,7 +14,10 @@ module.exports = {
      */
     currentPath: new Rx.ReplaySubject(3),
 
-
+    // change the sub-header in the AppBar
+    updateTitle: new Rx.Subject(),
+    
+    
     /**
      * Call this when you want to change the route (after login, or on logout go to login)
      */
