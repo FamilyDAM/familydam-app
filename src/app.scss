@@ -6,9 +6,7 @@
 }
 
 
-@import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/variables"; //set for defaults
-@import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap-sprockets";
-@import "../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
+@import "../node_modules/bootstrap/scss/bootstrap"; //set for defaults
 @import "./assets/bower_components/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.scss"; //set for defaults
 @import "./assets/bower_components/bootstrap-tokenfield/dist/css/tokenfield-typeahead.scss"; //set for defaults
 
@@ -21,7 +19,10 @@
 /***************************************
  * Defaults
  ***************************************/
-html, body
+$text-color: #757575;
+
+
+html
 {
   height:    100%;
   font-size: 62.5%;
@@ -30,24 +31,16 @@ html, body
 
 body
 {
-  background-color:  #f8f7f7;
   font-family:       $font-family-base;
   -webkit-transform: translateZ(0);
   transform:         translateZ(0);
-  font-size:         14px;
-  font-size:         1.4rem;
+  font-size:         16px;
+  font-size:         1.6rem;
   font-weight:       300;
-  color:             $text-color;
+  color:             #757575;
   margin:            0;
-  background-color:  #ffffff;
+  background-color:  rgb(232, 232, 232);
 }
-
-
-
-.btn-group {
-  box-shadow: 0 !important
-}
-
 
 
 @import "modules/login/login";

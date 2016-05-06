@@ -4,6 +4,7 @@
 var React = require('react');
 var ReactIntl  = require('react-intl');
 var ReactDOM = require('react-dom');
+var Bootstrap = require('bootstrap');
 //require('react-router');
 //require('react-bootstrap');
 //require('react-router-bootstrap');

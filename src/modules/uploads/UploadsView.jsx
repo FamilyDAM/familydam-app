@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
@@ -7,7 +6,7 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-import { Router, Link } from 'react-router';
+import {Router, Link} from 'react-router';
 
 import {
     IconButton,
@@ -54,58 +53,60 @@ module.exports = React.createClass({
     },
 
     getInitialState: function () {
-        var _defaultPath = DirectoryStore.contentFileRoot +UserStore.getCurrentUser().username;
+        var _defaultPath = DirectoryStore.contentFileRoot + UserStore.getCurrentUser().username;
 
         return {
             state: '100%',
-            uploadPath:_defaultPath,
-            showAddFolder:false
+            uploadPath: _defaultPath,
+            showAddFolder: false
         };
     },
 
-    componentWillMount: function(){
+    componentWillMount: function () {
         var _this = this;
 
         // update the Title
         NavigationActions.updateTitle.onNext({'label': 'Upload Files'});
 
-        this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function(d_){
+        this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (d_) {
 
             var _uploadPath = d_.path;
-            if( d_.path.substring(d_.path.length-1) != "/")
+            if (d_.path.substring(d_.path.length - 1) != "/")
             {
-                _uploadPath = d_.path +"/";
+                _uploadPath = d_.path + "/";
             }
 
 
-            this.setState({'currentFolder':d_.path, "uploadPath":_uploadPath});
+            this.setState({'currentFolder': d_.path, "uploadPath": _uploadPath});
         }.bind(this));
     },
 
-    componentWillUnmount: function(){
-        if( this.currentFolderSubscription !== undefined ){
+    componentWillUnmount: function () {
+        if (this.currentFolderSubscription !== undefined)
+        {
             this.currentFolderSubscription.dispose();
         }
     },
 
 
-
-    render: function() {
+    render: function () {
 
         return (
-            <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
-                <Toolbar style={{'display':'flex', 'height':'50px', 'alignItems':'center'}}>
-                    <ToolbarGroup firstChild={true} float="left">
-                        <IconButton iconClassName="material-icons">folder</IconButton>
-                        <Breadcrumb path={this.state.currentFolder}/>
-                    </ToolbarGroup>
-                    <ToolbarGroup float="right">
 
-                    </ToolbarGroup>
-                </Toolbar>
+            <div className="row" style={{'backgroundColor':'rgb(245, 245, 245)'}}>
+                <Paper className="col-xs-12" style={{'backgroundColor':'rgb(245, 245, 245)'}}>
+                    <Toolbar style={{'backgroundColor':'rgb(245, 245, 245)'}}>
+                        <ToolbarGroup firstChild={true} float="left">
+                            <IconButton iconClassName="material-icons">folder</IconButton>
+                            <Breadcrumb path={this.state.currentFolder}/>
+                        </ToolbarGroup>
+                        <ToolbarGroup float="right">
 
+                        </ToolbarGroup>
+                    </Toolbar>
+                </Paper>
 
-                <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'width':'100%', 'justifyContent':'center'}}>
+                <div className="col-xs-10 col-offset-1" style={{'top':'24px', 'flexGrow': '1'}}>
 
                     <FileUploadView
                         currentFolder={this.state.currentFolder}
@@ -114,13 +115,12 @@ module.exports = React.createClass({
                 </div>
             </div>
 
+
         )
     },
 
 
-
-
-    renderOld: function() {
+    renderOld: function () {
 
         var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
         var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
@@ -138,7 +138,8 @@ module.exports = React.createClass({
 
                         <aside className={asideClass} style={asideStyle}>
                             <div className="boxRow content" style={{'minHeight':'200px'}}>
-                                <SidebarSection label="Files" open={true} showAddFolder={true} onAddFolder={this.handleAddFolder}>
+                                <SidebarSection label="Files" open={true} showAddFolder={true}
+                                                onAddFolder={this.handleAddFolder}>
                                     <Tree
                                         baseDir="/content/dam-files"
                                         onSelect={(path_)=>{
@@ -161,7 +162,8 @@ module.exports = React.createClass({
                     </div>
                 </div>
             );
-        }catch(err){
+        } catch (err)
+        {
             console.log(err);
         }
     }

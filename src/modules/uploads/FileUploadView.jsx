@@ -88,6 +88,18 @@ var FileUploadView = React.createClass({
     },
 
 
+    handleUploadAllFiles:function(){
+        UploadActions.uploadAllFilesAction.onNext(true);
+    },
+
+
+    handleRemoveAll:function(){
+        UploadActions.removeAllFilesAction.onNext(true);
+        if( this.isMounted() ) this.forceUpdate();
+    },
+
+
+
     render: function () {
         var _this = this;
 
@@ -98,58 +110,66 @@ var FileUploadView = React.createClass({
 
 
         return (
-            <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around' }}>
+            <div className="row">
+                <div className="col-xs-10 col-xs-offset-1">
 
-                <Paper zDepth={1} style={{'display':'flex', 'flexGrow':1, 'margin':'12px'}}>
-                    <span>Hello</span>
-                    <Table>
-                        <TableRow>
-                            <TableHeaderColumn colSpan="3" style={{textAlign: 'center'}}>
-                                <span>test 123</span>
-                                <div className="file-wrapper" onClick={this.clickFileInputField}
-                                     style={{'width':'200px', 'margin':'10px'}}>
-                                    <input type="file"
-                                           ref="fileInputField"
-                                           onChange={this.handleFileChange}
-                                           style={{'display':'none'}}
-                                           multiple="true"/>
+                    <Paper zDepth={1}>
 
-                                    <RaisedButton label="Select Files" primary={true} style={{'width':'100%'}}/>
-                                </div>
-                                <div className="file-wrapper" onClick={this.clickFolderInputField}
-                                     style={{'width':'200px', 'margin':'10px'}}>
-                                    <input type="file"
-                                           ref="folderInputField"
-                                           onChange={this.handleFolderChange}
-                                           style={{'display':'none'}}
-                                           multiple="true" webkitdirectory="webkitdirectory" directory="true"/>
+                        {(() => {
 
-                                    <RaisedButton label="Select Folder" primary={true} style={{'width':'100%'}}/>
-                                </div>
-                            </TableHeaderColumn>
-                        </TableRow>
-                        <TableRow>
-                            <TableHeaderColumn tooltip="The ID">ID</TableHeaderColumn>
-                            <TableHeaderColumn tooltip="The Name">Name</TableHeaderColumn>
-                            <TableHeaderColumn tooltip="The Status">Status</TableHeaderColumn>
-                        </TableRow>
-                        <TableBody
-                            displayRowCheckbox={false}
-                            showRowHover={true}
-                            stripedRows={false}
-                        >
+                            if( _fileList.length == 0 ){
+                                return (<FileUploadControls
+                                    currentFolder={this.props.currentFolder}
+                                    uploadPath={this.props.uploadPath}/>);
 
-                        </TableBody>
-                    </Table>
+                            }else{
+                                return (
+                                <Table>
+                                    <TableHeader displaySelectAll={false} enableSelectAll={false} adjustForCheckbox={false}>
+                                        <TableRow>
+                                            <TableHeaderColumn colSpan="4" style={{textAlign: 'right'}}>
+                                                <RaisedButton label="Remove All Files"
+                                                              onTouchTap={this.handleRemoveAll}
+                                                              style={{'marginRight':'10px'}}/>
+                                                <RaisedButton label="Upload All Files"
+                                                              primary={true}
+                                                              onTouchTap={this.handleUploadAllFiles}/>
+                                            </TableHeaderColumn>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableHeaderColumn colSpan="2" tooltip="File Name">Name</TableHeaderColumn>
+                                            <TableHeaderColumn colSpan="1" tooltip="File Type">Type</TableHeaderColumn>
+                                            <TableHeaderColumn colSpan="1" tooltip="File Size">Size</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody
+                                        displayRowCheckbox={false}
+                                        showRowHover={true}
+                                        stripedRows={false}>
 
-                </Paper>
+                                            {_fileList.map(function (result_) {
+                                                debugger;
+                                                //<Glyphicon glyph="remove"  style={{'padding': '8px 8px;', 'margin':'0px 0px'}}  className="btn" onClick={_this.handleRemoveFile.bind(_this, result_)}/>
+                                                //<Glyphicon glyph="cloud-upload" style={{'padding': '8px 8px;', 'margin':'0px 0px'}} className="btn" onClick={_this.handleUploadSingleFile.bind(_this, result_)}/>
 
-                <div style={{'display':'flex', 'flexGrow':0, 'flexShrink':0, 'margin':'12px'}} >
-                    <FileUploadControls
-                        currentFolder={this.props.currentFolder}
-                        uploadPath={this.props.uploadPath}/>
+                                                return (
+                                                    <TableRow key={result_.id}>
+                                                        <TableRowColumn colSpan="2">{result_.name}</TableRowColumn>
+                                                        <TableRowColumn colSpan="1">{result_.type}</TableRowColumn>
+                                                        <TableRowColumn colSpan="1">{result_.size}</TableRowColumn>
+                                                    </TableRow>
+                                                );
+
+                                            })}
+
+                                    </TableBody>
+                                </Table>
+                                );
+                            }
+                        })()}
+
+                    </Paper>
                 </div>
-
             </div>
         )
     }
@@ -157,6 +177,52 @@ var FileUploadView = React.createClass({
 
 /****
  *
+ *
+
+ <span>Hello</span>
+ <Table>
+ <TableRow>
+ <TableHeaderColumn colSpan="3" style={{textAlign: 'center'}}>
+ <span>test 123</span>
+ <div className="file-wrapper" onClick={this.clickFileInputField}
+ style={{'width':'200px', 'margin':'10px'}}>
+ <input type="file"
+ ref="fileInputField"
+ onChange={this.handleFileChange}
+ style={{'display':'none'}}
+ multiple="true"/>
+
+ <RaisedButton label="Select Files" primary={true} style={{'width':'100%'}}/>
+ </div>
+ <div className="file-wrapper" onClick={this.clickFolderInputField}
+ style={{'width':'200px', 'margin':'10px'}}>
+ <input type="file"
+ ref="folderInputField"
+ onChange={this.handleFolderChange}
+ style={{'display':'none'}}
+ multiple="true" webkitdirectory="webkitdirectory" directory="true"/>
+
+ <RaisedButton label="Select Folder" primary={true} style={{'width':'100%'}}/>
+ </div>
+ </TableHeaderColumn>
+ </TableRow>
+ <TableRow>
+ <TableHeaderColumn tooltip="The ID">ID</TableHeaderColumn>
+ <TableHeaderColumn tooltip="The Name">Name</TableHeaderColumn>
+ <TableHeaderColumn tooltip="The Status">Status</TableHeaderColumn>
+ </TableRow>
+ <TableBody
+ displayRowCheckbox={false}
+ showRowHover={true}
+ stripedRows={false}
+ >
+
+ </TableBody>
+ </Table>
+
+
+
+
  *
  <ul className="fileList">
  {_fileList.map(function (result_) {

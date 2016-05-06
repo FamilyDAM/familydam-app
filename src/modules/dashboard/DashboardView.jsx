@@ -143,8 +143,8 @@ module.exports = React.createClass({
                                 iconElementRight={
                                     <IconMenu
                                         iconButtonElement={ <IconButton><MoreVertIcon/></IconButton>}
-                                        anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-                                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                                        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                                        targetOrigin={{horizontal: 'right', vertical: 'top'}}
                                     >
                                         <LinkContainer to="users"><MenuItem primaryText="User Manager" /></LinkContainer>
                                         <LinkContainer to="login"><MenuItem primaryText="Logout" /></LinkContainer>
@@ -179,10 +179,13 @@ module.exports = React.createClass({
 
 
                             <Paper zDepth={1}
-                                   style={{'display':'flex', 'flexDirection':'column', 'flexGrow':1, 'flexBasis':'auto', 'alignItems':'auto', 'width': bodyWidth, 'backgroundColor':'#eee'}}>
+                                   className="container-fluid"
+                                   style={{'width':'100%','backgroundColor':'rgb(245, 245, 245)'}}>
 
-                                <div style={{'alignItems':'center'}}>
-                                    {this.props.children}
+                                <div className="row">
+                                    <div className="col-xs-12">
+                                        {this.props.children}
+                                    </div>
                                 </div>
                                 <div className="device-xs visible-xs"></div>
                                 <div className="device-sm visible-sm"></div>

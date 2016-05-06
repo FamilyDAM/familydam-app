@@ -29,9 +29,7 @@ var FileUploadControls = React.createClass({
         return {uploadPath: "/content"}
     },
 
-    componentWillMount: function () {
-        var _this = this;
-    },
+    componentWillMount: function () { },
 
     componentDidMount: function () {
         var _this = this;
@@ -43,6 +41,7 @@ var FileUploadControls = React.createClass({
 
 
     handleFileChange: function (event_) {
+
         var _this = this;
         //console.dir(event_);
         var _files = event_.currentTarget.files;
@@ -50,14 +49,15 @@ var FileUploadControls = React.createClass({
 
 
         Rx.Observable.from(_files).forEach(function (item_) {
-            item_.uploadPath = _this.state.uploadPath;
+
+            item_.uploadPath = this.props.uploadPath;
             if (item_.webkitRelativePath != "" && item_.webkitRelativePath.length > 0)
             {
-                item_.uploadPath = _this.state.uploadPath + item_.webkitRelativePath.replace(item_.name, "");
+                item_.uploadPath = this.props.uploadPath + item_.webkitRelativePath.replace(item_.name, "");
             }
             item_.id = UUID.create().toString();
             UploadActions.addFileAction.onNext(item_);
-        })
+        }.bind(this));
 
         //save for later, dir check
         // if( _file.webkitRelativePath.length > 0 && _file.path.endsWith(_file.webkitRelativePath) ) {//is a dir.}
@@ -65,36 +65,26 @@ var FileUploadControls = React.createClass({
 
 
     handleFolderChange: function (event_) {
-        var _this = this;
         //console.dir(event_);
         var _files = event_.currentTarget.files;
         //console.dir(_files);
 
         Rx.Observable.from(_files).forEach(function (item_) {
-            item_.uploadPath = _this.state.uploadPath;
+            item_.uploadPath = this.props.uploadPath;
             if (item_.path !== undefined && item_.path != "")
             {
-                item_.uploadPath = _this.state.uploadPath;// +item_.name;
+                item_.uploadPath = this.props.uploadPath;// +item_.name;
             }
             else if (item_.webkitRelativePath != "" && item_.webkitRelativePath.length > 0)
             {
-                item_.uploadPath = _this.state.uploadPath + item_.webkitRelativePath.replace(item_.name, "");
+                item_.uploadPath = this.props.uploadPath + item_.webkitRelativePath.replace(item_.name, "");
             }
             item_.id = UUID.create().toString();
             UploadActions.addFileAction.onNext(item_);
-        });
+        }.bind(this));
 
         //save for later, dir check
         // if( _file.webkitRelativePath.length > 0 && _file.path.endsWith(_file.webkitRelativePath) ) {//is a dir.}
-    },
-
-
-    handleUploadAllFiles: function () {
-        UploadActions.uploadAllFilesAction.onNext(true);
-    },
-
-    handleRemoveAll: function () {
-        UploadActions.removeAllFilesAction.onNext(true);
     },
 
 
@@ -119,16 +109,17 @@ var FileUploadControls = React.createClass({
 
 
         return (
-            <Paper className="FileUploadControls" style={{'display':'flex', 'flexDirection':'column', 'padding':'20px', 'height':'250px'}}>
+            <Paper className="FileUploadControls row" >
+                <div className="col-xs-12" style={{'padding':'24px'}}>
+                    <div className="row">
+                        <div className="col-sm-6 hidden-xs-down background">
+                        </div>
 
-                <h3>Add Files</h3>
+                        <div className="col-xs-12 col-sm-6"
+                        style={{'display':'flex','flexDirection':'column','justifyContent':'center','alignItems':'center'}}>
 
-                <div style={{'display':'flex', 'flexDirection':'row'}}>
-
-                    <div style={{'display':'flex','alignItems':'center'}}>
-                        <div style={{'display':'flex', 'flexDirection':'column'}}>
                             <div className="file-wrapper" onClick={this.clickFileInputField}
-                                 style={{'width':'200px', 'margin':'10px'}}>
+                                 style={{'width':'100%','maxWidth':'250px', 'margin':'10px'}}>
                                 <input type="file"
                                        ref="fileInputField"
                                        onChange={this.handleFileChange}
@@ -138,7 +129,7 @@ var FileUploadControls = React.createClass({
                                 <RaisedButton label="Select Files" primary={true} style={{'width':'100%'}}/>
                             </div>
                             <div className="file-wrapper" onClick={this.clickFolderInputField}
-                                 style={{'width':'200px', 'margin':'10px'}}>
+                                 style={{'width':'100%', 'maxWidth':'250px', 'margin':'10px'}}>
                                 <input type="file"
                                        ref="folderInputField"
                                        onChange={this.handleFolderChange}
@@ -149,7 +140,6 @@ var FileUploadControls = React.createClass({
                             </div>
                         </div>
                     </div>
-
                 </div>
             </Paper>
         )

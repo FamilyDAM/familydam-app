@@ -268,17 +268,15 @@ module.exports = React.createClass({
                 //return <DirectoryRow key={dir_.path} dir={dir_}/>
                 return (
                     <TableRow key={'dir-' +index_}>
-                        <TableRowColumn
-                            onTouchTap={() => {this.context.router.push({pathname:'/files', query:{'path':dir_.path}}) }}
-                            style={{'display':'flex','alignItems':'center', 'cursor':'pointer'}}>
+                        <TableRowColumn colSpan="2"
+                            onTouchTap={() => {this.context.router.push({pathname:'/files', query:{'path':dir_.path}}) }}>
                             <FolderIcon
                                 style={{'width':'25px', 'height':'25px', 'minWidth':'25px', 'minHeight':'25px'}}/>
                             <span style={{'paddingLeft':'10px'}}><Link
                                 to={{pathname: '/files', query:{'path':dir_.path}}}>{dir_.name}</Link></span>
                         </TableRowColumn>
-                        <TableRowColumn></TableRowColumn>
-                        <TableRowColumn></TableRowColumn>
-                        <TableRowColumn>
+                        <TableRowColumn colSpan="1"></TableRowColumn>
+                        <TableRowColumn colSpan="1">
                             {(() => {
                                 if (dir_._links.delete)
                                 {
@@ -306,16 +304,16 @@ module.exports = React.createClass({
 
                     return (
                         <TableRow key={file_.path}>
-                            <TableRowColumn style={{'display':'flex','alignItems':'center'}}>
-                                <LinkContainer to={ {pathname:'photos/details',query:{'path': file_.path}} }><img
-                                    src={file_._links.thumb}
-                                    style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></LinkContainer>
-                                <span style={{'paddingLeft':'10px','cursor':'pointer'}}><Link
-                                    to={{pathname: 'photos/details', query:{'path':file_.path}}}>{file_.name}</Link></span>
+                            <TableRowColumn colSpan="2">
+                                    <LinkContainer to={ {pathname:'photos/details',query:{'path': file_.path}} }><img
+                                        src={file_._links.thumb}
+                                        style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></LinkContainer>
+                                    <span style={{'paddingLeft':'10px','cursor':'pointer'}}><Link
+                                        to={{pathname: 'photos/details', query:{'path':file_.path}}}>{file_.name}</Link></span>
+
                             </TableRowColumn>
-                            <TableRowColumn>---</TableRowColumn>
-                            <TableRowColumn>{_dt}</TableRowColumn>
-                            <TableRowColumn>
+                            <TableRowColumn colSpan="1">{_dt}</TableRowColumn>
+                            <TableRowColumn colSpan="1">
 
                                 <IconButton iconClassName="material-icons"
                                             onClick={() => {this.context.router.push({pathname:'photos/details', query:{path:file_.path}}) }}>launch</IconButton>
@@ -342,13 +340,14 @@ module.exports = React.createClass({
                 {
                     return (
                         <TableRow key={file_.path}>
-                            <TableRowColumn style={{'display':'flex','alignItems':'center'}}>
-                                <FileIcon/>
-                                <span style={{'paddingLeft':'10px'}}>{file_.name}</span>
+                            <TableRowColumn colSpan="2">
+                                <div  style={{'display':'flex','alignItems':'center'}}>
+                                    <FileIcon/>
+                                    <span style={{'paddingLeft':'10px'}}>{file_.name}</span>
+                                </div>
                             </TableRowColumn>
-                            <TableRowColumn></TableRowColumn>
-                            <TableRowColumn></TableRowColumn>
-                            <TableRowColumn>
+                            <TableRowColumn colSpan="1"></TableRowColumn>
+                            <TableRowColumn colSpan="1">
                                 <a href={file_.path} download><IconButton iconClassName="material-icons"
                                                                           data-path={file_._links.download}>file_download</IconButton></a>
 
@@ -445,10 +444,9 @@ module.exports = React.createClass({
                             >
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHeaderColumn>Name</TableHeaderColumn>
-                                        <TableHeaderColumn>Owner</TableHeaderColumn>
-                                        <TableHeaderColumn>Created</TableHeaderColumn>
-                                        <TableHeaderColumn>Actions</TableHeaderColumn>
+                                        <TableHeaderColumn colSpan="2">Name</TableHeaderColumn>
+                                        <TableHeaderColumn colSpan="1">Owner</TableHeaderColumn>
+                                        <TableHeaderColumn colSpan="1">Actions</TableHeaderColumn>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody
