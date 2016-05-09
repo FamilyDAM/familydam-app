@@ -148,7 +148,6 @@ var FileUploadView = React.createClass({
                                         stripedRows={false}>
 
                                             {_fileList.map(function (result_) {
-                                                debugger;
                                                 //<Glyphicon glyph="remove"  style={{'padding': '8px 8px;', 'margin':'0px 0px'}}  className="btn" onClick={_this.handleRemoveFile.bind(_this, result_)}/>
                                                 //<Glyphicon glyph="cloud-upload" style={{'padding': '8px 8px;', 'margin':'0px 0px'}} className="btn" onClick={_this.handleUploadSingleFile.bind(_this, result_)}/>
 

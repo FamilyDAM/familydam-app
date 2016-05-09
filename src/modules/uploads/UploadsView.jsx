@@ -119,55 +119,6 @@ module.exports = React.createClass({
         )
     },
 
-
-    renderOld: function () {
-
-        var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
-        var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
-
-        var asideStyle = {};
-        asideStyle['height'] = this.state.height;
-
-        var sectionStyle = {};
-
-        try
-        {
-            return (
-                <div className="uploadView container-fluid">
-                    <div className="row">
-
-                        <aside className={asideClass} style={asideStyle}>
-                            <div className="boxRow content" style={{'minHeight':'200px'}}>
-                                <SidebarSection label="Files" open={true} showAddFolder={true}
-                                                onAddFolder={this.handleAddFolder}>
-                                    <Tree
-                                        baseDir="/content/dam-files"
-                                        onSelect={(path_)=>{
-                                            FileActions.getFiles.source.onNext(path_.path);
-                                            DirectoryActions.selectFolder.onNext({path: path_.path});
-                                        }}/>
-                                </SidebarSection>
-                            </div>
-
-
-                            <div className=" boxRow footer">
-                                <AppSidebar />
-                            </div>
-                        </aside>
-
-
-                        <section className={tableClass} style={sectionStyle}>
-                            <FileUploadView />
-                        </section>
-                    </div>
-                </div>
-            );
-        } catch (err)
-        {
-            console.log(err);
-        }
-    }
-
 });
 
 

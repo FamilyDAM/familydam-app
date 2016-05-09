@@ -67,21 +67,26 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {
             files: [],
-            selectedItem: undefined,
             state: '100%',
             showAddFolderDialog: false,
-            selectedPath: "/content/dam-files"
+            selectedPath: "/content/dam-files",
+            addNodeRefs: [],
+            treeData: []
+
+        };
+    },
+
+
+    getDefaultProps:function(){
+        return {
+            baseDir: "/content/dam-files"
         };
     },
 
 
     componentWillMount: function () {
-        var _this = this;
 
-        // update the Title
-        NavigationActions.updateTitle.onNext({'label': 'File Browser'});
-
-
+        //update selected path
         this.state.path = "/content/dam-files";
         if (this.props.location && this.props.location.query && this.props.location.query.path)
         {
@@ -89,18 +94,30 @@ module.exports = React.createClass({
         }
         this.state.selectedPath = this.state.path;
 
-        //Show sidebar
+
+        //hide app sidebar
         NavigationActions.openAppSidebar.onNext(false);
 
-        // save current dir
-        //DirectoryActions.selectFolder.onNext(this.state.path);
+
+        // update the Title
+        NavigationActions.updateTitle.onNext({'label': 'File Browser'});
+
+
         // load files
         FileActions.getFiles.source.onNext(this.state.selectedPath);
 
-        var getFilesSubscription = FileActions.getFiles.source.subscribe(function (path_) {
-            this.state.selectedPath = path_;
 
+        // load directories
+        DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+
+
+        // listen for trigger to reload for files in directory
+        this.refreshDirectoriesSubscription = DirectoryActions.refreshDirectories.subscribe(function (data_) {
+            DirectoryActions.getDirectories.source.onNext(undefined);
+            DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
         }.bind(this));
+
+
 
 
         // rx callbacks
@@ -126,18 +143,45 @@ module.exports = React.createClass({
         // Refresh the file list when someone changes the directory
         this.selectFolderSubscription = DirectoryStore.currentFolder.distinctUntilChanged().subscribe(function (data_) {
             FileActions.getFiles.source.onNext(data_.path);
-            _this.setState({'selectedPath': data_.path});
+            this.setState({'selectedPath': data_.path});
         }.bind(this));
 
-        // Refresh the file list when someone changes the directory
-        this.selectedFileSubscription = FileActions.selectFile.subscribe(function (data_) {
-            _this.setState({'selectedItem': data_});
-        }.bind(this));
 
+        //Listen for directory changes
+        this.directoriesSubscription = DirectoryStore.directories.subscribe(function (data_) {
+            var isChild = false;
+            for (var i = 0; i < this.state.addNodeRefs.length; i++)
+            {
+                var obj = this.state.addNodeRefs[i];
+
+                for (var j = 0; j < data_.length; j++)
+                {
+                    var dataObj = data_[j];
+                    if (obj.path == dataObj.parent)
+                    {
+                        isChild = true;
+                        obj.children.push(dataObj);
+
+                        this.state.addNodeRefs.push(dataObj);
+
+                    }
+                }
+            }
+
+            if (!isChild && data_ !== undefined && data_.length > 0)
+            {
+                this.state.treeData = data_;
+                for (var i = 0; i < data_.length; i++)
+                {
+                    this.state.addNodeRefs.push(data_[i]);
+                }
+            }
+            if (this.isMounted()) this.forceUpdate();
+        }.bind(this));
 
         /**
          * Add Folder Modal
-         */
+
         // listen for the selected dir.
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
             _this.setState({'parent': data_});
@@ -151,6 +195,7 @@ module.exports = React.createClass({
             //todo show toast
             //console.dir(error_);
         }.bind(this));
+         */
     },
 
 
@@ -172,32 +217,22 @@ module.exports = React.createClass({
     },
 
     componentWillUnmount: function () {
-        if (this.getFilesSubscription !== undefined)
-        {
-            this.getFilesSubscription.dispose();
-        }
-        if (this.fileStoreSubscription !== undefined)
-        {
+        if (this.fileStoreSubscription !== undefined) {
             this.fileStoreSubscription.dispose();
         }
-        if (this.refreshFilesSubscription !== undefined)
-        {
+        if (this.refreshFilesSubscription !== undefined) {
             this.refreshFilesSubscription.dispose();
         }
-        if (this.selectFolderSubscription !== undefined)
-        {
+        if (this.selectFolderSubscription !== undefined) {
             this.selectFolderSubscription.dispose();
         }
-        if (this.selectedFileSubscription !== undefined)
-        {
+        if (this.selectedFileSubscription !== undefined) {
             this.selectedFileSubscription.dispose();
         }
-        if (this.currentFolderSubscription !== undefined)
-        {
+        if (this.currentFolderSubscription !== undefined) {
             this.currentFolderSubscription.dispose();
         }
-        if (this.createFolderSubscription !== undefined)
-        {
+        if (this.createFolderSubscription !== undefined) {
             this.createFolderSubscription.dispose();
         }
 
@@ -212,6 +247,9 @@ module.exports = React.createClass({
     updateDimensions: function () {
         this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
     },
+
+
+
 
     _onNodeDelete: function (event, component) {
         event.preventDefault();
@@ -417,14 +455,14 @@ module.exports = React.createClass({
                 </Dialog>
 
 
-                <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around', }}>
+                <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around'}}>
                     <div
                         style={{'display':'flex', 'flexDirection':'column', 'flexGrow':0, 'flexShrink':0, 'minWidth':'240px', 'margin':'20px'}}
                         zDepth={0}>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
                             <TreeList
                                 title="Files"
-                                baseDir="/content/dam-files"
+                                data={this.state.treeData}
                                 onSelect={(path_)=>{
                                         FileActions.getFiles.source.onNext(path_.path);
                                         DirectoryActions.selectFolder.onNext({path: path_.path});
@@ -442,15 +480,15 @@ module.exports = React.createClass({
                                 multiSelectable={true}
                                 onRowSelection={this._onRowSelection}
                             >
-                                <TableHeader>
+                                <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                     <TableRow>
                                         <TableHeaderColumn colSpan="2">Name</TableHeaderColumn>
-                                        <TableHeaderColumn colSpan="1">Owner</TableHeaderColumn>
+                                        <TableHeaderColumn colSpan="1">Created</TableHeaderColumn>
                                         <TableHeaderColumn colSpan="1">Actions</TableHeaderColumn>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody
-                                    displayRowCheckbox={true}
+                                    displayRowCheckbox={false}
                                     deselectOnClickaway={false}
                                     showRowHover={true}
                                     stripedRows={false}>

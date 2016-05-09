@@ -4,16 +4,28 @@
 /** jsx React.DOM */
 
 var React = require('react');
-import { Router, Link } from 'react-router';
+import {Router, Link} from 'react-router';
+import {
+    FlatButton,
+    FontIcon,
+    IconButton,
+    RaisedButton,
+    Paper,
+    SvgIcon,
+    Subheader,
+    Tabs,
+    Tab,
+    Table,
+    TableBody,
+    TableRow,
+    TableRowColumn,
+    TableHeader,
+    TableHeaderColumn,
+    Toggle
+} from 'material-ui';
+import FolderIcon from 'material-ui/svg-icons/file/folder';
 
-
-var Button = require('react-bootstrap').Button;
-var Tabs = require('react-bootstrap').Tabs;
-var Tab = require('react-bootstrap').Tab;
-var Table = require('react-bootstrap').Table;
 var LinkContainer = require('react-router-bootstrap').LinkContainer;
-var Ladda = require('ladda');
-
 
 var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
@@ -21,33 +33,86 @@ var UserStore = require('../../stores/UserStore');
 
 var NavigationActions = require('./../../actions/NavigationActions');
 
+const LoadingIcon = (props) => (
+    <SvgIcon {...props}>
+        <svg width='24px' height='24px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
+             preserveAspectRatio="xMidYMid" class="uil-default">
+            <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(0 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0s' repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(30 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.08333333333333333s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(60 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.16666666666666666s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(90 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.25s' repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(120 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.3333333333333333s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(150 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.4166666666666667s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(180 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5s' repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(210 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5833333333333334s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(240 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.6666666666666666s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(270 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.75s' repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(300 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.8333333333333334s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(330 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.9166666666666666s'
+                         repeatCount='indefinite'/>
+            </rect>
+        </svg>
+    </SvgIcon>
+);
 
 module.exports = React.createClass({
 
     getInitialState: function () {
         return {
             user: {},
+            empty: "",
+            saveLoading: false,
+            savePwdLoading: false,
             savePasswordLoading: false
         }
     },
 
-    statics: {
-        willTransitionTo: function (transition, params, query, callback) {
-
-            // update the breadcrumb
-            var _pathData = {
-                'label': params.id,
-                'navigateTo': "userManagerDetails",
-                'params': {id: params.id},
-                'level': 2
-            };
-            NavigationActions.currentPath.onNext(_pathData);
-            callback();
-        }
-    },
 
     componentDidMount: function () {
-        console.log("{UserManagerDetailView} componentWillMount");
+        console.log("{UserManagerDetailView} componentDidMount");
 
         // pull
         this.state.user = {};
@@ -56,80 +121,66 @@ module.exports = React.createClass({
         UserActions.getUser.source.onNext(userid);
 
 
-
         this.loadUserSubscription = UserActions.getUser.sink.subscribe(function (data_) {
-            this.setState({'user': data_});
-            this.setState({savePasswordLoading: true});
+            this.state.user = data_;
+            this.state.savePasswordLoading = true;
+            if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
 
-        UserActions.saveUser.sink.subscribe(function(data_){
-            setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
-        }.bind(this), function(data_){
+        this.saveUserSubscription = UserActions.saveUser.sink.subscribe(function (data_) {
+            setTimeout(function () {
+                //stop save spinner
+                this.setState({saveLoading: false});
+            }.bind(this), 500);
+        }.bind(this), function (data_) {
             //error
-            setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
+            debugger;
+            setTimeout(function () {
+                //stop save spinner
+                this.setState({saveLoading: false});
+            }.bind(this), 500);
         }.bind(this));
 
 
-        UserActions.changePassword.sink.subscribe(function(data_){
-            setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
-        }.bind(this), function(data_){
+        this.changePasswordSubscription = UserActions.changePassword.sink.subscribe(function (data_) {
+            setTimeout(function () {
+                //stop save spinner
+                this.setState({savePwdLoading: false});
+            }.bind(this), 500);
+        }.bind(this), function (data_) {
             //error
-            setTimeout(function(){ Ladda.stopAll(); }.bind(this), 500);
+            setTimeout(function () {
+                //stop save spinner
+                this.setState({savePwdLoading: false});
+            }.bind(this), 500);
         }.bind(this));
 
-
-
-        $(this.refs.googleDriveToggle).bootstrapSwitch({'state': false});
-        $(this.refs.googleDriveToggle).on('switchChange.bootstrapSwitch', function (event, state) {
-            //MetricActions.enableAutoRefresh.onNext(state);
-        });
-        $(this.refs.dropboxToggle).bootstrapSwitch({'state': false});
-        $(this.refs.dropboxToggle).on('switchChange.bootstrapSwitch', function (event, state) {
-            //MetricActions.enableAutoRefresh.onNext(state);
-        });
-        $(this.refs.facebookToggle).bootstrapSwitch({'state': false});
-        $(this.refs.facebookToggle).on('switchChange.bootstrapSwitch', function (event, state) {
-            //MetricActions.enableAutoRefresh.onNext(state);
-        });
-        $(this.refs.twitterToggle).bootstrapSwitch({'state': false});
-        $(this.refs.twitterToggle).on('switchChange.bootstrapSwitch', function (event, state) {
-            //MetricActions.enableAutoRefresh.onNext(state);
-        });
     },
-
-    componentDidUpdate: function (prevProps, prevState) {
-        $(this.refs.googleDriveToggle).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
-        $(this.refs.dropboxToggle).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
-        $(this.refs.facebookToggle).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
-        $(this.refs.twitterToggle).bootstrapSwitch('state', this.state.enableAutoRefresh, true);
-
-        this.saveBtn = Ladda.create( document.querySelector( '#saveBtn' ) );
-        this.savePasswordBtn = Ladda.create( document.querySelector( '#savePasswordBtn' ) );
-    },
-
 
     componentWillUnmount: function () {
-        if (this.loadUserSubscription !== undefined)
+        if (this.loadUserSubscription)
         {
             this.loadUserSubscription.dispose();
+        }
+        if (this.saveUserSubscription)
+        {
+            this.saveUserSubscription.dispose();
+        }
+        if (this.changePasswordSubscription)
+        {
+            this.changePasswordSubscription.dispose();
         }
     },
 
     componentWillReceiveProps: function (nextProps) {
-        
-        var userid = this.props.params.id;
-        UserActions.getUser.source.onNext(userid);
 
-    },
-
-    handleResetPasswordClick: function (event_) {
-
-        if( this.savePasswordBtn !== undefined ) {
-            this.savePasswordBtn.start();
+        if (nextProps.params.id !== this.props.params.id)
+        {
+            var userid = this.props.params.id;
+            UserActions.getUser.source.onNext(userid);
         }
 
-        UserActions.changePassword.source.onNext(this.state.user);
     },
 
     handleChange: function (event_) {
@@ -141,243 +192,263 @@ module.exports = React.createClass({
 
     handleSave: function (event_) {
 
-        if( this.saveBtn !== undefined ) {
+        if (this.saveBtn !== undefined)
+        {
             this.saveBtn.start();
         }
 
+        this.setState({saveLoading: true});
         UserActions.saveUser.source.onNext(this.state.user);
     },
 
+    handleResetPasswordClick: function (event_) {
+
+        if (this.savePasswordBtn !== undefined)
+        {
+            this.savePasswordBtn.start();
+        }
+
+        this.state.user.psasword = this.refs.password.value;
+        debugger;
+        this.setState({savePwdLoading: true});
+        UserActions.changePassword.source.onNext(this.state.user);
+    },
 
     render: function () {
         var _this = this;
 
         return (
-            <div className="container-fluid userDetailsView">
+            <div className="container-fluid userDetailsView" style={{'padding':'20px'}}>
                 <div className="row">
-                    <div className="col-sm-8">
+                    <div className="col-sm-4">
                         <h3>{this.state.user.firstName} {this.state.user.lastName}</h3>
                     </div>
-                    <div className="col-sm-4">
+                    <div className="col-sm-8" style={{'textAlign':'right'}}>
                         <LinkContainer to="users">
-                            <button className="btn btn-default btn-link">Cancel</button>
+                            <FlatButton label="Cancel"/>
                         </LinkContainer>
-                        <Button ref="saveBtn" id="saveBtn"
-                                data-style="expand-left"
-                                data-spinner-size={30}
-                                data-spinner-color="#000"
-                                bsStyle='primary'
-                                className="ladda-button"
-                                style={{'color':'#fff'}}
-                                onClick={this.handleSave} >Save</Button>
+                        <RaisedButton
+                            label="Save Settings"
+                            ref="saveBtn" id="saveBtn"
+                            onTouchTap={this.handleSave}
+                            primary={true}
+                            icon={this.state.saveLoading?<LoadingIcon style={{'width':'25px', 'height':'25px'}}/>:<span/>}/>
                     </div>
                 </div>
 
                 <div className="row personalInfoForm">
-                    <div className="col-sm-6">
-                        <fieldset>
-                            <legend>Personal Info:</legend>
-                            <div className="row">
-                                <div className="col-sm-6">
-                                    <label htmlFor="firstName">
-                                        First Name:&nbsp;<br/>
-                                        <input type="text"
-                                               ref="firstName"
-                                               id="firstName" name="firstName"
-                                               value={this.state.user.firstName}
-                                               onChange={this.handleChange}/>
-                                    </label>
-                                </div>
-                                <div className="col-sm-6">
-                                    <label htmlFor="firstName">
-                                        Last Name:&nbsp;<br/>
-                                        <input type="text"
-                                               ref="lastName"
-                                               id="lastName" name="lastName"
-                                               value={this.state.user.lastName}
-                                               onChange={this.handleChange}/>
-                                    </label>
-                                </div>
+                    <div className="col-sm-7">
+
+                        <Subheader style={{'paddingLeft':'0px'}}>Personal Info:</Subheader>
+                        <div className="row">
+                            <div className="col-sm-6">
+                                <label htmlFor="firstName">
+                                    First Name:&nbsp;<br/>
+                                    <input type="text"
+                                           ref="firstName"
+                                           id="firstName" name="firstName"
+                                           value={this.state.user.firstName}
+                                           onChange={this.handleChange}/>
+                                </label>
                             </div>
-                            <div className="row" style={{'marginTop': '10px'}}>
-                                <div className="col-sm-12">
-                                    <label htmlFor="firstName">
-                                        Email:&nbsp;<br/>
-                                        <input type="text"
-                                               ref="email"
-                                               id="email" name="email"
-                                               value={this.state.user.email}
-                                               onChange={this.handleChange}/>
-                                    </label>
-                                </div>
+                            <div className="col-sm-6">
+                                <label htmlFor="firstName">
+                                    Last Name:&nbsp;<br/>
+                                    <input type="text"
+                                           ref="lastName"
+                                           id="lastName" name="lastName"
+                                           value={this.state.user.lastName}
+                                           onChange={this.handleChange}/>
+                                </label>
                             </div>
-                        </fieldset>
+                        </div>
+                        <div className="row" style={{'marginTop': '10px'}}>
+                            <div className="col-sm-12">
+                                <label htmlFor="firstName">
+                                    Email:&nbsp;<br/>
+                                    <input type="text"
+                                           ref="email"
+                                           id="email" name="email"
+                                           value={this.state.user.email}
+                                           onChange={this.handleChange}/>
+                                </label>
+                            </div>
+                        </div>
+
                     </div>
 
 
-                    <div className="col-sm-6">
-                        <fieldset>
-                            <legend>Reset Login Info:</legend>
-                            <label htmlFor="password">
-                                New Password:<br/>
-                                <input type="password"
-                                       ref="password"
-                                       id="password" name="password"
-                                       onChange={this.handleChange}/>
-                            </label>
+                    <div className="col-sm-5" style={{'borderLeft':'1px solid'}}>
 
-                            <Button ref="savePasswordBtn"
-                                    id="savePasswordBtn"
-                                    onClick={this.handleResetPasswordClick}
-                                    data-color="#fff"
-                                    data-style="expand-left"
-                                    data-spinner-size={20}
-                                    data-spinner-color="#000"
-                                    className="ladda-button" >
-                                <span className="ladda-label">Save Password</span>
-                            </Button>
+                        <Subheader>Reset Login Info:</Subheader>
+                        <label htmlFor="password" style={{'paddingLeft':'16px'}}>
+                            New Password:<br/>
+                            <input type="password"
+                                   ref="password"
+                                   id="password" name="password"/>
+                        </label><br/>
 
-                        </fieldset>
+                        <FlatButton
+                            label="Change Password"
+                            ref="savePasswordBtn"
+                            id="savePasswordBtn"
+                            onTouchTap={this.handleResetPasswordClick}
+                            icon={this.state.savePwdLoading?<LoadingIcon style={{'width':'25px', 'height':'25px'}}/>:<span/>}/>
+
+
                         <br/><br/>
                     </div>
                 </div>
 
 
                 <div className="row">
+                    <br/><br/>
+                </div>
+                <div className="row">
                     <div className="col-sm-12">
                         <Tabs defaultActiveKey={1}>
-                            <Tab eventKey={1} title='Cloud Drives'>
+                            <Tab eventKey={1} label='Cloud Drives'>
 
-                                <Table className="userDetailsTable">
-                                    <tbody>
-                                    <tr>
-                                        <td style={{'width':'100%'}}>
-                                            Google Drive (coming soon)
-                                        </td>
-                                        <td>
-                                            <input ref="googleDriveToggle"
-                                                   type="checkbox"
-                                                   data-size="small"
-                                                   disabled
-                                                   checked={false}/>
-                                        </td>
-                                        <td>
-                                            <Button bsSize='xsmall' disabled>Authorize</Button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{'width':'100%'}}>
-                                            Dropbox (coming soon)
-                                        </td>
-                                        <td>
-                                            <input ref="dropboxToggle"
-                                                   type="checkbox"
-                                                   data-size="small"
-                                                   disabled
-                                                   checked={false}/>
-                                        </td>
-                                        <td>
-                                            <Button bsSize='xsmall' disabled>Authorize</Button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
+                                <Table >
+                                    <TableHeader enableSelectAll={false} adjustForCheckbox={false}
+                                                 displaySelectAll={false}>
+                                        <TableRow>
+                                            <TableHeaderColumn colSpan={5} tooltip="Service">Service</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody displayRowCheckbox={false}>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
+                                                Google Drive (coming soon)
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Enabled"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton disabled={true} label="Authorize"/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                        <tr>
+                                            <TableRowColumn colSpan={3}>
+                                                Dropbox (coming soon)
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Enabled"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton disabled={true} label="Authorize"/>
+                                            </TableRowColumn>
+                                        </tr>
+                                    </TableBody>
                                 </Table>
                             </Tab>
 
 
-
-                            <Tab eventKey={2} title='Web Sites'>
-                                <Table className="userDetailsTable">
-                                    <tbody>
-                                    <tr>
-                                        <td style={{'width':'100%'}}>
-                                            Facebook (coming soon)
-                                        </td>
-                                        <td>
-                                            <input ref="facebookToggle"
-                                                   type="checkbox"
-                                                   data-size="small"
-                                                   disabled
-                                                   checked={false}/>
-                                        </td>
-                                        <td>
-                                            <Button bsSize='xsmall' disabled>Authorize</Button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{'width':'100%'}}>
-                                            Twitter (coming soon)
-                                        </td>
-                                        <td>
-                                            <input ref="twitterToggle"
-                                                   type="checkbox"
-                                                   data-size="small"
-                                                   disabled
-                                                   checked={false}/>
-                                        </td>
-                                        <td>
-                                            <Button bsSize='xsmall' disabled>Authorize</Button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
+                            <Tab eventKey={2} label='Web Sites'>
+                                <Table >
+                                    <TableHeader enableSelectAll={false} adjustForCheckbox={false}
+                                                 displaySelectAll={false}>
+                                        <TableRow>
+                                            <TableHeaderColumn colSpan={5} tooltip="Service">Service</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody displayRowCheckbox={false}>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
+                                                Facebook (coming soon)
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Sync"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton disabled={true} label="Authorize"/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
+                                                Twitter (coming soon)
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Sync"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton disabled={true} label="Authorize"/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                    </TableBody>
                                 </Table>
                             </Tab>
 
 
-                            <Tab eventKey={3} title='Email Accounts'>
-                                <Table className="userDetailsTable">
-                                    <tbody>
-                                    <tr>
-                                        <td style={{'width':'100%'}}>
-                                            Gmail (coming soon)
-                                        </td>
-                                        <td>
-                                            <input ref="facebookToggle"
-                                                   type="checkbox"
-                                                   data-size="small"
-                                                   disabled
-                                                   checked={false}/>
-                                        </td>
-                                        <td>
-                                            <Button bsSize='xsmall' disabled>Authorize</Button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{'width':'100%'}}>
-                                            Yahoo (coming soon)
-                                        </td>
-                                        <td>
-                                            <input ref="twitterToggle"
-                                                   type="checkbox"
-                                                   data-size="small"
-                                                   disabled
-                                                   checked={false}/>
-                                        </td>
-                                        <td>
-                                            <Button bsSize='xsmall' disabled>Authorize</Button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{'width':'100%'}}>
-                                            POP (coming soon)
-                                        </td>
-                                        <td>
-                                            <input ref="twitterToggle"
-                                                   type="checkbox"
-                                                   data-size="small"
-                                                   disabled
-                                                   checked={false}/>
-                                        </td>
-                                        <td>
-                                            <Button bsSize='xsmall' disabled>Authorize</Button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
+                            <Tab eventKey={3} label='Email Accounts'>
+                                <Table >
+                                    <TableHeader enableSelectAll={false} adjustForCheckbox={false}
+                                                 displaySelectAll={false}>
+                                        <TableRow>
+                                            <TableHeaderColumn colSpan={5} tooltip="Service">Service</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody displayRowCheckbox={false}>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
+                                                Gmail (coming soon)
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Sync"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton disabled={true} label="Authorize"/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
+                                                Yahoo (coming soon)
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Sync"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton disabled={true} label="Authorize"/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
+                                                POP (coming soon)
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Sync"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton disabled={true} label="Authorize"/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                    </TableBody>
                                 </Table>
                             </Tab>
 
 
-                            <Tab eventKey={4} title='Permissions'>
+                            <Tab eventKey={4} label='Permissions'>
                                 <br/>(Coming Soon)<br/>
 
                             </Tab>

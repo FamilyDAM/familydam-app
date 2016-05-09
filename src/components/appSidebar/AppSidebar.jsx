@@ -90,15 +90,15 @@ module.exports = React.createClass({
                     <div style={{'display':'flex', 'flexDirection':'column', 'width':'240px'}}>
                         <Paper zDepth={1} style={{'width':'100%'}}>
                             <div style={{'display':'flex', 'flexDirection':'column', 'justifyContent':'center', 'alignItems':'center', 'height':'125px','width':'100%'}}>
-                                <div style={{'display':'flex', 'flexDirection':'row','alignItems':'center'}}>
+                                <div style={{'display':'flex', 'flexDirection':'row','alignItems':'center', 'alignItems':'flex-start'}}>
                                     <Avatar icon={<SocialPerson/>} />
                                     <span style={{'paddingLeft':'10px'}}>{this.state.currentUser.firstName +' ' +this.state.currentUser.lastName}</span>
                                 </div>
                                 <br/>
                                 <div style={{'display':'flex', 'flexDirection':'row', 'alignItems':'flex-end'}}>
-                                    <LinkContainer to="login"><FlatButton label="Logout"
+                                    <LinkContainer to="/login"><FlatButton label="Logout"
                                                 style={{'justifyContent':'flex-start'}}/></LinkContainer>
-                                    <LinkContainer to="users"><FlatButton label="Profile"
+                                    <LinkContainer to={'/users/' +this.state.currentUser.username}><FlatButton label="Profile"
                                                 style={{'justifyContent':'flex-end'}} /></LinkContainer>
                                 </div>
                             </div>
@@ -156,7 +156,7 @@ module.exports = React.createClass({
                         </List>
 
                         <List style={{'flexGrow':0}}>
-                            <LinkContainer to="users">
+                            <LinkContainer to={'/users/' +this.state.currentUser.username}>
                             <ListItem
                                 style={{'paddingBottom':'10px'}}
                                 leftAvatar={<Avatar icon={<SocialPerson />} />}

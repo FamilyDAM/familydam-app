@@ -97,7 +97,7 @@ var FileUploadControls = React.createClass({
 
 
     /**
-     * Use jquery to click a hiddle file input field
+     * Use jquery to click a hidden file input field
      */
     clickFolderInputField: function () {
         $(this.refs.folderInputField).attr("webkitdirectory", "webkitdirectory");
@@ -120,23 +120,21 @@ var FileUploadControls = React.createClass({
 
                             <div className="file-wrapper" onClick={this.clickFileInputField}
                                  style={{'width':'100%','maxWidth':'250px', 'margin':'10px'}}>
-                                <input type="file"
-                                       ref="fileInputField"
-                                       onChange={this.handleFileChange}
-                                       style={{'display':'none'}}
-                                       multiple="true"/>
-
-                                <RaisedButton label="Select Files" primary={true} style={{'width':'100%'}}/>
+                                <RaisedButton label="Select Files" primary={true} style={{'width':'100%'}}>
+                                    <input type="file"
+                                           ref="fileInputField"
+                                           onChange={this.handleFileChange}
+                                           multiple="true"/>
+                                </RaisedButton>
                             </div>
                             <div className="file-wrapper" onClick={this.clickFolderInputField}
                                  style={{'width':'100%', 'maxWidth':'250px', 'margin':'10px'}}>
-                                <input type="file"
-                                       ref="folderInputField"
-                                       onChange={this.handleFolderChange}
-                                       style={{'display':'none'}}
-                                       multiple="true" webkitdirectory="webkitdirectory" directory="true"/>
-
-                                <RaisedButton label="Select Folder" primary={true} style={{'width':'100%'}}/>
+                                <RaisedButton label="Select Folder" primary={true} style={{'width':'100%'}}>
+                                    <input type="file"
+                                           ref="folderInputField"
+                                           onChange={this.handleFolderChange}
+                                           multiple="true" webkitdirectory="webkitdirectory" directory="true"/>
+                                </RaisedButton>
                             </div>
                         </div>
                     </div>

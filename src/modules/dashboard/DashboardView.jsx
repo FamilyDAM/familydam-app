@@ -183,7 +183,7 @@ module.exports = React.createClass({
                                    style={{'width':'100%','backgroundColor':'rgb(245, 245, 245)'}}>
 
                                 <div className="row">
-                                    <div className="col-xs-12">
+                                    <div className="col-xs-12" style={{'marginLeft':'-0.9375rem'}}>
                                         {this.props.children}
                                     </div>
                                 </div>

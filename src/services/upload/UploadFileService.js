@@ -28,8 +28,8 @@ module.exports = {
      */
     execute:function(file_)
     {
-        console.log("{upload single file} " +file_.path);
-        console.dir(file_);
+        //console.log("{upload single file} " +file_.path);
+        //console.dir(file_);
 
 
         var _this = this;

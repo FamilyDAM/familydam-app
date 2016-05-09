@@ -38,7 +38,7 @@ module.exports = React.createClass({
                 <div className="col-sm-offset-3 col-sm-6">
                     <p className="text-center" style={{'marginTop':'30px', 'width':'100%'}}>
                         The FamilyD.A.M System allows members of your family their own view of the data.
-                    Allowing everyone to manage the files, photos, and music anyway they want. </p>
+                        Allowing everyone to manage the files, photos, and music anyway they want. </p>
                     <br/>
                 </div>
             </div>
