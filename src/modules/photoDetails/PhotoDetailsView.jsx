@@ -21,7 +21,7 @@ var Tags = require('./../../components/tags/Tags.jsx');
 var ExifMap = require('./../../components/exifMap/ExifMap.jsx');
 var ExifData = require('./../../components/exifData/ExifData.jsx');
 
-var FolderTree = require('../../components/folderTree/FolderTree.jsx');
+//var FolderTree = require('../../components/folderTree/FolderTree.jsx');
 
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');

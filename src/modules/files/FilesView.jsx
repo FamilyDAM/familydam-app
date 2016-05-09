@@ -48,9 +48,6 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 
 var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
-var FileRow = require("./FileRow.jsx");
-var DirectoryRow = require("./DirectoryRow.jsx");
-var BackFolder = require("./BackFolder.jsx");
 var PreviewSidebar = require("./../previews/PreviewSidebar.jsx");
 var TreeList = require('../../components/folderTree/TreeList.jsx');
 var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');

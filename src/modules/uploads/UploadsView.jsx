@@ -26,10 +26,10 @@ import {
 var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
 
 var FileUploadView = require('./FileUploadView.jsx');
-var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
-var Tree = require('../../components/folderTree/Tree.jsx');
-var FolderTree = require('../../components/folderTree/FolderTree.jsx');
-var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
+//var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
+//var Tree = require('../../components/folderTree/Tree.jsx');
+//var FolderTree = require('../../components/folderTree/FolderTree.jsx');
+//var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
 
 var UploadActions = require('../../actions/UploadActions');
 var NavigationActions = require('./../../actions/NavigationActions');

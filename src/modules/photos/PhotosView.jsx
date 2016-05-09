@@ -6,7 +6,21 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-import { Router, Link } from 'react-router';
+import {Router, Link} from 'react-router';
+
+import {
+    CircularProgress,
+    GridList,
+    GridTile,
+    Paper,
+    Subheader,
+    Toolbar,
+    ToolbarGroup,
+    ToolbarSeparator,
+    IconButton,
+    StarBorder
+} from 'material-ui';
+import ImagePhoto from 'material-ui/svg-icons/image/photo';
 
 var MenuItem = require('react-bootstrap').MenuItem;
 var DropdownButton = require('react-bootstrap').DropdownButton;
@@ -23,10 +37,11 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 var PhotoStore = require('./../../stores/PhotoStore');
 
+var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
 var Tags = require('./../../components/tags/Tags.jsx');
 var PreviewSidebar = require("./../previews/PreviewSidebar.jsx");
-var Tree = require('../../components/folderTree/Tree.jsx');
-var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
+var TreeList = require('../../components/folderTree/TreeList.jsx');
+//var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
 var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 var Fab = require('../../components/fab/UploadFab.jsx');
 var IsotopeGallery = require('../../components/isotopeGallery/IsotopeGallery.jsx');
@@ -36,22 +51,80 @@ var DateTree = require('./DateTree.jsx');
 var PhotoActions = require('./PhotoActions.jsx');
 
 
+var GridGroup = React.createClass({
 
-module.exports =  React.createClass({
+    render:function(){
+        return(
+            <div key="g1" style={{'width':'100%'}}>
+
+                {this.props.groups.map(function (item_, indx_) {
+                    return (
+                        <div key={item_.label}>
+                            <Subheader>{item_.label}</Subheader>
+                            <GridList
+                                cols={5}
+                                cellHeight={200}
+                                style={{'overflowY': 'auto','marginBottom': '24px'}}>
+
+                                {item_.children.map( (img_) => (
+                                    <GridTile
+                                        key={img_.path}
+                                        title={img_.name}
+                                        subtitle={<span>by <b>john doe</b></span>}>
+                                        <img src={img_.src} />
+                                    </GridTile>
+                                ))}
+
+                            </GridList>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    }
+});
+
+
+var GridCards = React.createClass({
+
+    render:function(){
+        return(
+            <GridTile
+                key={img_.path}
+                title={img_.name}
+                subtitle={<span>by <b>john doe</b></span>}>
+                <img src={img_.src} style={{'width':'200px', 'height':'200px'}}/>
+            </GridTile>
+        );
+    }
+
+});
+
+
+module.exports = React.createClass({
 
     getInitialState: function () {
         return {
             files: [],
             filters: {},
+            selectedPath:"",
             selectedItem: undefined,
-            selectedImages:[],
+            selectedImages: [],
             state: '100%',
             showAddFolder: false,
             bodyWidth: 0,
-            isLoading:true
+            isLoading: true,
+            addNodeRefs: [],
+            treeData: []
         };
     },
 
+
+    getDefaultProps:function(){
+        return {
+            baseDir: "/content"
+        };
+    },
 
     componentWillMount: function () {
         var _this = this;
@@ -62,21 +135,63 @@ module.exports =  React.createClass({
         var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'params': {}, 'level': 1};
         NavigationActions.currentPath.onNext(_pathData);
 
-        this.filtersSubscription = PhotoStore.filters.subscribe(function(data_){
+        this.filtersSubscription = PhotoStore.filters.subscribe(function (data_) {
             this.state.filters = data_;
 
             //on Initial load, or when filters change run initial search to populate the view
             ImageActions.search.source.onNext(this.state.filters);
 
-            if( this.isMounted()) this.forceUpdate();
+            if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
 
-        this.searchSubscription = ImageActions.search.sink.subscribe(function(data_){
-            this.setState({'files':data_, isLoading:false});
+        this.searchSubscription = ImageActions.search.sink.subscribe(function (data_) {
+            this.setState({'files': data_, isLoading: false});
             //this.state.isLoading = false;
             //this.state.files = data_;
             //if( this.isMounted()) this.forceUpdate();
+        }.bind(this));
+
+
+        // load directories
+        DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+
+        // listen for trigger to reload for files in directory
+        this.refreshDirectoriesSubscription = DirectoryActions.refreshDirectories.subscribe(function (data_) {
+            DirectoryActions.getDirectories.source.onNext(undefined);
+            DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+        }.bind(this));
+
+        //Listen for directory changes
+        this.directoriesSubscription = DirectoryStore.directories.subscribe(function (data_) {
+            var isChild = false;
+            for (var i = 0; i < this.state.addNodeRefs.length; i++)
+            {
+                var obj = this.state.addNodeRefs[i];
+
+                for (var j = 0; j < data_.length; j++)
+                {
+                    var dataObj = data_[j];
+                    if (obj.path == dataObj.parent)
+                    {
+                        isChild = true;
+                        obj.children.push(dataObj);
+
+                        this.state.addNodeRefs.push(dataObj);
+
+                    }
+                }
+            }
+
+            if (!isChild && data_ !== undefined && data_.length > 0)
+            {
+                this.state.treeData = data_;
+                for (var i = 0; i < data_.length; i++)
+                {
+                    this.state.addNodeRefs.push(data_[i]);
+                }
+            }
+            if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
     },
@@ -90,8 +205,10 @@ module.exports =  React.createClass({
     componentWillUnmount: function () {
         window.removeEventListener("resize", this.updateDimensions);
 
-        if( this.filtersSubscription !== undefined ) this.filtersSubscription.dispose();
-        if( this.searchSubscription !== undefined ) this.filtersSubscription.dispose();
+        if (this.filtersSubscription !== undefined) this.filtersSubscription.dispose();
+        if (this.searchSubscription !== undefined) this.filtersSubscription.dispose();
+        if (this.directoriesSubscription !== undefined) this.directoriesSubscription.dispose();
+        if (this.refreshDirectoriesSubscription !== undefined) this.refreshDirectoriesSubscription.dispose();
     },
 
     componentDidMount: function () {
@@ -103,54 +220,50 @@ module.exports =  React.createClass({
         this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
     },
 
-    handleLogout:function(event_){
+    handleLogout: function (event_) {
         //todo, logout and redirect back to /
     },
 
 
-    handleActionClose:function(event_){
+    handleActionClose: function (event_) {
 
         this.state.selectedImages = [];
 
-        for( var key in this.state.files)
+        for (var key in this.state.files)
         {
             for (var i = 0; i < this.state.files[key].children.length; i++)
             {
                 var _file = this.state.files[key].children[i];
-                    _file.active = false;
+                _file.active = false;
             }
         }
 
-        if( this.isMounted()) this.forceUpdate();
+        if (this.isMounted()) this.forceUpdate();
     },
 
 
-    handleImageToggle:function(event_){
+    handleImageToggle: function (event_) {
 
         this.state.selectedImages = [];
 
-        for( var key in this.state.files)
+        for (var key in this.state.files)
         {
             for (var i = 0; i < this.state.files[key].children.length; i++)
             {
                 var _file = this.state.files[key].children[i];
-                if( _file.active){
+                if (_file.active)
+                {
                     this.state.selectedImages.push(_file);
                 }
             }
         }
 
-        if( this.isMounted()) this.forceUpdate();
+        if (this.isMounted()) this.forceUpdate();
     },
 
 
-
-
-
-
-    handleGroupByChange:function(event, eventKey)
-    {
-        this.setState({'files':[], 'isLoading':true});
+    handleGroupByChange: function (event, eventKey) {
+        this.setState({'files': [], 'isLoading': true});
 
         var data = {};
         data.type = "group";
@@ -158,70 +271,80 @@ module.exports =  React.createClass({
         ImageActions.addFilter.onNext(data);
     },
 
-    removeFilter: function(data){
-        this.setState({'files':[], 'isLoading':true});
+    removeFilter: function (data) {
+        this.setState({'files': [], 'isLoading': true});
 
         ImageActions.removeFilter.onNext(data);
     },
 
-    addFilter: function(data){
+    addFilter: function (data) {
 
-        this.setState({'files':[], 'isLoading':true});
+        this.setState({'files': [], 'isLoading': true});
 
-        if( data.type == "path" ){
+        if (data.type == "path")
+        {
             data.name = data.path;
-        } else if( data.type == "date" ){
+        } else if (data.type == "date")
+        {
             data.name = data.key;
         }
         ImageActions.addFilter.onNext(data);
     },
 
-    addFreeFormFilter: function(data){
+    addFreeFormFilter: function (data) {
         var _type = "tag";
         var _name = data;
 
-        if( data.indexOf(":") > -1)
+        if (data.indexOf(":") > -1)
         {
             _type = data.substr(0, data.indexOf(":"));
-            _name = data.substr(data.indexOf(":")+1);
+            _name = data.substr(data.indexOf(":") + 1);
         }
 
         var isNew = false;
-        if( _type === "path" )
+        if (_type === "path")
         {
-            for (var k = 0; k < this.state.filters.paths.length; k++) {
+            for (var k = 0; k < this.state.filters.paths.length; k++)
+            {
                 var _path = this.state.filters.paths[k];
-                if (_path.name == _name) {
+                if (_path.name == _name)
+                {
                     isNew = true;
                     break;
                 }
             }
         }
-        else if( _type === "date" )
+        else if (_type === "date")
         {
-            for (var i = 0; i < this.state.filters.date.length; i++) {
+            for (var i = 0; i < this.state.filters.date.length; i++)
+            {
                 var _date = this.state.filters.date[i];
-                if (_date.name == _name) {
+                if (_date.name == _name)
+                {
                     isNew = true;
                     break;
                 }
             }
         }
-        else if( _type === "people" )
+        else if (_type === "people")
         {
-            for (var i = 0; i < this.state.filters.people.length; i++) {
+            for (var i = 0; i < this.state.filters.people.length; i++)
+            {
                 var _people = this.state.filters.people[i];
-                if (_people.name == _name) {
+                if (_people.name == _name)
+                {
                     isNew = true;
                     break;
                 }
             }
         }
-        else if( _type === "tag" )
+        else if (_type === "tag")
         {
-            for (var i = 0; i < this.state.filters.tags.length; i++) {
+            for (var i = 0; i < this.state.filters.tags.length; i++)
+            {
                 var _tag = this.state.filters.tags[i];
-                if (_tag.name == _name) {
+                if (_tag.name == _name)
+                {
                     isNew = true;
                     break;
                 }
@@ -229,14 +352,14 @@ module.exports =  React.createClass({
         }
 
 
-        if( !isNew )
+        if (!isNew)
         {
-            this.setState({'files':[], 'isLoading':true});
+            this.setState({'files': [], 'isLoading': true});
 
-            if( data.indexOf(":") > -1 )
+            if (data.indexOf(":") > -1)
             {
                 ImageActions.addFilter.onNext({type: _type, name: _name});
-            }else
+            } else
             {
                 ImageActions.addFilter.onNext({type: "tag", name: _name});
                 ImageActions.addFilter.onNext({type: "people", name: _name});
@@ -247,14 +370,106 @@ module.exports =  React.createClass({
 
 
 
+
+
     render: function () {
+
+        return (
+            <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
+                <Toolbar style={{'display':'flex', 'height':'50px', 'alignItems':'center'}}>
+                    <ToolbarGroup firstChild={true} float="left" style={{'flexGrow':1, 'justifyContent':'flex-start'}}>
+                        <ImagePhoto/>
+                        <Breadcrumb path={this.state.selectedPath}/>
+                    </ToolbarGroup>
+                    <ToolbarGroup float="right" style={{'flexGrow':0, 'justifyContent':'flex-end'}}>
+                        <ToolbarSeparator/>
+
+                    </ToolbarGroup>
+                </Toolbar>
+
+
+                <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around'}}>
+                    <div
+                        style={{'display':'flex', 'flexDirection':'column', 'flexGrow':0, 'flexShrink':0, 'minWidth':'240px', 'margin':'20px'}}
+                        zDepth={0}>
+                        <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
+                            <TreeList
+                                title="Filter Photos By Path"
+                                data={this.state.treeData}
+                                onSelect={(path_)=>{
+                                     e_.type = "path";
+                                    this.addFilter(path_);
+                                }}/>
+                        </Paper>
+                    </div>
+
+
+                    <div style={{'display':'flex', 'flexGrow':1, 'margin':'20px'}}>
+                        <Paper zDepth={2} style={{'flexGrow':1}}>
+                            <div style={{'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'center'}}>
+                                {(() => {
+                                    if (this.state.isLoading)
+                                    {
+                                        return (
+                                            <div style={{'display':'flex','flexWrap': 'wrap','justifyContent': 'center','alignItems': 'center', 'height':'100vh', }}>
+                                                <CircularProgress size={2} />
+                                            </div>
+                                        );
+
+                                    } else if( this.state.files.length > 0 ){
+
+                                        return(
+                                            <GridGroup groups={this.state.files}/>
+                                        );
+                                    }
+                                    else
+                                    {
+                                        return(
+                                            <Subheader>No items found</Subheader>
+                                        );
+                                    }
+                                })()}
+                            </div>
+                        </Paper>
+                    </div>
+                </div>
+            </div>
+
+        )
+    },
+
+
+    /****
+     *  {this.state.files.map(function (item_, indx_) {
+                                return (
+
+                                    <Subheader>{item_.label}</Subheader>
+
+
+                                )
+                            }.bind(this))}
+     *
+     *
+     *
+     * {item_.children.map((img_) => (
+                                        return (<GridTile
+                                                    key={img_.path}
+                                                    title={img_.name}
+                                                    subtitle={<span>by <b>john doe</b></span>}
+                                                    actionIcon={<IconButton><StarBorder color="white" /></IconButton>} >
+                                                    <img src={img_.src} />
+                                                </GridTile>);
+                                    ))};
+
+
+    renderOld: function () {
 
         var _this = this;
         var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
         var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
         var asideRightClass = "card hidden col-xs-4 col-sm-3 col-md-3";
 
-        if (this.state.selectedImages.length > 0 )
+        if (this.state.selectedImages.length > 0)
         {
             tableClass = "card main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
             asideClass = "box body-sidebar hidden-xs hidden-sm col-md-3 col-lg-2";
@@ -321,7 +536,8 @@ module.exports =  React.createClass({
 
 
                                 <div>
-                                    <DropdownButton id="groupByOptions" title="Group By:" onSelect={this.handleGroupByChange}>
+                                    <DropdownButton id="groupByOptions" title="Group By:"
+                                                    onSelect={this.handleGroupByChange}>
                                         <MenuItem eventKey="date:day">Group By Day</MenuItem>
                                         <MenuItem eventKey="date:month">Group By Month</MenuItem>
                                         <MenuItem eventKey="date:year">Group By Year</MenuItem>
@@ -340,19 +556,20 @@ module.exports =  React.createClass({
                                 </div>
 
                                 {(() => {
-                                    if( this.state.isLoading )
+                                    if (this.state.isLoading)
                                     {
                                         return (
                                             <div className="loadingPanel text-center">
-                                                <i className="fa fa-spinner fa-spin fa-4x fa-fw margin-bottom" style={{'marginTop':'50px'}}></i>
+                                                <i className="fa fa-spinner fa-spin fa-4x fa-fw margin-bottom"
+                                                   style={{'marginTop':'50px'}}></i>
                                             </div>
                                         );
                                     }
                                 })()}
 
 
-                                {this.state.files.map(function(item_, indx_){
-                                    return(
+                                {this.state.files.map(function (item_, indx_) {
+                                    return (
                                         <div key={'group-' +indx_}>
                                             <SidebarSection
                                                 style={{'height':'60px'}}
@@ -385,11 +602,13 @@ module.exports =  React.createClass({
                     <br/>
                 </div>
             );
-        }catch(err_){
+        } catch (err_)
+        {
             console.log(err_);
-            return(<div>{err_}</div>);
+            return (<div>{err_}</div>);
         }
     }
+     ****/
 
 });
 

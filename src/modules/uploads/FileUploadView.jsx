@@ -27,8 +27,6 @@ import {
     ToolbarSeparator
 } from 'material-ui';
 
-var Glyphicon = require('react-bootstrap').Glyphicon;
-var Button = require('react-bootstrap').Button;
 
 var FileUploadControls = require("./FileUploadControls.jsx");
 

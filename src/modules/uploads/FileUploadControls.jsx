@@ -9,10 +9,7 @@ var Rx = require('rx');
 var React = require('react');
 var UUID = require('uuid-js');
 
-
 import {RaisedButton,Paper} from 'material-ui';
-
-var Button = require('react-bootstrap').Button;
 
 var UploadActions = require("../../actions/UploadActions");
 var DirectoryActions = require("../../actions/DirectoryActions");
