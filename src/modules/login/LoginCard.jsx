@@ -55,7 +55,7 @@ module.exports = React.createClass({
      * Submit form, on success redirect to the dashboard.
      * @param event
      */
-    handleSubmit: function(event)
+    handleLogin: function(event)
     {
 
         var _this = this;
@@ -70,6 +70,16 @@ module.exports = React.createClass({
             {
                 //_this.transitionTo("dashboard");
                 this.context.router.push({pathname: '/dashboard'});
+
+
+                mixpanel.identify(data_['jcr:uuid']);
+                mixpanel.register({
+                    "locale": "en_us",
+                    "source": "desktop"
+                });
+                //todo: set source if desktop or drobo
+                //todo: set version #
+                mixpanel.track("login");
             }
         }.bind(this));
 
@@ -126,7 +136,7 @@ module.exports = React.createClass({
                                     </div>
                                     <div>
                                         <button className="btn btn-default btn-link" onClick={this.handleCancel}>{this.getIntlMessage('cancel')}</button>
-                                        <button className="btn btn-primary" onClick={this.handleSubmit} onTouch={this.handleSubmit}>{this.getIntlMessage('login')}</button>
+                                        <button className="btn btn-primary" onClick={this.handleLogin} onTouch={this.handleSubmit}>{this.getIntlMessage('login')}</button>
                                         <br/>
                                     </div>
                                 </div>

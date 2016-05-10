@@ -18,23 +18,17 @@ module.exports = React.createClass({
             data:[]
         }
     },
-    
 
-    componentWillMount: function () {
-        // trigger a directory reload
-        if (this.props.baseDir !== undefined)
-        {
-            this.loadDirectoryTree();
-        }
-    },
-    
-    
+
+    /**
     componentWillReceiveProps: function (nextProps_) {
         if (nextProps_.data !== undefined)
         {
-            //this.state.treeData = nextProps_.data;
+            this.props.data = nextProps_.data;
+            if( this.isMounted() ) this.forceUpdate();
         }
     },
+     **/
 
 
     _onClickHandler: function (path_) {
@@ -59,6 +53,7 @@ module.exports = React.createClass({
 
 
     render(){
+        debugger;
 
         return (
             <List>

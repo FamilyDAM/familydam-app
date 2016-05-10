@@ -194,6 +194,8 @@ module.exports = React.createClass({
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
+
+        mixpanel.track("Enter Photos View");
     },
 
 
@@ -284,9 +286,11 @@ module.exports = React.createClass({
         if (data.type == "path")
         {
             data.name = data.path;
+            mixpanel.track("PhotosView: Add PATH filter");
         } else if (data.type == "date")
         {
             data.name = data.key;
+            mixpanel.track("PhotosView: Add DATE filter");
         }
         ImageActions.addFilter.onNext(data);
     },
@@ -313,6 +317,7 @@ module.exports = React.createClass({
                     break;
                 }
             }
+            mixpanel.track("PhotosView: Add PATH filter");
         }
         else if (_type === "date")
         {
@@ -325,6 +330,7 @@ module.exports = React.createClass({
                     break;
                 }
             }
+            mixpanel.track("PhotosView: Add DATE filter");
         }
         else if (_type === "people")
         {
@@ -337,6 +343,7 @@ module.exports = React.createClass({
                     break;
                 }
             }
+            mixpanel.track("PhotosView: Add PEOPLE filter");
         }
         else if (_type === "tag")
         {
@@ -349,6 +356,7 @@ module.exports = React.createClass({
                     break;
                 }
             }
+            mixpanel.track("PhotosView: Add TAG filter");
         }
 
 

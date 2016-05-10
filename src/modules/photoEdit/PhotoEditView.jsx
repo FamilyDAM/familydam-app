@@ -52,6 +52,8 @@ module.exports = React.createClass({
 
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
+
+        mixpanel.track("Enter Photo Edit View");
     },
 
 

@@ -76,6 +76,8 @@ module.exports = React.createClass({
                 _this.history.pushState(null, 'photo/' +_this.state.nextId );
             }
         });
+
+        mixpanel.track("Enter Photo Details View");
     },
 
 

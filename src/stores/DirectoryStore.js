@@ -16,7 +16,7 @@ module.exports = {
     /**
      * List of directories
      */
-    directories: new Rx.BehaviorSubject([]),
+    directories: new Rx.Subject(),
 
     /**
      * the last folder selected by a user in the sidebar folder tree.

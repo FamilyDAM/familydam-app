@@ -69,7 +69,6 @@ module.exports = React.createClass({
             selectedPath: "/content/dam-files",
             addNodeRefs: [],
             treeData: []
-
         };
     },
 
@@ -104,8 +103,6 @@ module.exports = React.createClass({
         FileActions.getFiles.source.onNext(this.state.selectedPath);
 
 
-        // load directories
-        DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
 
 
         // listen for trigger to reload for files in directory
@@ -176,6 +173,10 @@ module.exports = React.createClass({
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
+
+        // load directories
+        DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+
         /**
          * Add Folder Modal
 
@@ -193,6 +194,8 @@ module.exports = React.createClass({
             //console.dir(error_);
         }.bind(this));
          */
+
+        mixpanel.track("Enter Files View");
     },
 
 
@@ -211,9 +214,14 @@ module.exports = React.createClass({
         {
             FileActions.getFiles.source.onNext(PreferenceStore.getRootDirectory());
         }
+
+        // reload directories
+        DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+
     },
 
     componentWillUnmount: function () {
+
         if (this.fileStoreSubscription !== undefined) {
             this.fileStoreSubscription.dispose();
         }
@@ -231,6 +239,9 @@ module.exports = React.createClass({
         }
         if (this.createFolderSubscription !== undefined) {
             this.createFolderSubscription.dispose();
+        }
+        if (this.directoriesSubscription !== undefined) {
+            this.directoriesSubscription.dispose();
         }
 
         window.removeEventListener("resize", this.updateDimensions);
@@ -263,6 +274,8 @@ module.exports = React.createClass({
         e.preventDefault();
         //<Link to={{pathname: '/files', query:{'path':dir_.path}}}>
         this.context.router.transitionTo({pathname: '/files', query: {'path': dir_.path}});
+
+        mixpanel.track("FilesView: Change Folder");
     },
 
     _onAddFolder: function (e) {
@@ -305,10 +318,12 @@ module.exports = React.createClass({
                     <TableRow key={'dir-' +index_}>
                         <TableRowColumn colSpan="2"
                             onTouchTap={() => {this.context.router.push({pathname:'/files', query:{'path':dir_.path}}) }}>
-                            <FolderIcon
-                                style={{'width':'25px', 'height':'25px', 'minWidth':'25px', 'minHeight':'25px'}}/>
-                            <span style={{'paddingLeft':'10px'}}><Link
-                                to={{pathname: '/files', query:{'path':dir_.path}}}>{dir_.name}</Link></span>
+                            <div style={{'display':'flex', 'alignItems':'center'}}>
+                                <FolderIcon
+                                    style={{'width':'25px', 'height':'25px', 'minWidth':'25px', 'minHeight':'25px'}}/>
+                                <span style={{'paddingLeft':'10px'}}><Link
+                                    to={{pathname: '/files', query:{'path':dir_.path}}}>{dir_.name}</Link></span>
+                            </div>
                         </TableRowColumn>
                         <TableRowColumn colSpan="1"></TableRowColumn>
                         <TableRowColumn colSpan="1">
