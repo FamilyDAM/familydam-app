@@ -5,6 +5,8 @@
 var React = require('react');
 import { Router, Link } from 'react-router';
 
+import {Subheader, List, ListItem, IconButton} from 'material-ui';
+
 var ImageActions = require('../../actions/ImageActions');
 var PhotoStore = require('./../../stores/PhotoStore');
 var Tree = require('../../components/folderTree/Tree.jsx');
@@ -39,15 +41,42 @@ module.exports =  React.createClass({
     },
 
 
-    selectItem: function(node, toggled){
-        if( this.props.onSelect !== undefined ){
-            node.type="date";
-            this.props.onSelect(node);
+    _onSelectHandler: function(val_){
+        if( this.props.onSelect  ){
+            this.props.onSelect(  (JSON.parse(JSON.stringify(val_)))  );
         }
     },
 
+    getListItem: function (items_) {
 
-    render: function() {
+        var elements = [];
+        $.each(items_, (indx_, item_)=> {
+            elements.push(
+                <ListItem key={item_.key}
+                          primaryText={item_.name}
+                          onTouchTap={()=>{this._onSelectHandler(item_)}}
+                          nestedItems={this.getListItem(item_.children)}
+                          style={{'fontSize':'13px', 'lineHeight':'13px'}}/>
+            );
+        });
+
+        return elements;
+        //leftIcon={<FolderIcon />}
+        //leftIcon={<IconButton iconClassName="material-icons" >folder</IconButton>}
+    },
+
+
+    render(){
+        return (
+            <List>
+                {this.getListItem(this.state.tree)}
+            </List>
+        );
+    }
+
+
+    /**
+    renderOld: function() {
         try{
             return (
                 <div className="dateTree">
@@ -60,6 +89,7 @@ module.exports =  React.createClass({
             console.log(err_);
         }
     }
+     **/
 
 });
 

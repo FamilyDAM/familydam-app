@@ -10,56 +10,58 @@ var React = require('react');
 var TokenField = require('bootstrap-tokenfield');
 
 
-module.exports  = React.createClass({
+module.exports = React.createClass({
 
 
-
-    getDefaultProps: function(){
-        return {'tags':[], title:"Tags", placeholder:"Enter Tags"}
+    getDefaultProps: function () {
+        return {'tags': [], title: "Tags", placeholder: "Enter Tags"}
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {}
     },
 
-    componentDidMount: function(){
+    componentDidMount: function () {
         var _this = this;
         $(this.refs.tokenField).tokenfield();
-        $(this.refs.tokenField).on('tokenfield:createdtoken', function(event_){
+        $(this.refs.tokenField).on('tokenfield:createdtoken', function (event_) {
             //console.dir(event_.attrs.value);
 
-            if( _this.props.onAdd  != undefined ){
+            if (_this.props.onAdd != undefined)
+            {
                 _this.props.onAdd(event_.attrs.value);
             }
 
         });
-        $(this.refs.tokenField).on('tokenfield:removedtoken', function(event_){
+        $(this.refs.tokenField).on('tokenfield:removedtoken', function (event_) {
             //console.dir(event_.attrs.value);
 
-            if( _this.props.onRemove != undefined ){
+            if (_this.props.onRemove != undefined)
+            {
                 _this.props.onRemove(event_.attrs.value);
             }
         });
     },
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps: function (nextProps) {
         this.props = nextProps;
 
-        if( nextProps['tags'] != undefined && nextProps['tags'].constructor == Array )
+        if (nextProps['tags'] != undefined && nextProps['tags'].constructor == Array)
         {
             $(this.refs.tokenField).tokenfield('setTokens', nextProps['tags']);
         }
-        if( nextProps['tags'] != undefined && nextProps['tags'].constructor == Object )
+        if (nextProps['tags'] != undefined && nextProps['tags'].constructor == Object)
         {
             var vals = [];
-            for(var key in nextProps['tags'] ){
+            for (var key in nextProps['tags'])
+            {
                 var _items = nextProps['tags'][key];
-                if( _items.constructor == Array)
+                if (_items.constructor == Array)
                 {
                     for (var i = 0; i < _items.length; i++)
                     {
                         var obj = _items[i];
-                        vals.push( obj.type +":" +obj.name );
+                        vals.push(obj.type + ":" + obj.name);
                     }
                 }
             }
@@ -67,24 +69,25 @@ module.exports  = React.createClass({
         }
     },
 
-    componentWillUnmount: function(){
+    componentWillUnmount: function () {
 
     },
 
-    handleOnChange: function(){
+    handleOnChange: function () {
         //do nothing
     },
 
 
-    render: function() {
+    render: function () {
 
         return (
 
-            <div className="TagComponent input-group" >
-                <span className="input-group-addon">{this.props.title}:</span>
+            <div className="TagComponent input-group">
+                <span className="input-group-addon" style={{'fontSize':'inherit', 'lineHeight':'1.4'}}>{this.props.title}:</span>
                 <input type="text" ref="tokenField"
-                    placeholder={this.props.placeholder}
-                    defaultValue={this.props.tags} />
+                       placeholder={this.props.placeholder}
+                       defaultValue={this.props.tags}
+                       style={{'fontSize':'inherit'}}/>
             </div>
 
         );

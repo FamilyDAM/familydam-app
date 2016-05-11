@@ -10,6 +10,8 @@ import {Router, Link} from 'react-router';
 
 import {
     CircularProgress,
+    DropDownMenu,
+    MenuItem,
     GridList,
     GridTile,
     Paper,
@@ -22,8 +24,6 @@ import {
 } from 'material-ui';
 import ImagePhoto from 'material-ui/svg-icons/image/photo';
 
-var MenuItem = require('react-bootstrap').MenuItem;
-var DropdownButton = require('react-bootstrap').DropdownButton;
 
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
@@ -53,8 +53,8 @@ var PhotoActions = require('./PhotoActions.jsx');
 
 var GridGroup = React.createClass({
 
-    render:function(){
-        return(
+    render: function () {
+        return (
             <div key="g1" style={{'width':'100%'}}>
 
                 {this.props.groups.map(function (item_, indx_) {
@@ -66,12 +66,12 @@ var GridGroup = React.createClass({
                                 cellHeight={200}
                                 style={{'overflowY': 'auto','marginBottom': '24px'}}>
 
-                                {item_.children.map( (img_) => (
+                                {item_.children.map((img_) => (
                                     <GridTile
                                         key={img_.path}
                                         title={img_.name}
                                         subtitle={<span>by <b>john doe</b></span>}>
-                                        <img src={img_.src} />
+                                        <img src={img_.src}/>
                                     </GridTile>
                                 ))}
 
@@ -87,8 +87,8 @@ var GridGroup = React.createClass({
 
 var GridCards = React.createClass({
 
-    render:function(){
-        return(
+    render: function () {
+        return (
             <GridTile
                 key={img_.path}
                 title={img_.name}
@@ -107,7 +107,7 @@ module.exports = React.createClass({
         return {
             files: [],
             filters: {},
-            selectedPath:"",
+            selectedPath: "",
             selectedItem: undefined,
             selectedImages: [],
             state: '100%',
@@ -120,7 +120,7 @@ module.exports = React.createClass({
     },
 
 
-    getDefaultProps:function(){
+    getDefaultProps: function () {
         return {
             baseDir: "/content"
         };
@@ -264,12 +264,12 @@ module.exports = React.createClass({
     },
 
 
-    handleGroupByChange: function (event, eventKey) {
+    handleGroupByChange: function(event_, key_, payload_) {
         this.setState({'files': [], 'isLoading': true});
 
         var data = {};
         data.type = "group";
-        data.name = eventKey;
+        data.name = payload_;
         ImageActions.addFilter.onNext(data);
     },
 
@@ -280,7 +280,6 @@ module.exports = React.createClass({
     },
 
     addFilter: function (data) {
-
         this.setState({'files': [], 'isLoading': true});
 
         if (data.type == "path")
@@ -289,6 +288,7 @@ module.exports = React.createClass({
             mixpanel.track("PhotosView: Add PATH filter");
         } else if (data.type == "date")
         {
+            debugger;
             data.name = data.key;
             mixpanel.track("PhotosView: Add DATE filter");
         }
@@ -376,25 +376,36 @@ module.exports = React.createClass({
     },
 
 
-
-
-
-
     render: function () {
 
         return (
             <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
-                <Toolbar style={{'display':'flex', 'height':'50px', 'alignItems':'center'}}>
-                    <ToolbarGroup firstChild={true} float="left" style={{'flexGrow':1, 'justifyContent':'flex-start'}}>
-                        <ImagePhoto/>
-                        <Breadcrumb path={this.state.selectedPath}/>
-                    </ToolbarGroup>
-                    <ToolbarGroup float="right" style={{'flexGrow':0, 'justifyContent':'flex-end'}}>
-                        <ToolbarSeparator/>
 
-                    </ToolbarGroup>
-                </Toolbar>
+                <div className="container-fluid photo-body" style={{'width':'100%'}}>
+                    <div className="row" style={{'width':'100%'}}>
+                        <div className="col-xs-10 col-xs-offset-1">
 
+                            <DropDownMenu onChange={this.handleGroupByChange} value="date:day">
+                                <MenuItem value="date:day" primaryText="Group By Day"/>
+                                <MenuItem value="date:month" primaryText="Group By Month"/>
+                                <MenuItem value="date:year"  primaryText="Group By Year"/>
+                                <MenuItem value="gps:location" primaryText="Group By Location"/>
+                                <MenuItem value="tag:person" primaryText="Group By Person"/>
+                                <MenuItem value="tag:tag" primaryText="Group By Tag"/>
+                            </DropDownMenu>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-xs-10 col-xs-offset-1" style={{'fontSize':'14px'}}>
+                            <Tags
+                                title="Filters"
+                                tags={this.state.filters}
+                                onAdd={this.addFreeFormFilter}
+                                onRemove={this.removeFilter}
+                            />
+                        </div>
+                    </div>
+                </div>
 
                 <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around'}}>
                     <div
@@ -405,9 +416,30 @@ module.exports = React.createClass({
                                 title="Filter Photos By Path"
                                 data={this.state.treeData}
                                 onSelect={(path_)=>{
-                                     e_.type = "path";
-                                    this.addFilter(path_);
+                                    var e = {'type':"path", 'path': path_};
+                                    this.addFilter(e);
                                 }}/>
+                        </Paper>
+                        <br/>
+                        <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'200px'}}>
+                            <Subheader>Filter Photos By Date</Subheader>
+                            <DateTree
+                                onSelect={(e_)=>{
+                                e_.type = "date";
+                                this.addFilter(e_);
+                            }}/>
+                        </Paper>
+                        <br/>
+                        <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'200px'}}>
+                            <Subheader>Filter Photos By People</Subheader>
+                            <PeopleList
+                                onSelect={this.addFilter}/>
+                        </Paper>
+                        <br/>
+                        <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'200px'}}>
+                            <Subheader>Filter Photos By Tags</Subheader>
+                            <TagList
+                                onSelect={this.addFilter}/>
                         </Paper>
                     </div>
 
@@ -419,20 +451,22 @@ module.exports = React.createClass({
                                     if (this.state.isLoading)
                                     {
                                         return (
-                                            <div style={{'display':'flex','flexWrap': 'wrap','justifyContent': 'center','alignItems': 'center', 'height':'100vh', }}>
-                                                <CircularProgress size={2} />
+                                            <div
+                                                style={{'display':'flex','flexWrap': 'wrap','justifyContent': 'center','alignItems': 'center', 'height':'100vh', }}>
+                                                <CircularProgress size={2}/>
                                             </div>
                                         );
 
-                                    } else if( this.state.files.length > 0 ){
+                                    } else if (this.state.files.length > 0)
+                                    {
 
-                                        return(
+                                        return (
                                             <GridGroup groups={this.state.files}/>
                                         );
                                     }
                                     else
                                     {
-                                        return(
+                                        return (
                                             <Subheader>No items found</Subheader>
                                         );
                                     }
@@ -448,29 +482,9 @@ module.exports = React.createClass({
 
 
     /****
-     *  {this.state.files.map(function (item_, indx_) {
-                                return (
-
-                                    <Subheader>{item_.label}</Subheader>
-
-
-                                )
-                            }.bind(this))}
      *
-     *
-     *
-     * {item_.children.map((img_) => (
-                                        return (<GridTile
-                                                    key={img_.path}
-                                                    title={img_.name}
-                                                    subtitle={<span>by <b>john doe</b></span>}
-                                                    actionIcon={<IconButton><StarBorder color="white" /></IconButton>} >
-                                                    <img src={img_.src} />
-                                                </GridTile>);
-                                    ))};
 
-
-    renderOld: function () {
+     renderOld: function () {
 
         var _this = this;
         var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";

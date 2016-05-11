@@ -50,6 +50,18 @@ module.exports = {
         }).then(function(data_, status_, xhr_){
 
             //console.log("{GetDirectoriesService} getDirectories() success" );
+            //Special filter to remove the dashboard app folder
+            var filteredChildren = [];
+            var children = data_._embedded.children;
+            for (var i = 0; i < children.length; i++)
+            {
+                var child = children[i];
+                if( child.path != "/content/dashboard"){
+                    filteredChildren.push(child);
+                }
+            }
+            data_._embedded.children = filteredChildren;
+
             _this.sink.onNext(data_);
 
             // update token

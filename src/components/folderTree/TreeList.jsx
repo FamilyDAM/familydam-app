@@ -31,8 +31,11 @@ module.exports = React.createClass({
      **/
 
 
-    _onClickHandler: function (path_) {
-        FileActions.getFiles.source.onNext(path_);
+    _onSelectHandler: function (path_) {
+        if( this.props.onSelect )
+        {
+            this.props.onSelect(path_);
+        }
     },
 
 
@@ -41,7 +44,7 @@ module.exports = React.createClass({
             return (
                 <ListItem key={item_.path}
                           primaryText={item_.name}
-                          onTouchTap={()=>{this._onClickHandler(item_.path)}}
+                          onTouchTap={()=>{this._onSelectHandler(item_.path)}}
                           nestedItems={this.getListItem(item_.children)}
                           style={{'fontSize':'13px', 'lineHeight':'13px'}}/>
             );
@@ -53,8 +56,6 @@ module.exports = React.createClass({
 
 
     render(){
-        debugger;
-
         return (
             <List>
                 <Subheader>{this.props.title}</Subheader>
