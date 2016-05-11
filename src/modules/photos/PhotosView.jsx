@@ -49,6 +49,8 @@ var TagList = require('./TagList.jsx');
 var PeopleList = require('./PeopleList.jsx');
 var DateTree = require('./DateTree.jsx');
 var PhotoActions = require('./PhotoActions.jsx');
+var LoadingIcon = require('../../components/loadingIcon/LoadingIcon.jsx');
+
 
 
 var GridGroup = React.createClass({
@@ -115,7 +117,11 @@ module.exports = React.createClass({
             bodyWidth: 0,
             isLoading: true,
             addNodeRefs: [],
-            treeData: []
+            treeData: [],
+            isDirTreeLoading:false,
+            isDateTreeLoading:false,
+            isPeopleTreeLoading:false,
+            isTagTreeLoading:false
         };
     },
 
@@ -153,14 +159,12 @@ module.exports = React.createClass({
         }.bind(this));
 
 
-        // load directories
-        DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
-
         // listen for trigger to reload for files in directory
         this.refreshDirectoriesSubscription = DirectoryActions.refreshDirectories.subscribe(function (data_) {
             DirectoryActions.getDirectories.source.onNext(undefined);
             DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
         }.bind(this));
+
 
         //Listen for directory changes
         this.directoriesSubscription = DirectoryStore.directories.subscribe(function (data_) {
@@ -191,18 +195,18 @@ module.exports = React.createClass({
                     this.state.addNodeRefs.push(data_[i]);
                 }
             }
+            this.state.isDirTreeLoading = false;
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
 
+        // load directories
+        this.state.isDirTreeLoading = true;
+        DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
+
         mixpanel.track("Enter Photos View");
     },
 
-
-    componentWillReceiveProps: function (nextProps) {
-        //console.log("{PhotosView} componentWillReceiveProps");
-
-    },
 
     componentWillUnmount: function () {
         window.removeEventListener("resize", this.updateDimensions);
@@ -414,6 +418,7 @@ module.exports = React.createClass({
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
                             <TreeList
                                 title="Filter Photos By Path"
+                                isLoading={this.state.isDirTreeLoading}
                                 data={this.state.treeData}
                                 onSelect={(path_)=>{
                                     var e = {'type':"path", 'path': path_};
@@ -422,8 +427,8 @@ module.exports = React.createClass({
                         </Paper>
                         <br/>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'200px'}}>
-                            <Subheader>Filter Photos By Date</Subheader>
                             <DateTree
+                                title="Filter Photos By Date"
                                 onSelect={(e_)=>{
                                 e_.type = "date";
                                 this.addFilter(e_);
@@ -431,13 +436,33 @@ module.exports = React.createClass({
                         </Paper>
                         <br/>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'200px'}}>
-                            <Subheader>Filter Photos By People</Subheader>
+                            <div style={{'display':'flex', 'flexDirection':'row', 'alignItems':'center'}}>
+                                <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>Filter Photos By People</Subheader>
+                                {(() => {
+                                    if( this.state.isPeopleTreeLoading )
+                                    {
+                                        <div style={{'display':'flex', 'alignItems':'flex-end'}}>
+                                            <LoadingIcon color="#757575" style={{'width':'36px', 'height':'36px'}}/>
+                                        </div>
+                                    }
+                                })()}
+                            </div>
                             <PeopleList
                                 onSelect={this.addFilter}/>
                         </Paper>
                         <br/>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'200px'}}>
-                            <Subheader>Filter Photos By Tags</Subheader>
+                            <div style={{'display':'flex', 'flexDirection':'row', 'alignItems':'center'}}>
+                                <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>Filter Photos By Tags</Subheader>
+                                {(() => {
+                                    if( this.state.isTagTreeLoading )
+                                    {
+                                        <div style={{'display':'flex', 'alignItems':'flex-end'}}>
+                                            <LoadingIcon color="#757575" style={{'width':'36px', 'height':'36px'}}/>
+                                        </div>
+                                    }
+                                })()}
+                            </div>
                             <TagList
                                 onSelect={this.addFilter}/>
                         </Paper>

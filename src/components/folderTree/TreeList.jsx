@@ -9,13 +9,16 @@ var FileActions = require('./../../actions/FileActions');
 var DirectoryActions = require('./../../actions/DirectoryActions');
 var DirectoryStore = require('./../../stores/DirectoryStore');
 
+var LoadingIcon = require('../../components/loadingIcon/LoadingIcon.jsx');
+
 
 module.exports = React.createClass({
 
     getDefaultProps: function () {
         return {
             title: "",
-            data:[]
+            data:[],
+            isLoading:true
         }
     },
 
@@ -57,10 +60,22 @@ module.exports = React.createClass({
 
     render(){
         return (
-            <List>
-                <Subheader>{this.props.title}</Subheader>
-                {this.getListItem(this.props.data)}
-            </List>
+            <div style={{'display':'flex', 'flexDirection':'column', 'flexGrow':'1'}}>
+                <div style={{'display':'flex', 'flexDirection':'row', 'alignItems':'center'}}>
+                    <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>{this.props.title}</Subheader>
+                    {(() => {
+                        if( this.props.isLoading )
+                        {
+                            return(<div style={{'display':'flex', 'alignItems':'flex-end'}}>
+                                <LoadingIcon color="#757575" style={{'width':'36px', 'height':'36px'}}/>
+                            </div>);
+                        }
+                    })()}
+                </div>
+                <List>
+                    {this.getListItem(this.props.data)}
+                </List>
+            </div>
         );
     }
 

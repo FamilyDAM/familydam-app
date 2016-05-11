@@ -7,9 +7,12 @@ import { Router, Link } from 'react-router';
 
 import {Subheader, List, ListItem, IconButton} from 'material-ui';
 
+
 var ImageActions = require('../../actions/ImageActions');
 var PhotoStore = require('./../../stores/PhotoStore');
+
 var Tree = require('../../components/folderTree/Tree.jsx');
+var LoadingIcon = require('../../components/loadingIcon/LoadingIcon.jsx');
 
 module.exports =  React.createClass({
    
@@ -21,29 +24,38 @@ module.exports =  React.createClass({
     },
     
     getInitialState: function(){
-        return {}
+        return {
+            isLoading:true
+        }
     },
 
 
     componentWillMount: function () {
+        this.state.isLoading = true;
         ImageActions.dateTree.source.onNext(true);
 
 
-        PhotoStore.dateTree.subscribe(function(data){
+        this.dateTreeSubscription = PhotoStore.dateTree.subscribe(function(data){
             var root = [];
             for( var key in data ){
                 root.push(data[key]);
             }
 
             this.state.tree = root;
+            this.state.isLoading = false;
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
+    },
+
+    
+    componentWillUnmount: function () {
+        if (this.dateTreeSubscription !== undefined) this.dateTreeSubscription.dispose();
     },
 
 
     _onSelectHandler: function(val_){
         if( this.props.onSelect  ){
-            this.props.onSelect(  (JSON.parse(JSON.stringify(val_)))  );
+            this.props.onSelect( Object.assign({}, val_) );// (JSON.parse(JSON.stringify(val_)))  );
         }
     },
 
@@ -67,10 +79,24 @@ module.exports =  React.createClass({
 
 
     render(){
+
         return (
-            <List>
-                {this.getListItem(this.state.tree)}
-            </List>
+            <div style={{'display':'flex', 'flexDirection':'column', 'flexGrow':'1'}}>
+                <div style={{'display':'flex', 'flexDirection':'row', 'alignItems':'center'}}>
+                    <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>{this.props.title}</Subheader>
+                    {(() => {
+                        if( this.state.isLoading )
+                        {
+                            return(<div style={{'display':'flex', 'alignItems':'flex-end'}}>
+                                <LoadingIcon color="#757575" style={{'width':'36px', 'height':'36px'}}/>
+                            </div>);
+                        }
+                    })()}
+                </div>
+                <List>
+                    {this.getListItem(this.state.tree)}
+                </List>
+            </div>
         );
     }
 
