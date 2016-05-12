@@ -37,70 +37,20 @@ var PreferenceStore = require('./../../stores/PreferenceStore');
 var UserStore = require('./../../stores/UserStore');
 var PhotoStore = require('./../../stores/PhotoStore');
 
-var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
-var Tags = require('./../../components/tags/Tags.jsx');
-var PreviewSidebar = require("./../previews/PreviewSidebar.jsx");
-var TreeList = require('../../components/folderTree/TreeList.jsx');
-//var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
-var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
-var Fab = require('../../components/fab/UploadFab.jsx');
-var IsotopeGallery = require('../../components/isotopeGallery/IsotopeGallery.jsx');
 var TagList = require('./TagList.jsx');
 var PeopleList = require('./PeopleList.jsx');
 var DateTree = require('./DateTree.jsx');
 var PhotoActions = require('./PhotoActions.jsx');
+
 var LoadingIcon = require('../../components/loadingIcon/LoadingIcon.jsx');
+var MaterialGallery = require('../../components/gallery/MaterialGallery.jsx');
+
+var Tags = require('./../../components/tags/Tags.jsx');
+var PreviewSidebar = require("./../previews/PreviewSidebar.jsx");
+var TreeList = require('../../components/folderTree/TreeList.jsx');
+var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 
 
-
-var GridGroup = React.createClass({
-
-    render: function () {
-        return (
-            <div key="g1" style={{'width':'100%'}}>
-
-                {this.props.groups.map(function (item_, indx_) {
-                    return (
-                        <div key={item_.label}>
-                            <Subheader>{item_.label}</Subheader>
-                            <GridList
-                                cols={5}
-                                cellHeight={200}
-                                style={{'overflowY': 'auto','marginBottom': '24px'}}>
-
-                                {item_.children.map((img_) => (
-                                    <GridTile
-                                        key={img_.path}
-                                        title={img_.name}
-                                        subtitle={<span>by <b>john doe</b></span>}>
-                                        <img src={img_.src}/>
-                                    </GridTile>
-                                ))}
-
-                            </GridList>
-                        </div>
-                    );
-                })}
-            </div>
-        );
-    }
-});
-
-
-var GridCards = React.createClass({
-
-    render: function () {
-        return (
-            <GridTile
-                key={img_.path}
-                title={img_.name}
-                subtitle={<span>by <b>john doe</b></span>}>
-                <img src={img_.src} style={{'width':'200px', 'height':'200px'}}/>
-            </GridTile>
-        );
-    }
-
-});
 
 
 module.exports = React.createClass({
@@ -115,9 +65,9 @@ module.exports = React.createClass({
             state: '100%',
             showAddFolder: false,
             bodyWidth: 0,
-            isLoading: true,
             addNodeRefs: [],
             treeData: [],
+            isLoading: true,
             isDirTreeLoading:false,
             isDateTreeLoading:false,
             isPeopleTreeLoading:false,
@@ -471,32 +421,9 @@ module.exports = React.createClass({
 
                     <div style={{'display':'flex', 'flexGrow':1, 'margin':'20px'}}>
                         <Paper zDepth={2} style={{'flexGrow':1}}>
-                            <div style={{'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'center'}}>
-                                {(() => {
-                                    if (this.state.isLoading)
-                                    {
-                                        return (
-                                            <div
-                                                style={{'display':'flex','flexWrap': 'wrap','justifyContent': 'center','alignItems': 'center', 'height':'100vh', }}>
-                                                <CircularProgress size={2}/>
-                                            </div>
-                                        );
-
-                                    } else if (this.state.files.length > 0)
-                                    {
-
-                                        return (
-                                            <GridGroup groups={this.state.files}/>
-                                        );
-                                    }
-                                    else
-                                    {
-                                        return (
-                                            <Subheader>No items found</Subheader>
-                                        );
-                                    }
-                                })()}
-                            </div>
+                            <MaterialGallery
+                                isLoading={this.state.isLoading}
+                                files={this.state.files}/>
                         </Paper>
                     </div>
                 </div>

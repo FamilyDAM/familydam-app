@@ -68,7 +68,8 @@ module.exports = React.createClass({
             showAddFolderDialog: false,
             selectedPath: "/content/dam-files",
             addNodeRefs: [],
-            treeData: []
+            treeData: [],
+            isDirTreeLoading:false
         };
     },
 
@@ -170,11 +171,14 @@ module.exports = React.createClass({
                     this.state.addNodeRefs.push(data_[i]);
                 }
             }
+            
+            this.state.isDirTreeLoading = false;
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
 
         // load directories
+        this.state.isDirTreeLoading = true;
         DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
 
         /**
@@ -473,6 +477,7 @@ module.exports = React.createClass({
                         zDepth={0}>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
                             <TreeList
+                                isLoading={this.state.isDirTreeLoading}
                                 title="Files"
                                 data={this.state.treeData}
                                 onSelect={(path_)=>{

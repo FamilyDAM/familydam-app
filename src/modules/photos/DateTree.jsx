@@ -31,9 +31,6 @@ module.exports =  React.createClass({
 
 
     componentWillMount: function () {
-        this.state.isLoading = true;
-        ImageActions.dateTree.source.onNext(true);
-
 
         this.dateTreeSubscription = PhotoStore.dateTree.subscribe(function(data){
             var root = [];
@@ -45,6 +42,11 @@ module.exports =  React.createClass({
             this.state.isLoading = false;
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
+
+
+        this.state.isLoading = true;
+        ImageActions.dateTree.source.onNext(true);
+
     },
 
     
