@@ -21,6 +21,9 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.security.AccessControlException;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -45,7 +48,8 @@ import static com.familydam.core.FamilyDAMCoreConstants.HATEAOS_LINKS;
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.core.servlets.GraphServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "Default Graph Servlet Description (todo)", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false),
+        @Property(name = "service.base.dir", value = "/content")
 })
 public class GraphServlet extends SlingAllMethodsServlet
 {
@@ -82,11 +86,13 @@ public class GraphServlet extends SlingAllMethodsServlet
 
     private Map<String, Servlet> rendererMap = new HashMap<String, Servlet>();
 
+    private String baseDir;
 
 
     protected void activate(ComponentContext ctx) {
         Dictionary<?, ?> props = ctx.getProperties();
 
+        this.baseDir = OsgiUtil.toString(props.get("service.base.dir"), "/content");
         this.enableJson = OsgiUtil.toBoolean(props.get(JSON_RENDERER_PROPERTY), DEFAULT_RENDERER_PROPERTY);
         this.enableXml = OsgiUtil.toBoolean(props.get(XML_RENDERER_PROPERTY), DEFAULT_RENDERER_PROPERTY);
         this.limitResults = OsgiUtil.toInteger(props.get(LIMIT_RESULTS), DEFAULT_LIMIT_RESULTS);
@@ -106,8 +112,29 @@ public class GraphServlet extends SlingAllMethodsServlet
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
     {
         String[] selectors = request.getRequestPathInfo().getSelectors();
-        String resourcePath = request.getRequestPathInfo().getResourcePath();
+        String resourcePath = request.getRequestPathInfo().getResourcePath().trim();
         String extension = request.getRequestPathInfo().getExtension();
+
+
+        // Validate User & Access to the requested path
+        Session session = request.getResourceResolver().adaptTo(Session.class);
+        try {
+            session.checkPermission(resourcePath, Session.ACTION_READ);
+        }catch (AccessControlException ex){
+            response.setStatus(403);
+            return;
+        }catch ( RepositoryException re){
+            response.setStatus(500);
+            return;
+        }
+
+        // Validate path
+        if( !resourcePath.startsWith(baseDir) ){
+            response.setStatus(412);
+            return;
+        }
+
+
 
 
         String[] suffixTypes = defaultTypes;
