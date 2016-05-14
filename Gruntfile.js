@@ -49,7 +49,7 @@ module.exports = function (grunt) {
 
         slingPost: {
             options: {
-                exclude: [".svn", "*.txt", "*.svg", "*.jpg", "*.png", "shared-lib.js", "assets", "assets/*.*"]
+                exclude: [".svn", "*.txt", "*.svg", "*.jpg", "*.png", "assets", "assets/*.*"]
             },
             root: {
                 src: "dist",
