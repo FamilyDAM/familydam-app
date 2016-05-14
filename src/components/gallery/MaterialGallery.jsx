@@ -5,12 +5,21 @@
 var React = require('react');
 import { Router, Link } from 'react-router';
 
-import {CircularProgress,GridList,GridTile,Subheader} from 'material-ui';
+import {
+    CircularProgress,
+    GridList,
+    GridTile,
+    Subheader,
+    IconButton} from 'material-ui';
 
 var ImageActions = require('../../actions/ImageActions');
 
 
 var GridGroup = React.createClass({
+
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
 
 
     imageClickedHandler: function(e)
@@ -39,7 +48,11 @@ var GridGroup = React.createClass({
                                         key={img_.path}
                                         title={img_.name}
                                         style={img_.active?{'border':'2px solid blue'}:{}}
-                                        subtitle={<span>by <b>john doe</b></span>}>
+                                        subtitle={<span>by <b>john doe</b></span>}
+                                        actionIcon={<IconButton
+                                                        iconClassName="material-icons"
+                                                        onClick={() => {this.context.router.push({pathname:'photos/details', query:{path:img_.path}}) }}
+                                                        iconStyle={{'color':'white'}}>launch</IconButton>}>
                                         <img src={img_.src}
                                              onClick={ ()=>{ImageActions.selectImage.onNext(img_);} }/>
                                     </GridTile>
@@ -48,7 +61,7 @@ var GridGroup = React.createClass({
                             </GridList>
                         </div>
                     );
-                })}
+                }.bind(this))}
             </div>
         );
     }
@@ -147,8 +160,8 @@ module.exports =  React.createClass({
         }
 
 
-        if( this.props.onToggle !== undefined ){
-            this.props.onToggle();
+        if( this.props.onChange !== undefined ){
+            this.props.onChange();
         }
 
         if (this.isMounted()) this.forceUpdate();
@@ -182,6 +195,7 @@ module.exports =  React.createClass({
                         );
                     }
                 })()}
+
             </div>
         );
     }

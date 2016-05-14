@@ -6,7 +6,14 @@
 /** jsx React.DOM */
 // Used in TodoApp
 var React = require('react');
-import { Router, Link } from 'react-router';
+import {
+    Router,
+    Link } from 'react-router';
+
+import {
+    Paper
+} from 'material-ui';
+
 
 var Keymaster = require('keymaster');
 var moment = require('moment');
@@ -311,10 +318,6 @@ module.exports = React.createClass({
     },
 
 
-    handleDownloadOriginal:function(){
-        window.open(this.state.location);//, "_blank");
-    },
-
 
     handleDelete:function(){
 
@@ -330,8 +333,8 @@ module.exports = React.createClass({
         return (
             <div className="photoDetailsView container">
 
-                <div className="row">
-                    <section className="col-sm-12">
+                <Paper className="row">
+                    <section className="col-sm-12" style={{'margin':'20px'}}>
                         <div className="container-fluid">
                             <div className="row">
                                 <div className="col-sm-1">
@@ -367,10 +370,10 @@ module.exports = React.createClass({
                             <div className="row" >
                                 <div className="col-sm-6">
 
-                                    <img src="assets/icons/ic_file_download_24px.svg" style={{
+                                    <a href={this.state.location} download><img src="assets/icons/ic_file_download_24px.svg" style={{
                                         'width': '36px',
                                         'height': '36px'
-                                    }} onClick={this.handleDownloadOriginal}/>
+                                    }} /></a>
 
                                     <Link to={{pathname:'photos/edit', query:{path: this.state.photo._links.self}}} >
                                         <img src="assets/icons/ic_mode_edit_24px.svg" style={{
@@ -498,7 +501,7 @@ module.exports = React.createClass({
                         </div>
                     </section>
 
-                </div>
+                </Paper>
             </div>
 
         );

@@ -9,8 +9,11 @@ var React = require('react');
 import {Router, Link} from 'react-router';
 
 import {
+    AppBar,
     CircularProgress,
+    Drawer,
     DropDownMenu,
+    IconButton,
     MenuItem,
     GridList,
     GridTile,
@@ -19,10 +22,9 @@ import {
     Toolbar,
     ToolbarGroup,
     ToolbarSeparator,
-    IconButton,
     StarBorder
 } from 'material-ui';
-import ImagePhoto from 'material-ui/svg-icons/image/photo';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 
 var NodeActions = require('../../actions/NodeActions');
@@ -71,7 +73,8 @@ module.exports = React.createClass({
             isDirTreeLoading:false,
             isDateTreeLoading:false,
             isPeopleTreeLoading:false,
-            isTagTreeLoading:false
+            isTagTreeLoading:false,
+            openPreview:false
         };
     },
 
@@ -184,6 +187,7 @@ module.exports = React.createClass({
     handleActionClose: function (event_) {
 
         this.state.selectedImages = [];
+        this.state.openPreview = false;
 
         for (var key in this.state.files)
         {
@@ -198,7 +202,7 @@ module.exports = React.createClass({
     },
 
 
-    handleImageToggle: function (event_) {
+    handleImageToggle: function () {
 
         this.state.selectedImages = [];
 
@@ -214,6 +218,11 @@ module.exports = React.createClass({
             }
         }
 
+        if( this.state.selectedImages.length>0 ) {
+            this.state.openPreview = true;
+        }else{
+            this.state.openPreview = false;
+        }
         if (this.isMounted()) this.forceUpdate();
     },
 
@@ -332,6 +341,32 @@ module.exports = React.createClass({
 
     render: function () {
 
+        var _leftSidebar = {
+            display:'flex',
+            flexDirection:'column',
+            flexGrow:0,
+            flexShrink:0,
+            minWidth:'240px',
+            margin:'20px'};
+
+        if( this.state.openPreview ){
+            _leftSidebar['display'] = 'none';
+        };
+
+
+        var _rightSidebar = {
+            display:'none',
+            flexDirection:'column',
+            flexGrow:0,
+            flexShrink:0,
+            width:'0px',
+            margin:'20px'};
+
+        if( this.state.openPreview ){
+            _rightSidebar['display'] = 'flex';
+            _rightSidebar['width'] = '25%';
+        };
+
         return (
             <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
 
@@ -363,7 +398,7 @@ module.exports = React.createClass({
 
                 <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around'}}>
                     <div
-                        style={{'display':'flex', 'flexDirection':'column', 'flexGrow':0, 'flexShrink':0, 'minWidth':'240px', 'margin':'20px'}}
+                        style={_leftSidebar}
                         zDepth={0}>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
                             <TreeList
@@ -422,15 +457,28 @@ module.exports = React.createClass({
                     <div style={{'display':'flex', 'flexGrow':1, 'margin':'20px'}}>
                         <Paper zDepth={2} style={{'flexGrow':1}}>
                             <MaterialGallery
+                                onChange={this.handleImageToggle}
                                 isLoading={this.state.isLoading}
                                 files={this.state.files}/>
                         </Paper>
                     </div>
+
+
+                    <Paper
+                        style={_rightSidebar}
+                        zDepth={2}>
+
+                        <AppBar title="Photo Actions"
+                                iconElementLeft={<IconButton onTouchTap={this.handleActionClose}><NavigationClose /></IconButton>}/>
+                        <PhotoActions
+                            images={this.state.selectedImages}/>
+
+                    </Paper>
                 </div>
             </div>
 
         )
-    },
+    }
 
 
     /****

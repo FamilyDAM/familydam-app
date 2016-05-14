@@ -5,9 +5,13 @@
 var React = require('react');
 import { Router, Link } from 'react-router';
 
+
+import {
+    Subheader,
+    RaisedButton
+} from 'material-ui';
+
 var Glyphicon = require('react-bootstrap').Glyphicon;
-var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var Button = require('react-bootstrap').Button;
 
 var NodeActions = require('./../../actions/NodeActions');
 
@@ -165,8 +169,7 @@ module.exports =  React.createClass({
 
         try{
             return (
-                <div className="photoActions">
-                    <SectionTree title="Photo Actions" buttonGlyph="remove" buttonClick={this.handleOnClose}/>
+                <div className="photoActions" style={{'padding':'20px'}}>
                     <div>
                         <div className="pull-left">
                             <p>
@@ -181,7 +184,7 @@ module.exports =  React.createClass({
                     </div>
 
                     <div style={{'padding': '5px', 'clear':'left'}}>
-                        <p>Add people tag to all images</p>
+                        <Subheader>Add people tag to all images</Subheader>
                         <Tags
                             placeholder="Enter People"
                             title="People"
@@ -194,7 +197,7 @@ module.exports =  React.createClass({
                     </div>
 
                     <div style={{'padding': '5px'}}>
-                        <p>Add keyword tag to all images</p>
+                        <Subheader>Add keyword tag to all images</Subheader>
                         <Tags
                             placeholder="Enter Tags"
                             title="&nbsp;&nbsp;&nbsp;Tags"
@@ -207,13 +210,13 @@ module.exports =  React.createClass({
                     </div>
 
                     <hr/>
-                    <ButtonGroup vertical block>
-                        <Button disabled="true" block>Share (Facebook, Twitter)</Button>
-                        <Button disabled="true" block>Add To Collection</Button>
-                        <Button disabled="true" block>Export</Button>
-                        <Button disabled="true" block>Zip & Download</Button>
-                        <Button disabled="true" block>Auto Tag (with Google)</Button>
-                    </ButtonGroup>
+                    <div style={{'display':'flex','flexDirection':'column','alignContent':'space-around'}}>
+                        <RaisedButton disabled={true} style={{'marginBottom':'5px','color': '#ccc'}}>Share (Facebook, Twitter)</RaisedButton>
+                        <RaisedButton disabled={true} style={{'marginBottom':'5px','color': '#ccc'}}>Add To Collection</RaisedButton>
+                        <RaisedButton disabled={true} style={{'marginBottom':'5px','color': '#ccc'}}>Export</RaisedButton>
+                        <RaisedButton disabled={true} style={{'marginBottom':'5px','color': '#ccc'}}>Zip & Download</RaisedButton>
+                        <RaisedButton disabled={true} style={{'marginBottom':'5px','color': '#ccc'}}>Auto Tag (with Google)</RaisedButton>
+                    </div>
                 </div>
             );
         }catch(err_){
