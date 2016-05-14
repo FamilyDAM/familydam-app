@@ -19,14 +19,29 @@
 [feature name=model]
 [artifacts]
   org.apache.sling/org.apache.sling.launchpad/8/slingstart
-  org.apache.sling/org.apache.sling.bgservlets/1.0.2
+  #org.apache.sling/org.apache.sling.bgservlets/1.0.2
   org.apache.felix/org.apache.felix.shell/1.4.3
   org.apache.felix/org.apache.felix.shell.remote/1.1.2
 
 
+
+[feature name=familydam]
+[variables]
+    core.version=1.0.0-SNAPSHOT
+    dashboard.version=1.0.2-SNAPSHOT
+    image.handlers.version=1.0.0-SNAPSHOT
+[artifacts]
+   com.familydam.osgi/core/${core.version}
+   com.familydam.osgi/app-dashboard/${dashboard.version}
+   com.familydam.osgi/image-handlers/${image.handlers.version}
+[configurations]
+#    com.familydam.apps.photos.servlets.ImageThumbnailServlet
+#        resize-library="image-magik"
+
+
 [feature name=:boot]
 [configurations]
-    # uninstall obsolete bundles which are neither not required anymore or are
-    # replaced with new bundles
+# uninstall obsolete bundles which are neither not required anymore or are
+# replaced with new bundles
 :bootstrap
   uninstall org.apache.sling.launchpad.content

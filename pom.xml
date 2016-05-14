@@ -13,41 +13,40 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.familydam</groupId>
-    <artifactId>standalone</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>com.familydam.server</groupId>
+    <artifactId>repository</artifactId>
+    <version>0.1.0</version>
     <packaging>slingstart</packaging>
 
-    <name>FamilyDAM Standalone (Sling)</name>
+    <name>FamilyDAM Repository (Sling)</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-
-        <!---
         <dependency>
-            <groupId>io.neba</groupId>
-            <artifactId>io.neba.neba-api</artifactId>
-            <version>3.9.0</version>
+            <groupId>com.familydam.osgi</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>io.neba</groupId>
-            <artifactId>io.neba.neba-core</artifactId>
-            <version>3.9.0</version>
+            <groupId>com.familydam.osgi</groupId>
+            <artifactId>app-dashboard</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>io.neba</groupId>
-            <artifactId>io.neba.neba-delivery-sling</artifactId>
-            <version>3.9.0</version>
+            <groupId>com.familydam.osgi</groupId>
+            <artifactId>image-handlers</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
-        -->
     </dependencies>
 
     <build>
+        <finalName>repository-${project.version}</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.sling</groupId>
@@ -55,20 +54,10 @@
                 <version>1.4.2</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <createWebapp>true</createWebapp>
+                    <createWebapp>false</createWebapp>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>eclipse-gemini</id>
-            <name>Eclipse Gemini Maven repository</name>
-            <url>http://download.eclipse.org/gemini/mvn/</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-    </repositories>
 
 </project>
