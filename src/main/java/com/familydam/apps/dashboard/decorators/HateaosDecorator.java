@@ -46,8 +46,10 @@ public class HateaosDecorator implements ResourceDecorator
             linksMap.put("delete", resource.getPath()); //todo check permission
         }
         if (isDamImage(resource)) {
-            linksMap.put("thumb", resource.getPath() + ".resize.250.250.jpg");
-            linksMap.put("resize", resource.getPath() + ".resize.{width}.{height}.{format}");
+            String _path = resource.getPath().substring(0, resource.getPath().lastIndexOf("."));
+            String _ext = resource.getPath().substring(resource.getPath().lastIndexOf("."));
+            linksMap.put("thumb", _path + ".resize.250.250." +_ext);
+            linksMap.put("resize", _path + ".resize.{size}.{format}");
         }
 
         wrapper.put(HATEAOS_LINKS, linksMap);

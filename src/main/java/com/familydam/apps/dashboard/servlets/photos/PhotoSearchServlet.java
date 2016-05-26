@@ -180,16 +180,14 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
                 sql.append(" ) ");
             }
 
-
             sql.append(" ORDER BY [").append(_orderBy).append("] DESC");
-            if (limit > 0) { // 0 == return all
-                //sql.append(" LIMIT ").append(limit);
-                //sql.append(" OFFSET ").append(offset);
-            }
-
 
             QueryManager queryManager = session.getWorkspace().getQueryManager();
             Query query = queryManager.createQuery(sql.toString(), "JCR-SQL2");
+            if (limit > 0) { // 0 == return all
+                query.setLimit(limit);
+                query.setOffset(offset);
+            }
             //Query query = queryManager.createQuery(sql.toString(), "sql");
 
             // Execute the query and get the results ...

@@ -17,7 +17,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -144,12 +143,17 @@ public class NodeMapper
 
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = sdf.parse(node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getString());
-            Calendar cal = sdf.getCalendar();
-            file.setDateCreated(cal);
-        }catch(ParseException pe ){
+            if( node.hasProperty(FamilyDAMDashboardConstants.DAM_DATECREATED)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = sdf.parse(node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getString());
+                Calendar cal = sdf.getCalendar();
+                file.setDateCreated(cal);
+            }else{
+                file.setDateCreated(Calendar.getInstance());
+            }
+        }catch(Exception pe ){
             //todo: decide what to do
+            pe.printStackTrace();
         }
 
         return file;
