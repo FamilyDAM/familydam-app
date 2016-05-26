@@ -189,8 +189,10 @@ public class TreeWalker
             linksMap.put("delete", resource_.getPath()); //todo check permission
         }
         if (isDamImage(resource_)) {
-            linksMap.put("thumb", resource_.getPath() + ".resize.250.250.jpg");
-            linksMap.put("resize", resource_.getPath() + ".resize.{width}.{height}.{format}");
+            String _path = resource_.getPath().substring(0, resource_.getPath().lastIndexOf("."));
+            String _ext = resource_.getPath().substring(resource_.getPath().lastIndexOf("."));
+            linksMap.put("thumb", _path + ".resize.250.250." +_ext);
+            linksMap.put("resize", _path + ".resize.{size}." +_ext);
         }
 
         return linksMap;

@@ -63,7 +63,9 @@ public class AddNodeEventListener implements EventHandler
 
                     final Session session = adminResolver.adaptTo(Session.class);
                     // save the session, before changing props
-                    session.save();
+                    if( session.hasPendingChanges() ) {
+                        session.save();
+                    }
 
                     Node node = res.adaptTo(Node.class);
                     node.addMixin(NodeType.MIX_REFERENCEABLE);
