@@ -135,7 +135,7 @@ public class ImageThumbnailServlet extends SlingSafeMethodsServlet
             }else {
 
                 ResourceResolver resolver = request.getResourceResolver();
-                Resource resource = resolver.getResource(resourcePath);
+                Resource resource = resolver.getResource(imagePath +"." +extension);
 
 
                 String mimeType = resource.getResourceMetadata().getContentType();
