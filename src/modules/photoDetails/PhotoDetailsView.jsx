@@ -145,7 +145,7 @@ module.exports = React.createClass({
 
 
             // set some local props for easier rendering
-            var imagePath = results._links.resize.replace("{width}", 1024).replace("{height}", 1024).replace("{format}", "jpg");
+            var imagePath = results._links.resize.replace("{size}", 1024).replace("{format}", "jpg");
             var rating = results['dam:rating'] ? results['dam:rating'] : 0;
             var datetaken = results['jcr:created'];
 

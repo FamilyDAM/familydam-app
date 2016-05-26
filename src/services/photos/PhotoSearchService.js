@@ -31,7 +31,7 @@ module.exports = {
         if( filters_ !== undefined )
         {
             var _this = this;
-            var _url = "/content.image.search.json?type=dam:image&limit=100&offset=0";
+            var _url = "/content.image.search.json?type=dam:image&limit=50&offset=0";
 
             return $.ajax({
                 'method': "POST",
@@ -52,19 +52,12 @@ module.exports = {
                     for (var i = 0; i < data_[key].children.length; i++)
                     {
                         var img = data_[key].children[i];
-                        img.src = PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.500";
+                        var index = img.path.lastIndexOf(".");
+                        img.src = PreferenceStore.getBaseUrl() + img.path.substr(0, index) +".resize.250" +img.path.substr(index) ;
                         img.aspectRatio = img.width / img.height
-                        img.lightboxImage = {
-                            src: PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value,
-                            caption: img.name,
-                            srcset: [
-                                PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.1024" + ' 1024w',
-                                PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.800" + ' 800w',
-                                PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.500" + ' 500w',
-                                PreferenceStore.getBaseUrl() + img.path + "?token=" + UserStore.token.value + "&rendition=web.320" + ' 320w'
-                            ]
-                        };
+
                     }
+
                 }
 
                 _this.sink.onNext(sortedGroups.sort(function(a,b){

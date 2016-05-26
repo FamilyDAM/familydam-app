@@ -1,45 +1,51 @@
 .loginView
 {
-  font-family:      'Lato', 'Roboto 2', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background-color: #000000;
-  margin:           0;
-  padding:          0;
-
-  position:         absolute;
-  top:              0;
-  right:            0;
-  left:             0;
-  bottom:           0;
-  background-size: cover !important;
+  position:          absolute;
+  top:               0;
+  right:             0;
+  left:              0;
+  bottom:            0;
+  background-size:   cover !important;
   background-repeat: no-repeat !important;
 
+  .personCard
+  {
+    padding:    5px;
+    text-align: center;
 
-  ul{
-    list-style: none;
+    .box
+    {
+      background-color: blue;
+      height:           200px;
+      width:            200px;
+    }
   }
 
-  .logins
+  .loginCard
   {
-    height: 100%;
+    padding:    5px;
+    text-align: center;
 
+    .box
+    {
+      background-color: blue;
+      height:           200px;
+    }
   }
 
-  .login-grid
+
+  .loginCardForm
   {
-    top:    100px;
-    height: 100%;
+    padding: 20px;
+    width: 100%;
+    background-color: #ffffff;
 
-    ul
+    input
     {
-      list-style: none;
-
+      width: 100%;
     }
 
-    li
-    {
-      float:  left;
-      margin: 10px;
-    }
+
   }
 
   .timeClock
@@ -49,50 +55,4 @@
     left:     40px;
     width:    100%;
   }
-
-  /* Styles for signup panels */
-  .loginCard
-  {
-    padding: 3px;
-    margin-bottom: 0px;
-    width:210px;
-    float: left;
-    margin: 20px;
-
-
-    .box
-    {
-      background-color: blue;
-      height:          200px;
-      width:           200px;
-    }
-
-    h2
-    {
-      text-align: center;
-    }
-  }
-
-  .loginCardForm
-  {
-    width: 500px;
-    background-color: #fff;
-
-    input{
-      width: 100%;
-    }
-
-    .loginCard
-    {
-      width: 220px;
-      margin: 0px;
-    }
-
-    .loginForm{
-      float: left;
-      width:280px;
-    }
-  }
-
-
 }

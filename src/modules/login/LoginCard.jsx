@@ -9,6 +9,10 @@
 var React = require('react');
 import { Router, Link } from 'react-router';
 
+import {
+    TextField, Subheader, FlatButton, RaisedButton
+} from 'material-ui';
+
 
 var ReactIntl  = require('react-intl');
 var IntlMixin  = ReactIntl.IntlMixin;
@@ -111,7 +115,7 @@ module.exports = React.createClass({
         var activeView;
         if (this.props.mode !== "active") {
             activeView = <div
-                            className="loginCard panel center-block"
+                            className="personCard panel center-block"
                             onTouchEnd={this.handleSelect}
                             onClick={this.handleSelect}>
                             <div className="box">&nbsp;</div>
@@ -120,24 +124,27 @@ module.exports = React.createClass({
         } else {
             overrideStyle = {width:"100%"};
 
-            activeView= <div className="loginCardForm center-block container-fluid">
+            activeView= <div className="loginCard container" style={{'backgroundColor':'#fff', 'width':'500px', 'height':'250px'}}>
                             <div className="row">
-                                <div className="loginCard  col-sm-4">
+                                <div className="col-xs-12 col-sm-4">
                                     <div className="box">&nbsp;</div>
                                     <h2>{this.props.user.firstName}</h2>
                                 </div>
-                                <div className="loginForm col-sm-8" >
-                                    <h3>{this.props.user.username}</h3>
+                                <div className="col-xs-12 col-sm-8" style={{'textAlign':'center'}}>
+                                    <Subheader>{this.props.user.username}</Subheader>
+                                    <br/>
                                     <div>
-                                        <input ref="pwdField"
-                                               type="password"
-                                               onChange={(e) => {this.setState({'password': e.target.value})}}
-                                               label={this.getIntlMessage('password')}/>
+                                        <TextField
+                                            ref="pwdField"
+                                            type="password"
+                                            floatingLabelText={this.getIntlMessage('password')}
+                                            onChange={(e) => {this.setState({'password': e.target.value})}}
+                                        />
+
                                     </div>
                                     <div>
-                                        <button className="btn btn-default btn-link" onClick={this.handleCancel}>{this.getIntlMessage('cancel')}</button>
-                                        <button className="btn btn-primary" onClick={this.handleLogin} onTouch={this.handleSubmit}>{this.getIntlMessage('login')}</button>
-                                        <br/>
+                                        <FlatButton className="btn btn-default btn-link" onClick={this.handleCancel} label={this.getIntlMessage('cancel')} />
+                                        <RaisedButton className="btn btn-primary" onClick={this.handleLogin} onTouch={this.handleSubmit} label={this.getIntlMessage('login')}/>
                                     </div>
                                 </div>
                             </div>

@@ -6,10 +6,18 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-import { Router, Link } from 'react-router';
+import {Router, Link} from 'react-router';
 
-var ReactIntl  = require('react-intl');
-var IntlMixin  = ReactIntl.IntlMixin;
+
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {cyan500} from 'material-ui/styles/colors';
+import {lightBaseTheme} from 'material-ui/styles/baseThemes/lightBaseTheme';
+
+
+
+var ReactIntl = require('react-intl');
+var IntlMixin = ReactIntl.IntlMixin;
 
 var LoginCard = require('./LoginCard.jsx');
 var SignupCard = require('./SignupCard.jsx');
@@ -21,24 +29,32 @@ var UserStore = require('./../../stores/UserStore');
 
 var intlData = require("./../../locales/en-us");
 
+
+const muiThemeLight = getMuiTheme(lightBaseTheme);
 module.exports = React.createClass({
 
-
-    getInitialState: function(){
-        return {
-            users : undefined
-            , activeUser: undefined
-            , backgrounds: [
-                "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933187/graphicstock/lake-marina_GkuzZvKu__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933186/graphicstock/DSC_5803-777__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933181/graphicstock/pebble-stack_XJX4rE__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933172/graphicstock/fire-texture-15_GyOwSEFd__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933171/graphicstock/lake_GyXLZDKu__.jpg"
-            ]};
+    childContextTypes: {
+        muiTheme: React.PropTypes.object
     },
 
 
-    componentDidMount: function(){
+    getInitialState: function () {
+        return {
+            users: undefined
+            , activeUser: undefined
+            , backgrounds: [
+                "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933080/graphicstock/AS6_9771-180__.jpg"
+                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933187/graphicstock/lake-marina_GkuzZvKu__.jpg"
+                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933186/graphicstock/DSC_5803-777__.jpg"
+                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933181/graphicstock/pebble-stack_XJX4rE__.jpg"
+                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933172/graphicstock/fire-texture-15_GyOwSEFd__.jpg"
+                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933171/graphicstock/lake_GyXLZDKu__.jpg"
+            ]
+        };
+    },
+
+
+    componentDidMount: function () {
         var _this = this;
 
         AuthActions.logout.onNext(true);
@@ -50,32 +66,33 @@ module.exports = React.createClass({
         });
     },
 
-    componentWillUnmount: function(){
-        if( this.usersSubscription != undefined ){
+    componentWillUnmount: function () {
+        if (this.usersSubscription != undefined)
+        {
             this.usersSubscription.dispose();
         }
     },
 
 
-    handleCardSelection: function(user){
-        this.setState({activeUser:user});
+    handleCardSelection: function (user) {
+        this.setState({activeUser: user});
     },
 
 
-    handleCancelCardSelection: function(event){
-        this.setState({activeUser:undefined});
+    handleCancelCardSelection: function (event) {
+        this.setState({activeUser: undefined});
     },
 
 
-    render: function() {
+    render: function () {
 
         var _this = this;
         var childNodes;
 
-        var randomBackground = this.state.backgrounds[ Math.floor(Math.random()*this.state.backgrounds.length) ];
-        var style = {"background": "url('" +randomBackground +"') no-repeat"};
+        var randomBackground = this.state.backgrounds[0];
 
-        if( this.state.users !== undefined )
+
+        if (this.state.users !== undefined)
         {
             if (this.state.users !== undefined && this.state.users.length == 0)
             {
@@ -86,7 +103,7 @@ module.exports = React.createClass({
             else if (this.state.activeUser === undefined)
             {
                 childNodes = this.state.users.map(function (user, index) {
-                    return <div key={index}>
+                    return <div key={index} class="personCard" style={{'backgroundColor':'#ffffff'}}>
                                 <LoginCard
                                     user={user}
                                     mode="inactive"
@@ -110,19 +127,17 @@ module.exports = React.createClass({
         }
 
         return (
-            <div className="loginView container-fluid" style={style}>
-                <div className="row logins">
-                    <div className="col-sm-8 col-sm-offset-2 login-grid">
-                    {childNodes}
-                    </div>
-                </div>
+            <MuiThemeProvider muiTheme={muiThemeLight}>
+                <div className="loginView "
+                     style={{'display':'flex', 'flexGrow':1, 'alignItems':'center','justifyContent':'center', 'height':'100vh', "background": "url('" + randomBackground + "') no-repeat"}}>
 
-                <div className="row timeClock">
-                    <div className="col-sm-12">
+                    {childNodes}
+
+                    <div className="timeClock">
                         <Clock/>
                     </div>
                 </div>
-            </div>
+            </MuiThemeProvider>
         );
     }
 
