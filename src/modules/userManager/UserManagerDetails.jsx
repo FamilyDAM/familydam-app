@@ -117,9 +117,6 @@ module.exports = React.createClass({
         // pull
         this.state.user = {};
 
-        var userid = this.props.params.id;
-        UserActions.getUser.source.onNext(userid);
-
 
         this.loadUserSubscription = UserActions.getUser.sink.subscribe(function (data_) {
             this.state.user = data_;
@@ -156,28 +153,23 @@ module.exports = React.createClass({
             }.bind(this), 500);
         }.bind(this));
 
+
+        //Load user
+        var userid = this.props.params.id;
+        UserActions.getUser.source.onNext(userid);
     },
 
     componentWillUnmount: function () {
-        if (this.loadUserSubscription)
-        {
-            this.loadUserSubscription.dispose();
-        }
-        if (this.saveUserSubscription)
-        {
-            this.saveUserSubscription.dispose();
-        }
-        if (this.changePasswordSubscription)
-        {
-            this.changePasswordSubscription.dispose();
-        }
+        if (this.loadUserSubscription) this.loadUserSubscription.dispose();
+        if (this.saveUserSubscription) this.saveUserSubscription.dispose();
+        if (this.changePasswordSubscription) this.changePasswordSubscription.dispose();
     },
 
     componentWillReceiveProps: function (nextProps) {
 
         if (nextProps.params.id !== this.props.params.id)
         {
-            var userid = this.props.params.id;
+            var userid = nextProps.params.id;
             UserActions.getUser.source.onNext(userid);
         }
 
@@ -242,35 +234,38 @@ module.exports = React.createClass({
                         <Subheader style={{'paddingLeft':'0px'}}>Personal Info:</Subheader>
                         <div className="row">
                             <div className="col-sm-6">
-                                <label htmlFor="firstName">
+                                <label htmlFor="firstName" style={{'width':'100%'}}>
                                     First Name:&nbsp;<br/>
                                     <input type="text"
                                            ref="firstName"
                                            id="firstName" name="firstName"
                                            value={this.state.user.firstName}
-                                           onChange={this.handleChange}/>
+                                           onChange={this.handleChange}
+                                           style={{'width':'100%'}}/>
                                 </label>
                             </div>
                             <div className="col-sm-6">
-                                <label htmlFor="firstName">
+                                <label htmlFor="firstName" style={{'width':'100%'}}>
                                     Last Name:&nbsp;<br/>
                                     <input type="text"
                                            ref="lastName"
                                            id="lastName" name="lastName"
                                            value={this.state.user.lastName}
-                                           onChange={this.handleChange}/>
+                                           onChange={this.handleChange}
+                                           style={{'width':'100%'}}/>
                                 </label>
                             </div>
                         </div>
                         <div className="row" style={{'marginTop': '10px'}}>
                             <div className="col-sm-12">
-                                <label htmlFor="firstName">
+                                <label htmlFor="firstName" style={{'width':'100%'}}>
                                     Email:&nbsp;<br/>
                                     <input type="text"
                                            ref="email"
                                            id="email" name="email"
                                            value={this.state.user.email}
-                                           onChange={this.handleChange}/>
+                                           onChange={this.handleChange}
+                                           style={{'width':'100%'}}/>
                                 </label>
                             </div>
                         </div>
@@ -281,11 +276,12 @@ module.exports = React.createClass({
                     <div className="col-sm-5" style={{'borderLeft':'1px solid'}}>
 
                         <Subheader>Reset Login Info:</Subheader>
-                        <label htmlFor="password" style={{'paddingLeft':'16px'}}>
+                        <label htmlFor="password" style={{'paddingLeft':'16px', 'width':'100%'}}>
                             New Password:<br/>
                             <input type="password"
                                    ref="password"
-                                   id="password" name="password"/>
+                                   id="password" name="password"
+                                   style={{'width':'100%'}}/>
                         </label><br/>
 
                         <FlatButton

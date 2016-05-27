@@ -143,8 +143,8 @@ module.exports = React.createClass({
 
                                     </div>
                                     <div>
-                                        <FlatButton className="btn btn-default btn-link" onClick={this.handleCancel} label={this.getIntlMessage('cancel')} />
-                                        <RaisedButton className="btn btn-primary" onClick={this.handleLogin} onTouch={this.handleSubmit} label={this.getIntlMessage('login')}/>
+                                        <FlatButton onClick={this.handleCancel} label={this.getIntlMessage('cancel')} />
+                                        <RaisedButton onClick={this.handleLogin} onTouch={this.handleSubmit} label={this.getIntlMessage('login')}/>
                                     </div>
                                 </div>
                             </div>
