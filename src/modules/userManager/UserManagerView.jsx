@@ -115,7 +115,8 @@ module.exports = React.createClass({
                                 }.bind(this))}
                             </List>
 
-                            <FlatButton label="Add User" disabled={true}/>
+                            <FlatButton label="Add User"
+                                        onTouchTap={()=>{ this.context.router.push({pathname:'/users/add'}) }}/>
                         </Paper>
                     </div>
 

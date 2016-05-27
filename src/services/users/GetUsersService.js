@@ -60,7 +60,11 @@ module.exports = {
                         }
                     }
 
-                    var _sortedUsers = list.sort(function (a, b) { return b.username - a.username; });
+                    var _sortedUsers = list.sort(function (a, b) {
+                        if( a.username > b.username) return 1;
+                        if( a.username < b.username) return -1;
+                        return 0;
+                    });
                     _this.sink.onNext(_sortedUsers);
 
                 }, function (xhr_, status_, errorThrown_){

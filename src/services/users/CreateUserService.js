@@ -17,9 +17,11 @@ module.exports = {
     sink: undefined,
 
     subscribe: function () {
-        console.log("{CreateUser Service} subscribe");
+        console.log("{createUser Service} subscribe");
         this.sink = UserActions.createUser.sink;
-        UserActions.createUser.source.subscribe(this.createUser.bind(this));
+        UserActions.createUser.source.subscribe(function (data_) {
+            this.createUser(data_);
+        }.bind(this));
     },
 
     /**
@@ -28,35 +30,35 @@ module.exports = {
      * @returns {*}
      */
     createUser: function (data_) {
+
+        debugger;
+        var _data = {};
+        _data.username = data_.username;
+        var _props = {
+            ':name': data_.firstName,
+            'firstName': data_.firstName,
+            'lastName': data_.lastName,
+            'email': data_.email,
+            'pwd': data_.password,
+            'pwdConfirm': data_.password
+        };
+
         var _this = this;
-
-        //var _username = data_.username;
-        //var _password = data_.password;
-        //var _userProps = JSON.stringify(data_.userProps);
-        //var _data = {'name':_username, 'pwd': _password, 'pwdConfirm': _password, 'isRootAdmin': true, 'userProps': _userProps};
-
-
-        var _data = data_.userProps;
-        _data[':name'] = data_.username;
-        _data['pwd'] = data_.password;
-        _data['pwdConfirm'] = data_.password;
-        _data['isFamilyAdmin'] = true;
-
-        //, 'url': PreferenceStore.getBaseUrl() + '/system/userManager/user.create.json'
-
         return $.ajax({
             'method': 'post'
-            , 'url': '/bin/familydam/api/v1/users'
+            , 'url': "/bin/familydam/api/v1/users"
+            , 'data': _props
             , cache: false
-            , data: _data,
-            'xhrFields': {
+            , 'xhrFields': {
                 withCredentials: true
             }
         }).then(function (results, status_, xhr_) {
 
-            _this.sink.onNext(results);
-            
+            _this.sink.onNext(true);
+
         }, function (xhr_, status_, errorThrown_) {
+
+            debugger;
             //send the error to the store (through the sink observer
             if (xhr_.status == 401)
             {
@@ -67,7 +69,6 @@ module.exports = {
                 _this.sink.onError(_error);
             }
         });
-
 
     }
 

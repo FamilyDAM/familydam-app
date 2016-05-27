@@ -103,7 +103,7 @@ module.exports = React.createClass({
             else if (this.state.activeUser === undefined)
             {
                 childNodes = this.state.users.map(function (user, index) {
-                    return <div key={index} class="personCard" style={{'backgroundColor':'#ffffff'}}>
+                    return <div key={index} class="personCard" style={{'backgroundColor':'#ffffff', 'margin':'20px'}}>
                                 <LoginCard
                                     user={user}
                                     mode="inactive"
@@ -129,7 +129,7 @@ module.exports = React.createClass({
         return (
             <MuiThemeProvider muiTheme={muiThemeLight}>
                 <div className="loginView "
-                     style={{'display':'flex', 'flexGrow':1, 'alignItems':'center','justifyContent':'center', 'height':'100vh', "background": "url('" + randomBackground + "') no-repeat"}}>
+                     style={{'display':'flex', 'flexGrow':1, 'flexWrap':'wrap', 'alignItems':'center','justifyContent':'center', 'height':'100vh', "background": "url('" + randomBackground + "') no-repeat"}}>
 
                     {childNodes}
 

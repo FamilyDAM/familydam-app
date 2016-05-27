@@ -44,6 +44,7 @@ var PhotoEditView = require('./modules/photoEdit/PhotoEditView.jsx');
 var UserManagerView = require('./modules/userManager/UserManagerView.jsx');
 var UserManagerHomeView = require('./modules/userManager/UserManagerHome.jsx');
 var UserManagerDetailsView = require('./modules/userManager/UserManagerDetails.jsx');
+var UserManagerAddView = require('./modules/userManager/UserManagerAddView.jsx');
 
 const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
 
@@ -72,6 +73,7 @@ ReactDOM.render(
 
                 <Route component={UserManagerView}>
                     <Route path="users" component={UserManagerHomeView}/>
+                    <Route path="users/add" component={UserManagerAddView}/>
                     <Route path="users/:id" component={UserManagerDetailsView}/>
                 </Route>
             </Route>
