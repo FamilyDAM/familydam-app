@@ -140,9 +140,16 @@ module.exports = React.createClass({
 
 
     handleChange: function (event_) {
+        debugger;
         var _field = event_.currentTarget.id;
         var _val = event_.currentTarget.value;
-        this.state.user[_field] = _val;
+
+        if( _field == "isFamilyAdmin"){
+            this.state.user["isFamilyAdmin"] = _val=="on"?true:false;
+        }else
+        {
+            this.state.user[_field] = _val;
+        }
         if (this.isMounted()) this.forceUpdate();
     },
 
@@ -210,7 +217,7 @@ module.exports = React.createClass({
                             </div>
                         </div>
                         <div className="row" style={{'marginTop': '10px'}}>
-                            <div className="col-sm-8">
+                            <div className="col-sm-12">
                                 <label htmlFor="firstName" style={{'width':'100%'}}>
                                     Email:&nbsp;<br/>
                                     <input type="text"
@@ -221,14 +228,9 @@ module.exports = React.createClass({
                                            style={{'width':'100%'}}/>
                                 </label>
                             </div>
-                            <div className="col-sm-4">
-                                <label htmlFor="isAdmin" style={{'width':'100%'}}>
-                                    Is Family Admin:&nbsp;<br/>
-                                </label>
-                            </div>
                         </div>
                         <div className="row" style={{'marginTop': '10px'}}>
-                            <div className="col-sm-8">
+                            <div className="col-sm-12">
                                 <label htmlFor="firstName" style={{'width':'100%'}}>
                                     Password:&nbsp;<br/>
                                     <input type="password"
@@ -241,6 +243,16 @@ module.exports = React.createClass({
                             </div>
                         </div>
 
+                    </div>
+                    <div className="col-sm-5">
+                        <br/><br/>
+                        <Toggle
+                            id="isFamilyAdmin"
+                            label="Family Administrator"
+                            defaultToggled={false}
+                            onToggle={this.handleChange}
+                        />
+                        <span>Family Administrators can add new users, read, write, and DELETE any file in the system.</span>
                     </div>
                 </div>
 

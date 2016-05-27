@@ -40,7 +40,8 @@ module.exports = {
             'lastName': data_.lastName,
             'email': data_.email,
             'pwd': data_.password,
-            'pwdConfirm': data_.password
+            'pwdConfirm': data_.password,
+            'isFamilyAdmin': data_.isFamilyAdmin
         };
 
         var _this = this;
