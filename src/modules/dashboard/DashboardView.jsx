@@ -91,10 +91,7 @@ module.exports = React.createClass({
         };
     },
 
-
     componentWillMount: function () {
-        var _this = this;
-
         AuthActions.loginRedirect.subscribe(function () {
             this.state.history.pushState(null, '/', null);
         }.bind(this));

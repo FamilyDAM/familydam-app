@@ -6,6 +6,7 @@ var SaveUserService = require('./users/SaveUserService');
 var UpdatePasswordService = require('./users/UpdatePasswordService');
 var CreateUserService = require('./users/CreateUserService');
 var GetUserService = require('./users/GetUserService');
+var GetFamilyUserService = require('./users/GetFamilyUserService');
 var NodeCrudService = require('./content/NodeCrudService');
 var GetFilesService = require('./files/GetFilesService');
 var GetDirectoriesService = require('./files/GetDirectoriesService');
@@ -26,6 +27,7 @@ module.exports = {
         UpdatePasswordService.subscribe();
         CreateUserService.subscribe();
         GetUserService.subscribe();
+        GetFamilyUserService.subscribe();
         NodeCrudService.subscribe();
         GetFilesService.subscribe();
         GetDirectoriesService.subscribe();

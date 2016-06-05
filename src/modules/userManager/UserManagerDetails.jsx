@@ -118,7 +118,7 @@ module.exports = React.createClass({
         this.state.user = {};
 
 
-        this.loadUserSubscription = UserActions.getUser.sink.subscribe(function (data_) {
+        this.loadUserSubscription = UserActions.getFamilyUser.sink.subscribe(function (data_) {
             this.state.user = data_;
             this.state.savePasswordLoading = true;
             if (this.isMounted()) this.forceUpdate();
@@ -155,7 +155,7 @@ module.exports = React.createClass({
 
         //Load user
         var userid = this.props.params.id;
-        UserActions.getUser.source.onNext(userid);
+        UserActions.getFamilyUser.source.onNext(userid);
     },
 
     componentWillUnmount: function () {
@@ -169,7 +169,7 @@ module.exports = React.createClass({
         if (nextProps.params.id !== this.props.params.id)
         {
             var userid = nextProps.params.id;
-            UserActions.getUser.source.onNext(userid);
+            UserActions.getFamilyUser.source.onNext(userid);
         }
 
     },

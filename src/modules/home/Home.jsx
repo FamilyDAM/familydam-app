@@ -15,6 +15,8 @@ var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 
 module.exports = React.createClass({
 
+
+
     componentDidMount: function(){
         // update the breadcrumb
         //var _pathData = {'label':'Home', 'navigateTo':"dashboard", 'params':{}, 'level':1};

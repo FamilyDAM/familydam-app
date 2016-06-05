@@ -19,6 +19,7 @@ module.exports = React.createClass({
         }
     },
 
+
     componentDidMount: function () {
         console.log("{UserManagerDetailView} componentWillMount");
 
