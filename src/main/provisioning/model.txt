@@ -19,10 +19,13 @@
 [feature name=model]
 [artifacts]
   org.apache.sling/org.apache.sling.launchpad/8/slingstart
+  org.apache.sling/org.apache.sling.resourceaccesssecurity/1.0.0
   #org.apache.sling/org.apache.sling.bgservlets/1.0.2
   org.apache.felix/org.apache.felix.shell/1.4.3
   org.apache.felix/org.apache.felix.shell.remote/1.1.2
-
+[configurations]
+#    org.apache.sling.engine.impl.auth.SlingAuthenticator [format=properties]
+#        auth.annonymous=true
 
 
 [feature name=familydam]
