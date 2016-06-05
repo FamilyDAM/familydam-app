@@ -35,7 +35,6 @@ module.exports = {
     {
         console.log("{GetDirectoryService} getDirectories()" );
 
-        var _this = this;
         var _url =  path_ +".graph.-1.json/nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
         //console.dir(UserStore.token.value);
@@ -62,7 +61,7 @@ module.exports = {
             }
             data_._embedded.children = filteredChildren;
 
-            _this.sink.onNext(data_);
+            this.sink.onNext(data_);
 
             // update token
             var _token = xhr_.getResponseHeader("X-Auth-Token");
@@ -70,7 +69,7 @@ module.exports = {
                 UserActions.saveToken.onNext(_token);
             }
 
-        }, function (xhr_, status_, errorThrown_){
+        }.bind(this), function (xhr_, status_, errorThrown_){
 
             //send the error to the store (through the sink observer
             if( xhr_.status == 401){
@@ -78,9 +77,9 @@ module.exports = {
             }else
             {
                 var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                _this.sink.onError(_error);
+                this.sink.onError(_error);
             }
-        });
+        }.bind(this));
 
 
     }
