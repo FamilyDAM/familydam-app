@@ -42,6 +42,13 @@
 - dam:tags (STRING) multiple
 - dam:people (STRING) multiple
 
+
+[dam:user] mixin
++ dam:security (nt:unstructured)
++ dam:friends (nt:unstructured)
+
+
+
 [dam:file] mixin
 - dam:datecreated (STRING)
 

@@ -14,8 +14,8 @@ import javax.jcr.RepositoryException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +53,10 @@ public class TreeWalker
         treeMap = convertResourceNode(startNode);
 
         if( depth > 0 ){
-            Collection<Map> children = walkTree(startNode, depth);
+            List<Map> children = walkTree(startNode, depth);
             if( children != null && children.size() > 0) {
-                treeMap.put(CHILDREN_NODE_NAME, children);
+
+                treeMap.put(CHILDREN_NODE_NAME, sortChildren(children));
             }
         }
 
@@ -63,13 +64,26 @@ public class TreeWalker
     }
 
 
+    private Object sortChildren(List<Map> children)
+    {
+        Collections.sort(children, new Comparator<Object>()
+        {
+            @Override public int compare(Object o1, Object o2)
+            {
+                return ((Map)o1).get("name").toString().compareTo(((Map)o2).get("name").toString());
+            }
+        });
 
-    private Collection<Map> walkTree(Resource resource_, int depth_)
+        return children;
+    }
+
+
+    private List<Map> walkTree(Resource resource_, int depth_)
     {
         if( depth_ == 0) return null;
         --depth_;
 
-        Collection<Map> nodes = new ArrayList();
+        List<Map> nodes = new ArrayList();
 
         for (Resource _resource : resource_.getChildren()) {
 
@@ -95,9 +109,9 @@ public class TreeWalker
             Map _node = convertResourceNode(_resource);
 
             if( depth_ > 0) {
-                Collection<Map> children = walkTree(_resource, depth_);
+                List<Map> children = walkTree(_resource, depth_);
                 if (children != null) {
-                    _node.put(CHILDREN_NODE_NAME, children);
+                    _node.put(CHILDREN_NODE_NAME, sortChildren(children));
                 }
             }
 

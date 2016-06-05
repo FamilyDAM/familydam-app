@@ -6,7 +6,6 @@ package com.familydam.core.observers;
 
 import com.familydam.core.FamilyDAMCoreConstants;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingConstants;
@@ -26,10 +25,9 @@ import javax.jcr.nodetype.NodeType;
 /**
  * Created by mnimer on 3/4/16.
  */
-@Property(name = org.osgi.service.event.EventConstants.EVENT_TOPIC,
-        value = SlingConstants.TOPIC_RESOURCE_ADDED)
 @Component(immediate = true)
 @Service(value = EventHandler.class)
+//@Property(name = org.osgi.service.event.EventConstants.EVENT_TOPIC, value = SlingConstants.TOPIC_RESOURCE_ADDED)
 public class AddNodeEventListener implements EventHandler
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
