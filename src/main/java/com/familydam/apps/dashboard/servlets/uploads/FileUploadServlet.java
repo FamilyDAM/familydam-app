@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.servlet.ServletException;
@@ -246,8 +247,13 @@ public class FileUploadServlet extends SlingAllMethodsServlet
              ***/
 
         }
+        catch (AccessDeniedException ex) {
+            ex.printStackTrace();
+            response.setStatus(403); //Bad Request
+        }
         catch (Exception ex) {
             ex.printStackTrace();
+            response.getOutputStream().write(ex.getMessage().getBytes());
             response.setStatus(500); //Bad Request
         }
         finally {

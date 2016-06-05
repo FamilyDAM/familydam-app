@@ -16,6 +16,7 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,19 +31,18 @@ import java.util.Date;
 public class NodeMapper
 {
 
-    public static INode map(Node node) throws RepositoryException,UnknownINodeException
+    public static INode map(Node node) throws RepositoryException, UnknownINodeException
     {
 
         if (node.getPrimaryNodeType().isNodeType(JcrConstants.NT_FOLDER)) {
             return mapDirectoryNode(node);
-            
+
         } else if (node.getPrimaryNodeType().isNodeType(JcrConstants.NT_FILE)) {
             return mapFileNode(node);
         }
-        
-        throw new UnknownINodeException("no mapping for type " +node.getPrimaryNodeType().getName());
-    }
 
+        throw new UnknownINodeException("no mapping for type " + node.getPrimaryNodeType().getName());
+    }
 
 
     private static INode mapDirectoryNode(Node node) throws RepositoryException
@@ -50,9 +50,9 @@ public class NodeMapper
         // return map for every file
         Directory directory = new Directory();
         directory.setId(node.getIdentifier());
-        if( node.hasProperty(JcrConstants.JCR_NAME) ) {
+        if (node.hasProperty(JcrConstants.JCR_NAME)) {
             directory.setName(node.getProperty(JcrConstants.JCR_NAME).getString());
-        }else{
+        } else {
             directory.setName(node.getName());
         }
 
@@ -74,13 +74,13 @@ public class NodeMapper
             if (node.getProperty("loading") != null) {
                 directory.setLoading(true);
             }
-        }catch(PathNotFoundException pe){
+        }
+        catch (PathNotFoundException pe) {
             directory.setLoading(false);
         }
 
         return directory;
     }
-
 
 
     private static INode mapFileNode(Node node) throws RepositoryException
@@ -89,13 +89,13 @@ public class NodeMapper
         File file = new File();
 
         // Add image specific properties
-        if( node.isNodeType(FamilyDAMDashboardConstants.DAM_IMAGE) )
-        {
+        if (node.isNodeType(FamilyDAMDashboardConstants.DAM_IMAGE)) {
             file = new DamImage();
             try {
                 ((DamImage) file).setWidth(node.getProperty(FamilyDAMDashboardConstants.WIDTH).getDouble());
                 ((DamImage) file).setHeight(node.getProperty(FamilyDAMDashboardConstants.HEIGHT).getDouble());
-            }catch(Exception ex){
+            }
+            catch (Exception ex) {
                 //set a default
                 ((DamImage) file).setWidth(250d);
                 ((DamImage) file).setHeight(250d);
@@ -103,9 +103,9 @@ public class NodeMapper
         }
 
         file.setId(node.getIdentifier());
-        if( node.hasProperty(JcrConstants.JCR_NAME) ) {
+        if (node.hasProperty(JcrConstants.JCR_NAME)) {
             file.setName(node.getProperty(JcrConstants.JCR_NAME).getString());
-        }else{
+        } else {
             file.setName(node.getName());
         }
         file.setPath(node.getPath());
@@ -123,35 +123,45 @@ public class NodeMapper
         file.setMixins(_mixins);
 
         Collection<String> _tags = new ArrayList();
-        if( node.hasProperty("dam:tags") ){
-            Value[] values = node.getProperty("dam:tags").getValues();
-            for (int i = 0; i < values.length; i++) {
-                _tags.add(values[i].getString());
+        if (node.hasProperty("dam:tags")) {
+            try {
+                Value[] values = node.getProperty("dam:tags").getValues();
+                for (int i = 0; i < values.length; i++) {
+                    _tags.add(values[i].getString());
+                }
+            }
+            catch (ValueFormatException ex) {
+                //swallow and do nothing
             }
         }
         file.setTags(_tags);
 
         Collection<String> _people = new ArrayList();
-        if( node.hasProperty("dam:people") ){
-            Value[] values = node.getProperty("dam:people").getValues();
-            for (int i = 0; i < values.length; i++) {
-                _people.add(values[i].getString());
+        if (node.hasProperty("dam:people")) {
+            try {
+                Value[] values = node.getProperty("dam:people").getValues();
+                for (int i = 0; i < values.length; i++) {
+                    _people.add(values[i].getString());
+                }
+            }
+            catch (ValueFormatException ex) {
+                //swallow and do nothing
             }
         }
         file.setPeople(_people);
 
 
-
         try {
-            if( node.hasProperty(FamilyDAMDashboardConstants.DAM_DATECREATED)) {
+            if (node.hasProperty(FamilyDAMDashboardConstants.DAM_DATECREATED)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 Date date = sdf.parse(node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getString());
                 Calendar cal = sdf.getCalendar();
                 file.setDateCreated(cal);
-            }else{
+            } else {
                 file.setDateCreated(Calendar.getInstance());
             }
-        }catch(Exception pe ){
+        }
+        catch (Exception pe) {
             //todo: decide what to do
             pe.printStackTrace();
         }

@@ -50,15 +50,25 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.security.Privilege;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -102,11 +112,15 @@ public class CreateUserServlet extends SlingAllMethodsServlet
         //String resourcePath = request.getRequestPathInfo().getResourcePath();
 
 
+        JackrabbitSession adminSession = null;
+        UserManager userManager = null;
         try {
 
             Session session = request.getResourceResolver().adaptTo(Session.class);
             ResourceResolver adminResolver = resolverFactory.getAdministrativeResourceResolver(null);
-            Session adminSession = adminResolver.adaptTo(Session.class);
+            adminSession = (JackrabbitSession)adminResolver.adaptTo(Session.class);
+
+
 
             boolean isFirstUser = checkFirstUser(adminSession);
 
@@ -114,11 +128,32 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             if (isFirstUser) {
                 // this is the first user of the system so we'll trust them and use the admin session to create the first user
                 activeSession = adminSession;
+
+
+                User anonUser = (User) userManager.getAuthorizable("anonymous");
+                //assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_WRITE});
+                assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("content"), null, new String[]{Privilege.JCR_ALL});
+
+
+            }else {
+
+                // Check permission before creating the user. If they are a family admin then we'll use the admin session to create the user
+                userManager = adminSession.getUserManager();
+                User _user = (User)userManager.getAuthorizable(session.getUserID());
+                Object isFamilyAdmin = _user.getProperty("isFamilyAdmin");
+                if (isFamilyAdmin == null || !(((Value[]) isFamilyAdmin)[0].getBoolean())) {
+                    response.setStatus(403);
+                    response.setContentType("application/text");
+                    response.getOutputStream().write("Not authorized to create new users, you need to be an 'admin' user.".getBytes());
+                    return;
+                }
             }
 
-            User user = createUser(activeSession, request);
+            User user = createUser(adminSession, request);//createUser(activeSession, request);
             assignToGroup(activeSession, user, request);
             createDefaultFolders(adminSession, user);
+            createSecurityKeys(adminSession, user);
+
 
             response.setStatus(201);
             response.setContentType("application/text");
@@ -128,6 +163,15 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             response.setStatus(409);
         }
         catch ( LoginException | RepositoryException ex) {
+
+            //remove the user if the save failed at any point
+            try {
+                if (adminSession != null && userManager != null) {
+                    userManager.getAuthorizable(((Value[]) request.getParameterMap().get(":name"))[0].toString().toLowerCase()).remove();
+                    adminSession.save();
+                }
+            }catch(RepositoryException re){}
+
             log.error(ex.getMessage(), ex);
             response.setStatus(500);
         }
@@ -161,7 +205,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet
      * @return
      * @throws RepositoryException
      */
-    private User createUser(Session session_, SlingHttpServletRequest request) throws RepositoryException
+    private User createUser(Session session_, SlingHttpServletRequest request) throws RepositoryException, IOException
     {
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
 
@@ -197,6 +241,8 @@ public class CreateUserServlet extends SlingAllMethodsServlet
         // make sure the user has an UUID
         Node userNode = session_.getNode(_user.getPath());
         userNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        userNode.addMixin("dam:extensible");
+        userNode.addMixin("dam:user");
         session_.save();
 
 
@@ -230,16 +276,16 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             if (familyAdminGroup == null) {
                 familyAdminGroup = userManager.createGroup(FamilyDAMDashboardConstants.FAMILY_ADMIN_GROUP);
             }
+            user_.setProperty("isFamilyAdmin", new BooleanValue(true));
             familyAdminGroup.addMember(user_);
             //If the user is an admin give them jcr_all permissions to the whole system
-            assignPermission(session_, user_, session_.getRootNode(), new String[]{Privilege.JCR_ALL}, null);
+            assignPermission(session_, user_.getPrincipal(), session_.getRootNode(), new String[]{Privilege.JCR_ALL}, null);
 
+        }else{
+            // If they aren't an admin start with read access to /content
+            assignPermission(session_, user_.getPrincipal(), session_.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_ALL});
+            assignPermission(session_, user_.getPrincipal(), session_.getRootNode().getNode("content"), new String[]{Privilege.JCR_READ}, null);
         }
-
-
-
-        //TODO: add USER to the default system administrators group
-        //TODO: add jcr:all policy to the jcr root
 
         session_.save();
     }
@@ -278,11 +324,9 @@ public class CreateUserServlet extends SlingAllMethodsServlet
                 _node.setProperty(JcrConstants.JCR_NAME, user_.getID());
                 session_.save();
 
-                assignPermission(session_, user_, _node, new String[]{Privilege.JCR_ALL}, null);
+                assignPermission(session_, user_.getPrincipal(), _node, new String[]{Privilege.JCR_ALL}, null);
             }
 
-            // give all users READ only access to the FamilyDAM contentfolder
-            assignPermission(session_, user_, node, new String[]{Privilege.JCR_READ}, null);
         }
 
 
@@ -291,13 +335,73 @@ public class CreateUserServlet extends SlingAllMethodsServlet
     }
 
 
-    private void assignPermission(Session session_, User user_, Node node_, String[] addPrivledges_, String[] removePrivledges_)
+
+
+    /**
+     * Generate a public/private key for each user.
+     * @param session_
+     * @param user_
+     * @throws RepositoryException
+     *
+     * @See http://www.javamex.com/tutorials/cryptography/rsa_encryption.shtml
+     */
+    private void createSecurityKeys(Session session_, User user_) throws RepositoryException
+    {
+
+        String _publicKeyStr = null;
+        String _privateKeyStr = null;
+
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048);
+            KeyPair kp = kpg.genKeyPair();
+            Key publicKey = kp.getPublic();
+            Key privateKey = kp.getPrivate();
+
+            KeyFactory fact = KeyFactory.getInstance("RSA");
+            RSAPublicKeySpec pub = fact.getKeySpec(publicKey, RSAPublicKeySpec.class);
+            RSAPrivateKeySpec priv = fact.getKeySpec(privateKey, RSAPrivateKeySpec.class);
+
+            Map keys = new HashMap();
+
+            // make sure the user has an UUID
+            Node userNode = session_.getNode(user_.getPath());
+            Node securityNode = userNode.addNode("dam:security", "nt:unstructured");
+            securityNode.setProperty("keyAlgorithm", fact.getAlgorithm());
+            securityNode.setProperty("keyProvider", fact.getProvider().toString());
+            securityNode.setProperty("publicKeyModulus", new StringValue( pub.getModulus().toString() ) );
+            securityNode.setProperty("publicKeyExponent", new StringValue( pub.getPublicExponent().toString() ) );
+            securityNode.setProperty("privateKeyModulus", new StringValue( priv.getModulus().toString() ) );
+            securityNode.setProperty("privateKeyExponent", new StringValue( priv.getPrivateExponent().toString() ) );
+            session_.save();
+
+            // remove READ access for this user
+            assignPermission(session_, user_.getPrincipal(), securityNode, null, new String[]{Privilege.JCR_ALL});
+
+            UserManager userManager = ((JackrabbitSession) session_).getUserManager();
+            User anonUser = (User) userManager.getAuthorizable("anonymous");
+            //assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_WRITE});
+            assignPermission(session_, anonUser.getPrincipal(), securityNode, null, new String[]{Privilege.JCR_ALL});
+
+
+        }catch(NoSuchAlgorithmException|InvalidKeySpecException ex){
+            ex.printStackTrace();
+        }
+
+    }
+
+
+    /**
+     * Helper function to assign or remove permissions as needed
+     * @param session_
+     * @param principal_
+     * @param node_
+     * @param addPrivledges_
+     * @param removePrivledges_
+     */
+    private void assignPermission(Session session_, Principal principal_, Node node_, String[] addPrivledges_, String[] removePrivledges_)
     {
         try {
-            //get principle for user
-            Principal _principal = user_.getPrincipal();
-
-
             //setup list of privledges to add or remove
             Set<String> grantedPrivilegeNames = new HashSet<String>();
             if( addPrivledges_ != null ) {
@@ -305,7 +409,15 @@ public class CreateUserServlet extends SlingAllMethodsServlet
                     grantedPrivilegeNames.add(priviledge);
                 }
             }
+
             Set<String> deniedPrivilegeNames = new HashSet<String>();
+            if( removePrivledges_ != null ){
+                for (String priviledge : removePrivledges_) {
+                    deniedPrivilegeNames.add(priviledge);
+                }
+            }
+
+
             Set<String> removedPrivilegeNames = new HashSet<String>();
             if( removePrivledges_ != null ){
                 for (String priviledge : removePrivledges_) {
@@ -318,7 +430,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             //accessControlManager.setPolicy(list.getPath(), list);
 
             AccessControlUtil.replaceAccessControlEntry(session_,
-                    node_.getPath(), _principal,
+                    node_.getPath(), principal_,
                     grantedPrivilegeNames.toArray(new String[grantedPrivilegeNames.size()]),
                     deniedPrivilegeNames.toArray(new String[deniedPrivilegeNames.size()]),
                     removedPrivilegeNames.toArray(new String[removedPrivilegeNames.size()]));
