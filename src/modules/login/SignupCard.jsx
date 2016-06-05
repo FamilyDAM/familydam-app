@@ -56,10 +56,10 @@ module.exports = React.createClass({
      */
     handleSubmit: function(event)
     {
-        debugger;
         var _user = {};
         _user.username = this.refs.firstName.input.value.toLowerCase();
         _user.password = this.refs.password.input.value;
+        _user.isFamilyAdmin = true;
         _user.userProps = {};
         _user.userProps.firstName = this.refs.firstName.input.value;
         _user.userProps.lastName = this.refs.lastName.input.value;

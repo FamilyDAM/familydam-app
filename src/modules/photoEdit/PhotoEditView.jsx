@@ -76,7 +76,7 @@ module.exports = React.createClass({
                 this.kit = new ImglyKit({
                     image: image,
                     container: container,
-                    assetsUrl: "./assets/js/imglykit/assets",
+                    assetsUrl: "./assets/js/imgly-sdk-html5-v2.0.3-13/assets",
                     ui: {
                         enabled: true, // UI is disabled per default
                         showExportButton: true,

@@ -65,7 +65,6 @@ module.exports = {
 
     uploadAllFiles: function (dir_) {
         //var _this = this;
-        debugger;
         console.log("{upload all files}");
 
         this._files.forEach(function (file_) {

@@ -31,7 +31,7 @@ module.exports = {
         if( filters_ !== undefined )
         {
             var _this = this;
-            var _url = "/content.image.search.json?type=dam:image&limit=50&offset=0";
+            var _url = "/content.image.search.json?type=dam:image&limit=100&offset=0";
 
             return $.ajax({
                 'method': "POST",

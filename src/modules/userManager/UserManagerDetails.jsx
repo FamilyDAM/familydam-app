@@ -132,7 +132,6 @@ module.exports = React.createClass({
             }.bind(this), 500);
         }.bind(this), function (data_) {
             //error
-            debugger;
             setTimeout(function () {
                 //stop save spinner
                 this.setState({saveLoading: false});
@@ -201,7 +200,7 @@ module.exports = React.createClass({
         }
 
         this.state.user.psasword = this.refs.password.value;
-        debugger;
+        
         this.setState({savePwdLoading: true});
         UserActions.changePassword.source.onNext(this.state.user);
     },

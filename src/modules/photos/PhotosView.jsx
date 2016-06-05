@@ -251,7 +251,6 @@ module.exports = React.createClass({
             mixpanel.track("PhotosView: Add PATH filter");
         } else if (data.type == "date")
         {
-            debugger;
             data.name = data.key;
             mixpanel.track("PhotosView: Add DATE filter");
         }

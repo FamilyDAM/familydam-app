@@ -92,7 +92,7 @@ module.exports = React.createClass({
                             <div style={{'display':'flex', 'flexDirection':'column', 'justifyContent':'center', 'alignItems':'center', 'height':'125px','width':'100%'}}>
                                 <div style={{'display':'flex', 'flexDirection':'row','alignItems':'center'}}>
                                     <Avatar icon={<SocialPerson/>} />
-                                    <span style={{'paddingLeft':'10px'}}>{this.state.currentUser.firstName +' ' +this.state.currentUser.lastName}</span>
+                                    <span style={{'paddingLeft':'10px'}}>{this.state.currentUser.firstName} {this.state.currentUser.lastName}</span>
                                 </div>
                                 <br/>
                                 <div style={{'display':'flex', 'flexDirection':'row', 'alignItems':'flex-end'}}>

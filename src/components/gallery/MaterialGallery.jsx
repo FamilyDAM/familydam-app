@@ -70,7 +70,6 @@ var GridGroup = React.createClass({
 
 
     imageClickedHandler: function (e) {
-        debugger;
         ImageActions.selectImage.onNext(e);
     },
 

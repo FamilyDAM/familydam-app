@@ -102,7 +102,7 @@ module.exports = React.createClass({
 
     getInitialState: function () {
         return {
-            user: {},
+            user: {userProps:{}},
             saveLoading: false
         }
     },
@@ -122,7 +122,6 @@ module.exports = React.createClass({
             }.bind(this), 500);
         }.bind(this), function (data_) {
             //error
-            debugger;
             setTimeout(function () {
                 //stop save spinner
                 this.setState({saveLoading: false});
@@ -140,15 +139,28 @@ module.exports = React.createClass({
 
 
     handleChange: function (event_) {
-        debugger;
+        
         var _field = event_.currentTarget.id;
         var _val = event_.currentTarget.value;
 
+        if( !this.state.user.userProps ){
+            this.state.user.userProps = {};
+        }
+
+
         if( _field == "isFamilyAdmin"){
-            this.state.user["isFamilyAdmin"] = _val=="on"?true:false;
-        }else
+            this.state.user.isFamilyAdmin = (_val=="on")?true:false;
+        }
+        else if( _field == "password")
         {
             this.state.user[_field] = _val;
+        }
+        else
+        {
+            if( !this.state.user.userProps ){
+                this.state.user.userProps = {};
+            }
+            this.state.user.userProps[_field] = _val;
         }
         if (this.isMounted()) this.forceUpdate();
     },

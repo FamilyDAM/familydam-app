@@ -31,14 +31,17 @@ module.exports = {
      */
     createUser: function (data_) {
 
-        debugger;
         var _data = {};
+        if( !data_.username ){
+            data_.username = data_.userProps.firstName.toLowerCase();
+        }
         _data.username = data_.username;
+
         var _props = {
-            ':name': data_.firstName,
-            'firstName': data_.firstName,
-            'lastName': data_.lastName,
-            'email': data_.email,
+            ':name': data_.username,
+            'firstName': data_.userProps.firstName,
+            'lastName': data_.userProps.lastName,
+            'email': data_.userProps.email,
             'pwd': data_.password,
             'pwdConfirm': data_.password,
             'isFamilyAdmin': data_.isFamilyAdmin
@@ -59,12 +62,20 @@ module.exports = {
 
         }, function (xhr_, status_, errorThrown_) {
 
-            debugger;
             //send the error to the store (through the sink observer
             if (xhr_.status == 401)
             {
                 AuthActions.loginRedirect.onNext(true);
-            } else
+            }
+            else if (xhr_.status == 409)
+            {
+                // User already exists
+            }
+            else if (xhr_.status == 403)
+            {
+                UserActions.alert.onNext("You do not have permission to add a new user");
+            }
+            else
             {
                 var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
                 _this.sink.onError(_error);

@@ -13,7 +13,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {cyan500} from 'material-ui/styles/colors';
 import {lightBaseTheme} from 'material-ui/styles/baseThemes/lightBaseTheme';
 //import {darkBaseTheme} from 'material-ui/styles/baseThemes/darkBaseTheme';
-import {AppBar, IconMenu, IconButton, MenuItem, Divider, Drawer, Paper, Toolbar, ToolbarGroup} from 'material-ui';
+import {AppBar, IconMenu, IconButton, MenuItem, Divider, Drawer, Paper, Snackbar, Toolbar, ToolbarGroup} from 'material-ui';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
@@ -24,6 +24,7 @@ var SectionHeader = require('../../components/breadcrumb/SectionHeader.jsx');
 var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 
 var AuthActions = require('../../actions/AuthActions');
+var UserActions = require('../../actions/UserActions');
 var NavigationActions = require('../../actions/NavigationActions');
 
 var UserStore = require('./../../stores/UserStore');
@@ -84,7 +85,9 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {
             user: {},
-            openAppSidebar:false
+            openAppSidebar:false,
+            snackBarOpen:false,
+            snackBarMessage:""
         };
     },
 
@@ -107,6 +110,14 @@ module.exports = React.createClass({
                 this.setState({'user': data_});
             }
         }.bind(this));
+
+
+        this.userAlertSubscription = UserActions.alert.subscribe( function(data_){
+            this.setState({
+                snackBarOpen:true,
+                snackBarMessage:data_
+            });
+        }.bind(this))
     },
 
 
@@ -116,6 +127,9 @@ module.exports = React.createClass({
         }
         if( this.openAppSidebarSubscription ){
             this.openAppSidebarSubscription.dispose();
+        }
+        if( this.userAlertSubscription ){
+            this.userAlertSubscription.dispose();
         }
     },
 
@@ -138,7 +152,7 @@ module.exports = React.createClass({
 
                         <header>
                             <AppBar
-                                title={<span>Family<i>D.A.M</i></span>}
+                                title={<span>Family|<i>D.A.M</i></span>}
                                 onLeftIconButtonTouchTap={this.handleHamburgerClick}
                                 iconElementRight={
                                     <IconMenu
@@ -193,6 +207,15 @@ module.exports = React.createClass({
                                 <div className="device-lg visible-lg"></div>
                             </Paper>
                         </div>
+
+
+                        <footer>
+                            <Snackbar
+                                open={this.state.snackBarOpen}
+                                message={this.state.snackBarMessage}
+                                autoHideDuration={3000}
+                            />
+                        </footer>
                     </div>
                 </MuiThemeProvider>
             );

@@ -192,10 +192,11 @@ module.exports = {
 
             return data_;
         }, function (xhr_, status_, errorThrown_){
-
             //send the error to the store (through the sink observer
             if( xhr_.status == 401){
                 AuthActions.loginRedirect.onNext(true);
+            }if( xhr_.status == 403){
+                UserActions.alert.onNext("You do not have permission to upload to this folder");
             }else
             {
                 var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
