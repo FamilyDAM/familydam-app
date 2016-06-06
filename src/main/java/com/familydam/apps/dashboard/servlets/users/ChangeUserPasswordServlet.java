@@ -49,6 +49,7 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.jcr.security.AccessControlException;
 import javax.jcr.security.Privilege;
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -119,6 +120,10 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 
             session.save();
 
+        }
+        catch (AccessControlException ex){
+            response.setStatus(403);
+            return;
         }
         catch ( AuthorizableExistsException aee ){
             response.setStatus(409);

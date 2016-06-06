@@ -20,6 +20,7 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.jcr.security.AccessControlException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -229,7 +230,12 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
             response.getOutputStream().write(objectMapper.writeValueAsString(_groupedNodes).getBytes());
 
 
-        }catch (Exception ex){
+        }
+        catch (AccessControlException ex){
+            response.setStatus(403);
+            return;
+        }
+        catch (Exception ex){
             ex.printStackTrace();
             response.setStatus(500);
             response.setContentType("application/json");

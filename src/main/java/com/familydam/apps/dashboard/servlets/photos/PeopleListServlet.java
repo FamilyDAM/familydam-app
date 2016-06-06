@@ -13,6 +13,7 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 
 import javax.jcr.Session;
+import javax.jcr.security.AccessControlException;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
@@ -53,6 +54,10 @@ public class PeopleListServlet extends SlingSafeMethodsServlet
             response.setStatus(200);
             response.setContentType("application/json");
             response.getOutputStream().write(json.getBytes());
+        }
+        catch (AccessControlException ex){
+            response.setStatus(403);
+            return;
         }
         catch (Exception ae) {
             ae.printStackTrace();

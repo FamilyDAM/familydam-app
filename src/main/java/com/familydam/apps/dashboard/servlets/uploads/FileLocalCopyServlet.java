@@ -39,18 +39,9 @@ public class FileLocalCopyServlet extends SlingAllMethodsServlet
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
     {
-
-        //String[] selectors = request.getRequestPathInfo().getSelectors();
-        //String extension = request.getRequestPathInfo().getExtension();
         String resourcePath = request.getRequestPathInfo().getResourcePath();
 
-
         try {
-
-            //Session session = request.getResourceResolver().adaptTo(Session.class);
-            //ResourceResolver adminResolver = resolverFactory.getAdministrativeResourceResolver(null);
-            //Session adminSession = adminResolver.adaptTo(Session.class);
-
             String path = request.getParameter("path");//(String) props.get("path");
 
             if (path == null) {

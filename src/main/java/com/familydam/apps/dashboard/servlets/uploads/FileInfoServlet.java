@@ -14,6 +14,7 @@ import org.apache.sling.commons.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.security.AccessControlException;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
@@ -39,19 +40,10 @@ public class FileInfoServlet extends SlingAllMethodsServlet
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
     {
-
-        //String[] selectors = request.getRequestPathInfo().getSelectors();
-        //String extension = request.getRequestPathInfo().getExtension();
         String resourcePath = request.getRequestPathInfo().getResourcePath();
 
-
         try {
-
-            //Session session = request.getResourceResolver().adaptTo(Session.class);
-            //ResourceResolver adminResolver = resolverFactory.getAdministrativeResourceResolver(null);
-            //Session adminSession = adminResolver.adaptTo(Session.class);
-
-            String path = request.getParameter("path");//(String) props.get("path");
+            String path = request.getParameter("path");
 
             if (path == null) {
                 response.setStatus(404);

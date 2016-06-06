@@ -54,6 +54,7 @@ import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.jcr.security.AccessControlException;
 import javax.jcr.security.Privilege;
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -120,8 +121,6 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             ResourceResolver adminResolver = resolverFactory.getAdministrativeResourceResolver(null);
             adminSession = (JackrabbitSession)adminResolver.adaptTo(Session.class);
 
-
-
             boolean isFirstUser = checkFirstUser(adminSession);
 
             Session activeSession = session;
@@ -129,11 +128,13 @@ public class CreateUserServlet extends SlingAllMethodsServlet
                 // this is the first user of the system so we'll trust them and use the admin session to create the first user
                 activeSession = adminSession;
 
-
-                User anonUser = (User) userManager.getAuthorizable("anonymous");
-                //assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_WRITE});
-                assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("content"), null, new String[]{Privilege.JCR_ALL});
-
+                try{
+                    User anonUser = (User) userManager.getAuthorizable("anonymous");
+                    //assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_WRITE});
+                    assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("content"), null, new String[]{Privilege.JCR_ALL});
+                }catch(NullPointerException ex){
+                    //swallow
+                }
 
             }else {
 
@@ -158,6 +159,10 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             response.setStatus(201);
             response.setContentType("application/text");
             response.setContentType(user.getPath());
+        }
+        catch (AccessControlException ex){
+            response.setStatus(403);
+            return;
         }
         catch ( AuthorizableExistsException aee ){
             response.setStatus(409);
@@ -283,7 +288,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet
 
         }else{
             // If they aren't an admin start with read access to /content
-            assignPermission(session_, user_.getPrincipal(), session_.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_ALL});
+            assignPermission(session_, user_.getPrincipal(), session_.getRootNode().getNode("home"), new String[]{Privilege.JCR_READ}, new String[]{Privilege.JCR_WRITE});
             assignPermission(session_, user_.getPrincipal(), session_.getRootNode().getNode("content"), new String[]{Privilege.JCR_READ}, null);
         }
 

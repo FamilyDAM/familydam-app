@@ -67,15 +67,8 @@ public class FileUploadServlet extends SlingAllMethodsServlet
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
     {
+       String resourcePath = request.getRequestPathInfo().getResourcePath();
 
-        //String[] selectors = request.getRequestPathInfo().getSelectors();
-        //String extension = request.getRequestPathInfo().getExtension();
-        String resourcePath = request.getRequestPathInfo().getResourcePath();
-
-
-        //Session session = request.getResourceResolver().adaptTo(Session.class);
-        //ResourceResolver adminResolver = resolverFactory.getAdministrativeResourceResolver(null);
-        //Session adminSession = adminResolver.adaptTo(Session.class);
 
         if (!ServletFileUpload.isMultipartContent(request)) {
             response.setStatus(500); //Bad Request

@@ -32,7 +32,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-
 /**
  * Created by mnimer on 10/14/15.
  */
@@ -49,13 +48,14 @@ public class TreeDao
 
     /**
      * Create a tree of YEAR -> MONTH -> DATE
+     *
      * @param session
      * @return
      * @throws RepositoryException
      */
     public Map dateTree(Session session, String path_) throws RepositoryException, UnknownINodeException
     {
-        StringBuffer sql = new StringBuffer("SELECT [" + FamilyDAMDashboardConstants.DAM_DATECREATED +"]  FROM [dam:image] where [" +FamilyDAMDashboardConstants.DAM_DATECREATED +"] is not null");
+        StringBuffer sql = new StringBuffer("SELECT [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "]  FROM [dam:image] where [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "] is not null");
 
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -69,68 +69,66 @@ public class TreeDao
         // Iterate over the nodes in the results ...
         Map<String, Map> _nodeMap = new HashMap<>();
         RowIterator nodeItr = result.getRows();
-        while ( nodeItr.hasNext() ) {
-            try {
-                Row row = nodeItr.nextRow();
+        while (nodeItr.hasNext()) {
 
-                String date = row.getValue(FamilyDAMDashboardConstants.DAM_DATECREATED).getString();
-                String[] dateParts = date.split("-");
+            Row row = nodeItr.nextRow();
 
-
-                String year = dateParts[0];
-                String monthName = MonthDay.of(new Integer(dateParts[1]), new Integer(dateParts[2])).getMonth().name();
-                String monthNumber = dateParts[1];
-                String day = dateParts[2];
-
-                Map yearMap = _nodeMap.get(year);
-                if (yearMap == null) {
-                    yearMap = new HashMap();
-                    yearMap.put("key", year);
-                    yearMap.put("name", year);
-                    yearMap.put("year", year);
-                    yearMap.put("children", new HashMap());
-                    _nodeMap.put(year, yearMap);
-                }
+            String date = row.getValue(FamilyDAMDashboardConstants.DAM_DATECREATED).getString();
+            String[] dateParts = date.split("-");
 
 
-                Map monthMap = (Map) ((Map) _nodeMap.get(year).get("children")).get(monthName);
-                if (monthMap == null) {
+            String year = dateParts[0];
+            String monthName = MonthDay.of(new Integer(dateParts[1]), new Integer(dateParts[2])).getMonth().name();
+            String monthNumber = dateParts[1];
+            String day = dateParts[2];
 
-                    monthMap = new HashMap();
-                    monthMap.put("key", year +"-" +monthNumber);
-                    monthMap.put("name", monthName);
-                    monthMap.put("year", year);
-                    monthMap.put("month", monthNumber);
-                    monthMap.put("children", new HashMap());
-
-                    ((Map) _nodeMap.get(year).get("children")).put(monthNumber, monthMap);
-
-                }
-
-                Map dayMap = (Map) ((Map) ((Map) ((Map) _nodeMap.get(year).get("children")).get(monthNumber)).get("children")).get(day);
-                if (dayMap == null) {
-                    dayMap = new HashMap();
-                    dayMap.put("key", year +"-" +monthNumber +"-" +day);
-                    dayMap.put("name", day);
-                    dayMap.put("year", year);
-                    dayMap.put("month", monthNumber);
-                    dayMap.put("day", day);
-                    dayMap.put("children", new HashMap());
-
-                    ((Map) ((Map) ((Map) _nodeMap.get(year).get("children")).get(monthNumber)).get("children")).put(day, dayMap);
-                }
-
-                //log.debug(row);
-            }catch(Exception ex){
-                //ex.printStackTrace();
+            Map yearMap = _nodeMap.get(year);
+            if (yearMap == null) {
+                yearMap = new HashMap();
+                yearMap.put("key", year);
+                yearMap.put("name", year);
+                yearMap.put("year", year);
+                yearMap.put("children", new HashMap());
+                _nodeMap.put(year, yearMap);
             }
+
+
+            Map monthMap = (Map) ((Map) _nodeMap.get(year).get("children")).get(monthName);
+            if (monthMap == null) {
+
+                monthMap = new HashMap();
+                monthMap.put("key", year + "-" + monthNumber);
+                monthMap.put("name", monthName);
+                monthMap.put("year", year);
+                monthMap.put("month", monthNumber);
+                monthMap.put("children", new HashMap());
+
+                ((Map) _nodeMap.get(year).get("children")).put(monthNumber, monthMap);
+
+            }
+
+            Map dayMap = (Map) ((Map) ((Map) ((Map) _nodeMap.get(year).get("children")).get(monthNumber)).get("children")).get(day);
+            if (dayMap == null) {
+                dayMap = new HashMap();
+                dayMap.put("key", year + "-" + monthNumber + "-" + day);
+                dayMap.put("name", day);
+                dayMap.put("year", year);
+                dayMap.put("month", monthNumber);
+                dayMap.put("day", day);
+                dayMap.put("children", new HashMap());
+
+                ((Map) ((Map) ((Map) _nodeMap.get(year).get("children")).get(monthNumber)).get("children")).put(day, dayMap);
+            }
+
         }
 
         return _nodeMap;
     }
 
+
     /**
      * Create a list of distinct tags in the system.
+     *
      * @param session
      * @return
      * @throws RepositoryException
@@ -146,6 +144,7 @@ public class TreeDao
 
     /**
      * Create a list of distinct tags in the system.
+     *
      * @param session
      * @return
      * @throws RepositoryException
@@ -156,9 +155,6 @@ public class TreeDao
 
         return queryForListAndCount(session, "dam:people", sql);
     }
-
-
-
 
 
     private List<Map> queryForListAndCount(Session session, String field, StringBuffer sql) throws RepositoryException
@@ -175,7 +171,7 @@ public class TreeDao
         final Map<String, Integer> _nodeMap = new HashMap<>();
         final List<Map> _nodeList = new ArrayList<>();
         NodeIterator nodeItr = result.getNodes();
-        while ( nodeItr.hasNext() ) {
+        while (nodeItr.hasNext()) {
             Node node = nodeItr.nextNode();
 
             Value[] tags = node.getProperty(field).getValues();
@@ -184,9 +180,9 @@ public class TreeDao
                 String tag = _tag.getString().toLowerCase();
 
                 Integer existingItemCount = _nodeMap.get(tag);
-                if( existingItemCount == null ){
+                if (existingItemCount == null) {
                     existingItemCount = 1;
-                }else{
+                } else {
                     existingItemCount += 1;
                 }
 
