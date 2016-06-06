@@ -21,9 +21,9 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{GetFiles Service} subscribe");
+        console.log("{GetDirectories Service} subscribe");
         this.sink = DirectoryActions.getDirectories.sink;
-        DirectoryActions.getDirectories.source.distinctUntilChanged().subscribe(this.getDirectories.bind(this));
+        DirectoryActions.getDirectories.source.subscribe(this.getDirectories.bind(this));
     },
 
     /**

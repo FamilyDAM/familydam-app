@@ -17,7 +17,7 @@ module.exports = {
     sink: undefined,
 
     subscribe: function () {
-        console.log("{createUser Service} subscribe");
+        //console.log("{createUser Service} subscribe");
         this.sink = UserActions.createUser.sink;
         UserActions.createUser.source.subscribe(function (data_) {
             this.createUser(data_);
@@ -70,6 +70,7 @@ module.exports = {
             else if (xhr_.status == 409)
             {
                 // User already exists
+                UserActions.alert.onNext("User already exists");
             }
             else if (xhr_.status == 403)
             {

@@ -100,6 +100,12 @@ const LoadingIcon = (props) => (
 
 module.exports = React.createClass({
 
+
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
+
+    
     getInitialState: function () {
         return {
             user: {},
@@ -153,9 +159,17 @@ module.exports = React.createClass({
         }.bind(this));
 
 
-        //Load user
+
         var userid = this.props.params.id;
-        UserActions.getFamilyUser.source.onNext(userid);
+        if( UserStore.getCurrentUser().isFamilyAdmin || UserStore.getCurrentUser().username == userid )
+        {
+            //Load user
+            UserActions.getFamilyUser.source.onNext(userid);
+        }else{
+            this.context.router.push({pathname: '/users/'});
+            UserActions.alert.onNext("You are not allowed to edit other users.");
+        }
+
     },
 
     componentWillUnmount: function () {
@@ -169,7 +183,15 @@ module.exports = React.createClass({
         if (nextProps.params.id !== this.props.params.id)
         {
             var userid = nextProps.params.id;
-            UserActions.getFamilyUser.source.onNext(userid);
+            if( UserStore.getCurrentUser().isFamilyAdmin || UserStore.getCurrentUser().username == userid )
+            {
+                //Load user
+                UserActions.getFamilyUser.source.onNext(userid);
+            }else{
+                this.context.router.push({pathname: '/users/'});
+                UserActions.alert.onNext("You are not allowed to edit other users.");
+            }
+
         }
 
     },

@@ -51,7 +51,7 @@ module.exports = React.createClass({
 
 
     componentDidMount: function() {
-        var _this = this;
+        if(this.refs.pwdField) this.refs.pwdField.focus();
     },
 
 

@@ -19,7 +19,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{GetUsers Service} subscribe");
+        //console.log("{GetUsers Service} subscribe");
         this.sink = UserActions.getUsers.sink;
         UserActions.getUsers.source.subscribe(this.getUsers.bind(this));
 

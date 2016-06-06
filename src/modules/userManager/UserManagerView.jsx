@@ -23,6 +23,7 @@ import {
 
 var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
+var UserStore = require('../../stores/UserStore');
 
 var TreeList = require('../../components/folderTree/TreeList.jsx');
 var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
@@ -96,6 +97,24 @@ module.exports = React.createClass({
         });
     },
 
+    selectUser: function(user_){
+        if( UserStore.getCurrentUser().isFamilyAdmin || UserStore.getCurrentUser().username == user_ )
+        {
+            this.context.router.push({pathname: '/users/' + user_});
+        }else{
+            UserActions.alert.onNext("You are not allowed to edit other users.");
+        }
+    },
+
+    addUser:function(event_){
+        if( UserStore.getCurrentUser().isFamilyAdmin )
+        {
+            this.context.router.push({pathname:'/users/add'})
+        }else{
+            UserActions.alert.onNext("You are not allowed to add new family members.");
+        }
+    },
+
     
     render: function () {
 
@@ -112,12 +131,12 @@ module.exports = React.createClass({
                                 <Subheader>Users</Subheader>
                                 {this.state.users.map(function (user, index) {
                                     return (<ListItem key={user.username}
-                                                      onTouchTap={()=>{ this.context.router.push({pathname:'/users/'+user.username}) }}>{user.firstName} {user.lastName}</ListItem>);
+                                                      onTouchTap={()=>this.selectUser(user.username)}>{user.firstName} {user.lastName}</ListItem>);
                                 }.bind(this))}
                             </List>
 
                             <FlatButton label="Add User"
-                                        onTouchTap={()=>{ this.context.router.push({pathname:'/users/add'}) }}/>
+                                        onTouchTap={this.addUser}/>
                         </Paper>
                     </div>
 

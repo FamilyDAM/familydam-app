@@ -69,7 +69,9 @@ module.exports = React.createClass({
             selectedPath: "/content/dam-files",
             addNodeRefs: [],
             treeData: [],
-            isDirTreeLoading:false
+            isDirTreeLoading:false,
+            canAddFile:false,
+            canAddFolder:false
         };
     },
 
@@ -108,7 +110,7 @@ module.exports = React.createClass({
 
         // listen for trigger to reload for files in directory
         this.refreshDirectoriesSubscription = DirectoryActions.refreshDirectories.subscribe(function (data_) {
-            DirectoryActions.getDirectories.source.onNext(undefined);
+            debugger;
             DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
         }.bind(this));
 
@@ -137,8 +139,17 @@ module.exports = React.createClass({
 
         // Refresh the file list when someone changes the directory
         this.selectFolderSubscription = DirectoryStore.currentFolder.distinctUntilChanged().subscribe(function (data_) {
+
+            var _canWrite = false;
+            if( UserStore.getCurrentUser().isFamilyAdmin || data_.path.startsWith("/content/dam-files/" +UserStore.getCurrentUser().username)  )
+            {
+                _canWrite = true;
+            }
+
             FileActions.getFiles.source.onNext(data_.path);
-            this.setState({'selectedPath': data_.path});
+            this.setState({'selectedPath': data_.path, canAddFolder: _canWrite, canAddFile: _canWrite});
+
+
         }.bind(this));
 
 
@@ -439,9 +450,10 @@ module.exports = React.createClass({
                         <ToolbarSeparator/>
 
                         <FlatButton
-                            label="Upload"
+                            label="Add Files"
                             linkButton={true}
                             primary={true}
+                            disabled={!this.state.canAddFile}
                             onTouchTap={()=>{ this.context.router.push('/upload')}}
                             icon={<IconButton iconClassName="material-icons">file_upload</IconButton>}
                         />
@@ -450,6 +462,7 @@ module.exports = React.createClass({
                             label="Add Folder"
                             linkButton={true}
                             primary={true}
+                            disabled={!this.state.canAddFolder}
                             onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}
                             icon={<IconButton iconClassName="material-icons">create_new_folder</IconButton>}
                         />
@@ -481,8 +494,8 @@ module.exports = React.createClass({
                                 title="Files"
                                 data={this.state.treeData}
                                 onSelect={(path_)=>{
-                                        FileActions.getFiles.source.onNext(path_.path);
-                                        DirectoryActions.selectFolder.onNext({path: path_.path});
+                                        FileActions.getFiles.source.onNext(path_);
+                                        DirectoryActions.selectFolder.onNext({path: path_});
                                     }}/>
                         </Paper>
                     </div>

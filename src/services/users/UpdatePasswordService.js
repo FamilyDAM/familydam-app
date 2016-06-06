@@ -20,7 +20,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{changePassword Service} subscribe");
+        //console.log("{changePassword Service} subscribe");
         this.sink = UserActions.changePassword.sink;
         UserActions.changePassword.source.subscribe(this.saveUser.bind(this));
     },
@@ -57,7 +57,12 @@ module.exports = {
             //send the error to the store (through the sink observer
             if( xhr_.status == 401){
                 AuthActions.loginRedirect.onNext(true);
-            } else {
+            }
+            else if (xhr_.status == 403)
+            {
+                UserActions.alert.onNext("You do not have permission to change the password");
+            }
+            else {
                 var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
                 _this.sink.onError(_error);
             }

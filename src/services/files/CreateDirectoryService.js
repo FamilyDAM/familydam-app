@@ -7,6 +7,7 @@ var Rx = require('rx');
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserStore = require('../../stores/UserStore');
 var AuthActions = require('../../actions/AuthActions');
+var UserActions = require('../../actions/UserActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
 var FileActions = require('../../actions/FileActions');
 
@@ -59,13 +60,15 @@ module.exports = {
 
                 }, function (xhr_, status_, errorThrown_){
 
+                    debugger;
                     //send the error to the store (through the sink observer
                     if( xhr_.status == 401){
                         AuthActions.loginRedirect.onNext(true);
                     }else
                     {
-                        var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                        _this.sink.onError(_error);
+                        UserActions.alert.onNext("Error creating folder, you might now have permission");
+                        //var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                        //_this.sink.onError(_error);
                     }
                 });
 

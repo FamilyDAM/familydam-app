@@ -19,7 +19,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{GetUser Service} subscribe");
+        //console.log("{GetUser Service} subscribe");
         this.sink = UserActions.getUser.sink;
 
 
