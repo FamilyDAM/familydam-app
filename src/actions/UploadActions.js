@@ -29,7 +29,14 @@ module.exports = {
     uploadCompleteFileAction: new Rx.Subject(),
 
     // while a file is uploading it will throw multiple status messages during the process
-    fileStatusAction: new Rx.Subject()
+    //deprecated
+    fileStatusAction: new Rx.Subject(),
+
+    startUpload: new Rx.Subject(),
+    uploadStarted: new Rx.Subject(),
+    uploadCompleted: new Rx.Subject(),
+    uploadError: new Rx.Subject()
+
 
 };
 

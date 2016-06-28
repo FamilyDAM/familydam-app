@@ -15,6 +15,7 @@ module.exports = {
      */
     logout: new Rx.Subject(),
     loginRedirect: new Rx.Subject(),
+    checkAuth:  {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
 
     /**

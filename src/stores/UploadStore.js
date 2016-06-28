@@ -65,7 +65,9 @@ module.exports = {
 
     uploadAllFiles: function (dir_) {
         //var _this = this;
-        console.log("{upload all files}");
+        console.log("{upload all files} count=" +this._files.length);
+
+        UploadActions.startUpload.onNext({count:this._files.length});
 
         this._files.forEach(function (file_) {
             //_this.uploadSingleFile(dir_, file_);
@@ -75,6 +77,7 @@ module.exports = {
 
 
     handleFileUpload: function(file_){
+        UploadActions.startUpload.onNext({count:1});
         UploadActions.removeFileAction.onNext(file_);
     },
 

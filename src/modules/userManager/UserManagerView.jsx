@@ -102,7 +102,7 @@ module.exports = React.createClass({
         {
             this.context.router.push({pathname: '/users/' + user_});
         }else{
-            UserActions.alert.onNext("You are not allowed to edit other users.");
+            UserActions.alert.onNext("You are not allowed to edit other users. #3");
         }
     },
 

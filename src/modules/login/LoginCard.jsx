@@ -52,7 +52,16 @@ module.exports = React.createClass({
 
     componentDidMount: function() {
         if(this.refs.pwdField) this.refs.pwdField.focus();
+
+        $(".loginCard").bind('keypress',function(e){
+            if(e.keyCode === 13)
+            {
+                this.handleLogin(e);
+            }
+        }.bind(this));
     },
+
+
 
 
     /**
@@ -131,7 +140,6 @@ module.exports = React.createClass({
                                     <h2>{this.props.user.firstName}</h2>
                                 </div>
                                 <div className="col-xs-12 col-sm-8" style={{'textAlign':'center'}}>
-                                    <Subheader>{this.props.user.username}</Subheader>
                                     <br/>
                                     <div>
                                         <TextField

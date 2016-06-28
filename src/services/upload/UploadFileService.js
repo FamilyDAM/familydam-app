@@ -17,17 +17,52 @@ module.exports = {
     /**
      * Setup action Listeners
      */
-    subscribe:function(){
+    subscribe: function () {
         this.sink = UploadActions.uploadFileAction.sink;
-        UploadActions.uploadFileAction.source.distinctUntilChanged().subscribe( this.execute.bind(this) );
+        UploadActions.uploadFileAction.source
+            .subscribe( (file_) => {
+                setTimeout(this.uploadFile(file_), 0);
+            });
+        /**
+        UploadActions.uploadFileAction.source
+            .bufferWithCount(1)
+            .subscribe( (files_) => {
+                for (var i = 0; i < files_.length; i++)
+                {
+                    var _file = files_[i];
+                    this.uploadFile(_file);
+                }
+            });
+         **/
+
+
+        /**
+        UploadActions.uploadFileAction.source.map(function(file_){
+            return Rx.Observable.defer(function () {
+                return Rx.Observable.return(this.uploadFile(file_));
+            }.bind(this));
+        }.bind(this)).concatAll().subscribe(
+            function (result_) {
+                result_.subscribe(
+                    function (result_, status_, xhr_) {
+                        result_.jqXHR.then(function (data_, status_, xhr_){
+                        }.bind(this));
+                    }.bind(this)
+                )
+            }.bind(this), function (error) {
+                console.log("error", error);
+            }, function () {
+                console.log("complete");
+            }
+        );
+         **/
     },
 
 
     /**
      * Invoke service
      */
-    execute:function(file_)
-    {
+    execute: function (file_) {
         //console.log("{upload single file} " +file_.path);
         //console.dir(file_);
 
@@ -41,7 +76,8 @@ module.exports = {
 
 
         // short circut the check access. If the path is null we know we have to do a regular update
-        if( file_.path == undefined ){
+        if (file_.path == undefined)
+        {
             this.uploadFile(file_);
             return;
         }
@@ -58,7 +94,8 @@ module.exports = {
                 if (!_hasAccess)
                 {
                     _this.uploadFile(file_);
-                }else{
+                } else
+                {
                     _this.copyLocalFile(file_);
                 }
 
@@ -68,7 +105,6 @@ module.exports = {
 
 
     },
-
 
 
     /**
@@ -85,20 +121,22 @@ module.exports = {
             url: "/bin/familydam/api/v1/upload/info",
             data: {'dir': file_.uploadPath, 'path': file_.path},
             headers: {
-                "X-Auth-Token":  UserStore.token.value
+                "X-Auth-Token": UserStore.token.value
             }
-        }).then(function(data_, status_, xhr_){
+        }).then(function (data_, status_, xhr_) {
             var _token = xhr_.getResponseHeader("X-Auth-Token");
-            if( _token != null && _token !== undefined ){
+            if (_token != null && _token !== undefined)
+            {
                 UserActions.saveToken.onNext(_token);
             }
             return data_;
-        }, function(result_, status_, xhr_){
-            if( xhr_.status == 401){
-                AuthActions.loginRedirect.onNext(true);
-            }else
+        }, function (result_, status_, xhr_) {
+            if (xhr_.status == 401)
             {
-                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                AuthActions.loginRedirect.onNext(true);
+            } else
+            {
+                var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
                 _this.sink.onError(_error);
             }
         });
@@ -113,40 +151,43 @@ module.exports = {
     copyLocalFile: function (file_) {
         var _this = this;
 
-        if( file_.recursive == undefined ){
+        if (file_.recursive == undefined)
+        {
             file_.recursive = true;
         }
 
-         return $.ajax({
-                method: "post",
-                url: PreferenceStore.getBaseUrl() + "/api/import/file/copy/",
-                data: {'dir': file_.uploadPath, 'path': file_.path, 'recursive': file_.recursive},
-                 'xhrFields': {
-                     withCredentials: true
-                 }
-            }).then(function(data_, status_, xhr_){
+        return $.ajax({
+            method: "post",
+            url: PreferenceStore.getBaseUrl() + "/api/import/file/copy/",
+            data: {'dir': file_.uploadPath, 'path': file_.path, 'recursive': file_.recursive},
+            'xhrFields': {
+                withCredentials: true
+            }
+        }).then(function (data_, status_, xhr_) {
 
-                 file_.status = "COMPLETE";
-                 file_.percentComplete = "100";
-                 UploadActions.fileStatusAction.onNext(file_);
-                 UploadActions.removeFileAction.onNext(file_);
+            file_.status = "COMPLETE";
+            file_.percentComplete = "100";
+            UploadActions.fileStatusAction.onNext(file_);
+            UploadActions.removeFileAction.onNext(file_);
 
 
-                 var _token = xhr_.getResponseHeader("X-Auth-Token");
-                 if( _token != null && _token !== undefined ){
-                     UserActions.saveToken.onNext(_token);
-                 }
-                 return data_;
+            var _token = xhr_.getResponseHeader("X-Auth-Token");
+            if (_token != null && _token !== undefined)
+            {
+                UserActions.saveToken.onNext(_token);
+            }
+            return data_;
 
-         }, function(err_){
-             if( xhr_.status == 401){
-                 AuthActions.loginRedirect.onNext(true);
-             }else
-             {
-                 var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                 _this.sink.onError(_error);
-             }
-         });
+        }, function (err_) {
+            if (xhr_.status == 401)
+            {
+                AuthActions.loginRedirect.onNext(true);
+            } else
+            {
+                var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
+                _this.sink.onError(_error);
+            }
+        });
 
     },
 
@@ -159,12 +200,15 @@ module.exports = {
      */
     uploadFile: function (file_) {
         var _this = this;
+        var _dataFile = file_;
         var data = new FormData();
         data.append("file", file_);
         data.append("name", file_.name);
         data.append("path", file_.uploadPath);
         //data.append("lastModified", file_.lastModified);
         //data.append("lastModifiedDate", file_.lastModifiedDate);
+
+        UploadActions.uploadStarted.onNext(file_);
 
         return $.ajax({
             url: '/bin/familydam/api/v1/upload/',
@@ -174,35 +218,42 @@ module.exports = {
             processData: false, // Don't process the files
             contentType: false, // Set content type to false as jQuery will tell the server its a query string request
             headers: {
-                Accept : "application/json; charset=utf-8"
+                Accept: "application/json; charset=utf-8"
             },
             xhrFields: {
                 withCredentials: true,
                 onprogress: function (e) {
-                    if (e.lengthComputable) {
+                    if (e.lengthComputable)
+                    {
                         console.log(e.loaded / e.total * 100 + '%');
                     }
                 }
             }
-        }).then(function(data_, status_, xhr_){
-            file_.status = "COMPLETE";
-            file_.percentComplete = "100";
-            UploadActions.fileStatusAction.onNext(file_);
+        }).then(function (data_, status_, xhr_) {
+
+            UploadActions.uploadCompleted.onNext(file_);
             UploadActions.removeFileAction.onNext(file_);
 
-            return data_;
-        }, function (xhr_, status_, errorThrown_){
+            //return this;
+        }, function (xhr_, status_, errorThrown_) {
+
+            UploadActions.uploadError.onNext(file_);
+            //debugger;
             //send the error to the store (through the sink observer
-            if( xhr_.status == 401){
-                AuthActions.loginRedirect.onNext(true);
-            }if( xhr_.status == 403){
-                UserActions.alert.onNext("You do not have permission to upload to this folder");
-            }else
+            if (xhr_.status == 401)
             {
-                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
+                AuthActions.loginRedirect.onNext(true);
+            }
+            if (xhr_.status == 403)
+            {
+                UserActions.alert.onNext("You do not have permission to upload to this folder");
+            } else
+            {
+                var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
                 _this.sink.onError(_error);
             }
         });
+
 
     }
 

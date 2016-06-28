@@ -92,9 +92,9 @@ var GridGroup = React.createClass({
                                     {item_.children.map((img_) => (
                                         <GridTile
                                             key={img_.path}
-                                            title={img_.name}
+                                            title={' '}
                                             style={img_.active?{'border':'2px solid blue'}:{}}
-                                            subtitle={<span>by <b>john doe</b></span>}
+                                            subtitle={<span>{img_.name}</span>}
                                             actionIcon={<IconButton
                                             iconClassName="material-icons"
                                             onClick={() => {this.context.router.push({pathname:'photos/details', query:{path:img_.path}}) }}

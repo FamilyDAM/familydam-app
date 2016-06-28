@@ -231,7 +231,6 @@ module.exports = React.createClass({
             );
         } catch (err_)
         {
-            debugger;
             console.log(err_);
         }
     }

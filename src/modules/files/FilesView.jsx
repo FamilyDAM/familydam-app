@@ -110,7 +110,6 @@ module.exports = React.createClass({
 
         // listen for trigger to reload for files in directory
         this.refreshDirectoriesSubscription = DirectoryActions.refreshDirectories.subscribe(function (data_) {
-            debugger;
             DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
         }.bind(this));
 
@@ -192,23 +191,6 @@ module.exports = React.createClass({
         this.state.isDirTreeLoading = true;
         DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
 
-        /**
-         * Add Folder Modal
-
-        // listen for the selected dir.
-        this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (data_) {
-            _this.setState({'parent': data_});
-        }.bind(this));
-
-        // listen for save complete, then hide
-        this.createFolderSubscription = DirectoryActions.createFolder.sink.subscribe(function (data_) {
-            if (_this.isMounted()) _this.forceUpdate();
-        }, function (error_) {
-            debugger;
-            //todo show toast
-            //console.dir(error_);
-        }.bind(this));
-         */
 
         mixpanel.track("Enter Files View");
     },

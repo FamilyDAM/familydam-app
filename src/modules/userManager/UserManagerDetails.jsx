@@ -98,8 +98,10 @@ const LoadingIcon = (props) => (
     </SvgIcon>
 );
 
-module.exports = React.createClass({
 
+
+
+module.exports = React.createClass({
 
     contextTypes: {
         router: React.PropTypes.object.isRequired
@@ -245,7 +247,7 @@ module.exports = React.createClass({
                             ref="saveBtn" id="saveBtn"
                             onTouchTap={this.handleSave}
                             primary={true}
-                            icon={this.state.saveLoading?<LoadingIcon style={{'width':'25px', 'height':'25px'}}/>:<span/>}/>
+                            icon={this.state.isLoading?<LoadingIcon style={{'width':'25px', 'height':'25px'}}/>:<span/>}/>
                     </div>
                 </div>
 

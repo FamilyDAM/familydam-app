@@ -5,6 +5,8 @@ var $ = require('jquery');
 window.$ = $;
 window.jQuery = $;
 
+require('rx-jquery');
+
 //require('../bower_components/bootstrap-fileinput/js/fileinput.js');
 //require('./assets/bootstrapswitch/bootstrap-switch.min.js');
 //var React = require('react');

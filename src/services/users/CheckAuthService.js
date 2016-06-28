@@ -21,39 +21,36 @@ module.exports = {
 
     subscribe : function(){
         //console.log("{Login Service} subscribe");
-        this.sink = AuthActions.login.sink;
-        AuthActions.login.source.subscribe(this.login.bind(this));
+        this.sink = AuthActions.checkAuth.sink;
+        AuthActions.checkAuth.source.subscribe(this.checkAuth.bind(this));
     },
 
     /**
      * Return all of the users
      * @param val_
      */
-    login: function(data_)
+    checkAuth: function(data_)
     {
-        console.log("{Login Service} login(" +data_.username +"," +data_.password +")");
+        //console.log("{Check Auth Service}");
         var _this = this;
-        var _salt = new Date().getTime();
-        var _url = PreferenceStore.getBaseUrl() +'/j_security_check?';
+        var _url = '/bin/familydam/api/v1/auth/validate';
 
-        var _data = {'j_username':data_.username, 'j_password':data_.password, 'j_validate':'true', 'form.auth.timeout':120, 'form.onexpire.login':true};
 
         //TODO: hash the password & salt
         return $.ajax({
-                    'method':'post'
+                    'method':'get'
                     ,'url': _url
-                    ,'data':_data
-                
+
                 }).then(function(result_, status_, xhr_){
             
-                    UserActions.getUser.source.onNext(data_.username);
                     //send results to the store
-                    //_this.sink.onNext(data_);
+                    //this.sink.onNext(data_);
 
                 }.bind(this), function (xhr_, status_, errorThrown_){
 
                     //send the error to the store (through the sink observer
                     if( xhr_.status == 401){
+                        UserActions.alert.onNext("Session has expired, log in again");
                         AuthActions.loginRedirect.onNext(true);
                     }else
                     {

@@ -60,7 +60,6 @@ module.exports = {
 
                 }, function (xhr_, status_, errorThrown_){
 
-                    debugger;
                     //send the error to the store (through the sink observer
                     if( xhr_.status == 401){
                         AuthActions.loginRedirect.onNext(true);

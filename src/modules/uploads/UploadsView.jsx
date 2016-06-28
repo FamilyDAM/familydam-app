@@ -9,7 +9,10 @@ var React = require('react');
 import {Router, Link} from 'react-router';
 
 import {
+    Dialog,
+    FlatButton,
     IconButton,
+    LinearProgress,
     Paper,
     Table,
     TableHeader,
@@ -22,6 +25,7 @@ import {
     ToolbarGroup,
     ToolbarSeparator
 } from 'material-ui';
+
 
 var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
 
@@ -58,7 +62,13 @@ module.exports = React.createClass({
         return {
             state: '100%',
             uploadPath: _defaultPath,
-            showAddFolder: false
+            showAddFolder: false,
+            showUploadProgressDialog: false,
+            enableClose: false,
+            enableRetry: false,
+            completedFiles:0,
+            errorFiles:0,
+            totalFiles:0
         };
     },
 
@@ -69,27 +79,89 @@ module.exports = React.createClass({
         NavigationActions.updateTitle.onNext({'label': 'Upload Files'});
 
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (d_) {
-
             var _uploadPath = d_.path;
             if (d_.path.substring(d_.path.length - 1) != "/")
             {
                 _uploadPath = d_.path + "/";
             }
 
+            this.state.currentFolder = d_.path;
+            this.state.uploadPath = _uploadPath;
+            if( this.isMounted() ) this.forceUpdate();
+        }.bind(this));
 
-            this.setState({'currentFolder': d_.path, "uploadPath": _uploadPath});
+
+        // upload dialog status actions
+        this.startUploadSubscription = UploadActions.startUpload.subscribe(function(data_){
+            //this.state.totalFiles=data_.count;
+            this.state.showUploadProgressDialog = true;
+            if( this.isMounted() ) this.forceUpdate();
+        }.bind(this));
+
+
+        this.startUploadSubscription = UploadActions.uploadStarted.subscribe(function(data_){
+            this.state.totalFiles = this.state.totalFiles+1;
+            if( this.isMounted() ) this.forceUpdate();
+        }.bind(this));
+
+
+        this.UploadCompleteSubscription = UploadActions.uploadCompleted.subscribe(function(data_){
+            this.state.completedFiles = this.state.completedFiles+1;
+
+            var _totals = this.state.completedFiles + this.state.errorFiles;
+            if( this.state.totalFiles === _totals ){
+                this.state.enableClose=true;
+                this.state.enableRetry=this.state.errorFiles>0;
+            }
+
+            if( this.isMounted() ) this.forceUpdate();
+        }.bind(this));
+
+
+        this.UploadErrorSubscription = UploadActions.uploadError.subscribe(function(data_){
+            this.setState({errorFiles:this.state.errorFiles+1});
         }.bind(this));
     },
 
     componentWillUnmount: function () {
-        if (this.currentFolderSubscription !== undefined)
-        {
+        if (this.currentFolderSubscription !== undefined){
             this.currentFolderSubscription.dispose();
         }
+
+        if( this.startUploadSubscription ) this.UploadCompleteSubscription.dispose();
+        if( this.UploadErrorSubscription ) this.UploadCompleteSubscription.dispose();
+        if( this.UploadCompleteSubscription ) this.UploadCompleteSubscription.dispose();
+    },
+
+    handleDialogClose:function(){
+      this.setState({
+          showUploadProgressDialog: false,
+          enableClose: false,
+          enableRetry: false,
+          completedFiles:0,
+          errorFiles:0,
+          totalFiles:0
+      });
     },
 
 
     render: function () {
+
+        const actions = [
+            /* <FlatButton
+                label="Retry"
+                primary={true}
+                disabled={!this.state.enableRetry}
+                onTouchTap={this.handleDialogClose}
+            />, */
+            <FlatButton
+                label="Close"
+                primary={true}
+                disabled={!this.state.enableClose}
+                onTouchTap={this.handleDialogClose}
+            />,
+        ];
+
 
         return (
 
@@ -112,6 +184,40 @@ module.exports = React.createClass({
                         currentFolder={this.state.currentFolder}
                         uploadPath={this.state.uploadPath}/>
 
+                    <Dialog
+                        title="Upload Progress"
+                        actions={actions}
+                        modal={true}
+                        open={this.state.showUploadProgressDialog}
+                    >
+                        {(() => {
+                            if( this.state.totalFiles > 0 )
+                            {
+                                return(
+                                    <div>
+                                        Total File Progress {this.state.completedFiles} / {this.state.totalFiles} ({this.state.errorFiles} Errors)
+                                        <br/><br/>
+                                        <LinearProgress
+                                            mode="determinate"
+                                            max={this.state.totalFiles}
+                                            min={this.state.completedFiles}
+                                            style={{'height':'10px'}}/>
+                                    </div>
+                                );
+                            }else{
+                                return(
+                                    <div>
+                                        Preparing Files
+                                        <LinearProgress
+                                            mode="indeterminate"
+                                            style={{'height':'10px'}}/>
+                                    </div>
+                                );
+                            }
+                        })()}
+
+
+                    </Dialog>
                 </div>
             </div>
 

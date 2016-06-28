@@ -82,6 +82,10 @@ module.exports = React.createClass({
         muiTheme: React.PropTypes.object
     },
 
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
+    },
+
     getInitialState: function () {
         return {
             user: {},
@@ -91,10 +95,17 @@ module.exports = React.createClass({
         };
     },
 
+
     componentWillMount: function () {
+
+        this.checkAuthHandler();
+        this.authCheckTimer = window.setInterval(this.checkAuthHandler, 10000);
+
         AuthActions.loginRedirect.subscribe(function () {
-            this.state.history.pushState(null, '/', null);
+            //add a delay so any UserAction Alerts can show up
+            window.setTimeout( () => {this.context.router.push('/login')}, 1000);
         }.bind(this));
+
 
         this.openAppSidebarSubscription = NavigationActions.openAppSidebar.subscribe(function(data_){
             this.setState({'openAppSidebar':data_})
@@ -128,6 +139,9 @@ module.exports = React.createClass({
         if( this.userAlertSubscription ){
             this.userAlertSubscription.dispose();
         }
+        if( this.authCheckTimer ){
+            //window.clearInterval(this.authCheckTimer);
+        }
     },
 
 
@@ -135,6 +149,10 @@ module.exports = React.createClass({
         NavigationActions.openAppSidebar.onNext(!this.state.openAppSidebar);
     },
 
+
+    checkAuthHandler:function(){
+        AuthActions.checkAuth.source.onNext(true);
+    },
 
 
 
@@ -218,7 +236,6 @@ module.exports = React.createClass({
             );
         } catch (err)
         {
-            debugger;
             console.log(err);
         }
     }

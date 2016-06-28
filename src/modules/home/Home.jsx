@@ -7,7 +7,7 @@
 var React = require('react');
 import { Router, Link } from 'react-router';
 
-import {LeftNav} from 'material-ui';
+import {LeftNav, Snackbar} from 'material-ui';
 
 var NavigationActions = require('../../actions/NavigationActions');
 var SectionTree = require('../../components/folderTree/SectionTree.jsx');
@@ -15,6 +15,12 @@ var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 
 module.exports = React.createClass({
 
+    getInitialState:function(){
+        return {
+            snackBarOpen:false,
+            snackBarMessage:""
+        }
+    },
 
 
     componentDidMount: function(){
@@ -23,10 +29,20 @@ module.exports = React.createClass({
         //this.navigationActions = NavigationActions.currentPath.onNext( _pathData );
 
         NavigationActions.openAppSidebar.onNext(true);
+
+        this.userAlertSubscription = UserActions.alert.subscribe( function(data_){
+            this.setState({
+                snackBarOpen:true,
+                snackBarMessage:data_
+            });
+        }.bind(this))
     },
 
-    componentWillUnmount: function(){
 
+    componentWillUnmount: function(){
+        if( this.userAlertSubscription ){
+            this.userAlertSubscription.dispose();
+        }
     },
 
 
@@ -37,6 +53,14 @@ module.exports = React.createClass({
                 <div style={{'display':'flex', 'alignItems':'center', 'width':'100%'}}>
                     <h3 style={{'margin':'0px auto'}}>Select an App To Start</h3>
                 </div>
+
+                <footer>
+                    <Snackbar
+                        open={this.state.snackBarOpen}
+                        message={this.state.snackBarMessage}
+                        autoHideDuration={3000}
+                    />
+                </footer>
             </div>
 
         );
