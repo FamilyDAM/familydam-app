@@ -91,7 +91,7 @@ public class ImageResizeService implements IImageResizeService
 
 
 
-    public File resizeImage(Resource resource, String uri, String mimeTypeExt, InputStream is, int longSize) throws RepositoryException, IOException
+    public File resizeImage(Resource resource, String uri, String mimeTypeExt, InputStream is, int longSize) throws Exception
     {
         try {
             if (this.resizeLibrary.equalsIgnoreCase("image-magick")) {
@@ -102,7 +102,7 @@ public class ImageResizeService implements IImageResizeService
 
             } else {
 
-                BufferedImage bufImage = scaleWithScalr(is, longSize);
+                BufferedImage bufImage = scaleWithScalr(resource, is, longSize);
 
                 File tempFile = File.createTempFile(uri.substring(uri.lastIndexOf("/") + 1), mimeTypeExt);
                 ImageIO.write(bufImage, mimeTypeExt, tempFile);
@@ -125,21 +125,23 @@ public class ImageResizeService implements IImageResizeService
      * @throws RepositoryException
      * @throws IOException
      */
-    public BufferedImage scaleWithScalr(InputStream is, int longSize) throws IOException
+    public BufferedImage scaleWithScalr(Resource resource, InputStream is, int longSize) throws Exception
     {
-        BufferedImage newImage = ScaleWithScalr(is, longSize, Scalr.Method.AUTOMATIC);
+        BufferedImage newImage = ScaleWithScalr(resource, is, longSize, Scalr.Method.AUTOMATIC);
         return newImage;
     }
 
 
 
 
-    private BufferedImage ScaleWithScalr(InputStream is, int longSize, Scalr.Method quality) throws IOException
+    private BufferedImage ScaleWithScalr(Resource resource, InputStream is, int longSize, Scalr.Method quality) throws Exception
     {
         try {
             BufferedImage bufferedImage = ImageIO.read(is);
             BufferedImage scaledImage = Scalr.resize(bufferedImage, quality, longSize);
-            return scaledImage;
+            BufferedImage _rotatedFile = rotateImage(scaledImage, resource);
+
+            return _rotatedFile;
         }catch(Throwable ex){
             //ex.printStackTrace();
             log.error(ex.getMessage(), ex);
@@ -158,7 +160,7 @@ public class ImageResizeService implements IImageResizeService
      * @throws RepositoryException
      * @throws IOException
      */
-    public File scaleWithImageMagik(Resource resource_, InputStream is_, int longSize_) throws RepositoryException, IOException
+    public File scaleWithImageMagik(Resource resource_, InputStream is_, int longSize_) throws Exception
     {
         File _tmpNodeFile = null;
         File _tmpResizedFile = null;
@@ -240,71 +242,7 @@ public class ImageResizeService implements IImageResizeService
 
         Metadata metadata = ImageMetadataReader.readMetadata(metadataIS);
 
-        ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-        JpegDirectory jpegDirectory = (JpegDirectory) metadata.getDirectory(JpegDirectory.class);
-
-        int orientation = 1;
-        if( exifIFD0Directory != null && exifIFD0Directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION) ) {
-            try {
-                orientation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-            }
-            catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }else{
-            return originalImage;
-        }
-
-        if( jpegDirectory != null ) {
-            int width = jpegDirectory.getImageWidth();
-            int height = jpegDirectory.getImageHeight();
-
-            AffineTransform affineTransform = new AffineTransform();
-
-            switch (orientation) {
-                case 1:
-                    return originalImage;
-                case 2: // Flip X
-                    affineTransform.scale(-1.0, 1.0);
-                    affineTransform.translate(-width, 0);
-                    break;
-                case 3: // PI rotation
-                    affineTransform.translate(width, height);
-                    affineTransform.rotate(Math.PI);
-                    break;
-                case 4: // Flip Y
-                    affineTransform.scale(1.0, -1.0);
-                    affineTransform.translate(0, -height);
-                    break;
-                case 5: // - PI/2 and Flip X
-                    affineTransform.rotate(-Math.PI / 2);
-                    affineTransform.scale(-1.0, 1.0);
-                    break;
-                case 6: // -PI/2 and -width
-                    affineTransform.translate(height, 0);
-                    affineTransform.rotate(Math.PI / 2);
-                    break;
-                case 7: // PI/2 and Flip
-                    affineTransform.scale(-1.0, 1.0);
-                    affineTransform.translate(-height, 0);
-                    affineTransform.translate(0, width);
-                    affineTransform.rotate(3 * Math.PI / 2);
-                    break;
-                case 8: // PI / 2
-                    affineTransform.translate(0, width);
-                    affineTransform.rotate(3 * Math.PI / 2);
-                    break;
-                default:
-                    return originalImage;
-            }
-
-            AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_BILINEAR);
-            BufferedImage destinationImage = new BufferedImage(originalImage.getHeight(), originalImage.getWidth(), originalImage.getType());
-            destinationImage = affineTransformOp.filter(originalImage, destinationImage);
-
-            return destinationImage;
-        }
-        return originalImage;
+        return rotateImage(originalImage, metadata);
     }
 
 
@@ -326,6 +264,35 @@ public class ImageResizeService implements IImageResizeService
 
         Metadata metadata = ImageMetadataReader.readMetadata(metadataIS);
 
+        return rotateImage(originalImage, metadata);
+    }
+
+
+
+    /**
+     * A lot of images, especially mobile, are technically saved in any orientation with metadata to tell us how to flip it to
+     * what humans would expect to see.
+     * @param image
+     * @param resource
+     * @return
+     * @throws RepositoryException
+     * @throws IOException
+     * @throws ImageProcessingException
+     * @throws MetadataException
+     */
+    public BufferedImage rotateImage(BufferedImage image, Resource resource) throws RepositoryException, IOException, ImageProcessingException, MetadataException
+    {
+        InputStream metadataIS = JcrUtils.readFile(resource.adaptTo(Node.class));
+        if( metadataIS == null ) return image;
+
+        Metadata metadata = ImageMetadataReader.readMetadata(metadataIS);
+        return rotateImage(image, metadata);
+    }
+
+
+
+    private BufferedImage rotateImage(BufferedImage originalImage, Metadata metadata) throws MetadataException
+    {
         ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
         JpegDirectory jpegDirectory = (JpegDirectory) metadata.getDirectory(JpegDirectory.class);
 
@@ -392,7 +359,6 @@ public class ImageResizeService implements IImageResizeService
         }
         return originalImage;
     }
-
 
 
     /**

@@ -6,10 +6,8 @@ package com.familydam.apps.photos.services;
 
 import org.apache.sling.api.resource.Resource;
 
-import javax.jcr.RepositoryException;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -17,8 +15,8 @@ import java.io.InputStream;
  */
 public interface IImageResizeService
 {
-    File resizeImage(Resource resource, String uri, String mimeTypeExt, InputStream is, int longSize) throws RepositoryException, IOException;
+    File resizeImage(Resource resource, String uri, String mimeTypeExt, InputStream is, int longSize) throws Exception;
 
-    BufferedImage scaleWithScalr(InputStream is, int longSize) throws RepositoryException, IOException;
-    File scaleWithImageMagik(Resource resource, InputStream is, int longSize) throws RepositoryException, IOException;
+    BufferedImage scaleWithScalr(Resource resource, InputStream is, int longSize) throws Exception;
+    File scaleWithImageMagik(Resource resource, InputStream is, int longSize) throws Exception;
 }
