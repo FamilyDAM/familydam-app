@@ -30,6 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,8 +40,6 @@ import java.util.Dictionary;
 /**
  * Created by mnimer on 12/16/14.
  */
-
-
 /**
 @Component(metatype = true, immediate=true)
 @Properties({
@@ -54,6 +53,7 @@ import java.util.Dictionary;
         }),
         @Property(name = "image-magick-path", label = "Image Magic Path.", value = {""}, description = "Path to your local installation of Image Magick (ex: /opt/local/bin)")
 })
+ * /mnt/DroboFS/Shares/DroboApps/imagemagick/bin
 **/
 public class ImageResizeService implements IImageResizeService
 {
@@ -64,6 +64,11 @@ public class ImageResizeService implements IImageResizeService
 
     private String resizeLibrary = "scalr";
     private String imageMagickPath = "/";
+
+
+    public ImageResizeService()
+    {
+    }
 
 
     public ImageResizeService(String resizeLibrary, String imageMagickPath)
@@ -91,6 +96,7 @@ public class ImageResizeService implements IImageResizeService
         try {
             if (this.resizeLibrary.equalsIgnoreCase("image-magick")) {
 
+                log.debug("{scaleWithImageMagik} long size:" +longSize +" | path=" +resource.getPath());
                 File tempImage = scaleWithImageMagik(resource, is, longSize);
                 return tempImage;
 
@@ -181,8 +187,10 @@ public class ImageResizeService implements IImageResizeService
             // create the operation, add images and operators/options
             IMOperation op = new IMOperation();
             op.addImage(_tmpNodeFile.getAbsolutePath());
-            op.autoOrient();
             op.resize(longSize_);
+            op.autoOrient();
+            op.colorspace("RGB");
+            //op.orient();
             op.addImage(_tmpResizedFile.getAbsolutePath());
 
             // execute the operation
@@ -192,8 +200,11 @@ public class ImageResizeService implements IImageResizeService
             String newImagePath = _tmpResizedFile.getAbsolutePath();
 
             File tmpFile = new File(newImagePath);
+            BufferedImage _rotatedFile = rotateImage(tmpFile);
+            if( _rotatedFile != null ) {
+                ImageIO.write(_rotatedFile, nameParts[1], tmpFile);
+            }
             return tmpFile;
-
         }
         catch (Exception ex) {
             //ex.printStackTrace();
@@ -226,6 +237,92 @@ public class ImageResizeService implements IImageResizeService
         BufferedImage originalImage = ImageIO.read(originalImageIS);
 
         if( metadataIS == null ) return originalImage;
+
+        Metadata metadata = ImageMetadataReader.readMetadata(metadataIS);
+
+        ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+        JpegDirectory jpegDirectory = (JpegDirectory) metadata.getDirectory(JpegDirectory.class);
+
+        int orientation = 1;
+        if( exifIFD0Directory != null && exifIFD0Directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION) ) {
+            try {
+                orientation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }else{
+            return originalImage;
+        }
+
+        if( jpegDirectory != null ) {
+            int width = jpegDirectory.getImageWidth();
+            int height = jpegDirectory.getImageHeight();
+
+            AffineTransform affineTransform = new AffineTransform();
+
+            switch (orientation) {
+                case 1:
+                    return originalImage;
+                case 2: // Flip X
+                    affineTransform.scale(-1.0, 1.0);
+                    affineTransform.translate(-width, 0);
+                    break;
+                case 3: // PI rotation
+                    affineTransform.translate(width, height);
+                    affineTransform.rotate(Math.PI);
+                    break;
+                case 4: // Flip Y
+                    affineTransform.scale(1.0, -1.0);
+                    affineTransform.translate(0, -height);
+                    break;
+                case 5: // - PI/2 and Flip X
+                    affineTransform.rotate(-Math.PI / 2);
+                    affineTransform.scale(-1.0, 1.0);
+                    break;
+                case 6: // -PI/2 and -width
+                    affineTransform.translate(height, 0);
+                    affineTransform.rotate(Math.PI / 2);
+                    break;
+                case 7: // PI/2 and Flip
+                    affineTransform.scale(-1.0, 1.0);
+                    affineTransform.translate(-height, 0);
+                    affineTransform.translate(0, width);
+                    affineTransform.rotate(3 * Math.PI / 2);
+                    break;
+                case 8: // PI / 2
+                    affineTransform.translate(0, width);
+                    affineTransform.rotate(3 * Math.PI / 2);
+                    break;
+                default:
+                    return originalImage;
+            }
+
+            AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_BILINEAR);
+            BufferedImage destinationImage = new BufferedImage(originalImage.getHeight(), originalImage.getWidth(), originalImage.getType());
+            destinationImage = affineTransformOp.filter(originalImage, destinationImage);
+
+            return destinationImage;
+        }
+        return originalImage;
+    }
+
+
+
+    /**
+     * A lot of images, especially mobile, are technically saved in any orientation with metadata to tell us how to flip it to
+     * what humans would expect to see.
+     * @param file
+     * @return
+     * @throws RepositoryException
+     * @throws IOException
+     * @throws ImageProcessingException
+     * @throws MetadataException
+     */
+    public BufferedImage rotateImage(File file) throws RepositoryException, IOException, ImageProcessingException, MetadataException
+    {
+        InputStream metadataIS = new FileInputStream(file);
+        BufferedImage originalImage = ImageIO.read(file);
 
         Metadata metadata = ImageMetadataReader.readMetadata(metadataIS);
 

@@ -64,14 +64,15 @@ import java.util.Dictionary;
  * Annotations below are short version of:
  */
 @SlingServlet(
+        metatype = true,
         resourceTypes = "sling/servlet/default",
         selectors = {"resize"},
-        extensions = {"jpg", "JPG", "png", "PNG", "gif", "GIF"})
+        extensions = {"jpg","jpeg", "JPG", "JPEG", "png", "PNG", "gif", "GIF"})
 @Properties({
         @Property(name = "resize-library", label = "Resize Library", value = "scalr", description = "What resizing library should we use"
                 , options = {
                 @PropertyOption(name = "scalr", value = "scalr"),
-                @PropertyOption(name = "image-magik", value = "image-magik")
+                @PropertyOption(name = "image-magick", value = "image-magick")
         }),
         @Property(name = "image-magick-path", label = "Image Magic Path.", value = {""}, description = "Path to your local installation of Image Magick (ex: /opt/local/bin)")
 })
@@ -143,6 +144,7 @@ public class ImageThumbnailServlet extends SlingSafeMethodsServlet
                 int longSize = getLongSize(selectors);
 
                 InputStream is = resource.adaptTo(InputStream.class);
+                log.info("Resize Image {} to {}", resource.getPath(), longSize);
                 _tmpFile = imageRenditionsService.resizeImage(resource, imageUri, mimeTypeExt, is, longSize);
 
                 String newImageISPath = cacheImage(resource, imageUri, _tmpFile, mimeType, adminSession);
@@ -155,7 +157,10 @@ public class ImageThumbnailServlet extends SlingSafeMethodsServlet
 
             ResourceResolver resolver = request.getResourceResolver();
             Resource resource = resolver.getResource(resourcePath);
-
+            if( resource == null ){
+                // if null, grab the original
+                resource = resolver.getResource(imagePath +"." +extension);
+            }
             returnInputStream(response, resource.getResourceMetadata().getContentType(), resource.adaptTo(InputStream.class));
 
         }catch (Exception ex) {

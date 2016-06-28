@@ -22,9 +22,9 @@
     <groupId>com.familydam.osgi</groupId>
     <artifactId>image-handlers</artifactId>
     <packaging>bundle</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <name>FamilyDAM OSGI Image Handlers</name>
-    <description>com.familydam.apps - photos</description>
+    <description>Various image handlers for the FamilyDAM application</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -202,7 +202,7 @@
                 <version>3.0.0</version>
                 <configuration>
                     <instructions>
-                        <Bundle-Name>FamilyDAM Photos App</Bundle-Name>
+                        <Bundle-Name>FamilyDAM Image Handlers</Bundle-Name>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Private-Package>
