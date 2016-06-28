@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.servlet.ServletException;
@@ -64,6 +65,21 @@ public class FileUploadServlet extends SlingAllMethodsServlet
     public ResourceResolverFactory resolverFactory;
 
 
+    /**
+     * JCR node names have a certain character set, which is actually very broad and includes
+     * almost all of unicode minus some special characters such as /, [, ], |, :
+     * and * (used to build paths, address same-name siblings etc. in JCR), and it
+     * cannot be "." or ".." (obviously).
+     *
+     * @param fileName_
+     * @return
+     */
+    private String cleanFileName(String fileName_)
+    {
+        return Text.escapeIllegalJcrChars(fileName_.replace("\u00A0", " "));
+    }
+
+
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
     {
@@ -80,6 +96,8 @@ public class FileUploadServlet extends SlingAllMethodsServlet
         Session session = null;
         try {
             session = request.getResourceResolver().adaptTo(Session.class);
+            session.refresh(true);
+
 
             boolean isMultipart = org.apache.commons.fileupload.servlet.ServletFileUpload.isMultipartContent(request);
             isMultipart = true;
@@ -116,9 +134,16 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                 }
 
 
-                List<String> locations = new ArrayList<>();
-                Node _pathNode = JcrUtils.getOrCreateByPath(_uploadPath, "sling:Folder", session);
                 session.save();
+                List<String> locations = new ArrayList<>();
+                Node _pathNode = null;
+                try {
+                    _pathNode = JcrUtils.getOrCreateByPath(_uploadPath, "sling:Folder", session);
+                }
+                catch (InvalidItemStateException ex) {
+                    _pathNode = JcrUtils.getOrCreateByPath(_uploadPath, "sling:Folder", session);
+                }
+
                 //Find the file
                 for (final java.util.Map.Entry<String, org.apache.sling.api.request.RequestParameter[]> pairs : partMap.entrySet()) {
                     final String k = pairs.getKey();
@@ -132,6 +157,16 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                             /**
                              * Write to DAM
                              */
+//                            Node existingNode = JcrUtils.getNodeIfExists(_pathNode.getPath() +"/" +_fileName, session);
+//                            if( existingNode != null ){
+//                                if( existingNode.isCheckedOut() ){
+//                                    //existingNode.checkin();
+//                                    //session.save();
+//                                    //existingNode.checkout();
+//                                    //existingNode.checkout();
+//                                }
+//                            }
+
                             Node _newFile = JcrUtils.putFile(_pathNode, _fileName, param.getContentType(), stream);
                             _newFile.addMixin("dam:extensible");
                             _newFile.addMixin(JcrConstants.MIX_REFERENCEABLE);
@@ -149,6 +184,7 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                             // save the primary file.
                             session.save();
                             log.trace("file {} uploaded to {}", _fileName, _newFile.getPath());
+                            //System.out.println("file " +_fileName +" uploaded to " +_newFile.getPath());
 
                             locations.add(_newFile.getPath());
                         }
@@ -162,82 +198,6 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                 response.setHeader("location", StringUtils.join(locations.toArray(), ","));
             }
 
-            /***
-             * Read raw file stream (doesn't work in sling)
-             ServletFileUpload upload = new ServletFileUpload();
-             FileItemIterator iter = upload.getItemIterator(request);
-             while (iter.hasNext()) {
-             FileItemStream item = iter.next();
-             String name = item.getFieldName();
-             InputStream stream = item.openStream();
-             if (item.isFormField()) {
-             if (name.equalsIgnoreCase("path")) {
-             // FIND the path
-             _path = Streams.asString(stream);
-             }
-             //System.out.println("Form field " + name + " with value " + Streams.asString(stream) + " detected.");
-             } else {
-             _fileName = item.getName();
-             _contentType = item.getContentType();
-             //System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
-             // Process the input stream
-             _fileStream = stream;//item.openStream();
-
-
-             // check file name for starting /
-             int pos = _fileName.lastIndexOf("/");
-             if (pos > -1 && (pos + 1) < _fileName.length()) {
-             _fileName = _fileName.substring(pos + 1);
-             }
-             _fileName = cleanFileName(_fileName);
-
-             //set dir path, from the _path
-
-             // Create DIR to store file
-             Node copyToDir = JcrUtils.getOrCreateByPath(resourcePath, false, JcrConstants.NT_FOLDER, JcrConstants.NT_FOLDER, session, true);
-             //todo add mixins to all parent folders
-
-             // figure out the mime type
-             String mimeType = mimeTypeService.getMimeType(_contentType);
-             if (mimeType == null) {
-             //default to our local check (based on file extension)
-             mimeType = contentAwareMimeTypeService.getMimeType(_fileName, _fileStream);
-             }
-
-             // Check to see if this is a new node or if we are updating an existing node
-             Node nodeExistsCheck = JcrUtils.getNodeIfExists(copyToDir, _fileName);
-             if (nodeExistsCheck != null) {
-             fileExists = true;
-             }
-
-             // Upload the FILE
-             Node fileNode = JcrUtils.putFile(copyToDir, _fileName, mimeType, _fileStream);
-             fileNode.addMixin("dam:extensible");
-             fileNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
-             fileNode.addMixin(JcrConstants.MIX_VERSIONABLE);
-
-             //fileNode.setProperty(JcrConstants.JCR_CREATED, session.getUserID());
-
-
-             // Set a DAM specific date (as as tring so it's easy to parse later)
-             javax.jcr.Property createdDate = fileNode.getProperty(JcrConstants.JCR_CREATED);
-             Calendar dateStamp = Calendar.getInstance();
-             if (createdDate == null) {
-             dateStamp = createdDate.getDate();
-             }
-             fileNode.setProperty(FamilyDAMDashboardConstants.DAM_DATECREATED, dateFormat.format(dateStamp.getTime()));
-
-             // save the primary file.
-             session.save();
-
-
-             response.setStatus(200);
-             response.setContentType("application/text");
-             // return a path to the new file, in the location header
-             response.setHeader("location", fileNode.getPath());
-             }
-             }
-             ***/
 
         }
         catch (AccessDeniedException ex) {
@@ -245,9 +205,9 @@ public class FileUploadServlet extends SlingAllMethodsServlet
             response.setStatus(403); //Bad Request
         }
         catch (Exception ex) {
-            ex.printStackTrace();
-            response.getOutputStream().write(ex.getMessage().getBytes());
             response.setStatus(500); //Bad Request
+            response.getOutputStream().write(ex.getMessage().getBytes());
+            //ex.printStackTrace();
         }
         finally {
             if (session != null) {
@@ -258,17 +218,83 @@ public class FileUploadServlet extends SlingAllMethodsServlet
     }
 
 
-    /**
-     * JCR node names have a certain character set, which is actually very broad and includes
-     * almost all of unicode minus some special characters such as /, [, ], |, :
-     * and * (used to build paths, address same-name siblings etc. in JCR), and it
-     * cannot be "." or ".." (obviously).
-     *
-     * @param fileName_
-     * @return
-     */
-    private String cleanFileName(String fileName_)
-    {
-        return Text.escapeIllegalJcrChars(fileName_.replace("\u00A0", " "));
-    }
+
+    /***
+     * Read raw file stream (doesn't work in sling)
+     ServletFileUpload upload = new ServletFileUpload();
+     FileItemIterator iter = upload.getItemIterator(request);
+     while (iter.hasNext()) {
+     FileItemStream item = iter.next();
+     String name = item.getFieldName();
+     InputStream stream = item.openStream();
+     if (item.isFormField()) {
+     if (name.equalsIgnoreCase("path")) {
+     // FIND the path
+     _path = Streams.asString(stream);
+     }
+     //System.out.println("Form field " + name + " with value " + Streams.asString(stream) + " detected.");
+     } else {
+     _fileName = item.getName();
+     _contentType = item.getContentType();
+     //System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
+     // Process the input stream
+     _fileStream = stream;//item.openStream();
+
+
+     // check file name for starting /
+     int pos = _fileName.lastIndexOf("/");
+     if (pos > -1 && (pos + 1) < _fileName.length()) {
+     _fileName = _fileName.substring(pos + 1);
+     }
+     _fileName = cleanFileName(_fileName);
+
+     //set dir path, from the _path
+
+     // Create DIR to store file
+     Node copyToDir = JcrUtils.getOrCreateByPath(resourcePath, false, JcrConstants.NT_FOLDER, JcrConstants.NT_FOLDER, session, true);
+     //todo add mixins to all parent folders
+
+     // figure out the mime type
+     String mimeType = mimeTypeService.getMimeType(_contentType);
+     if (mimeType == null) {
+     //default to our local check (based on file extension)
+     mimeType = contentAwareMimeTypeService.getMimeType(_fileName, _fileStream);
+     }
+
+     // Check to see if this is a new node or if we are updating an existing node
+     Node nodeExistsCheck = JcrUtils.getNodeIfExists(copyToDir, _fileName);
+     if (nodeExistsCheck != null) {
+     fileExists = true;
+     }
+
+     // Upload the FILE
+     Node fileNode = JcrUtils.putFile(copyToDir, _fileName, mimeType, _fileStream);
+     fileNode.addMixin("dam:extensible");
+     fileNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
+     fileNode.addMixin(JcrConstants.MIX_VERSIONABLE);
+
+     //fileNode.setProperty(JcrConstants.JCR_CREATED, session.getUserID());
+
+
+     // Set a DAM specific date (as as tring so it's easy to parse later)
+     javax.jcr.Property createdDate = fileNode.getProperty(JcrConstants.JCR_CREATED);
+     Calendar dateStamp = Calendar.getInstance();
+     if (createdDate == null) {
+     dateStamp = createdDate.getDate();
+     }
+     fileNode.setProperty(FamilyDAMDashboardConstants.DAM_DATECREATED, dateFormat.format(dateStamp.getTime()));
+
+     // save the primary file.
+     session.save();
+
+
+     response.setStatus(200);
+     response.setContentType("application/text");
+     // return a path to the new file, in the location header
+     response.setHeader("location", fileNode.getPath());
+     }
+     }
+     ***/
+
+
 }

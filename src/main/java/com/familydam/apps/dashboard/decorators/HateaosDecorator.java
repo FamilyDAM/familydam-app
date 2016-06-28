@@ -48,7 +48,7 @@ public class HateaosDecorator implements ResourceDecorator
         if (isDamImage(resource)) {
             String _path = resource.getPath().substring(0, resource.getPath().lastIndexOf("."));
             String _ext = resource.getPath().substring(resource.getPath().lastIndexOf("."));
-            linksMap.put("thumb", _path + ".resize.250.250." +_ext);
+            linksMap.put("thumb", _path + ".resize.250" +_ext);
             linksMap.put("resize", _path + ".resize.{size}.{format}");
         }
 

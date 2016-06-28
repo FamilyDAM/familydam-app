@@ -23,7 +23,7 @@
     <groupId>com.familydam.osgi</groupId>
     <artifactId>app-dashboard</artifactId>
     <packaging>bundle</packaging>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
     <name>FamilyDAM OSGI Dashboard App</name>
     <description></description>
 
@@ -114,6 +114,7 @@
             <artifactId>org.apache.sling.commons.contentdetection</artifactId>
             <version>1.0.2</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
