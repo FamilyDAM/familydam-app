@@ -20,7 +20,6 @@
 [artifacts]
   org.apache.sling/org.apache.sling.launchpad/8/slingstart
   org.apache.sling/org.apache.sling.resourceaccesssecurity/1.0.0
-  #org.apache.sling/org.apache.sling.bgservlets/1.0.2
   org.apache.felix/org.apache.felix.shell/1.4.3
   org.apache.felix/org.apache.felix.shell.remote/1.1.2
 [configurations]
@@ -28,11 +27,13 @@
 #        auth.annonymous=true
 
 
+
+
 [feature name=familydam]
 [variables]
-    core.version=1.0.0-SNAPSHOT
-    dashboard.version=1.0.2-SNAPSHOT
-    image.handlers.version=1.0.0-SNAPSHOT
+    core.version=0.1.0-SNAPSHOT
+    dashboard.version=0.1.2-SNAPSHOT
+    image.handlers.version=0.1.1-SNAPSHOT
 [artifacts]
    com.familydam.osgi/core/${core.version}
    com.familydam.osgi/app-dashboard/${dashboard.version}
@@ -42,9 +43,26 @@
 #        resize-library="image-magik"
 
 
+
 [feature name=:boot]
 [configurations]
 # uninstall obsolete bundles which are neither not required anymore or are
 # replaced with new bundles
 :bootstrap
   uninstall org.apache.sling.launchpad.content
+
+[configurations runModes=:remove]
+    org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService.localIndexDir
+
+
+
+[feature name=oak]
+[configurations runModes=oak]
+org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService
+    threadPoolSize="5"
+
+[configurations runModes=oak_tar]
+org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService
+  name="FamilyDAM\ Default\ NodeStore"
+
+
