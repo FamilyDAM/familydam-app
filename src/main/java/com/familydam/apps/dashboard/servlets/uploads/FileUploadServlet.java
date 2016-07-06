@@ -206,7 +206,9 @@ public class FileUploadServlet extends SlingAllMethodsServlet
         }
         catch (Exception ex) {
             response.setStatus(500); //Bad Request
-            response.getOutputStream().write(ex.getMessage().getBytes());
+            try {
+                response.getOutputStream().write(ex.getMessage().getBytes());
+            }catch(Throwable t){}
             //ex.printStackTrace();
         }
         finally {

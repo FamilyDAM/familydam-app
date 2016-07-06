@@ -326,6 +326,11 @@ public class CreateUserServlet extends SlingAllMethodsServlet
                 if( node.getName().equals("dam-files") || node.getName().equals("dam-cloud")) {
                     _node.addMixin("mix:versionable");
                 }
+
+                if( node.getName().equals("dam-files") ){
+                    createDefaultFileFolders(_node);
+                }
+
                 _node.setProperty(JcrConstants.JCR_NAME, user_.getID());
                 session_.save();
 
@@ -340,6 +345,22 @@ public class CreateUserServlet extends SlingAllMethodsServlet
     }
 
 
+    /**
+     * Create some default folders under /content/dam-files
+     * @param node
+     * @throws RepositoryException
+     */
+    private void createDefaultFileFolders(Node node) throws RepositoryException
+    {
+        String[] folders = new String[]{"Documents", "Movies", "Music", "Photos"};
+
+        for (String folder : folders) {
+            Node _node = JcrUtils.getOrAddNode(node, folder, JcrConstants.NT_FOLDER);
+            _node.addMixin("mix:created");
+            _node.addMixin("dam:extensible");
+            _node.addMixin("dam:contentfolder");
+        }
+    }
 
 
     /**
