@@ -22,12 +22,12 @@
  */
 
 (function() {
-    var app = require('app');
+    var app = require('electron').app;
+    var ipc = require('electron').ipcMain;
+    var BrowserWindow = require('electron').BrowserWindow;
     var os = require('os');
     var fs = require('fs');
-    var ipc = require('ipc');
     var http = require('http');
-    var BrowserWindow = require('browser-window');
     var serverManager = require('./ServerManager');
 
     var settings = {};

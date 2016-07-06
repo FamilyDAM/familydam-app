@@ -2,11 +2,9 @@ module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('default', ['clean:dist', 'build-js', 'copy:app', 'copy:splash', 'copy:app-configwizard', 'copy:repository', 'watch']);
-
-    grunt.registerTask('build-js', ['jshint']);
-
-    grunt.registerTask('build-electron', ['clean:binaryDist', 'electron']);
+    grunt.registerTask('build', ['clean:dist', 'jshint', 'copy:app', 'copy:splash', 'copy:app-configwizard', 'copy:repository']);
+    grunt.registerTask('build-dev', ['default', 'watch']);
+    //grunt.registerTask('build-electron', ['clean:binaryDist', 'electron']);
 
 
 
@@ -38,13 +36,6 @@ module.exports = function(grunt) {
         },
 
         watch: {
-            'electron-js': {
-                files: ['<%= options.app %>/*.js'],
-                tasks: ['copy:app','build-electron'],
-                options: {
-                    livereload: true
-                }
-            },
             dist: {
                 files: '<%= options.dist %>/**',
                 tasks: ['copy:binary-dist'],
@@ -117,7 +108,7 @@ module.exports = function(grunt) {
             },
             'repository': {
                 files:[{
-                    src: '../osgi-bundles/standalone/target/repository-<%= options.repoVersion %>.jar',
+                    src: '../osgi-bundles/standalone/target/FamilyDAM-<%= options.repoVersion %>.jar',
                     dest: './dist/resources/',
                     expand: true,
                     flatten:true,
@@ -147,20 +138,21 @@ module.exports = function(grunt) {
             ]
         },
 
+
         "6to5": {
             options: {
                 sourceMap: true
             }
-        },
+        }
 
-
+        /** Use NPM script instead
         electron: {
             osxBuild: {
                 options: {
                     name: 'FamilyDAM',
                     dir: 'dist',
                     out: 'binary-dist',
-                    version: '0.37.6',
+                    version: '1.2.5',
                     platform: 'darwin',
                     arch: 'x64',
                     'app-bundle-id': 'com.familydam',
@@ -172,7 +164,7 @@ module.exports = function(grunt) {
                     name: 'FamilyDAM',
                     dir: 'dist',
                     out: 'binary-dist',
-                    version: '0.37.6',
+                    version: '1.2.5',
                     platform: 'win32',
                     arch: 'x64',
                     'app-bundle-id': 'com.familydam',
@@ -180,6 +172,7 @@ module.exports = function(grunt) {
                 }
             }
         }
+         **/
 
     });
 

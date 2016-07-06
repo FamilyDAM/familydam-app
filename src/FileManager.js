@@ -4,9 +4,9 @@
  */
 
 (function() {
-    var app = require('app');
+    var app = require('electron').app;
+    var ipc = require('electron').ipcMain;
     var fs = require('fs');
-    var ipc = require('ipc');
     var http = require('http');
     var dialog = require('dialog');
     var request = require('request');

@@ -4,10 +4,10 @@
  */
 
 (function() {
-    var app = require('app');
+    var app = require('electron').app;
+    var ipc = require('electron').ipcMain;
     var os = require('os');
     var fs = require('fs');
-    var ipc = require('ipc');
     var http = require('http');
 
     //reference back to main window
@@ -147,7 +147,7 @@
 
 
 
-            var jarPath = "repository-" +settings_['version'] +".jar";
+            var jarPath = "FamilyDAM-" +settings_['version'] +".jar";
             var jarHost = settings_['host'];
             var jarPort = settings_['port'];
 

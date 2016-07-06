@@ -3,11 +3,17 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 
-var app = require('app');  // Module to control application life.
+var app = require('electron').app;  // Module to control application life.
 
 // Report crashes to our server.
-require('crash-reporter').start();
+const {crashReporter} = require('electron');
 
+crashReporter.start({
+    productName: 'FamilyDAM',
+    companyName: '11:58 Labs',
+    submitURL: 'https://www.familydam.com/api/v1/crashreporter',
+    autoSubmit: true
+});
 
 
 
