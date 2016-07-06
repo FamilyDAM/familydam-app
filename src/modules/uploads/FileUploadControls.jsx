@@ -42,9 +42,24 @@ var FileUploadControls = React.createClass({
         var _this = this;
         //console.dir(event_);
         var _files = event_.currentTarget.files;
-        console.dir(_files);
+        //console.log("File Selection Event Handler | files=" +_files.length);
 
+        for (var i = 0; i < _files.length; i++)
+        {
+            var item_ = _files[i];
+            item_.uploadPath = this.props.uploadPath;
+            if (item_.webkitRelativePath != "" && item_.webkitRelativePath.length > 0)
+            {
+                item_.uploadPath = this.props.uploadPath + item_.webkitRelativePath.replace(item_.name, "");
+            }
+            item_.id = UUID.create().toString();
+            item_.status = "PENDING";
+        }
 
+        //console.log("File Selection Event Handler | Finished file loop");
+        UploadActions.addFileAction.onNext(_files);
+
+        /**
         Rx.Observable.from(_files).forEach(function (item_) {
 
             item_.uploadPath = this.props.uploadPath;
@@ -55,6 +70,7 @@ var FileUploadControls = React.createClass({
             item_.id = UUID.create().toString();
             UploadActions.addFileAction.onNext(item_);
         }.bind(this));
+         **/
 
         //save for later, dir check
         // if( _file.webkitRelativePath.length > 0 && _file.path.endsWith(_file.webkitRelativePath) ) {//is a dir.}
@@ -64,9 +80,13 @@ var FileUploadControls = React.createClass({
     handleFolderChange: function (event_) {
         //console.dir(event_);
         var _files = event_.currentTarget.files;
+        console.log("File Selection Event Handler | files=" +_files.length);
         //console.dir(_files);
 
-        Rx.Observable.from(_files).forEach(function (item_) {
+        for (var i = 0; i < _files.length; i++)
+        {
+            var item_ = _files[i];
+
             item_.uploadPath = this.props.uploadPath;
             if (item_.path !== undefined && item_.path != "")
             {
@@ -77,8 +97,12 @@ var FileUploadControls = React.createClass({
                 item_.uploadPath = this.props.uploadPath + item_.webkitRelativePath.replace(item_.name, "");
             }
             item_.id = UUID.create().toString();
-            UploadActions.addFileAction.onNext(item_);
-        }.bind(this));
+            item_.status = "PENDING";
+        };
+
+
+        console.log("File Selection Event Handler | Finished file loop");
+        UploadActions.addFileAction.onNext(_files);
 
         //save for later, dir check
         // if( _file.webkitRelativePath.length > 0 && _file.path.endsWith(_file.webkitRelativePath) ) {//is a dir.}

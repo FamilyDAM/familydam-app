@@ -8,10 +8,10 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-
-
+var UUID = require('uuid-js');
 
 import {
+    FontIcon,
     IconButton,
     Paper,
     RaisedButton,
@@ -29,7 +29,6 @@ import {
 
 
 var FileUploadControls = require("./FileUploadControls.jsx");
-
 var UploadActions = require("./../../actions/UploadActions");
 var UploadStore = require("./../../stores/UploadStore");
 var DirectoryStore = require("./../../stores/DirectoryStore");
@@ -82,7 +81,9 @@ var FileUploadView = React.createClass({
     
     handleUploadSingleFile: function(file_, event_, component_){
         //console.dir(item_);
-        UploadActions.uploadFileAction.source.onNext(file_);
+        var _files = [];
+        _files.push(file_);
+        UploadActions.uploadFileAction.source.onNext(_files);
     },
 
 
@@ -125,7 +126,7 @@ var FileUploadView = React.createClass({
                                 <Table>
                                     <TableHeader displaySelectAll={false} enableSelectAll={false} adjustForCheckbox={false}>
                                         <TableRow>
-                                            <TableHeaderColumn colSpan="4" style={{textAlign: 'right'}}>
+                                            <TableHeaderColumn colSpan="5" style={{textAlign: 'right'}}>
                                                 <RaisedButton label="Remove All Files"
                                                               onTouchTap={this.handleRemoveAll}
                                                               style={{'marginRight':'10px'}}/>
@@ -135,9 +136,10 @@ var FileUploadView = React.createClass({
                                             </TableHeaderColumn>
                                         </TableRow>
                                         <TableRow>
-                                            <TableHeaderColumn colSpan="2" tooltip="File Name">Name</TableHeaderColumn>
-                                            <TableHeaderColumn colSpan="1" tooltip="File Type">Type</TableHeaderColumn>
-                                            <TableHeaderColumn colSpan="1" tooltip="File Size">Size</TableHeaderColumn>
+                                            <TableHeaderColumn colSpan="2" >Name</TableHeaderColumn>
+                                            <TableHeaderColumn colSpan="1" >Type</TableHeaderColumn>
+                                            <TableHeaderColumn colSpan="1" >Size</TableHeaderColumn>
+                                            <TableHeaderColumn colSpan="1" >Actions</TableHeaderColumn>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody
@@ -145,15 +147,35 @@ var FileUploadView = React.createClass({
                                         showRowHover={true}
                                         stripedRows={false}>
 
-                                            {_fileList.map(function (result_) {
+                                            {_fileList.map(function (result_, a2, a3) {
+
+                                                if( !result_.id ){
+                                                    result_.id = UUID.create().toString();
+                                                }
+
+                                                var _key = result_.name +'/' +result_.id;
+                                                if( result_.uploadPath ){
+                                                    _key = result_.uploadPath +'/' +result_.name +'/' +result_.id;
+                                                }
+
                                                 //<Glyphicon glyph="remove"  style={{'padding': '8px 8px;', 'margin':'0px 0px'}}  className="btn" onClick={_this.handleRemoveFile.bind(_this, result_)}/>
                                                 //<Glyphicon glyph="cloud-upload" style={{'padding': '8px 8px;', 'margin':'0px 0px'}} className="btn" onClick={_this.handleUploadSingleFile.bind(_this, result_)}/>
 
                                                 return (
-                                                    <TableRow key={result_.id}>
-                                                        <TableRowColumn colSpan="2">{result_.name}</TableRowColumn>
+                                                    <TableRow key={_key}>
+                                                        <TableRowColumn colSpan="2">
+                                                            {result_.name}
+                                                            <br/>
+                                                            <span>{result_.webkitRelativePath}</span>
+                                                        </TableRowColumn>
                                                         <TableRowColumn colSpan="1">{result_.type}</TableRowColumn>
                                                         <TableRowColumn colSpan="1">{result_.size}</TableRowColumn>
+                                                        <TableRowColumn colSpan="1">
+                                                            <IconButton
+                                                                    tooltip="Upload Single File"
+                                                                    onClick={()=>{_this.handleUploadSingleFile(result_)}}><FontIcon className="material-icons">backup</FontIcon></IconButton><IconButton
+                                                                    tooltip="Remove File"
+                                                                    onClick={()=>{_this.handleRemoveFile(result_)}}><FontIcon className="material-icons">delete_forever</FontIcon></IconButton></TableRowColumn>
                                                     </TableRow>
                                                 );
 

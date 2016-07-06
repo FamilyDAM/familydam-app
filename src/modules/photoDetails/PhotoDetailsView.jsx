@@ -8,9 +8,11 @@
 var React = require('react');
 import {
     Router,
-    Link } from 'react-router';
+    Link} from 'react-router';
 
 import {
+    Dialog,
+    FlatButton,
     Paper
 } from 'material-ui';
 
@@ -43,11 +45,13 @@ module.exports = React.createClass({
 
     getInitialState: function () {
         return {
-            photo: undefined
+            path:""
+            , photo: undefined
             , datetaken: 'Date Unknown'
             , location: ""
             , prevId:undefined
             , nextId:undefined
+            , showDeleteConfirmation:false
         };
     },
 
@@ -58,6 +62,7 @@ module.exports = React.createClass({
         var _this = this;
 
         var _path = this.props.location.query.path;
+        this.setState({'path':_path});
         NodeActions.getNode.source.onNext(_path);
 
         // update the breadcrumb
@@ -320,11 +325,30 @@ module.exports = React.createClass({
 
 
     handleDelete:function(){
+        this.setState({'showDeleteConfirmation':true});
+    },
 
+    handleDeleteConfirmation:function(){
+        NodeActions.deleteNode.source.onNext({'path': this.state.path});
+        this.setState({'showDeleteConfirmation':false});
+        // go back to the page that loaded this image
+        window.history.back();
     },
 
 
     render: function () {
+        const deleteActions = [
+            <FlatButton
+                label="Cancel"
+                secondary={true}
+                onTouchTap={()=>{this.setState({'showDeleteConfirmation':false})}}
+            />,
+            <FlatButton
+                label="Yes"
+                primary={true}
+                onTouchTap={this.handleDeleteConfirmation}
+            />,
+        ];
 
         if( this.state.photo == undefined ) {
             return(<div/>);
@@ -332,6 +356,16 @@ module.exports = React.createClass({
 
         return (
             <div className="photoDetailsView container">
+                <Dialog
+                    title="Delete Confirmation"
+                    actions={deleteActions}
+                    modal={true}
+                    open={this.state.showDeleteConfirmation}
+                >
+                    <div>
+                        Are you sure you want to delete this image?
+                    </div>
+                </Dialog>
 
                 <Paper className="row">
                     <section className="col-sm-12" style={{'margin':'20px'}}>

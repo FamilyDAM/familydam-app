@@ -39,11 +39,12 @@ module.exports = {
     },
 
 
-    addFile: function (file_) {
-        console.dir(file_);
-        file_.status = "PENDING";
-
-        this._files.push(file_);
+    addFile: function (files_) {
+        for (var i = 0; i < files_.length; i++)
+        {
+            var obj = files_[i];
+            this._files.push(obj);
+        }
     },
 
 
@@ -68,17 +69,16 @@ module.exports = {
         console.log("{upload all files} count=" +this._files.length);
 
         UploadActions.startUpload.onNext({count:this._files.length});
-
-        this._files.forEach(function (file_) {
-            //_this.uploadSingleFile(dir_, file_);
-            UploadActions.uploadFileAction.source.onNext(file_);
-        });
+        UploadActions.uploadFileAction.source.onNext(this._files);
     },
 
 
     handleFileUpload: function(file_){
         UploadActions.startUpload.onNext({count:1});
-        UploadActions.removeFileAction.onNext(file_);
+
+        var _files = [];
+        _files.push(file_);
+        UploadActions.removeFileAction.onNext(_files);
     },
 
     handleFileUploadError: function(err_){

@@ -6,8 +6,10 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-import {Router, Link} from 'react-router';
 var Moment = require('moment');
+import {Router, Link} from 'react-router';
+var LinkContainer = require('react-router-bootstrap').LinkContainer;
+
 
 import {
     Avatar,
@@ -31,10 +33,8 @@ import {
 } from 'material-ui';
 import FolderIcon from 'material-ui/svg-icons/file/folder';
 import FileIcon from 'material-ui/svg-icons/action/description';
-import ActionInfo from 'material-ui/svg-icons/action/info';
-import ActionAssignment from 'material-ui/svg-icons/action/assignment';
 
-var LinkContainer = require('react-router-bootstrap').LinkContainer;
+
 
 
 var NodeActions = require('../../actions/NodeActions');
@@ -71,7 +71,8 @@ module.exports = React.createClass({
             treeData: [],
             isDirTreeLoading:false,
             canAddFile:false,
-            canAddFolder:false
+            canAddFolder:false,
+            showDeleteConfirmation:false
         };
     },
 
@@ -131,10 +132,10 @@ module.exports = React.createClass({
         // listen for trigger to reload for files in directory
         this.refreshFilesSubscription = FileActions.refreshFiles.subscribe(function (data_) {
             var _path = this.state.selectedPath;
-
-            FileActions.getFiles.source.onNext(undefined);
+            FileActions.getFiles.source.onNext("");
             FileActions.getFiles.source.onNext(_path);
         }.bind(this));
+
 
         // Refresh the file list when someone changes the directory
         this.selectFolderSubscription = DirectoryStore.currentFolder.distinctUntilChanged().subscribe(function (data_) {
@@ -145,8 +146,12 @@ module.exports = React.createClass({
                 _canWrite = true;
             }
 
-            FileActions.getFiles.source.onNext(data_.path);
+            if( data_.path != this.state.selectedPath)
+            {
+                FileActions.getFiles.source.onNext(data_.path);
+            }
             this.setState({'selectedPath': data_.path, canAddFolder: _canWrite, canAddFile: _canWrite});
+
 
 
         }.bind(this));
@@ -192,6 +197,11 @@ module.exports = React.createClass({
         DirectoryActions.getDirectories.source.onNext(this.props.baseDir);
 
 
+        // Listener to show/hide spinner
+        this.getFilesSourceSubscription = FileActions.getFiles.source.subscribe(function(data_){}.bind(this))
+        this.getFilesSinkSubscription = FileActions.getFiles.sink.subscribe(function(data_){}.bind(this))
+
+
         mixpanel.track("Enter Files View");
     },
 
@@ -206,6 +216,7 @@ module.exports = React.createClass({
             this.setState({'path': _path, 'files': []});
 
             // load files
+            FileActions.getFiles.source.onNext("");
             FileActions.getFiles.source.onNext(_path);
         } else
         {
@@ -219,26 +230,32 @@ module.exports = React.createClass({
 
     componentWillUnmount: function () {
 
-        if (this.fileStoreSubscription !== undefined) {
+        if (this.fileStoreSubscription) {
             this.fileStoreSubscription.dispose();
         }
-        if (this.refreshFilesSubscription !== undefined) {
+        if (this.refreshFilesSubscription) {
             this.refreshFilesSubscription.dispose();
         }
-        if (this.selectFolderSubscription !== undefined) {
+        if (this.selectFolderSubscription) {
             this.selectFolderSubscription.dispose();
         }
-        if (this.selectedFileSubscription !== undefined) {
+        if (this.selectedFileSubscription) {
             this.selectedFileSubscription.dispose();
         }
-        if (this.currentFolderSubscription !== undefined) {
+        if (this.currentFolderSubscription) {
             this.currentFolderSubscription.dispose();
         }
-        if (this.createFolderSubscription !== undefined) {
+        if (this.createFolderSubscription) {
             this.createFolderSubscription.dispose();
         }
-        if (this.directoriesSubscription !== undefined) {
+        if (this.directoriesSubscription) {
             this.directoriesSubscription.dispose();
+        }
+        if( this.getFilesSourceSubscription ){
+            this.getFilesSourceSubscription.dispose();
+        }
+        if( this.getFilesSinkSubscription ){
+            this.getFilesSinkSubscription.dispose();
         }
 
         window.removeEventListener("resize", this.updateDimensions);
@@ -262,8 +279,12 @@ module.exports = React.createClass({
         event.nativeEvent.stopImmediatePropagation();
 
         var _path = $(event.currentTarget).attr("data-path");
+        this.setState({'showDeleteConfirmation':true, 'pendingFileToDelete':_path});
+    },
 
-        NodeActions.deleteNode.source.onNext({'path': _path});
+    _onNodeDeleteConfirmation: function (event, component) {
+        NodeActions.deleteNode.source.onNext({'path': this.state.pendingFileToDelete});
+        this.setState({'showDeleteConfirmation':false, 'pendingFileToDelete':''});
     },
 
 
@@ -302,6 +323,19 @@ module.exports = React.createClass({
                 label="Create"
                 primary={true}
                 onTouchTap={this._onAddFolder}
+            />,
+        ];
+
+        const deleteActions = [
+            <FlatButton
+                label="Cancel"
+                secondary={true}
+                onTouchTap={()=>{this.setState({'showDeleteConfirmation':false})}}
+            />,
+            <FlatButton
+                label="Yes"
+                primary={true}
+                onTouchTap={this._onNodeDeleteConfirmation}
             />,
         ];
 
@@ -356,11 +390,11 @@ module.exports = React.createClass({
                                         src={file_._links.thumb}
                                         style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></LinkContainer>
                                     <span style={{'paddingLeft':'10px','cursor':'pointer'}}><Link
-                                        to={{pathname: 'photos/details', query:{'path':file_.path}}}>{file_.name}</Link></span>
+                                        to={{pathname: 'photos/details', query:{'path':file_.path}}}><span>{file_.name}</span></Link></span>
 
                             </TableRowColumn>
                             <TableRowColumn colSpan="1">{_dt}</TableRowColumn>
-                            <TableRowColumn colSpan="1">
+                            <TableRowColumn colSpan="1" style={{'display':'flex','alignItems':'center'}}>
 
                                 <IconButton iconClassName="material-icons"
                                             onClick={() => {this.context.router.push({pathname:'photos/details', query:{path:file_.path}}) }}>launch</IconButton>
@@ -394,7 +428,7 @@ module.exports = React.createClass({
                                 </div>
                             </TableRowColumn>
                             <TableRowColumn colSpan="1"></TableRowColumn>
-                            <TableRowColumn colSpan="1">
+                            <TableRowColumn colSpan="1" style={{'display':'flex','alignItems':'center'}}>
                                 <a href={file_.path} download><IconButton iconClassName="material-icons"
                                                                           data-path={file_._links.download}>file_download</IconButton></a>
 
@@ -463,6 +497,18 @@ module.exports = React.createClass({
                         hintText="Hint Text"
                         floatingLabelText="Folder Name"
                     />
+                </Dialog>
+
+
+                <Dialog
+                    title="Delete Confirmation"
+                    actions={deleteActions}
+                    modal={true}
+                    open={this.state.showDeleteConfirmation}
+                >
+                    <div>
+                        Are you sure you want to delete this file or folder?
+                    </div>
                 </Dialog>
 
 

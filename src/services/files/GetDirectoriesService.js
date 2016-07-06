@@ -23,6 +23,7 @@ module.exports = {
     subscribe : function(){
         console.log("{GetDirectories Service} subscribe");
         this.sink = DirectoryActions.getDirectories.sink;
+        //DirectoryActions.getDirectories.source.distinctUntilChanged().subscribe(this.getDirectories.bind(this));
         DirectoryActions.getDirectories.source.subscribe(this.getDirectories.bind(this));
     },
 
@@ -35,53 +36,59 @@ module.exports = {
     {
         console.log("{GetDirectoryService} getDirectories()" );
 
-        var _url =  path_ +".graph.-1.json/nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
+        if( path_ !== undefined && path_.length > 0 )
+        {
 
-        //console.dir(UserStore.token.value);
+            var _url = path_ + ".graph.-1.json/nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
-        return $.ajax({
-            method: "get",
-            url: _url,
-            data: {'path':path_},
-            'xhrFields': {
-                withCredentials: true
-            }
-        }).then(function(data_, status_, xhr_){
+            //console.dir(UserStore.token.value);
 
-            //console.log("{GetDirectoriesService} getDirectories() success" );
-            //Special filter to remove the dashboard app folder
-            var filteredChildren = [];
-            var children = data_._embedded.children;
-            for (var i = 0; i < children.length; i++)
-            {
-                var child = children[i];
-                if( child.path != "/content/dashboard"){
-                    filteredChildren.push(child);
+            return $.ajax({
+                method: "get",
+                url: _url,
+                data: {'path': path_},
+                'xhrFields': {
+                    withCredentials: true
                 }
-            }
-            data_._embedded.children = filteredChildren;
+            }).then(function (data_, status_, xhr_) {
 
-            this.sink.onNext(data_);
+                //console.log("{GetDirectoriesService} getDirectories() success" );
+                //Special filter to remove the dashboard app folder
+                var filteredChildren = [];
+                var children = data_._embedded.children;
+                for (var i = 0; i < children.length; i++)
+                {
+                    var child = children[i];
+                    if (child.path != "/content/dashboard")
+                    {
+                        filteredChildren.push(child);
+                    }
+                }
+                data_._embedded.children = filteredChildren;
 
-            // update token
-            var _token = xhr_.getResponseHeader("X-Auth-Token");
-            if( _token != null && _token !== undefined ){
-                UserActions.saveToken.onNext(_token);
-            }
+                this.sink.onNext(data_);
 
-        }.bind(this), function (xhr_, status_, errorThrown_){
+                // update token
+                var _token = xhr_.getResponseHeader("X-Auth-Token");
+                if (_token != null && _token !== undefined)
+                {
+                    UserActions.saveToken.onNext(_token);
+                }
 
-            //send the error to the store (through the sink observer
-            if( xhr_.status == 401){
-                AuthActions.loginRedirect.onNext(true);
-            }else
-            {
-                var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                this.sink.onError(_error);
-            }
-        }.bind(this));
+            }.bind(this), function (xhr_, status_, errorThrown_) {
 
+                //send the error to the store (through the sink observer
+                if (xhr_.status == 401)
+                {
+                    AuthActions.loginRedirect.onNext(true);
+                } else
+                {
+                    var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
+                    this.sink.onError(_error);
+                }
+            }.bind(this));
 
+        }
     }
 
 };

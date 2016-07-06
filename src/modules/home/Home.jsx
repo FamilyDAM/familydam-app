@@ -10,6 +10,7 @@ import { Router, Link } from 'react-router';
 import {LeftNav, Snackbar} from 'material-ui';
 
 var NavigationActions = require('../../actions/NavigationActions');
+var UserActions = require('../../actions/UserActions');
 var SectionTree = require('../../components/folderTree/SectionTree.jsx');
 var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 

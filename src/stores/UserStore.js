@@ -38,18 +38,24 @@ module.exports = {
             }.bind(this));
 
 
-            UserActions.loadUser.source.subscribe(function (data_) {
-                this.users.forEach(function (users_) {
-                    for (var i = 0; i < users_.length; i++)
-                    {
-                        var _u = users_[i];
-                        if( _u.id === data_){
-                            UserActions.loadUser.sink.onNext(_u);
+            try
+            {
+                UserActions.getUser.source.subscribe(function (data_) {
+                    this.users.forEach(function (users_) {
+                        for (var i = 0; i < users_.length; i++)
+                        {
+                            var _u = users_[i];
+                            if (_u.id === data_)
+                            {
+                                UserActions.loadUser.sink.onNext(_u);
+                            }
                         }
-                    }
-                }, this);
-
-            }.bind(this));
+                    }, this);
+                }.bind(this));
+            }catch(err_){
+                debugger;
+                console.dir(err_);
+            }
         }
         catch (err_)
         {

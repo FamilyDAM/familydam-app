@@ -33,7 +33,7 @@ module.exports = {
     {
         //console.log("{Check Auth Service}");
         var _this = this;
-        var _url = '/bin/familydam/api/v1/auth/validate';
+        var _url = '/bin/familydam/api/v1/auth/ping';
 
 
         //TODO: hash the password & salt

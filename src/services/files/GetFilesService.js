@@ -14,7 +14,7 @@ module.exports = {
     subscribe : function(){
         console.log("{GetFiles Service} subscribe");
         this.sink = FileActions.getFiles.sink;
-        FileActions.getFiles.source.subscribe(this.getFiles.bind(this));
+        FileActions.getFiles.source.distinctUntilChanged().subscribe(this.getFiles.bind(this));
     },
 
     /**
@@ -24,7 +24,7 @@ module.exports = {
      */
     getFiles: function(path_)
     {
-        if( path_ !== undefined )
+        if( path_ !== undefined && path_.length > 0 )
         {
             console.log("{GetFiles Service} getFiles()");
 

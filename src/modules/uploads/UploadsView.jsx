@@ -68,7 +68,8 @@ module.exports = React.createClass({
             enableRetry: false,
             completedFiles:0,
             errorFiles:0,
-            totalFiles:0
+            totalFiles:0,
+            currentFile:""
         };
     },
 
@@ -93,23 +94,32 @@ module.exports = React.createClass({
 
         // upload dialog status actions
         this.startUploadSubscription = UploadActions.startUpload.subscribe(function(data_){
-            //this.state.totalFiles=data_.count;
+            this.state.totalFiles = data_.count;
             this.state.showUploadProgressDialog = true;
             if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
 
 
-        this.startUploadSubscription = UploadActions.uploadStarted.subscribe(function(data_){
-            this.state.totalFiles = this.state.totalFiles+1;
+        this.UploadStartedSubscription = UploadActions.uploadStarted.subscribe(function(data_){
+            //this.state.totalFiles = this.state.totalFiles+1;
+
+            if( data_.webkitRelativePath.length > 0 ) {
+                this.setState({"currentFile":data_.webkitRelativePath});
+                //this.state.currentFile = data_.webkitRelativePath;
+            }else{
+                this.setState({"currentFile":data_.name});
+                //this.state.currentFile = data_.name;
+            }
             if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
 
 
         this.UploadCompleteSubscription = UploadActions.uploadCompleted.subscribe(function(data_){
             this.state.completedFiles = this.state.completedFiles+1;
+            this.setState({"currentFile":""});
 
             var _totals = this.state.completedFiles + this.state.errorFiles;
-            if( this.state.totalFiles === _totals ){
+            if( this.state.totalFiles >= _totals ){
                 this.state.enableClose=true;
                 this.state.enableRetry=this.state.errorFiles>0;
             }
@@ -119,7 +129,10 @@ module.exports = React.createClass({
 
 
         this.UploadErrorSubscription = UploadActions.uploadError.subscribe(function(data_){
-            this.setState({errorFiles:this.state.errorFiles+1});
+            //this.state.currentFile = "";
+            this.state.errorFiles = this.state.errorFiles+1;
+
+            if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
     },
 
@@ -129,6 +142,7 @@ module.exports = React.createClass({
         }
 
         if( this.startUploadSubscription ) this.UploadCompleteSubscription.dispose();
+        if( this.UploadStartedSubscription ) this.UploadStartedSubscription.dispose();
         if( this.UploadErrorSubscription ) this.UploadCompleteSubscription.dispose();
         if( this.UploadCompleteSubscription ) this.UploadCompleteSubscription.dispose();
     },

@@ -29,11 +29,14 @@ module.exports = {
     subscribe: function() {
         console.log("{DirectoryStore}.init()");
 
-        FileActions.getFiles.source.subscribe(function (data_) {
-            this.currentFolder.onNext({path:data_});
+        FileActions.getFiles.source.distinctUntilChanged().subscribe(function (data_) {
+            if( data_ )
+            {
+                this.currentFolder.onNext({path: data_});
+            }
         }.bind(this));
 
-        DirectoryActions.selectFolder.subscribe( function(data_){
+        DirectoryActions.selectFolder.distinctUntilChanged().subscribe( function(data_){
             this.currentFolder.onNext(data_);
         }.bind(this) );
 
