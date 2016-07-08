@@ -49,7 +49,7 @@ module.exports = {
                 }.bind(this), function (xhr_, status_, errorThrown_){
 
                     //send the error to the store (through the sink observer
-                    if( xhr_.status == 401){
+                    if( xhr_.status == 401 || xhr_.status == 403 ){
                         UserActions.alert.onNext("Session has expired, log in again");
                         AuthActions.loginRedirect.onNext(true);
                     }else
