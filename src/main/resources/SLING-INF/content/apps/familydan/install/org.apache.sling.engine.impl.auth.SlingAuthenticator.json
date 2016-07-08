@@ -1,0 +1,15 @@
+{
+  "jcr:primaryType": "sling:OsgiConfig",
+  "auth.annonymous":false,
+  "auth.http":"enabled",
+  "auth.http.realm":"FamilyDAM",
+  "sling.auth.requirements": [
+    "+/content",
+    "+/caches",
+    "+/home",
+    "+/apps",
+    "+/var",
+    "-/system/userManager",
+    "-/"
+  ]
+}
