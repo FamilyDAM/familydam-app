@@ -11,7 +11,7 @@ module.exports = function (grunt) {
 
 
     grunt.registerTask('build-babel-dev', [
-        'clean:dist', 'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard'
+        'clean:dist', 'build-css', 'copy:locales', 'babel', 'copy:dashboard', 'jshint', 'browserify2:dashboard'
     ]);
     /*, 'build-atom-shell-app'*/
     grunt.registerTask('build-babel-prod', [
@@ -160,6 +160,17 @@ module.exports = function (grunt) {
         },
 
         copy: {
+            locales: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= options.app %>',
+                    dest: '<%= options.tmp %>',
+                    src: [
+                        'locales/**/*.json',
+                    ]
+                }]
+            },
             dashboard: {
                 files: [{
                     expand: true,
@@ -222,8 +233,6 @@ module.exports = function (grunt) {
         "babel": {
             options: {
                 sourceMap: true,
-                nonStandard: true,
-                optional: ["utility.inlineEnvironmentVariables"],
                 code: {optional: ["utility.inlineEnvironmentVariables"]}
             },
             dist: {

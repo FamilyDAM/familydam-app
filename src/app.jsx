@@ -2,74 +2,68 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 
+// Material-ui
+import injectTapEventPlugin from 'react-tap-event-plugin';
 //Needed for onTouchTap
 //Can go away when react 1.0 release
 //Check this repo:
 //https://github.com/zilverline/react-tap-event-plugin
-//var injectTapEventPlugin = require("react-tap-event-plugin");
-//injectTapEventPlugin();
-var electronRequire = require;
-var ipc = electronRequire('ipc');
+injectTapEventPlugin();
 
-var React = require('react');
+// React
+import React from 'react';
+var ReactDOM = require('react-dom');
 window.React = React;
-var ReactIntl  = require('react-intl');
-var Router = require('react-router');
-var Route = Router.Route;
-var DefaultRoute = Router.DefaultRoute;
+import {IntlProvider, addLocaleData, injectIntl} from 'react-intl';
 
-//actions
+// React-Router
+import { Router, Route, IndexRoute, useRouterHistory } from 'react-router';
+import { createHashHistory } from 'history'
+const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
+
+//app actions
 var ConfigActions = require('./actions/ConfigActions');
 
-//views
+//app views
 var MainView = require("./modules/main/MainView");
 var WelcomeView = require("./modules/welcome/WelcomeView");
-var StorageView = require("./modules/storage/StorageView");
-var RegisterView = require("./modules/register/RegisterView");
+//var StorageView = require("./modules/storage/StorageView");
+//var RegisterView = require("./modules/register/RegisterView");
 
-//stores
+//app stores
 var SettingsStore = require('./stores/SettingsStore');
 SettingsStore.subscribe();
 
 
-var routes = [
-    <Route name="main" handler={MainView} path="/">
-        <DefaultRoute handler={WelcomeView}/>
-        <Route name="welcome" handler={WelcomeView}/>
-        <Route name="register" handler={RegisterView}/>
-        <Route name="storage" handler={StorageView}/>
-    </Route>
-];
+ReactDOM.render(<div>loading...</div>, document.getElementById("appBody"));
 
 
-//React.renderComponent(routes, document.body);
-//Router.run(routes, Router.HistoryLocation, function (Handler, state) {
-Router.run(routes, function (Handler, state) {
+SettingsStore.locale.subscribe(function (locale_) {
+    var i18n;
+    if (locale_ === "es-ES")
+    {
+        i18n = require("./locales/es-ES");
+    } else if (locale_ === "zh-CN")
+    {
+        i18n = require("./locales/zh-CN");
+    } else
+    {
+        i18n = require("./locales/en-us");
+    }
 
-    React.render(
-        <div>loading...</div>
-        , document.body);
+    ReactDOM.render(
+        <IntlProvider locale={i18n.locales[0]} messages={i18n.messages}>
+            <Router history={appHistory}>
+                <Route path="/"  component={MainView}>
+                    <IndexRoute component={WelcomeView}/>
+                    <Route path="/welcome" component={WelcomeView}/>
+                    <Route path="storage" component={WelcomeView}/>
+                </Route>
+            </Router>
+        </IntlProvider>
+        , document.getElementById("appBody"));
 
-
-    this.localSubscription = SettingsStore.locale.subscribe(function (locale_) {
-        var i18n;
-        if (locale_ === "es-ES")
-        {
-            i18n = require("./locales/es-ES");
-        } else if (locale_ === "zh-CN")
-        {
-            i18n = require("./locales/zh-CN");
-        } else
-        {
-            i18n = require("./locales/en-us");
-        }
-
-        React.render(
-            <Handler params={state.params} query={state.query} {...i18n} />
-            , document.body);
-
-
-    }.bind(this));
-
-    //this.localSubscription.dispose();
 });
+        //<Handler params={state.params} query={state.query} {...i18n} />
+    //this.localSubscription.dispose();
+

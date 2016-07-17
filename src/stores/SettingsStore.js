@@ -4,8 +4,8 @@
  */
 
 'use strict';
-var electronRequire = require;
-var ipc = electronRequire('ipc');
+//var electronRequire = require;
+var ipc = {sendSync:function(){}};//electronRequire('ipc');
 
 var Rx = require('rx');
 var ConfigActions = require('../actions/ConfigActions');

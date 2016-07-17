@@ -3,32 +3,22 @@
  */
 
 /** jsx React.DOM */
-// Renders the todo list as well as the toggle all button
-// Used in TodoApp
 var React = require('react');
-var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
-var IntlMixin = require('react-intl');
-var ButtonLink = require('react-router-bootstrap').ButtonLink;
+import {LinkContainer} from 'react-router-bootstrap';
+
+import {FormattedMessage, FormattedPlural,FormattedDate} from 'react-intl';
 
 var ConfigActions = require('./../../actions/ConfigActions');
 var SettingsStore = require('./../../stores/SettingsStore');
 
 module.exports = React.createClass({
 
-    mixins: [IntlMixin],
-
     getInitialState: function () {
-        return {'locale': "en_us"};
+        return {};
     },
 
     componentDidMount: function () {
         //console.log("WelcomeView");
-
-        SettingsStore.locale.subscribe(function(data_){
-            this.state.locale = data_;
-            if( this.isMounted()) this.forceUpdate();
-        }.bind(this));
     },
 
     componentWillUnmount: function () {
@@ -40,6 +30,7 @@ module.exports = React.createClass({
         ConfigActions.changeLocale.onNext(_locale);
     },
 
+
     render: function () {
 
         return (
@@ -47,18 +38,36 @@ module.exports = React.createClass({
                 <div className="main-section">
 
                     <span className="intro">
-                        {this.getIntlMessage('welcome.intro')}
+                        <FormattedMessage
+                            id="welcome.intro"
+                            defaultMessage="Before we can start the application we need to know a few things. The first, is your preferred language. The second, is a place to store all of the files we are going to manage."
+                            description='Introduction for welcome screen'
+                        />
                     </span>
 
                     <br/><br/>
 
                     <div>
-                        <label>{this.getIntlMessage('welcome.selectDefaultLanguage')}:</label><br/>
+                        <label>
+                            <FormattedMessage
+                                id="welcome.selectDefaultLanguage"
+                                defaultMessage="tbd"
+                                description='Default language selection'
+                            />:</label><br/>
                         <select defaultValue={this.state.locale} onChange={this.changeLocale}>
-                            <option value="en_us">{this.getIntlMessage('language.english')}</option>
+                                <FormattedMessage
+                                    id="language.english"
+                                    defaultMessage="Englist"
+                                    description='English Selection'>
+                                    {(message)=> <option value="en_us">{message}</option>}
+                                </FormattedMessage>
                         </select>
                         <br/>
-                        {this.getIntlMessage('welcome.moreComingSoon')}
+                        <FormattedMessage
+                            id="welcome.moreComingSoon"
+                            defaultMessage="tbd"
+                            description='More are coming soon'
+                        />
                     </div>
                 </div>
 
@@ -68,7 +77,12 @@ module.exports = React.createClass({
                         <div className="left">
                         </div>
                         <div className="right">
-                            <ButtonLink to="storage">{this.getIntlMessage('next')}</ButtonLink>
+                            <LinkContainer to={{'pathname':'storage'}}>
+                            <FormattedMessage
+                                id="next"
+                                defaultMessage="tbd"
+                                description='Next Button Label'>
+                            </FormattedMessage></LinkContainer>
                         </div>
                     </div>
                 </div>
@@ -77,3 +91,4 @@ module.exports = React.createClass({
     }
 
 });
+//<ButtonLink to="storage">next{message}</ButtonLink>
