@@ -151,6 +151,7 @@
     {
 
 
+        console.log("DIR:" + __dirname );
         console.log("Load configuration window (" +new Date() +")  file://" + __dirname + "/apps/config/index.html");
         //this.configWindow = new BrowserWindow({width:900, height:600, center:true, frame:true, show:false, title:'FamilyDAM Configuration Wizard'});
 

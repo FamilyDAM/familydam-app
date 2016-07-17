@@ -2,8 +2,8 @@ module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('build', ['clean:dist', 'jshint', 'copy:app', 'copy:splash', 'copy:app-configwizard', 'copy:repository']);
-    grunt.registerTask('build-dev', ['default', 'watch']);
+    grunt.registerTask('build', ['clean', 'jshint', 'copy:app', 'copy:splash', 'copy:app-configwizard', 'copy:repository']);
+    grunt.registerTask('build-dev', ['build', 'watch']);
     //grunt.registerTask('build-electron', ['clean:binaryDist', 'electron']);
 
 
@@ -11,7 +11,7 @@ module.exports = function(grunt) {
     var options = {
         port: 8081,
         app: "src",
-        dist: "dist",
+        build: ".build-app",
         tmp: ".tmp",
         repoVersion: "0.1.0"
     };
@@ -19,25 +19,11 @@ module.exports = function(grunt) {
     grunt.initConfig({
         options: options,
         pkg: grunt.file.readJSON('package.json'),
-        connect: {
-            server: {
-                options: {
-                    port: options.port,
-                    livereload: 35729,
-                    base: '.'
-                }
-            }
-        },
 
-        open: {
-            server: {
-                path: 'http://localhost:<%= options.port %>/index.html'
-            }
-        },
 
         watch: {
             dist: {
-                files: '<%= options.dist %>/**',
+                files: '<%= options.build %>/**',
                 tasks: ['copy:binary-dist'],
                 options: {
                     livereload: true
@@ -50,9 +36,7 @@ module.exports = function(grunt) {
                 files: [{
                     dot: true,
                     src: [
-                        '.tmp',
-                        '<%= options.dist %>/*',
-                        '!<%= options.dist %>/.git*'
+                        '.tmp'
                     ]
                 }]
             },
@@ -60,7 +44,7 @@ module.exports = function(grunt) {
                 files: [{
                     dot: true,
                     src: [
-                        'binary-dist'
+                        '.binary-dist'
                     ]
                 }]
             }
@@ -74,7 +58,7 @@ module.exports = function(grunt) {
                     expand: true,
                     dot: true,
                     cwd: '<%= options.app %>',
-                    dest: '<%= options.dist %>',
+                    dest: '<%= options.build %>',
                     src: [
                         '*.js',
                         '**/*.json',
@@ -90,7 +74,7 @@ module.exports = function(grunt) {
                     expand: true,
                     dot: true,
                     cwd: '<%= options.app %>/apps',
-                    dest: '<%= options.dist %>/apps',
+                    dest: '<%= options.build %>/apps',
                     src: [
                         'splash/**/*'
                     ]
@@ -101,7 +85,7 @@ module.exports = function(grunt) {
                     {
                         cwd: '../app-configwizard/dist',
                         src: '**',
-                        dest: './dist/apps/config',
+                        dest: './<%= options.build %>/apps/config',
                         expand: true
                     }
                 ]
@@ -109,7 +93,7 @@ module.exports = function(grunt) {
             'repository': {
                 files:[{
                     src: '../osgi-bundles/standalone/target/FamilyDAM-<%= options.repoVersion %>.jar',
-                    dest: './dist/resources/',
+                    dest: './<%= options.build %>/resources/',
                     expand: true,
                     flatten:true,
                     verbose:true
@@ -118,9 +102,9 @@ module.exports = function(grunt) {
             'binary-dist': {
                 files: [
                     {
-                        cwd: './dist/',
+                        cwd: './<%= options.build %>/',
                         src: '**',
-                        dest: './binary-dist/FamilyDAM-darwin-x64/FamilyDAM.app/Contents/Resources/app/',
+                        dest: './.binary-dist/FamilyDAM-darwin-x64/FamilyDAM.app/Contents/Resources/app/',
                         expand: true
                     }
                 ]
