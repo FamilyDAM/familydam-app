@@ -4,11 +4,9 @@
  */
 
 (function() {
-    var app = require('electron').app;
-    var ipc = require('electron').ipcMain;
+    const {app} = require('electron');
     var os = require('os');
     var fs = require('fs');
-    var http = require('http');
 
     //reference back to main window
     var appRoot;

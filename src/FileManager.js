@@ -95,7 +95,6 @@
         console.log("multipart len=" +multipartBody.length);
 
 
-        debugger;
         var request = http.request({
             hostname: 'localhost',
             port: 8080,

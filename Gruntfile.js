@@ -120,43 +120,9 @@ module.exports = function(grunt) {
             all: [
                 '<%= options.app %>*.js'
             ]
-        },
-
-
-        "6to5": {
-            options: {
-                sourceMap: true
-            }
         }
 
-        /** Use NPM script instead
-        electron: {
-            osxBuild: {
-                options: {
-                    name: 'FamilyDAM',
-                    dir: 'dist',
-                    out: 'binary-dist',
-                    version: '1.2.5',
-                    platform: 'darwin',
-                    arch: 'x64',
-                    'app-bundle-id': 'com.familydam',
-                    'app-version': '0.1.0'
-                }
-            },
-            winBuild: {
-                options: {
-                    name: 'FamilyDAM',
-                    dir: 'dist',
-                    out: 'binary-dist',
-                    version: '1.2.5',
-                    platform: 'win32',
-                    arch: 'x64',
-                    'app-bundle-id': 'com.familydam',
-                    'app-version': '0.1.0'
-                }
-            }
-        }
-         **/
+
 
     });
 

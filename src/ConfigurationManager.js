@@ -22,9 +22,9 @@
  */
 
 (function() {
-    var app = require('electron').app;
-    var ipc = require('electron').ipcMain;
-    var BrowserWindow = require('electron').BrowserWindow;
+    const {app} = require('electron');
+    const {ipcMain} = require('electron');
+
     var os = require('os');
     var fs = require('fs');
     var http = require('http');
@@ -89,7 +89,6 @@
      */
     function initializeStorageLocation(settings_) {
 
-
         try{
 
             if( !fs.existsSync(settings_.storageLocation) )
@@ -150,10 +149,8 @@
     var loadConfigApplication = function()
     {
 
-
         console.log("DIR:" + __dirname );
         console.log("Load configuration window (" +new Date() +")  file://" + __dirname + "/apps/config/index.html");
-        //this.configWindow = new BrowserWindow({width:900, height:600, center:true, frame:true, show:false, title:'FamilyDAM Configuration Wizard'});
 
         configWindow.openDevTools();
         configWindow.loadURL('file://' + __dirname + '/apps/config/index.html');
@@ -177,9 +174,9 @@
         /**
          * Call back handler which invoked from the webpage when all of the fields have been filled out.
          */
-        ipc.on('saveConfig', function(event, _settings)
+        ipcMain.on('saveConfig', function(event, _settings)
         {
-            //  console.log("save settings : " +_settings );
+            console.log("save settings : " +_settings );
 
             //deserialize
             settings = JSON.parse(_settings);
@@ -188,7 +185,7 @@
             settings.state = "READY";
 
             //fix version of the repository
-            settings.version = "0.1.0";
+            //settings.version = "0.1.0";
 
             //serialize
             var encodedSettings = JSON.stringify(settings);
@@ -206,6 +203,9 @@
                 app.loadSplashApplication();
 
             });
+
+            event.returnValue = "save complete";
+            event.sender.send('saveConfigComplete', 'save complete')
         });
 
 

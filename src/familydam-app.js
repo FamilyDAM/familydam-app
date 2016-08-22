@@ -2,9 +2,8 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 
-var app = require('electron').app;  // Module to control application life.
-var ipc = require('electron').ipcMain;
-var BrowserWindow = require('electron').BrowserWindow;  // Module to create native browser window.
+const {app} = require('electron');  // Module to control application life.
+const {BrowserWindow} = require('electron');  // Module to create native browser window.
 var http = require('http');
 var fs = require('fs');
 var serverManager = require('./ServerManager');
