@@ -5,7 +5,12 @@
 
 'use strict';
 //var electronRequire = require;
-var ipc = {sendSync:function(){}};//electronRequire('ipc');
+//import {ipcRenderer} from 'electron';
+var electronRequire = require;
+var ipcRenderer = electronRequire('electron').ipcRenderer;
+//var ipcRenderer = require('electron').ipcRenderer
+//const electron = require('electron').app;
+//const ipcRenderer = electron.ipcRenderer;
 
 var Rx = require('rx');
 var ConfigActions = require('../actions/ConfigActions');
@@ -39,8 +44,12 @@ module.exports = {
         ConfigActions.saveSettings.subscribe( function(){
             var _json = this.buildJson();
             console.log("Calling Save Config : " +_json);
-            var result = ipc.sendSync('saveConfig', _json );
-            console.log("RESULT=" +result);
+            var result = ipcRenderer.send('saveConfig', _json );
+            console.log("{saveSettings} RESULT=" +result);
+        }.bind(this));
+
+        ipcRenderer.on("saveConfigComplete", function(event){
+            console.log("{saveConfigComplete} RESULT=" +event);
         }.bind(this));
 
     },

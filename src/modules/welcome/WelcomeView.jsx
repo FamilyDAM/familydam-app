@@ -4,7 +4,7 @@
 
 /** jsx React.DOM */
 var React = require('react');
-import {LinkContainer} from 'react-router-bootstrap';
+import {Link} from 'react-router';
 
 import {FormattedMessage, FormattedPlural,FormattedDate} from 'react-intl';
 
@@ -77,12 +77,11 @@ module.exports = React.createClass({
                         <div className="left">
                         </div>
                         <div className="right">
-                            <LinkContainer to={{'pathname':'storage'}}>
+                            <Link to="welcome">
                             <FormattedMessage
                                 id="next"
-                                defaultMessage="tbd"
-                                description='Next Button Label'>
-                            </FormattedMessage></LinkContainer>
+                                defaultMessage="Next">
+                            </FormattedMessage></Link>
                         </div>
                     </div>
                 </div>
@@ -91,4 +90,5 @@ module.exports = React.createClass({
     }
 
 });
-//<ButtonLink to="storage">next{message}</ButtonLink>
+
+

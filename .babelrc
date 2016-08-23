@@ -1,11 +1,7 @@
 {
-  "presets": [
-    "react","es2015"
-  ],
-  "plugins": [
-    ["react-intl", {
-      "messagesDir": "./tmp/messages/",
-      "enforceDescriptions": true
-    }]
-  ]
+  "compact":"true",
+  "retainLines": true,
+  "sourceMaps":"both",
+  "sourceRoot":"/Users/mnimer/Development/github/FamilyDAM/app-dashboard/src",
+  "presets": ["react", "es2015"]
 }

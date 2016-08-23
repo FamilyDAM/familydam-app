@@ -24,6 +24,7 @@ module.exports = function (grunt) {
         port: 8081,
         app: "src",
         dist: "dist",
+        binarydist: "../client-desktop/.build-binary/0.1.0/mac/FamilyDAM.app/Contents/Resources/app",
         tmp: ".tmp"
     };
 
@@ -82,6 +83,10 @@ module.exports = function (grunt) {
                 options: {
                     livereload: true
                 }
+            },
+            dist: {
+                files: '<%= options.dist %>/**/*',
+                tasks: ['copy:binaryDist']
             }
         },
 
@@ -187,6 +192,17 @@ module.exports = function (grunt) {
                         'assets/**/*',
                         'bower_components/**/*',
                         '.htaccess'
+                    ]
+                }]
+            },
+            binaryDist: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= options.dist %>',
+                    dest: '<%= options.binaryDist %>',
+                    src: [
+                        '**/*'
                     ]
                 }]
             }

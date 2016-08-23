@@ -27,7 +27,7 @@ var ConfigActions = require('./actions/ConfigActions');
 //app views
 var MainView = require("./modules/main/MainView");
 var WelcomeView = require("./modules/welcome/WelcomeView");
-//var StorageView = require("./modules/storage/StorageView");
+var StorageView = require("./modules/storage/StorageView");
 //var RegisterView = require("./modules/register/RegisterView");
 
 //app stores
@@ -56,12 +56,13 @@ SettingsStore.locale.subscribe(function (locale_) {
             <Router history={appHistory}>
                 <Route path="/"  component={MainView}>
                     <IndexRoute component={WelcomeView}/>
-                    <Route path="/welcome" component={WelcomeView}/>
-                    <Route path="storage" component={WelcomeView}/>
+                    <Route path="welcome" component={WelcomeView}/>
+                    <Route path="storage" component={StorageView}/>
                 </Route>
             </Router>
         </IntlProvider>
         , document.getElementById("appBody"));
+
 
 });
         //<Handler params={state.params} query={state.query} {...i18n} />
