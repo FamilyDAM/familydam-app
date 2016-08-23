@@ -103,7 +103,7 @@ module.exports = React.createClass({
             else if (this.state.activeUser === undefined)
             {
                 childNodes = this.state.users.map(function (user, index) {
-                    return <div key={index} class="personCard" style={{'backgroundColor':'#ffffff', 'margin':'20px'}}>
+                    return <div key={index} className="personCard" style={{'backgroundColor':'#ffffff', 'margin':'20px'}}>
                                 <LoginCard
                                     user={user}
                                     mode="inactive"

@@ -19,110 +19,128 @@ module.exports = {
      * Setup action Listeners
      */
     subscribe: function () {
+
         this.sink = UploadActions.uploadFileAction.sink;
 
-        var source = UploadActions.uploadFileAction.source.subscribe((files_)=> {
-            this.fileQueue = files_;
-            this.uploadFileQueue(3);
-        });
-        /**
-         var pauser = new Rx.Subject();
-         var source = UploadActions.uploadFileAction.source
-         .map(function (file_) {
-                console.log("start");
-                pauser.onNext(false);
-                this.uploadFile(file_).then(
-                    function (v) {
-                        console.log("complete");
-                        pauser.onNext(true);
-                        return v;
-                    }.bind(this),
-                    function (e) {
-                        debugger;
-                        pauser.onNext(true);
-                        return new Error(e);
-                    }.bind(this));
-            }.bind(this))
-         .catch(function(err_){
-                debugger;
-                console.log(err_);
-            })
-         .subscribe(function (result) {
-            },function (result) {
-                debugger;
-            });
+        var source = UploadActions.uploadFileAction.source
+            .subscribe((d)=>{
 
-         source.subscribe(function noop(){});
-         pauser.onNext(true);
-         **/
-
-        /**
-         UploadActions.uploadFileAction.source
-         .first()
-         .flatMap(function (file_) {
-                debugger;
-                return Rx.Observable.fromPromise(this.uploadFile(file_).then(
-                    function (v) {
-                        debugger;
-                        return v;
-                    },
-                    function (e) {
-                        debugger;
-                        return new Error(e);
-                    }));
-            }.bind(this))
-         .catch(function(err_){
-                debugger;
-            })
-         .repeat()
-         .subscribe(function (result) {
-                debugger
-            },function (result) {
-                debugger
-            });
-         **/
-        /**
-         UploadActions.uploadFileAction.source
-         .subscribe( (file_) => {
-                setTimeout(this.uploadFile(file_), 0);
-            });
-         **/
-
-
-        /**
-         UploadActions.uploadFileAction.source
-         .bufferWithCount(1)
-         .subscribe( (files_) => {
-                for (var i = 0; i < files_.length; i++)
+                for (var i = 0; i < d.length; i++)
                 {
-                    var _file = files_[i];
-                    this.uploadFile(_file);
+                    var file = d[i];
+                    this.fileQueue.push(file);
                 }
+
+                for (var i = 0; i < Math.min(this.fileQueue.length, 3); i++)
+                {
+                    this.uploadNextFile();
+                }
+
+                //console.log("done");
+            }, (e)=>{
+                debugger;
+                //console.log("error");
             });
-         **/
-
-
-        /**
-         UploadActions.uploadFileAction.source.map(function(file_){
-            return Rx.Observable.defer(function () {
-                return Rx.Observable.return(this.uploadFile(file_));
-            }.bind(this));
-        })
-         .concatAll() // consume each inner observable in sequence
-         .subscribe(function (result) {
-        }, function (error) {
-            console.log("error", error);
-        }, function () {
-            console.log("complete");
-        });
-         **/
 
     },
 
 
+
+
+
+    uploadNextFile:function () {
+        if( this.fileQueue.length > 0 )
+        {
+            var file = this.fileQueue.pop();
+            if( file)
+            {
+                this.uploadFile(file).then(
+                    function (v) {
+                        this.uploadNextFile();
+                    }.bind(this),
+                    function (e) {
+                        this.uploadNextFile();
+                    }.bind(this));
+            }
+        }
+    },
+
+
+
+    /**
+     * The server can't access the file locally, or we are in a browser.
+     * So this method will do a regular AJAX file upload
+     * @param dir
+     * @param path
+     */
+    uploadFile: function (file_) {
+
+        var _this = this;
+        var _dataFile = file_;
+        var data = new FormData();
+        data.append("file", file_);
+        data.append("id", file_.id);
+        data.append("name", file_.name);
+        data.append("path", file_.uploadPath);
+        //data.append("lastModified", file_.lastModified);
+        //data.append("lastModifiedDate", file_.lastModifiedDate);
+
+
+        return $.ajax({
+            url: '/bin/familydam/api/v1/upload/',
+            type: 'POST',
+            data: data,
+            cache: false,
+            processData: false, // Don't process the files
+            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+            headers: {
+                Accept: "application/json; charset=utf-8"
+            },
+            xhrFields: {
+                withCredentials: true,
+                onprogress: function (e) {
+                    if (e.lengthComputable)
+                    {
+                        console.log(e.loaded / e.total * 100 + '%');
+                    }
+                }
+            }
+        }).then(function (data_, status_, xhr_) {
+
+            //this.uploadNextFile();
+            UploadActions.uploadCompleted.onNext(data_);
+            //UploadActions.removeFileAction.onNext(data_);
+
+            return this;
+        }.bind(this), function (xhr_, status_, errorThrown_) {
+
+            //this.uploadNextFile();
+
+            // handle the error
+            UploadActions.uploadError.onNext(file_);
+            //send the error to the store (through the sink observer
+            if (xhr_.status == 401)
+            {
+                AuthActions.loginRedirect.onNext(true);
+            }
+            if (xhr_.status == 403)
+            {
+                UserActions.alert.onNext("You do not have permission to upload to this folder");
+            } else
+            {
+                var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
+                _this.sink.onError(_error);
+            }
+            return this;
+        }.bind(this)).promise();
+    },
+
+
+
+
     /**
      * Invoke service
-     */
+
     execute: function (file_) {
         //console.log("{upload single file} " +file_.path);
         //console.dir(file_);
@@ -163,9 +181,8 @@ module.exports = {
             }, function (result_, status_, xhr_) {
                 _this.uploadFile(file_);
             });
-
-
     },
+     */
 
 
     /**
@@ -173,7 +190,7 @@ module.exports = {
      * @param dir - passthrough for the next step in the sequence
      * @param path
      * @returns {HttpPromise}
-     */
+
     checkAccess: function (file_) {
         var _this = this;
 
@@ -202,13 +219,13 @@ module.exports = {
             }
         });
     },
-
+     */
 
     /**
      * Tell the embedded server to copy a local file, by path.
      * @param dir
      * @param path
-     */
+
     copyLocalFile: function (file_) {
         var _this = this;
 
@@ -244,165 +261,8 @@ module.exports = {
             }
         }).promise();
 
-    },
-
-
-    /**
-     * The server can't access the file locally, or we are in a browser.
-     * So this method will do a regular AJAX file upload
-     * @param dir
-     * @param path
-
-    uploadFile: function (file_) {
-        var _this = this;
-        var _dataFile = file_;
-        var data = new FormData();
-        data.append("file", file_);
-        data.append("name", file_.name);
-        data.append("path", file_.uploadPath);
-        //data.append("lastModified", file_.lastModified);
-        //data.append("lastModifiedDate", file_.lastModifiedDate);
-
-        UploadActions.uploadStarted.onNext(file_);
-
-        return $.ajax({
-            url: '/bin/familydam/api/v1/upload/',
-            type: 'POST',
-            data: data,
-            cache: false,
-            processData: false, // Don't process the files
-            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-            headers: {
-                Accept: "application/json; charset=utf-8"
-            },
-            xhrFields: {
-                withCredentials: true,
-                onprogress: function (e) {
-                    if (e.lengthComputable)
-                    {
-                        console.log(e.loaded / e.total * 100 + '%');
-                    }
-                }
-            }
-        }).then(function (data_, status_, xhr_) {
-
-            UploadActions.uploadCompleted.onNext(file_);
-            UploadActions.removeFileAction.onNext(file_);
-
-            return this;
-        }, function (xhr_, status_, errorThrown_) {
-
-            debugger;
-            UploadActions.uploadError.onNext(file_);
-            //send the error to the store (through the sink observer
-            if (xhr_.status == 401)
-            {
-                AuthActions.loginRedirect.onNext(true);
-            }
-            if (xhr_.status == 403)
-            {
-                UserActions.alert.onNext("You do not have permission to upload to this folder");
-            } else
-            {
-                var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
-                _this.sink.onError(_error);
-            }
-            return this;
-        }).promise();
-    },
-     */
-
-
-    /**
-     * The server can't access the file locally, or we are in a browser.
-     * So this method will do a regular AJAX file upload for each file in the file queue
-     * @param dir
-     * @param path
-     */
-    uploadFileQueue: function (threads_) {
-
-        var deferredPromises = [];
-        for (var i = 0; i < threads_; i++)
-        {
-            if (this.fileQueue.length == 0) break;
-
-            var _this = this;
-            var _dataFile = this.fileQueue.pop();
-
-            if( _dataFile.retry && _dataFile.retry > 1 ){
-                continue;
-            }
-
-
-            var data = new FormData();
-            data.append("file", _dataFile);
-            data.append("name", _dataFile.name);
-            data.append("path", _dataFile.uploadPath);
-            //data.append("lastModified", file_.lastModified);
-            //data.append("lastModifiedDate", file_.lastModifiedDate);
-
-            UploadActions.uploadStarted.onNext(_dataFile);
-
-            var _uploadPromise = $.ajax({
-                url: '/bin/familydam/api/v1/upload/',
-                type: 'POST',
-                data: data,
-                cache: false,
-                processData: false, // Don't process the files
-                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-                headers: {
-                    Accept: "application/json; charset=utf-8"
-                },
-                xhrFields: {
-                    withCredentials: true,
-                    onProgress: function (e) {
-                        if (e.lengthComputable)
-                        {
-                            console.log(e.loaded / e.total * 100 + '%');
-                        }
-                    }
-                }
-            }).then(function (data_, status_, xhr_) {
-
-                UploadActions.uploadCompleted.onNext(_dataFile);
-                UploadActions.removeFileAction.onNext(_dataFile);
-
-            }.bind(this), function (xhr_, status_, errorThrown_) {
-
-                UploadActions.uploadError.onNext(_dataFile);
-                //send the error to the store (through the sink observer
-                if (xhr_.status == 401)
-                {
-                    AuthActions.loginRedirect.onNext(true);
-                }else
-                {
-                    if (xhr_.status == 403)
-                    {
-                        UserActions.alert.onNext("You do not have permission to upload to this folder");
-                    } else
-                    {
-                        var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
-                        _this.sink.onError(_error);
-
-                        //put the file back in the queue and retry, we might need to add a retry count to the file object
-                        _dataFile.retry = 1;
-                        this.fileQueue.push(_dataFile)
-                    }
-                }
-                return this;
-            }.bind(this));
-
-            deferredPromises.push(_uploadPromise);
-        }
-
-        if(deferredPromises.length>0)
-        {
-            $.when(deferredPromises).then(function (arg1) {
-                // rerun to get the next file in the queue
-                this.uploadFileQueue(3);
-            }.bind(this));
-        }
-
     }
+     */
+
 
 };

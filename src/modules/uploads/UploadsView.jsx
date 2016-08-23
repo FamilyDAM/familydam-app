@@ -115,16 +115,19 @@ module.exports = React.createClass({
 
 
         this.UploadCompleteSubscription = UploadActions.uploadCompleted.subscribe(function(data_){
-            this.state.completedFiles = this.state.completedFiles+1;
-            this.setState({"currentFile":""});
+
+            var stateProps = {};
+            stateProps.completedFiles = this.state.completedFiles+1;
+            stateProps.currentFile = "";
 
             var _totals = this.state.completedFiles + this.state.errorFiles;
             if( this.state.totalFiles >= _totals ){
-                this.state.enableClose=true;
-                this.state.enableRetry=this.state.errorFiles>0;
+                stateProps.enableClose=true;
+                stateProps.enableRetry=this.state.errorFiles>0;
             }
 
-            if( this.isMounted() ) this.forceUpdate();
+            //this.setState(stateProps);
+
         }.bind(this));
 
 
@@ -146,6 +149,7 @@ module.exports = React.createClass({
         if( this.UploadErrorSubscription ) this.UploadCompleteSubscription.dispose();
         if( this.UploadCompleteSubscription ) this.UploadCompleteSubscription.dispose();
     },
+
 
     handleDialogClose:function(){
       this.setState({

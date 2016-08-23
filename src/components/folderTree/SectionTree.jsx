@@ -91,7 +91,6 @@ var AddFolderModal = React.createClass({
 
 
 var FolderTree = React.createClass({
-    mixins: [ Router.Navigation ],
 
     
     propTypes: {

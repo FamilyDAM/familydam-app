@@ -52,7 +52,7 @@ var FileUploadView = React.createClass({
             if( _this.isMounted() ) _this.forceUpdate();
         });
         this.removeFileSubscription = UploadActions.removeFileAction.subscribe(function (data_) {
-            if( _this.isMounted() ) _this.forceUpdate();
+            //if( _this.isMounted() ) _this.forceUpdate();
         });
     },
 

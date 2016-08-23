@@ -53,7 +53,6 @@ module.exports = {
                     }, this);
                 }.bind(this));
             }catch(err_){
-                debugger;
                 console.dir(err_);
             }
         }

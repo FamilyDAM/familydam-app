@@ -21,12 +21,11 @@ module.exports = {
         console.log("{UploadStore}.init()");
 
         UploadActions.addFileAction.subscribe(this.addFile.bind(this));
-        UploadActions.removeFileAction.subscribe(this.removeFile.bind(this));
+        //UploadActions.removeFileAction.subscribe(this.removeFile.bind(this));
         UploadActions.removeAllFilesAction.subscribe(this.removeAllFiles.bind(this));
         UploadActions.uploadAllFilesAction.subscribe(this.uploadAllFiles.bind(this));
         UploadActions.uploadFileAction.sink.subscribe(this.handleFileUpload.bind(this), this.handleFileUploadError.bind(this));
     },
-
 
 
     getFiles: function () {
@@ -48,13 +47,28 @@ module.exports = {
     },
 
 
-    removeFile: function (file_) {
-        var _pos = this._files.indexOf(file_);
+    removeFile: function (fileId_) {
+
+        var _pos = -1;
+
+        // find the file, by id
+        for (var i = 0; i < this._files.length; i++)
+        {
+            var obj = this._files[i];
+            if( obj.id === fileId_ ){
+                _pos = i;
+                break;
+            }
+        }
+
         if (_pos > -1)
         {
             this._files.splice(_pos, 1);
         }
-        return file_;
+
+        if( this.isMounted() ) {
+            this.setState({"_files": this._files});
+        }
     },
 
 
@@ -69,7 +83,10 @@ module.exports = {
         console.log("{upload all files} count=" +this._files.length);
 
         UploadActions.startUpload.onNext({count:this._files.length});
+
         UploadActions.uploadFileAction.source.onNext(this._files);
+
+        //UploadActions.uploadFileAction.source.onNext(this._files);
     },
 
 
