@@ -18,47 +18,31 @@
 #
 [feature name=model]
 [artifacts]
-  org.apache.sling/org.apache.sling.launchpad/8/slingstart
+  org.apache.sling/org.apache.sling.launchpad/9-SNAPSHOT/slingstart
   org.apache.sling/org.apache.sling.resourceaccesssecurity/1.0.0
   org.apache.felix/org.apache.felix.shell/1.4.3
   org.apache.felix/org.apache.felix.shell.remote/1.1.2
 
+#[configurations]
+#org.apache.sling.engine.impl.auth.SlingAuthenticator [format=properties]
+#  auth.annonymous=true
+
+
+
 
 
 [feature name=familydam]
+#
+#    com.familydam.apps.photos.servlets.ImageThumbnailServlet
+#        resize-library="image-magik"
+
 [variables]
-    core.version=0.1.0-SNAPSHOT
+    core.version=0.1.1-SNAPSHOT
     dashboard.version=0.1.2-SNAPSHOT
     image.handlers.version=0.1.1-SNAPSHOT
+
 [artifacts]
    com.familydam.osgi/core/${core.version}
    com.familydam.osgi/app-dashboard/${dashboard.version}
    com.familydam.osgi/image-handlers/${image.handlers.version}
-[configurations]
-#    com.familydam.apps.photos.servlets.ImageThumbnailServlet
-#        resize-library="image-magik"
-
-
-
-[feature name=:boot]
-[configurations]
-# uninstall obsolete bundles which are neither not required anymore or are
-# replaced with new bundles
-:bootstrap
-  uninstall org.apache.sling.launchpad.content
-
-#[configurations runModes=:remove]
-#    org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService.localIndexDir
-
-
-
-[feature name=oak]
-[configurations runModes=oak]
-org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService
-    threadPoolSize="5"
-
-[configurations runModes=oak_tar]
-org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService
-  name="FamilyDAM\ Default\ NodeStore"
-
 
