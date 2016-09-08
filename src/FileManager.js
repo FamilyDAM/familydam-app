@@ -27,7 +27,7 @@
                 try {
                     // Query the entry
                     var stats = fs.statSync(file);
-                    //console.log("******");
+                    //console.logger("******");
                     //console.dir(file);
                     //console.dir(stats);
 

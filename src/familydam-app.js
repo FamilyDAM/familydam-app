@@ -8,7 +8,8 @@ var http = require('http');
 var fs = require('fs');
 var serverManager = require('./ServerManager');
 var configurationManager = require('./ConfigurationManager');
-
+//logger
+var logger = require('electron-log');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the javascript object is GCed.
@@ -21,6 +22,18 @@ var isServerReady = false;
 // initialization and ready for creating browser windows.
 app.on('ready', function() {
 
+    // Log level
+    logger.transports.console.level = 'debug';
+    logger.transports.file.level = 'debug';
+    /**
+     * Set output format template. Available variables:
+     * Main: {level}, {text}
+     * Date: {y},{m},{d},{h},{i},{s},{ms}
+     */
+    logger.transports.console.format = '{h}:{i}:{s}:{ms} {text}';
+
+
+
     // Create the browser window.
     app.setupWindows();
 
@@ -32,22 +45,35 @@ app.on('ready', function() {
         var _this = this;
         var _settings = configurationManager.getSettings();
 
-        console.log("Start app with these settings:");
-        console.dir(_settings);
+        //set logger folder location to the be a sub folder of repo
+        if( _settings['storageLocation'] )
+        {
+            logger.transports.file.format = '{h}:{i}:{s}:{ms} {text}';
+            //set logger file size
+            logger.transports.file.maxSize = 5 * 1024 * 1024;
+            // Write to this file, must be set before first logging
+            logger.transports.file.file = _settings['storageLocation'] +"/desktop.log";// fs.createWriteStream options, must be set before first logging
+            logger.transports.file.streamConfig = { flags: 'w' };
+            // set existed file stream
+            logger.transports.file.stream = fs.createWriteStream(_settings['storageLocation'] +"/desktop.log");
 
-        console.log("** Start Server");
+        }
+
+
+        logger.debug("Start Repository");
         app.startServerApplication(_settings);
-        console.log("** load splash");
+
+        logger.debug("Load splash screen");
         app.loadSplashApplication();
 
 
-/***
- // Show splash screen, while starting embedded server
- app.loadSplashApplication();
+        /***
+         // Show splash screen, while starting embedded server
+         app.loadSplashApplication();
 
 
- // setup check status
-        var timer = setInterval(function(){
+         // setup check status
+         var timer = setInterval(function(){
             //check if server is ready, before closing. Otherwise wait 2secs and try again.
             if( _this.isServerReady )
             {
@@ -59,9 +85,9 @@ app.on('ready', function() {
             }
         }, 2000);
 
-        // start embedded java server
-        app.startServerApplication(_settings);
-***/
+         // start embedded java server
+         app.startServerApplication(_settings);
+         ***/
     }
 });
 
@@ -74,13 +100,13 @@ app.on('ready', function() {
 app.checkServer = function(port){
     var _this = this;
 
-    http.get("http://localhost:" +port +"/index.html", function(res) {
+    http.get("http://" +host +":" +port +"/index.html", function(res) {
         if( res.statusCode == 200 ){
             _this.isServerReady = true;
         }
     }).on('error', function(e) {
         _this.isServerReady = false;
-        console.log("check status: " +e.message);
+        logger.error("check status: " +e.message);
     });
 };
 
@@ -122,20 +148,22 @@ app.setupWindows = function(){
         serverManager.kill();
         if (process.platform != 'darwin')
         {
+            logger.warn("Unsupported Platform = " +process.platform);
             app.quit();
         }
     });
-
 };
+
 
 
 app.startServerApplication = function(_settings){
 
-    console.log("Start Embedded Repository");
-    console.dir(_settings);
+    logger.info("Start Embedded Repository");
+    logger.debug(_settings);
     serverManager.startServer(_settings, app, this.splashWindow, this.configWindow, this.mainWindow );
 
 };
+
 
 app.loadSplashApplication = function(){
 
@@ -171,7 +199,7 @@ app.loadDashboardApplication = function(host, port){
 
 
     //mainWindow.loadUrl('file://' + __dirname  +'/apps/dashboard/index.html');
-    mainWindow.loadURL("http://" +host +":" +port +"/");
+    mainWindow.loadURL("http://" +host +":" +port +"/index.html");
 
 
 };

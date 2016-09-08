@@ -89,6 +89,7 @@
      */
     function initializeStorageLocation(settings_) {
 
+        console.log("{initializeStorageLocation}" +settings_);
         try{
 
             if( !fs.existsSync(settings_.storageLocation) )
@@ -156,7 +157,7 @@
         configWindow.loadURL('file://' + __dirname + '/apps/config/index.html');
         configWindow.webContents.on('did-finish-load', function()
             {
-                //console.log("{did-finish-load} empty!");
+                //console.logger("{did-finish-load} empty!");
                 configWindow.webContents.send('settingConfig', settings);
             });
 

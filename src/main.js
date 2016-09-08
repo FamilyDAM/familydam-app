@@ -4,9 +4,10 @@
  */
 
 var app = require('electron').app;  // Module to control application life.
-
+var logger = require('electron-log');
 // Report crashes to our server.
 const {crashReporter} = require('electron');
+
 
 crashReporter.start({
     productName: 'FamilyDAM',

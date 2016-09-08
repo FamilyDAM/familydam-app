@@ -4,10 +4,14 @@
  */
 
 (function() {
-    const {app} = require('electron');
+    const {app, dialog} = require('electron');
     var os = require('os');
     var fs = require('fs');
     var http = require('http');
+
+    // child process
+    var spawn = require('child_process').spawn;
+    var exec = require('child_process').exec;
 
     //reference back to main window
     var appRoot;
@@ -21,15 +25,15 @@
     var serverStarted = false;
     var userServletStarted = false;
     var prc;
-    var tail;
-    var tailErr;
     var settings;
+    var logger = require('electron-log');
+
 
     var link = function(_settings, _appRoot, _splashWindow, _configWindow, _mainWindow)
     {
-        //console.log("{serverManager} link");
-        console.log("Settings:");
-        console.dir(_settings);
+        //logger.debug("{serverManager} link");
+        //logger.debug(_settings);
+
         settings = _settings;
         appRoot = _appRoot;
         splashWindow = _splashWindow;
@@ -41,22 +45,25 @@
 
     var checkLoadingStatus = function(host, port, callback_)
     {
-        console.log("Check Loading Status | host=" +host +" | port=" +port);
+        logger.debug("Check Loading Status | host=" +host +" | port=" +port);
 
         checkServerInterval = setInterval(function ()
         {
-            //console.log("checking server");
+            var _url = "http://admin:admin@" +host +":" +port +"/bin/familydam/api/v1/health";
+            logger.debug("checking server | " +_url);
 
-            http.get("http://" +host +":" +port +"/bin/familydam/api/v1/health", function (res, data)
+            http.get(_url, function (res, data)
             {
+
                 if (res.statusCode == 200 || res.statusCode == 302)
                 {
-                    console.log("Health Check Cleared");
+                    logger.debug("Health Check Cleared");
                     var body = '';
                     res.on('data', function(d) {
                         body += d;
                     });
                     res.on('end', function() {
+                        logger.debug("[end]" +body);
                         // Data reception is done, do whatever with it!
                         var parsed = JSON.parse(body);
 
@@ -65,14 +72,16 @@
                             callback_();
                             clearInterval(checkServerInterval);
                         }else{
-                            console.dir(parsed);
+                            //console.dir(parsed);
                         }
                     });
 
+                }else{
+                    logger.debug("Check Interval Status :" +res.statusCode)
                 }
             }).on('error', function (e)
             {
-                //console.log("error: " + e.message);
+                logger.error("error: " + e.message);
                 return false;
             });
 
@@ -105,35 +114,37 @@
             if (_data.indexOf("Started FamilyDAM") > -1)
             {
                 isStarted = true;
-                console.log( "[STARTED]" +_data );
+                logger.debug( "[STARTED]" +_data );
             }
             else if (_data.indexOf("ERROR") > -1)
             {
-                console.log( "[ERROR] " +_data );
+                logger.debug( "[ERROR] " +_data );
             }
             else if (_data.indexOf("WARN") > -1)
             {
-                console.log( "[WARN] " + _data );
+                logger.debug( "[WARN] " + _data );
             }
             else{
-                console.log( "--" +_data );
+                logger.debug( "--" +_data );
             }
 
             //fs.appendFile(logFile_, _data);
         }
         catch (err)
         {
-            console.log("[ERROR] ** " +err);
+            logger.debug("[ERROR] ** " +err);
         }
     }
 
+
+
     module.exports = {
+
 
         startServer : function(settings_, app_, configWindow_, splashWindow_, mainWindow_)
         {
-            var _this = this;
-            //console.log("Starting Server");
-            console.log("Startup System Check | TotalMem: " +os.totalmem() +" - FreeMem:" +os.freemem(), true);
+            logger.debug("Startup System Check");
+            logger.debug("TotalMem: " +os.totalmem() +" - FreeMem:" +os.freemem());
 
             link(settings_, app_, splashWindow_, configWindow_, mainWindow_);
 
@@ -141,96 +152,84 @@
             var outLogFile = settings_['storageLocation'] +'/familydam-out.log';
             var outLogErrFile = settings_['storageLocation'] +'/familydam-err.log';
 
-            console.log("Log File: " +outLogFile);
-            console.log("Log Error File: " +outLogErrFile);
+            logger.debug("Repository Log File: " +outLogFile);
+            logger.debug("Repository Log Error File: " +outLogErrFile);
 
 
 
-            var jarPath = "FamilyDAM-" +settings_['version'] +".jar";
+            var jarPath = settings_['storageLocation'] +"/FamilyDAM-" +settings_['version'] +".jar";
             var jarHost = settings_['host'];
             var jarPort = settings_['port'];
 
 
 
-            console.log("Starting Server!: " +jarPath +" | port=" +jarPort +" | location=" +settings_['storageLocation'], true);
+            logger.debug("Starting Server!: " +jarPath +" | port=" +jarPort +" | location=" +settings_['storageLocation'], true);
             app_.sendClientMessage('info', "Starting FamilyDAM Repository", false);
-            console.log("Resource Path=" +process.resourcesPath);
+            logger.debug("Resource Path=" +process.resourcesPath);
 
-
-            var _cwd = settings_['storageLocation'];
-            //console.log(cmd);
-            //console.log(args);
-            console.dir(_cwd);
-
-
-            var spawn = require('child_process').spawn;
 
 
 
             var cmd = "java";
+            var _repo = settings_['storageLocation'];
             //var args = ['-jar',  jarPath, '-p', jarPort, '-Dspring.profiles.active='+settings_['profile'], '-Dapp-root', settings_['storageLocation'] ];
             var args = ['-jar',  jarPath, '-p',  jarPort, '-c', settings_['storageLocation'], '-Dspring.profiles.active='+settings_['profile'] ];
 
-            console.log("checking java version");
-            version_prc = spawn("java",["-version"], {
-                cwd: _cwd
+
+            logger.debug("check java version");
+            version_prc = exec("java -version", {encoding: 'utf8'}, (error, stdout, stderr) => {
+                console.log("err=" +error);
+                if (error) {
+                    dialog.showErrorBox("Startup Error", "Unknown error.\nMake sure you have the latest version of Java installed\nhttps://java.com\n\n" +error);
+                    return;
+                }else{
+
+                    //console.logger(`stdout: ${stdout}`);
+                    //console.logger(`stderr: ${stderr}`);
+
+                    // support anything greater then version 8  (pattern matches 8-29)
+                    if( stderr.match(/1\.[1,2,8,9][0-9]?.[0-9_]+/) )
+                    {
+                        logger.debug("Version Check OK - Starting Repository");
+                        this.startRepository(cmd, args, spawn, _repo);
+
+                        //Start checks
+                        var isReady = false;
+                        checkLoadingStatus(jarHost, jarPort, function(){
+                            appRoot.loadDashboardApplication(jarHost, jarPort);
+                        });
+
+                    }else{
+                        //alert("Startup Error", "Invalid version of java | " +stderr);
+                        dialog.showErrorBox("Startup Error", "Invalid version of JAVA.Make sure you have the latest version of Java installed\nhttps://java.com\n\n" +stderr);
+                    }
+                }
+
             });
-            version_prc.stdout.on('data', function (data)
-            {
-                console.log("" +data);
+
+        },
+
+        startRepository:function(cmd, args, spawn) {
+            logger.info("start repo | " + cmd + " | " + args);
+            prc = spawn(cmd, args);
+            prc.unref();
+            prc.stdout.setEncoding("utf8");
+            prc.stdout.on('data', function (data) {
+                logger.debug("[data] " + data);
                 //processStdOut(data, outLogFile);
             });
-
-
-
-
-            console.log("start repo");
-            prc = spawn(cmd,  args, {
-                cwd: _cwd
+            prc.stderr.on('data', function (data) {
+                logger.debug("[ERR] " + data);
             });
-            prc.unref();
-            //prc.stdout.setEncoding("utf8");
-            prc.stdout.on('data', function (data)
-            {
-                //console.log("" +data);
-                processStdOut(data, outLogFile);
+            prc.on('exit', function (data, a2, a3) {
+                logger.debug("[exit] " + data + ":" + a2 + ":" + a3);
             });
-            prc.stderr.on('data', function (data)
-            {
-                console.log("" +data);
-            });
-            prc.on('exit', function (data)
-            {
-                console.dir("exit:" +data);
-            });
-
-
-
-
-            var isReady = false;
-            checkLoadingStatus(jarHost, jarPort, function(){
-                appRoot.loadDashboardApplication(jarHost, jarPort);
-            });
-
-
-
-
-            if (process.platform == 'darwin' || process.platform == 'linux')
-            {
-                try
-                {
-                    //console.log("kill existing java processes");
-                    //var killExistingJavaProc = spawn('pkill', ['-f', 'java.*FamilyDAM']);
-                }catch (err){ /* swallow */ }
-            }
-
         },
 
         kill : function()
         {
+            logger.info("Kill Repository");
             if( prc !== undefined ) prc.kill();
-            if( tail !== undefined ) tail.kill();
-            if( tailErr !== undefined ) tailErr.kill();
             if( checkServerInterval !== undefined ) clearInterval(checkServerInterval);
         }
     };

@@ -22,9 +22,9 @@ module.exports = function(grunt) {
 
 
         watch: {
-            dist: {
-                files: '<%= options.build %>/**',
-                tasks: ['copy:binary-dist'],
+            src: {
+                files: '<%= options.app %>/**',
+                tasks: ['build'],
                 options: {
                     livereload: true
                 }
@@ -37,6 +37,14 @@ module.exports = function(grunt) {
                     dot: true,
                     src: [
                         '.tmp'
+                    ]
+                }]
+            },
+            buildApp: {
+                files: [{
+                    dot: true,
+                    src: [
+                        '.build-app'
                     ]
                 }]
             },
@@ -92,7 +100,7 @@ module.exports = function(grunt) {
             },
             'repository': {
                 files:[{
-                    src: '../osgi-bundles/standalone/target/FamilyDAM-<%= options.repoVersion %>.jar',
+                    src: '../client-repository/target/FamilyDAM-<%= options.repoVersion %>.jar',
                     dest: './<%= options.build %>/resources/',
                     expand: true,
                     flatten:true,
