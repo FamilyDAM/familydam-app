@@ -21,6 +21,7 @@ import {
     TableRowColumn,
     TableHeader,
     TableHeaderColumn,
+    TextField,
     Toggle
 } from 'material-ui';
 import FolderIcon from 'material-ui/svg-icons/file/folder';
@@ -36,8 +37,8 @@ var NavigationActions = require('./../../actions/NavigationActions');
 const LoadingIcon = (props) => (
     <SvgIcon {...props}>
         <svg width='24px' height='24px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
-             preserveAspectRatio="xMidYMid" class="uil-default">
-            <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
+             preserveAspectRatio="xMidYMid" className="uil-default">
+            <rect x="0" y="0" width="100" height="100" fill="none" className="bk"></rect>
             <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
                   transform='rotate(0 50 50) translate(0 -30)'>
                 <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0s' repeatCount='indefinite'/>
@@ -182,7 +183,7 @@ module.exports = React.createClass({
         var _this = this;
 
         return (
-            <div className="container-fluid userDetailsView" style={{'padding':'20px'}}>
+            <div className="container-fluid userDetailsView" style={{'padding':'20px', 'height':'calc(100vh - 250px)', 'min-height': '300px'}}>
                 <div className="row">
                     <div className="col-xs-4">
                         Add Family Member
@@ -206,57 +207,57 @@ module.exports = React.createClass({
                         <Subheader style={{'paddingLeft':'0px'}}>Personal Info:</Subheader>
                         <div className="row">
                             <div className="col-sm-6">
-                                <label htmlFor="firstName" style={{'width':'100%'}}>
-                                    First Name:&nbsp;<br/>
-                                    <input type="text"
-                                           ref="firstName"
-                                           id="firstName" name="firstName"
-                                           value={this.state.user.firstName}
-                                           onChange={this.handleChange}
-                                            style={{'width':'100%'}}/>
-                                </label>
+                                <TextField
+                                    type="text"
+                                    ref="firstName"
+                                    id="firstName"
+                                    floatingLabelText="First Name"
+                                    onChange={this.handleChange}
+                                    style={{'width':'100%'}}
+                                />
+
                             </div>
                             <div className="col-sm-6">
-                                <label htmlFor="firstName" style={{'width':'100%'}}>
-                                    Last Name:&nbsp;<br/>
-                                    <input type="text"
-                                           ref="lastName"
-                                           id="lastName" name="lastName"
-                                           value={this.state.user.lastName}
-                                           onChange={this.handleChange}
-                                           style={{'width':'100%'}}/>
-                                </label>
+                                <TextField
+                                    type="text"
+                                    ref="lastName"
+                                    id="lastName"
+                                    floatingLabelText="Last Name"
+                                    onChange={this.handleChange}
+                                    style={{'width':'100%'}}
+                                />
+
                             </div>
                         </div>
                         <div className="row" style={{'marginTop': '10px'}}>
                             <div className="col-sm-12">
-                                <label htmlFor="firstName" style={{'width':'100%'}}>
-                                    Email:&nbsp;<br/>
-                                    <input type="text"
-                                           ref="email"
-                                           id="email" name="email"
-                                           value={this.state.user.email}
-                                           onChange={this.handleChange}
-                                           style={{'width':'100%'}}/>
-                                </label>
+                                <TextField
+                                    type="text"
+                                    ref="email"
+                                    id="email"
+                                    floatingLabelText="Email"
+                                    onChange={this.handleChange}
+                                    style={{'width':'100%'}}
+                                />
+
                             </div>
                         </div>
                         <div className="row" style={{'marginTop': '10px'}}>
                             <div className="col-sm-12">
-                                <label htmlFor="firstName" style={{'width':'100%'}}>
-                                    Password:&nbsp;<br/>
-                                    <input type="password"
-                                           ref="password"
-                                           id="password" name="password"
-                                           value={this.state.user.password}
-                                           onChange={this.handleChange}
-                                           style={{'width':'100%'}}/>
-                                </label>
+                                <TextField
+                                    type="password"
+                                    ref="password"
+                                    id="password"
+                                    floatingLabelText="Password"
+                                    onChange={this.handleChange}
+                                    style={{'width':'100%'}}
+                                />
+
                             </div>
                         </div>
 
                     </div>
-                    <div className="col-sm-5">
+                    <div className="col-sm-5" style={{'padding':'20px'}}>
                         <br/><br/>
                         <Toggle
                             id="isFamilyAdmin"
@@ -264,7 +265,7 @@ module.exports = React.createClass({
                             defaultToggled={false}
                             onToggle={this.handleChange}
                         />
-                        <span>Family Administrators can add new users, read, write, and DELETE any file in the system.</span>
+                        <span style={{'font-size':'14px', 'font-size':'1.4rem'}}>Family Administrators can add new users, read, write, and delete any file in the system.</span>
                     </div>
                 </div>
 

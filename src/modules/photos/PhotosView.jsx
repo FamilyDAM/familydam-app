@@ -10,6 +10,7 @@ import {Router, Link} from 'react-router';
 
 import {
     AppBar,
+    Chip,
     CircularProgress,
     Drawer,
     DropDownMenu,
@@ -337,6 +338,18 @@ module.exports = React.createClass({
         }
     },
 
+    renderChip(data) {
+        return (
+            <Chip
+                key={data.key}
+                onRequestDelete={this.removeFilter}
+                style={{'margin':'4'}}
+            >
+                {data.name}
+            </Chip>
+        );
+    },
+
 
     render: function () {
 
@@ -371,9 +384,8 @@ module.exports = React.createClass({
 
                 <div className="container-fluid photo-body" style={{'width':'100%'}}>
                     <div className="row" style={{'width':'100%'}}>
-                        <div className="col-xs-10 col-xs-offset-1">
-
-                            <DropDownMenu onChange={this.handleGroupByChange} value="date:day">
+                        <div className="col-xs-12">
+                            <DropDownMenu onChange={this.handleGroupByChange} value="date:day" style={{'width':'250px'}}>
                                 <MenuItem value="date:day" primaryText="Group By Day"/>
                                 <MenuItem value="date:month" primaryText="Group By Month"/>
                                 <MenuItem value="date:year"  primaryText="Group By Year"/>
@@ -384,21 +396,18 @@ module.exports = React.createClass({
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-xs-10 col-xs-offset-1" style={{'fontSize':'14px'}}>
-                            <Tags
-                                title="Filters"
-                                tags={this.state.filters}
-                                onAdd={this.addFreeFormFilter}
-                                onRemove={this.removeFilter}
-                            />
+                        <div className="col-xs-12" style={{'fontSize':'14px', 'display': 'flex', 'flexWrap': 'wrap'}}>
+                            {this.state.filters.date.map(this.renderChip, this)}
+                            {this.state.filters.people.map(this.renderChip, this)}
+                            {this.state.filters.tags.map(this.renderChip, this)}
+                            {this.state.filters.paths.map(this.renderChip, this)}
                         </div>
                     </div>
                 </div>
 
                 <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around'}}>
                     <div
-                        style={_leftSidebar}
-                        zDepth={0}>
+                        style={_leftSidebar}>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
                             <TreeList
                                 title="Filter Photos By Path"

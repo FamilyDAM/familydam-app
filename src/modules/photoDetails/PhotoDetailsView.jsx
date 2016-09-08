@@ -6,6 +6,7 @@
 /** jsx React.DOM */
 // Used in TodoApp
 var React = require('react');
+var moment = require('moment');
 import {
     Router,
     Link} from 'react-router';
@@ -16,21 +17,7 @@ import {
     Paper
 } from 'material-ui';
 
-
-var Keymaster = require('keymaster');
-var moment = require('moment');
-
-var Tab = require('react-bootstrap').Tab;
-var Tabs = require('react-bootstrap').Tabs;
-var Glyphicon = require('react-bootstrap').Glyphicon;
-var Rating = require('react-rating');
-
-
 var Tags = require('./../../components/tags/Tags.jsx');
-var ExifMap = require('./../../components/exifMap/ExifMap.jsx');
-var ExifData = require('./../../components/exifData/ExifData.jsx');
-
-//var FolderTree = require('../../components/folderTree/FolderTree.jsx');
 
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');

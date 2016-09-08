@@ -52,7 +52,7 @@ var GridGroup = React.createClass({
             {
                 if (_img.getAttribute('data-src'))
                 {
-                    console.log("swap image:" + _img.getAttribute('data-src'));
+                    //console.log("swap image:" + _img.getAttribute('data-src'));
                     _img.setAttribute('src', _img.getAttribute('data-src'));
                 }
             } else

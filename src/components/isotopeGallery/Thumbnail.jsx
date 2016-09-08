@@ -3,12 +3,10 @@
  */
 
 var React = require('react');
-var Router = require('react-router');
-var Link = Router.Link;
+var {Router, Link} = require('react-router');
 var LazyLoad = require('react-lazy-load');
 
-var Glyphicon = require('react-bootstrap').Glyphicon;
-var LinkContainer = require('react-router-bootstrap').LinkContainer;
+
 
 module.exports = React.createClass({
 
@@ -89,8 +87,8 @@ module.exports = React.createClass({
                         <span>{this.props.photo.name} </span>
                     </div><br/>
                     <div className="pull-left">
-                        <LinkContainer to="photos/details" query={{'path':this.props.photo.path}}>
-                            <Glyphicon glyph="eye-open" style={{'color':'#ffffff', 'fontSize':'24px'}}/></LinkContainer>
+                        <Link to={'photos/details'} query={{'path':this.props.photo.path}}>
+                            <Glyphicon glyph="eye-open" style={{'color':'#ffffff', 'fontSize':'24px'}}/></Link>
                     </div>
                 </div>
             </div>

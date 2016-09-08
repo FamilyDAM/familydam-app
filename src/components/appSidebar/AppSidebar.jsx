@@ -5,17 +5,17 @@
 
 /** jsx React.DOM */
 var React = require('react');
-var Router = require('react-router');
-var LinkContainer = require('react-router-bootstrap').LinkContainer;
+var {Router, Link} = require('react-router');
 
 import {
     List,
     ListItem,
     Subheader,
     Avatar,
-    Paper,
     FlatButton
 } from 'material-ui';
+import Paper from 'material-ui/Paper';
+
 import ActionHome from 'material-ui/svg-icons/action/home';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import ImagePhoto from 'material-ui/svg-icons/image/photo';
@@ -96,10 +96,10 @@ module.exports = React.createClass({
                                 </div>
                                 <br/>
                                 <div style={{'display':'flex', 'flexDirection':'row', 'alignItems':'flex-end'}}>
-                                    <LinkContainer to="/login"><FlatButton label="Logout"
-                                                style={{'justifyContent':'flex-start'}}/></LinkContainer>
-                                    <LinkContainer to={'/users/' +this.state.currentUser.username}><FlatButton label="Profile"
-                                                style={{'justifyContent':'flex-end'}} /></LinkContainer>
+                                    <Link to={'login'}><FlatButton label="Logout"
+                                                style={{'justifyContent':'flex-start'}}/></Link>
+                                    <Link to={'/users/' +this.state.currentUser.username}><FlatButton label="Profile"
+                                                style={{'justifyContent':'flex-end'}} /></Link>
                                 </div>
                             </div>
                         </Paper>
@@ -107,23 +107,23 @@ module.exports = React.createClass({
                         <List>
                             <Subheader>Apps</Subheader>
 
-                            <LinkContainer to="dashboard">
+                            <Link to={'dashboard'}>
                             <ListItem
                                 leftAvatar={<Avatar icon={<ActionHome />} />}
                                 primaryText="Home"
-                            /></LinkContainer>
+                            /></Link>
 
-                            <LinkContainer to="files">
+                            <Link to={'files'}>
                             <ListItem
                                 leftAvatar={<Avatar icon={<FileFolder />} />}
                                 primaryText="Files"
-                            /></LinkContainer>
+                            /></Link>
 
-                            <LinkContainer to="photos">
+                            <Link to={'photos'}>
                             <ListItem
                                 leftAvatar={<Avatar icon={<ImagePhoto />} />}
                                 primaryText="Photos"
-                            /></LinkContainer>
+                            /></Link>
                         </List>
                     </div>
                 );
@@ -135,33 +135,33 @@ module.exports = React.createClass({
                     <div className="" style={{'display':'flex', 'flexDirection':'column', 'width':'75px'}}>
 
                         <List style={{'flexGrow':1}}>
-                            <LinkContainer to="dashboard">
+                            <Link to={'dashboard'}>
                             <ListItem
                                 style={{'paddingBottom':'10px'}}
                                 leftAvatar={<Avatar icon={<ActionHome />} />}
-                            /></LinkContainer>
+                            /></Link>
 
-                            <LinkContainer to="files">
+                            <Link to={'files'}>
                             <ListItem
                                 style={{'paddingBottom':'10px'}}
                                 leftAvatar={<Avatar icon={<FileFolder />} />}
-                            /></LinkContainer>
+                            /></Link>
 
-                            <LinkContainer to="photos">
+                            <Link to={'photos'}>
                             <ListItem
                                 style={{'paddingBottom':'10px'}}
                                 leftAvatar={<Avatar icon={<ImagePhoto />} />}
                             />
-                            </LinkContainer>
+                            </Link>
                         </List>
 
                         <List style={{'flexGrow':0}}>
-                            <LinkContainer to={'/users/' +this.state.currentUser.username}>
+                            <Link to={'/users/' +this.state.currentUser.username}>
                             <ListItem
                                 style={{'paddingBottom':'10px'}}
                                 leftAvatar={<Avatar icon={<SocialPerson />} />}
                             />
-                            </LinkContainer>
+                            </Link>
                         </List>
 
                     </div>

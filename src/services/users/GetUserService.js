@@ -37,7 +37,8 @@ module.exports = {
     getUsers: function(user_)
     {
         var _this = this;
-        var _url = "/home/users/" +user_.substr(0,1) +"/" +user_  +".tidy.0.json";
+        //var _url = "/home/users/" +user_.substr(0,1) +"/" +user_  +".tidy.0.json";
+        var _url = "/system/userManager/user/" +user_  +".tidy.0.json";
 
         return $.ajax({
                     'method':'get'

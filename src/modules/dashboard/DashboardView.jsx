@@ -10,11 +10,11 @@ var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {cyan500} from 'material-ui/styles/colors';
-import {lightBaseTheme} from 'material-ui/styles/baseThemes/lightBaseTheme';
-//import {darkBaseTheme} from 'material-ui/styles/baseThemes/darkBaseTheme';
-import {AppBar, IconMenu, IconButton, MenuItem, Divider, Drawer, Paper, Snackbar, Toolbar, ToolbarGroup} from 'material-ui';
+import cyan500 from 'material-ui/styles/colors';
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+//import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import {AppBar, IconMenu, IconButton, MenuItem, Divider, Drawer, Paper, Snackbar, Toolbar, ToolbarGroup} from 'material-ui';
 
 var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 
@@ -31,7 +31,7 @@ var UserStore = require('./../../stores/UserStore');
 
 const muiThemeLight = getMuiTheme(lightBaseTheme);
 //const muiThemeDark = getMuiTheme(darkBaseTheme);
-/**************************
+/*****************DashboardView.jsx
  import {
 cyan500, cyan700,
 grey100, grey300, grey400, grey500,
@@ -99,7 +99,7 @@ module.exports = React.createClass({
     componentWillMount: function () {
 
         this.checkAuthHandler();
-        this.authCheckTimer = window.setInterval(this.checkAuthHandler, 10000);
+        this.authCheckTimer = window.setInterval(this.checkAuthHandler, 120000);
 
         AuthActions.loginRedirect.subscribe(function () {
             //add a delay so any UserAction Alerts can show up

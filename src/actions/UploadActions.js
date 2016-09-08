@@ -35,7 +35,8 @@ module.exports = {
     startUpload: new Rx.Subject(),
     uploadStarted: new Rx.Subject(),
     uploadCompleted: new Rx.Subject(),
-    uploadError: new Rx.Subject()
+    uploadError: new Rx.Subject(),
+    uploadMessage: new Rx.Subject()
 
 
 };

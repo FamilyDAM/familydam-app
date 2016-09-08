@@ -10,9 +10,6 @@ var React = require('react');
 import { Router, Link } from 'react-router';
 
 var moment = require('moment');
-var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var LinkContainer = require('react-router-bootstrap').LinkContainer;
-var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var NodeActions = require('../../actions/NodeActions');
@@ -185,11 +182,11 @@ module.exports = React.createClass({
                 <br/>
                 <div>
                     <ButtonGroup className="previewButtonBar pull-right">
-                        <LinkContainer to={'/photos/' +this.state.file['jcr:uuid']}>
+                        <Link to={'/photos/' +this.state.file['jcr:uuid']}>
                             <Button bsSize='large'>
                                 <Glyphicon glyph="eye-open" style={{'fontSize':'2.4rem'}}/>
                             </Button>
-                        </LinkContainer>
+                        </Link>
                         <Button bsSize='large'
                                 onClick={this.onDownloadOriginal}>
                             <Glyphicon glyph="download-alt" style={{'fontSize':'2.4rem'}}/>

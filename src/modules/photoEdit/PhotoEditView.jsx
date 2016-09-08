@@ -8,8 +8,6 @@
 var React = require('react');
 import {Router, Link} from 'react-router';
 
-//var CreativeCloudEditor = require('./../../components/creativeCloudEditor/CreativeCloudEditor');
-var Button = require('react-bootstrap').Button;
 
 var NavigationActions = require('./../../actions/NavigationActions');
 var NodeActions = require('./../../actions/NodeActions');

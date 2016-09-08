@@ -8,21 +8,11 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var addons = require('react-addons');
+var {Router, Route, Link} = require('react-router');
 
+import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
+import AddPlus from 'material-ui/svg-icons/content/add';
 
-var Router = require('react-router');
-var Route = Router.Route;
-var Link = Router.Link;
-
-var moment = require('moment');
-var ListGroup = require('react-bootstrap').ListGroup;
-var ListGroupItem = require('react-bootstrap').ListGroupItem;
-var Button = require('react-bootstrap').Button;
-var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var Modal = require('react-bootstrap').Modal;
-var ModalTrigger = require('react-bootstrap').ModalTrigger;
-var Glyphicon = require('react-bootstrap').Glyphicon;
 var DirectoryActions = require('./../../actions/DirectoryActions');
 var DirectoryStore = require('./../../stores/DirectoryStore');
 
@@ -77,10 +67,8 @@ var AddFolderModal = React.createClass({
                     {activeVisibleDir} <input type="text" ref="folderName" label="Folder Name"/>
                 </div>
                 <div className="modal-footer">
-                    <ButtonGroup>
-                        <Button onClick={this.props.onRequestHide}>Close</Button>
-                        <Button onClick={this.handleCreateFolder}>Create</Button>
-                    </ButtonGroup>
+                    <Button onClick={this.props.onRequestHide}>Close</Button>
+                    <Button onClick={this.handleCreateFolder}>Create</Button>
                 </div>
             </Modal>
         );
@@ -227,7 +215,7 @@ var FolderTree = React.createClass({
                                      style={{'cursor': 'pointer'}}
                                      className={_this.state.activeFolder == _f ? 'folderItem active' : 'folderItem'}
                                      onClick={_boundClick}>
-                                    <Glyphicon glyph="chevron-right"/>
+                                    <ChevronRight/>
                                     <strong style={{'paddingLeft': '3px'}}>{_f.name}</strong>
                                 </div>
                                 <ListGroup>
@@ -257,17 +245,9 @@ var FolderTree = React.createClass({
 
 
                         {this.props.showAdd==true ?
-                        <Glyphicon glyph="plus"
-                                className="pull-right"
-                                onClick={this.handleAdd}/>
-
+                        <AddPlus onClick={this.handleAdd}/>
                         :""}
 
-                        {this.props.buttonGlyph!==""?
-                        <Glyphicon glyph={this.props.buttonGlyph}
-                                   className="pull-right"
-                                   onClick={this.props.buttonClick}/>
-                        :""}
                     </h3>
                 </div><br/>
 
@@ -277,7 +257,7 @@ var FolderTree = React.createClass({
                         <div
                             style={{'cursor':'pointer'}}
                             onClick={_boundClick}>
-                            <Glyphicon glyph="chevron-right"/>
+                            <ChevronRight/>
                             <strong style={{'paddingLeft':'3px'}}>Home</strong>
                         </div>
                         <ListGroup>

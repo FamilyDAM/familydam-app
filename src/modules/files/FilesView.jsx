@@ -6,9 +6,8 @@
 // Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var React = require('react');
-var Moment = require('moment');
+var moment = require('moment');
 import {Router, Link} from 'react-router';
-var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 
 import {
@@ -52,7 +51,6 @@ var PreviewSidebar = require("./../previews/PreviewSidebar.jsx");
 var TreeList = require('../../components/folderTree/TreeList.jsx');
 var AppSidebar = require('../../components/appSidebar/AppSidebar.jsx');
 var SidebarSection = require('../../components/sidebarSection/SidebarSection.jsx');
-var Fab = require('../../components/fab/UploadFab.jsx');
 
 module.exports = React.createClass({
 
@@ -381,14 +379,14 @@ module.exports = React.createClass({
                 if (file_ !== undefined && file_['jcr:mixinTypes'] !== undefined && file_['jcr:mixinTypes'].indexOf("dam:image") > -1)
                 {
 
-                    var _dt = Moment(Date.parse(file_['jcr:created'])).format("MM/DD/YYYY");
+                    var _dt = moment(Date.parse(file_['jcr:created'])).format("MM/DD/YYYY");
 
                     return (
                         <TableRow key={file_.path}>
                             <TableRowColumn colSpan="2">
-                                    <LinkContainer to={ {pathname:'photos/details',query:{'path': file_.path}} }><img
+                                    <Link to={ {pathname:'photos/details',query:{'path': file_.path}} }><img
                                         src={file_._links.thumb}
-                                        style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></LinkContainer>
+                                        style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></Link>
                                     <span style={{'paddingLeft':'10px','cursor':'pointer'}}><Link
                                         to={{pathname: 'photos/details', query:{'path':file_.path}}}><span>{file_.name}</span></Link></span>
 
@@ -449,25 +447,20 @@ module.exports = React.createClass({
 
 
 
-        // todo for mobile, use these
-        //<LinkContainer to="upload"><IconButton iconClassName="material-icons">file_upload</IconButton></LinkContainer>
-        //<IconButton iconClassName="material-icons" onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}>create_new_folder</IconButton>
-
 
         return (
             <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
                 <Toolbar style={{'display':'flex', 'height':'50px', 'alignItems':'center'}}>
-                    <ToolbarGroup firstChild={true} float="left" style={{'flexGrow':1, 'justifyContent':'flex-start'}}>
+                    <ToolbarGroup firstChild={true}  style={{'flexGrow':1, 'justifyContent':'flex-start', 'float':'left'}}>
                         <IconButton iconClassName="material-icons">folder</IconButton>
-                        <Breadcrumb path={this.state.selectedPath}/>
+
                     </ToolbarGroup>
-                    <ToolbarGroup float="right"  style={{'flexGrow':0, 'justifyContent':'flex-end'}}>
+                    <ToolbarGroup style={{'flexGrow':0, 'justifyContent':'flex-end', 'float':'right'}}>
 
                         <ToolbarSeparator/>
 
                         <FlatButton
                             label="Add Files"
-                            linkButton={true}
                             primary={true}
                             disabled={!this.state.canAddFile}
                             onTouchTap={()=>{ this.context.router.push('/upload')}}
@@ -476,7 +469,6 @@ module.exports = React.createClass({
 
                         <FlatButton
                             label="Add Folder"
-                            linkButton={true}
                             primary={true}
                             disabled={!this.state.canAddFolder}
                             onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}
@@ -514,8 +506,7 @@ module.exports = React.createClass({
 
                 <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around'}}>
                     <div
-                        style={{'display':'flex', 'flexDirection':'column', 'flexGrow':0, 'flexShrink':0, 'minWidth':'240px', 'margin':'20px'}}
-                        zDepth={0}>
+                        style={{'display':'flex', 'flexDirection':'column', 'flexGrow':0, 'flexShrink':0, 'minWidth':'240px', 'margin':'20px'}}>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
                             <TreeList
                                 isLoading={this.state.isDirTreeLoading}

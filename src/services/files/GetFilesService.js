@@ -35,20 +35,18 @@ module.exports = {
                 'method': "get",
                 'url': _url,
                 'data': {'path': path_},
+                'headers': {
+                    Accept : "application/hal+json"
+                },
                 'xhrFields': {
                     withCredentials: true
                 }
 
             }).then(function (data_, status_, xhr_) {
-                
+
                 //console.log("{GetFiles Service} getFiles() success");
                 _this.sink.onNext(data_);
 
-                // update token
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if( _token != null && _token !== undefined ){
-                    AuthActions.saveToken.onNext(_token);
-                }
 
             }, function (xhr_, status_, errorThrown_){
 

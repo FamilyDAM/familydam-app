@@ -125,19 +125,20 @@ module.exports = React.createClass({
         if (this.props.mode !== "active") {
             activeView = <div
                             className="personCard panel center-block"
+                            style={{'padding':'5px'}}
                             onTouchEnd={this.handleSelect}
                             onClick={this.handleSelect}>
                             <div className="box">&nbsp;</div>
-                            <h2>{this.props.user.firstName}</h2>
+                            <h2 style={{'fontFamily':'Roboto', 'fontWeight':'400'}}>{this.props.user.firstName}</h2>
                         </div>;
         } else {
             overrideStyle = {width:"100%"};
 
             activeView= <div className="loginCard container" style={{'backgroundColor':'#fff', 'width':'500px', 'height':'250px'}}>
                             <div className="row">
-                                <div className="col-xs-12 col-sm-4">
+                                <div className="col-xs-12 col-sm-4" style={{'padding':'5px'}}>
                                     <div className="box">&nbsp;</div>
-                                    <h2>{this.props.user.firstName}</h2>
+                                    <h2 style={{'fontFamily':'Roboto', 'fontWeight':'400'}}>{this.props.user.firstName}</h2>
                                 </div>
                                 <div className="col-xs-12 col-sm-8" style={{'textAlign':'center'}}>
                                     <br/>

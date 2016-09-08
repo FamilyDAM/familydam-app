@@ -48,9 +48,9 @@ var Breadcrumb = React.createClass({
 
                 <div className="col-sm-12">
                     <ol className="breadcrumb" style={{'marginBottom':'0px', 'backgroundColor': 'transparent'}}>
-                        <LinkContainer to="/dashboard">
+                        <Link to={'/dashboard'}>
                             <Glyphicon glyph='home'/>
-                        </LinkContainer>&nbsp;&nbsp;
+                        </Link>&nbsp;&nbsp;
 
                         {this.state.paths.map(function(path_){
                             if( path_.level == 1 )

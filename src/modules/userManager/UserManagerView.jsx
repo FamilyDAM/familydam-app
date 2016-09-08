@@ -120,12 +120,11 @@ module.exports = React.createClass({
 
 
         return (
-            <div className="container" >
+            <div className="container-fluid" >
                 
                 <div className="row" style={{'marginTop':'20px'}}>
                     <div
-                        className="col-xs-12 col-sm-4 col-md-3"
-                        zDepth={0}>
+                        className="col-xs-12 col-sm-4 col-md-3">
                         <Paper zDepth={1} style={{'backgroundColor':'#fff'}}>
                             <List>
                                 <Subheader>Users</Subheader>
@@ -141,7 +140,7 @@ module.exports = React.createClass({
                     </div>
 
 
-                    <div className="col-xs-12 col-sm-8 col-md-9">
+                    <div className="col-xs-12 col-sm-8 col-md-9 box">
                         <Paper zDepth={2}>
                             {this.props.children}
                         </Paper>

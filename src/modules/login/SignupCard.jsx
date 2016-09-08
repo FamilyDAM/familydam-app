@@ -32,8 +32,8 @@ var UserStore = require('./../../stores/UserStore');
 const LoadingIcon = (props) => (
     <SvgIcon {...props}>
         <svg width='24px' height='24px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
-             preserveAspectRatio="xMidYMid" class="uil-default">
-            <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
+             preserveAspectRatio="xMidYMid" className="uil-default">
+            <rect x="0" y="0" width="100" height="100" fill="none" className="bk"></rect>
             <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
                   transform='rotate(0 50 50) translate(0 -30)'>
                 <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0s' repeatCount='indefinite'/>
@@ -181,40 +181,45 @@ module.exports = React.createClass({
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col-xs-12">
-                                        <h2>Create First User (administrator)</h2><hr/>
+                                        <h2>Create First User</h2><hr/>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-xs-6">
                                         <TextField type="text"
                                                    ref="firstName"
-                                                   floatingLabelText="First Name"/>
+                                                   floatingLabelText="First Name"
+                                                    style={{'width':'100%'}}/>
                                     </div>
                                     <div className="col-xs-6">
                                         <TextField type="text"
                                                    ref="lastName"
-                                                   floatingLabelText="Last Name"/>
+                                                   floatingLabelText="Last Name"
+                                                   style={{'width':'100%'}}/>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-xs-12">
                                         <TextField type="email"
                                                    ref="email"
-                                                   floatingLabelText="Email"/>
+                                                   floatingLabelText="Email"
+                                                   style={{'width':'100%'}}/>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-xs-12">
                                         <TextField type="password"
                                                    ref="password"
-                                                   floatingLabelText="Password"/>
+                                                   floatingLabelText="Password"
+                                                   style={{'width':'100%'}}/>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-xs-12">
                                         <TextField type="password"
                                                    ref="confirmPassword"
-                                                   floatingLabelText="Confirm Password"/>
+                                                   floatingLabelText="Confirm Password"
+                                                   style={{'width':'100%'}}/>
                                     </div>
                                 </div>
                             </div>
@@ -234,7 +239,6 @@ module.exports = React.createClass({
 
                     <div className="row">
                         <div className="col-sm-12" style={{'textAlign':'right'}}>
-                            <hr/>
                             <RaisedButton
                                 label="Create User"
                                 primary={true}

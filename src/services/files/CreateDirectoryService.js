@@ -37,7 +37,12 @@ module.exports = {
     {
         var _this = this;
         var _name = data_.name ;
-        var _dir = data_.path +"/*";
+        var _dir = data_.path;
+        if( _dir.trim().substr(_dir.length-1) == "/" ){
+            _dir = _dir +"*"
+        }else{
+            _dir = _dir +"/*"
+        }
 
         return $.ajax({
                     method: "post",

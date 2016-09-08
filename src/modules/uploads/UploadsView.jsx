@@ -69,7 +69,8 @@ module.exports = React.createClass({
             completedFiles:0,
             errorFiles:0,
             totalFiles:0,
-            currentFile:""
+            currentFile:"",
+            uploadMessage:""
         };
     },
 
@@ -137,6 +138,13 @@ module.exports = React.createClass({
 
             if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
+
+
+        this.UploadMessageSubscription = UploadActions.uploadMessage.subscribe(function(data_){
+            //this.state.currentFile = "";
+            this.setState({'uploadMessage': data_});
+            //if( this.isMounted() ) this.forceUpdate();
+        }.bind(this));
     },
 
     componentWillUnmount: function () {
@@ -148,7 +156,9 @@ module.exports = React.createClass({
         if( this.UploadStartedSubscription ) this.UploadStartedSubscription.dispose();
         if( this.UploadErrorSubscription ) this.UploadCompleteSubscription.dispose();
         if( this.UploadCompleteSubscription ) this.UploadCompleteSubscription.dispose();
+        if( this.UploadMessageSubscription ) this.UploadMessageSubscription.dispose();
     },
+
 
 
     handleDialogClose:function(){
@@ -186,11 +196,11 @@ module.exports = React.createClass({
             <div className="row" style={{'backgroundColor':'rgb(245, 245, 245)'}}>
                 <Paper className="col-xs-12" style={{'backgroundColor':'rgb(245, 245, 245)'}}>
                     <Toolbar style={{'backgroundColor':'rgb(245, 245, 245)'}}>
-                        <ToolbarGroup firstChild={true} float="left">
+                        <ToolbarGroup firstChild={true} style={{'float':'left'}}>
                             <IconButton iconClassName="material-icons">folder</IconButton>
                             <Breadcrumb path={this.state.currentFolder}/>
                         </ToolbarGroup>
-                        <ToolbarGroup float="right">
+                        <ToolbarGroup style={{'float':'left'}}>
 
                         </ToolbarGroup>
                     </Toolbar>
@@ -220,6 +230,8 @@ module.exports = React.createClass({
                                             max={this.state.totalFiles}
                                             min={this.state.completedFiles}
                                             style={{'height':'10px'}}/>
+                                        <br/>
+                                        <span>{this.state.uploadMessage}</span>
                                     </div>
                                 );
                             }else{

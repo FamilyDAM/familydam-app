@@ -56,12 +56,15 @@ module.exports = {
                 //Special filter to remove the dashboard app folder
                 var filteredChildren = [];
                 var children = data_._embedded.children;
-                for (var i = 0; i < children.length; i++)
+                if( children )
                 {
-                    var child = children[i];
-                    if (child.path != "/content/dashboard")
+                    for (var i = 0; i < children.length; i++)
                     {
-                        filteredChildren.push(child);
+                        var child = children[i];
+                        if (child.path != "/content/dashboard")
+                        {
+                            filteredChildren.push(child);
+                        }
                     }
                 }
                 data_._embedded.children = filteredChildren;

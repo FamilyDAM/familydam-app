@@ -8,12 +8,7 @@
 // Used in TodoApp
 var React = require('react');
 import { Router, Link } from 'react-router';
-
 var moment = require('moment');
-
-var ButtonGroup = require('react-bootstrap').ButtonGroup;
-var ButtonLink = require('react-router-bootstrap').ButtonLink;
-var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var NodeActions = require('../../actions/NodeActions');

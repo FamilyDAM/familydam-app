@@ -3,7 +3,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Treebeard = require('react-treebeard').Treebeard;
-var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var FileActions = require('./../../actions/FileActions');
 var DirectoryActions = require('./../../actions/DirectoryActions');

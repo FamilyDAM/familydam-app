@@ -52,15 +52,50 @@ module.exports = {
         if( this.fileQueue.length > 0 )
         {
             var file = this.fileQueue.pop();
-            if( file)
+            if(file)
             {
-                this.uploadFile(file).then(
-                    function (v) {
-                        this.uploadNextFile();
-                    }.bind(this),
-                    function (e) {
-                        this.uploadNextFile();
-                    }.bind(this));
+                console.dir(file);
+                if( file.path ){
+                    console.log("check access");
+                    this.checkAccess(file).then(
+                        function (v0) {
+                            console.log(v0);
+                            if( v0.visible )
+                            {
+                                console.log("visible, copy");
+                                this.copyLocalFile(file).then(
+                                    function (v1) {
+                                        this.uploadNextFile();
+                                    }.bind(this),
+                                    function (e1) {
+                                        this.uploadNextFile();
+                                    }.bind(this));
+                            }else{
+                                console.log("not visible, upload");
+                                this.uploadFile(file).then(
+                                    function (v2) {
+                                        this.uploadNextFile();
+                                    }.bind(this),
+                                    function (e2) {
+                                        this.uploadNextFile();
+                                    }.bind(this));
+                            }
+                        }.bind(this),
+                        function (e0) {
+                            //console.log("error");
+                            this.uploadNextFile();
+                        }.bind(this));
+                }else
+                {
+                    console.log("else clause, upload");
+                    this.uploadFile(file).then(
+                        function (v) {
+                            this.uploadNextFile();
+                        }.bind(this),
+                        function (e) {
+                            this.uploadNextFile();
+                        }.bind(this));
+                }
             }
         }
     },
@@ -81,7 +116,8 @@ module.exports = {
         data.append("file", file_);
         data.append("id", file_.id);
         data.append("name", file_.name);
-        data.append("path", file_.uploadPath);
+        data.append("path", file_.path);
+        data.append("destination", file_.uploadPath);
         //data.append("lastModified", file_.lastModified);
         //data.append("lastModifiedDate", file_.lastModifiedDate);
 
@@ -190,24 +226,17 @@ module.exports = {
      * @param dir - passthrough for the next step in the sequence
      * @param path
      * @returns {HttpPromise}
-
+     */
     checkAccess: function (file_) {
         var _this = this;
-
         return $.ajax({
-            method: "post",
-            url: "/bin/familydam/api/v1/upload/info",
-            data: {'dir': file_.uploadPath, 'path': file_.path},
+            method: "get",
+            url: "/bin/familydam/api/v1/upload/info?path=" +encodeURI(file_.path).replace("&", "%26"),
             headers: {
                 "X-Auth-Token": UserStore.token.value
             }
         }).then(function (data_, status_, xhr_) {
-            var _token = xhr_.getResponseHeader("X-Auth-Token");
-            if (_token != null && _token !== undefined)
-            {
-                UserActions.saveToken.onNext(_token);
-            }
-            return data_;
+            return JSON.parse(data_);
         }, function (result_, status_, xhr_) {
             if (xhr_.status == 401)
             {
@@ -219,36 +248,41 @@ module.exports = {
             }
         });
     },
-     */
+
 
     /**
      * Tell the embedded server to copy a local file, by path.
      * @param dir
      * @param path
-
+     */
     copyLocalFile: function (file_) {
         var _this = this;
-
-        if (file_.recursive == undefined)
+        
+        if ( !file_.recursive )
         {
             file_.recursive = true;
         }
-
         return $.ajax({
             method: "post",
-            url: PreferenceStore.getBaseUrl() + "/api/import/file/copy/",
-            data: {'dir': file_.uploadPath, 'path': file_.path, 'recursive': file_.recursive},
+            url: "/bin/familydam/api/v1/upload/copy",
+            data: {'dir': file_.uploadPath, 'path': file_.path, 'recursive': true},
             'xhrFields': {
-                withCredentials: true
+                withCredentials: true,
+                onprogress: function (e) {
+                    var indx = e.target.responseText.substr(0, e.target.responseText.length-1).lastIndexOf("\n");
+                    var lastLine = e.target.responseText.substr(indx);
+
+                    UploadActions.uploadMessage.onNext(lastLine);
+                }
             }
         }).then(function (data_, status_, xhr_) {
-
             file_.status = "COMPLETE";
             file_.percentComplete = "100";
-            UploadActions.fileStatusAction.onNext(file_);
-            UploadActions.removeFileAction.onNext(file_);
+            //UploadActions.fileStatusAction.onNext(file_);
+            //UploadActions.removeFileAction.onNext(file_);
+            UploadActions.uploadCompleted.onNext(data_);
 
-            return data_;
+            return JSON.parse(data_);
 
         }, function (err_) {
             if (xhr_.status == 401)
@@ -262,7 +296,7 @@ module.exports = {
         }).promise();
 
     }
-     */
+
 
 
 };
