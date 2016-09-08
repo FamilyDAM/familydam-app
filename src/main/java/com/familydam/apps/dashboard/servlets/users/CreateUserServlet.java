@@ -358,7 +358,6 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             Node _node = JcrUtils.getOrAddNode(node, folder, JcrConstants.NT_FOLDER);
             _node.addMixin("mix:created");
             _node.addMixin("dam:extensible");
-            _node.addMixin("dam:contentfolder");
         }
     }
 

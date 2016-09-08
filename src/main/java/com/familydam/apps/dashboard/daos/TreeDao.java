@@ -46,6 +46,11 @@ public class TreeDao
     SimpleDateFormat dfDay = new SimpleDateFormat("dd");
 
 
+    public TreeDao()
+    {
+    }
+
+
     /**
      * Create a tree of YEAR -> MONTH -> DATE
      *
@@ -61,7 +66,8 @@ public class TreeDao
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         //Query query = queryManager.createQuery(sql, "JCR-SQL2");
         Query query = queryManager.createQuery(sql.toString(), Query.JCR_SQL2);
-//
+
+
         // Execute the query and get the results ...
         QueryResult result = query.execute();
 
@@ -136,8 +142,6 @@ public class TreeDao
     public List<Map> tagList(Session session, String path_) throws RepositoryException, UnknownINodeException
     {
         StringBuffer sql = new StringBuffer("SELECT [dam:tags]  FROM [dam:image] where [dam:tags] is not null");
-
-
         return queryForListAndCount(session, "dam:tags", sql);
     }
 
@@ -152,7 +156,6 @@ public class TreeDao
     public List<Map> peopleList(Session session, String path_) throws RepositoryException, UnknownINodeException
     {
         StringBuffer sql = new StringBuffer("SELECT [dam:people]  FROM [dam:image] where [dam:people] is not null");
-
         return queryForListAndCount(session, "dam:people", sql);
     }
 
@@ -162,7 +165,7 @@ public class TreeDao
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         //Query query = queryManager.createQuery(sql, "JCR-SQL2");
         Query query = queryManager.createQuery(sql.toString(), Query.JCR_SQL2);
-//
+
         // Execute the query and get the results ...
         QueryResult result = query.execute();
 

@@ -87,6 +87,7 @@ public class FileUploadServlet extends SlingAllMethodsServlet
 
 
         if (!ServletFileUpload.isMultipartContent(request)) {
+            response.getOutputStream().write("Request is not multipart".getBytes()); //Bad Request
             response.setStatus(500); //Bad Request
             return;
         }
@@ -108,6 +109,7 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                 final java.util.Map<String, org.apache.sling.api.request.RequestParameter[]> partMap = request.getRequestParameterMap();
                 String _uploadPath = null;
                 String _fileName = null;
+                String _path = null;
                 Map<String, Object> _props = new HashMap<>();
 
                 for (final java.util.Map.Entry<String, org.apache.sling.api.request.RequestParameter[]> pairs : partMap.entrySet()) {
@@ -116,8 +118,10 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                     final org.apache.sling.api.request.RequestParameter param = pArr[0];
 
                     if (param.isFormField()) {
-                        if (k.equalsIgnoreCase("path")) {
+                        if (k.equalsIgnoreCase("destination")) {
                             _uploadPath = new String(param.get());
+                        }else if (k.equalsIgnoreCase("path")) {
+                            _path = cleanFileName(new String(param.get()));
                         }else if (k.equalsIgnoreCase("name")) {
                             _fileName = cleanFileName(new String(param.get()));
                         } else {
@@ -132,6 +136,7 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                     response.getOutputStream().write("Missing Upload Path or File Name".getBytes());
                     return;
                 }
+
 
 
                 session.save();
@@ -182,7 +187,8 @@ public class FileUploadServlet extends SlingAllMethodsServlet
 
 
                             // save the primary file.
-                            session.save();
+                            //session.save();
+                            request.getResourceResolver().commit();
                             log.trace("file {} uploaded to {}", _fileName, _newFile.getPath());
                             //System.out.println("file " +_fileName +" uploaded to " +_newFile.getPath());
 
@@ -193,7 +199,10 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                 }
 
 
+
                 response.setStatus(201);
+                //response.getOutputStream().write(request.getParameter("id").getBytes());
+                response.getWriter().print( request.getParameter("id") );
                 // return a path to the new file, in the location header
                 response.setHeader("location", StringUtils.join(locations.toArray(), ","));
             }
@@ -218,85 +227,6 @@ public class FileUploadServlet extends SlingAllMethodsServlet
         }
 
     }
-
-
-
-    /***
-     * Read raw file stream (doesn't work in sling)
-     ServletFileUpload upload = new ServletFileUpload();
-     FileItemIterator iter = upload.getItemIterator(request);
-     while (iter.hasNext()) {
-     FileItemStream item = iter.next();
-     String name = item.getFieldName();
-     InputStream stream = item.openStream();
-     if (item.isFormField()) {
-     if (name.equalsIgnoreCase("path")) {
-     // FIND the path
-     _path = Streams.asString(stream);
-     }
-     //System.out.println("Form field " + name + " with value " + Streams.asString(stream) + " detected.");
-     } else {
-     _fileName = item.getName();
-     _contentType = item.getContentType();
-     //System.out.println("File field " + name + " with file name " + item.getName() + " detected.");
-     // Process the input stream
-     _fileStream = stream;//item.openStream();
-
-
-     // check file name for starting /
-     int pos = _fileName.lastIndexOf("/");
-     if (pos > -1 && (pos + 1) < _fileName.length()) {
-     _fileName = _fileName.substring(pos + 1);
-     }
-     _fileName = cleanFileName(_fileName);
-
-     //set dir path, from the _path
-
-     // Create DIR to store file
-     Node copyToDir = JcrUtils.getOrCreateByPath(resourcePath, false, JcrConstants.NT_FOLDER, JcrConstants.NT_FOLDER, session, true);
-     //todo add mixins to all parent folders
-
-     // figure out the mime type
-     String mimeType = mimeTypeService.getMimeType(_contentType);
-     if (mimeType == null) {
-     //default to our local check (based on file extension)
-     mimeType = contentAwareMimeTypeService.getMimeType(_fileName, _fileStream);
-     }
-
-     // Check to see if this is a new node or if we are updating an existing node
-     Node nodeExistsCheck = JcrUtils.getNodeIfExists(copyToDir, _fileName);
-     if (nodeExistsCheck != null) {
-     fileExists = true;
-     }
-
-     // Upload the FILE
-     Node fileNode = JcrUtils.putFile(copyToDir, _fileName, mimeType, _fileStream);
-     fileNode.addMixin("dam:extensible");
-     fileNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
-     fileNode.addMixin(JcrConstants.MIX_VERSIONABLE);
-
-     //fileNode.setProperty(JcrConstants.JCR_CREATED, session.getUserID());
-
-
-     // Set a DAM specific date (as as tring so it's easy to parse later)
-     javax.jcr.Property createdDate = fileNode.getProperty(JcrConstants.JCR_CREATED);
-     Calendar dateStamp = Calendar.getInstance();
-     if (createdDate == null) {
-     dateStamp = createdDate.getDate();
-     }
-     fileNode.setProperty(FamilyDAMDashboardConstants.DAM_DATECREATED, dateFormat.format(dateStamp.getTime()));
-
-     // save the primary file.
-     session.save();
-
-
-     response.setStatus(200);
-     response.setContentType("application/text");
-     // return a path to the new file, in the location header
-     response.setHeader("location", fileNode.getPath());
-     }
-     }
-     ***/
 
 
 }
