@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by mnimer on 6/2/16.
  */
 @Service
-@Component(metatype = true)
+@Component
 @Property(name = "service.description", value = "remove secure user properties")
 public class UserDecorator implements ResourceDecorator
 {

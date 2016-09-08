@@ -4,6 +4,7 @@
 
 package com.familydam.core.resources;
 
+import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.sling.api.resource.Resource;
@@ -15,6 +16,7 @@ import org.apache.sling.resourceaccesssecurity.ResourceAccessGate;
 /**
  * Created by mnimer on 6/2/16.
  */
+@Component
 @Properties({
         @Property(name= ResourceAccessGate.PATH, label="Path", value="/home/users/.*"),
         @Property(name=ResourceAccessGate.OPERATIONS, value="read,update,create,delete", propertyPrivate=true),
