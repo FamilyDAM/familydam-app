@@ -217,18 +217,23 @@ public class ImageThumbnailServlet extends SlingSafeMethodsServlet
 
     private void returnInputStream(SlingHttpServletResponse response, String contentType, InputStream newImageIS) throws IOException
     {
-        response.setContentType(contentType);
-        response.setContentLength( new Long(((SegmentStream) newImageIS).getLength()).intValue() );
+        try {
+            response.setContentType(contentType);
+            int _len = new Long(((SegmentStream) newImageIS).getLength()).intValue();
+            response.setContentLength(_len);
 
 
-        byte[] buffer = new byte[10240];
-        try (
-                InputStream input = newImageIS;
-                OutputStream output = response.getOutputStream();
-        ) {
-            for (int length = 0; (length = input.read(buffer)) > 0;) {
-                output.write(buffer, 0, length);
+            byte[] buffer = new byte[10240];
+            try (
+                    InputStream input = newImageIS;
+                    OutputStream output = response.getOutputStream();
+            ) {
+                for (int length = 0; (length = input.read(buffer)) > 0; ) {
+                    output.write(buffer, 0, length);
+                }
             }
+        }catch(Exception ex){
+            ex.printStackTrace();
         }
     }
 

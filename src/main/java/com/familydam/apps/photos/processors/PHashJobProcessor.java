@@ -20,6 +20,7 @@ import org.apache.sling.event.jobs.consumer.JobConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.IIOException;
 import javax.jcr.Node;
 import javax.jcr.Session;
 import java.io.BufferedInputStream;
@@ -52,7 +53,6 @@ public class PHashJobProcessor implements JobConsumer
             final Resource res = adminResolver.getResource(resourcePath);
             final String mimeType = res.getResourceMetadata().getContentType();
             log.trace(resourcePath + " | mimetype=" + mimeType);
-
             log.debug("{PHASH Image Observer} " + resourcePath);
 
 
@@ -62,7 +62,8 @@ public class PHashJobProcessor implements JobConsumer
 
 
             //InputStream is = res.adaptTo(InputStream.class);
-            InputStream is = session.getNode(resourcePath).getNode("jcr:content").getProperty("jcr:data").getBinary().getStream();
+            Node _node = session.getNode(resourcePath);
+            InputStream is = _node.getNode("jcr:content").getProperty("jcr:data").getBinary().getStream();
             int count = 0;
             while( ((SegmentStream) is).getLength() == 0 && count++ < 10 ){
                 is.close();
@@ -73,7 +74,6 @@ public class PHashJobProcessor implements JobConsumer
 
             ImagePHash pHash = new ImagePHash();
             String hash = pHash.getHash(new BufferedInputStream(is));
-            Node _node = session.getNode(resourcePath);
             _node.setProperty("phash", hash);
 
             session.save();
@@ -84,7 +84,9 @@ public class PHashJobProcessor implements JobConsumer
 
         }
         catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
+            //todo log node and swallow
+            log.error(resourcePath +" | " +ex.getMessage());
+            //log.error(ex.getMessage(), ex);
             if( job instanceof JobImpl ) {
                 ((JobImpl) job).setProperty("error", ex.getMessage());
                 ((JobImpl) job).setProperty("stacktrace", ex.getStackTrace());
