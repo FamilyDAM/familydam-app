@@ -53,7 +53,7 @@ import static com.familydam.core.FamilyDAMCoreConstants.HATEAOS_LINKS;
 })
 public class GraphServlet extends SlingAllMethodsServlet
 {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    public final Logger log = LoggerFactory.getLogger(GraphServlet.class);
 
     String[] defaultTypes = "nt:folder,nt:file".split(",");
     String[] defaultSuffix = "name,path,index,parent,jcr:primaryType,jcr:created".split(",");
@@ -111,6 +111,7 @@ public class GraphServlet extends SlingAllMethodsServlet
         @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
     {
+        log.info("Run GRAPH Servlet");
         String[] selectors = request.getRequestPathInfo().getSelectors();
         String resourcePath = request.getRequestPathInfo().getResourcePath().trim();
         String extension = request.getRequestPathInfo().getExtension();
@@ -162,7 +163,6 @@ public class GraphServlet extends SlingAllMethodsServlet
                     break;
                 }catch(Exception ex){}
             }
-
         }
         int offset = request.getParameter("offset")!=null?new Integer(request.getParameter("offset")):0;
         int limit = request.getParameter("limit")!=null?new Integer(request.getParameter("limit")):this.limitResults;
