@@ -11,6 +11,8 @@ import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -25,6 +27,8 @@ import java.util.Map;
 )
 public class HealthServlet extends SlingSafeMethodsServlet
 {
+    public final Logger log = LoggerFactory.getLogger(HealthServlet.class);
+
     @Reference
     private TreeDao treeDao;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -33,6 +37,8 @@ public class HealthServlet extends SlingSafeMethodsServlet
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
     {
+        log.info("IN PING SERVLET");
+
         Map status = new HashMap();
         status.put("status", "OK");
 
