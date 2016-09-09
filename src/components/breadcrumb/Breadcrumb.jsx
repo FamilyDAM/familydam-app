@@ -27,26 +27,53 @@ module.exports = React.createClass({
         this.parsePath(this.props.path);
 
 
-        NavigationActions.currentPath.subscribe(
+        this.currentPathSubscription = NavigationActions.currentPath.subscribe(
             function (path_) {
                 //console.log("new path");
                 //console.dir(path_);
+                if( !path_.params || !path_.params.path ) return;
+
                 var _level = path_.level;
+                var _pathParts = path_.params.path.split("/");
+
+
                 var _paths = [];
-                for (var i = 0; i < _level; i++)
+                var _pathQueryString = [];
+                for (var i = 0; i < _pathParts.length; i++)
                 {
-                    if (_this.state.paths[i] !== undefined)
-                    {
-                        _paths[i] = _this.state.paths[i];
+                    var part = _pathParts[i];
+                    if( part.trim().length>0){
+                        _pathQueryString[i] = part;
+
+                        if( part === "content"){
+                            _paths[i] = {
+                                "label":part,
+                                "level":i,
+                            };
+                        }else{
+                            _paths[i] = {
+                                "label":part,
+                                "level":i,
+                                "navigateTo":"/files?path="+_pathQueryString.join("/")
+                            }
+                        }
                     }
+
                 }
-                _paths[_paths.length] = path_;
+
+
                 //console.dir(_paths);
-                _this.state.paths = _paths;
-                if (this.isMounted())this.forceUpdate();
+                this.setState({"paths": _paths});
             }.bind(this)
         );
 
+    },
+
+
+    componentWillUnmount:function(){
+        if( this.currentPathSubscription ){
+            this.currentPathSubscription.dispose();
+        }
     },
 
     componentWillReceiveProps: function (nextProps){
@@ -92,7 +119,7 @@ module.exports = React.createClass({
 
         return (
             <div style={{'display':'flex', 'alignItems':'center'}}>
-                <ol className="breadcrumb" style={{'marginBottom':'0px', 'backgroundColor': 'transparent'}}>
+                <ol className="breadcrumb">
                     {this.state.paths.map(function (path_) {
                         if (path_.navigateTo)
                         {

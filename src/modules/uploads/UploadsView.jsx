@@ -95,9 +95,11 @@ module.exports = React.createClass({
 
         // upload dialog status actions
         this.startUploadSubscription = UploadActions.startUpload.subscribe(function(data_){
-            this.state.totalFiles = data_.count;
-            this.state.showUploadProgressDialog = true;
-            if( this.isMounted() ) this.forceUpdate();
+            //this.state.totalFiles = data_.count;
+            //this.state.showUploadProgressDialog = true;
+
+            this.setState({"totalFiles":data_.count, "showUploadProgressDialog":true });
+            //if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
 
 
@@ -111,7 +113,7 @@ module.exports = React.createClass({
                 this.setState({"currentFile":data_.name});
                 //this.state.currentFile = data_.name;
             }
-            if( this.isMounted() ) this.forceUpdate();
+            //if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
 
 
@@ -127,22 +129,27 @@ module.exports = React.createClass({
                 stateProps.enableRetry=this.state.errorFiles>0;
             }
 
-            //this.setState(stateProps);
+            this.setState(stateProps);
 
         }.bind(this));
 
 
         this.UploadErrorSubscription = UploadActions.uploadError.subscribe(function(data_){
             //this.state.currentFile = "";
-            this.state.errorFiles = this.state.errorFiles+1;
+            this.setState({"errorFiles":this.state.errorFiles+1});
 
-            if( this.isMounted() ) this.forceUpdate();
+            //if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
 
 
         this.UploadMessageSubscription = UploadActions.uploadMessage.subscribe(function(data_){
             //this.state.currentFile = "";
-            this.setState({'uploadMessage': data_});
+            if( data_.substr(0, 1) != "{")
+            {
+                this.setState({'uploadMessage': "Completed", "enableClose":true});
+            }else{
+                this.setState({'uploadMessage': data_});
+            }
             //if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
     },
@@ -206,7 +213,7 @@ module.exports = React.createClass({
                     </Toolbar>
                 </Paper>
 
-                <div className="col-xs-10 col-offset-1" style={{'top':'24px', 'flexGrow': '1'}}>
+                <div className="col-xs-11 col-offset-1" style={{'top':'24px', 'flexGrow': '1'}}>
 
                     <FileUploadView
                         currentFolder={this.state.currentFolder}

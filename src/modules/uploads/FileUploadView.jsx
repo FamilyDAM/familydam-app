@@ -118,6 +118,7 @@ var FileUploadView = React.createClass({
 
                             if( _fileList.length == 0 ){
                                 return (<FileUploadControls
+                                    mode="full"
                                     currentFolder={this.props.currentFolder}
                                     uploadPath={this.props.uploadPath}/>);
 
@@ -126,7 +127,13 @@ var FileUploadView = React.createClass({
                                 <Table>
                                     <TableHeader displaySelectAll={false} enableSelectAll={false} adjustForCheckbox={false}>
                                         <TableRow>
-                                            <TableHeaderColumn colSpan="5" style={{textAlign: 'right'}}>
+                                            <TableHeaderColumn colSpan="2" style={{textAlign: 'left'}}>
+                                                <FileUploadControls
+                                                    mode="simple"
+                                                    currentFolder={this.props.currentFolder}
+                                                    uploadPath={this.props.uploadPath}/>
+                                            </TableHeaderColumn>
+                                            <TableHeaderColumn colSpan="3" style={{textAlign: 'right'}}>
                                                 <RaisedButton label="Remove All Files"
                                                               onTouchTap={this.handleRemoveAll}
                                                               style={{'marginRight':'10px'}}/>

@@ -42,6 +42,10 @@ body
   background-color:  rgb(232, 232, 232);
 }
 
+a{
+  text-decoration: none;
+}
+
 
 @import "modules/login/login";
 @import "modules/home/home";
@@ -53,6 +57,7 @@ body
 @import "modules/uploads/uploads";
 @import "modules/userManager/userManager";
 @import "components/appSidebar/appSidebar";
+@import "components/breadcrumb/breadcrumb";
 @import "components/clock/clock";
 @import "components/folderTree/folderTree";
 @import "components/tags/tags";

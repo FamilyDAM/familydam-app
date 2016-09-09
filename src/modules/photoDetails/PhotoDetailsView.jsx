@@ -7,6 +7,7 @@
 // Used in TodoApp
 var React = require('react');
 var moment = require('moment');
+var Keymaster = require('keymaster');
 import {
     Router,
     Link} from 'react-router';

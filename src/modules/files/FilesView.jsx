@@ -468,7 +468,7 @@ module.exports = React.createClass({
                         />
 
                         <FlatButton
-                            label="Add Folder"
+                            label="New Folder"
                             primary={true}
                             disabled={!this.state.canAddFolder}
                             onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}

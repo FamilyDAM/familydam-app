@@ -209,10 +209,10 @@ module.exports = React.createClass({
 
                             <Paper zDepth={1}
                                    className="container-fluid"
-                                   style={{'width':'100%','backgroundColor':'rgb(245, 245, 245)'}}>
+                                   style={{'width':'100%','backgroundColor':'rgb(245, 245, 245)', 'paddingLeft':'0px', 'paddingRight':'0px'}}>
 
                                 <div className="row">
-                                    <div className="col-xs-12" style={{'marginLeft':'-0.9375rem'}}>
+                                    <div className="col-xs-12">
                                         {this.props.children}
                                     </div>
                                 </div>

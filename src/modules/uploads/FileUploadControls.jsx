@@ -9,7 +9,10 @@ var Rx = require('rx');
 var React = require('react');
 var UUID = require('uuid-js');
 
-import {RaisedButton,Paper} from 'material-ui';
+import AddFileBtn from 'material-ui/svg-icons/action/note-add';
+import AddFolderBtn from 'material-ui/svg-icons/file/create-new-folder';
+import {RaisedButton, Paper} from 'material-ui';
+
 
 var UploadActions = require("../../actions/UploadActions");
 var DirectoryActions = require("../../actions/DirectoryActions");
@@ -23,17 +26,28 @@ var FileUploadControls = React.createClass({
 
 
     getDefaultProps: function () {
-        return {uploadPath: "/content"}
+        return {uploadPath: "/content", mode: "full"}
     },
 
-    componentWillMount: function () { },
+    componentWillMount: function () {
+
+    },
 
     componentDidMount: function () {
-        var _this = this;
 
-        //$(this.refs.fileInputField.getDOMNode()).fileinput(_options);
-        //this.refs.folderInputField.getDOMNode().setAttribute("webkitdirectory", "");
-        //this.refs.folderInputField.getDOMNode().setAttribute("directory", "");
+        //$(this.refs.fileInputField).fileinput(_options);
+        if( this.refs.folderInputField )
+        {
+            this.refs.folderInputField.setAttribute("multiple", "true");
+            this.refs.folderInputField.setAttribute("webkitdirectory", "webkitdirectory");
+            this.refs.folderInputField.setAttribute("directory", "directory");
+        }
+        if( this.refs.folderInputFieldMin )
+        {
+            this.refs.folderInputFieldMin.setAttribute("multiple", "true");
+            this.refs.folderInputFieldMin.setAttribute("webkitdirectory", "webkitdirectory");
+            this.refs.folderInputFieldMin.setAttribute("directory", "directory");
+        }
     },
 
 
@@ -60,7 +74,7 @@ var FileUploadControls = React.createClass({
         UploadActions.addFileAction.onNext(_files);
 
         /**
-        Rx.Observable.from(_files).forEach(function (item_) {
+         Rx.Observable.from(_files).forEach(function (item_) {
 
             item_.uploadPath = this.props.uploadPath;
             if (item_.webkitRelativePath != "" && item_.webkitRelativePath.length > 0)
@@ -80,7 +94,7 @@ var FileUploadControls = React.createClass({
     handleFolderChange: function (event_) {
         //console.dir(event_);
         var _files = event_.currentTarget.files;
-        console.log("File Selection Event Handler | files=" +_files.length);
+        console.log("File Selection Event Handler | files=" + _files.length);
         //console.dir(_files);
 
         for (var i = 0; i < _files.length; i++)
@@ -98,7 +112,8 @@ var FileUploadControls = React.createClass({
             }
             item_.id = UUID.create().toString();
             item_.status = "PENDING";
-        };
+        }
+        ;
 
 
         console.log("File Selection Event Handler | Finished file loop");
@@ -129,39 +144,86 @@ var FileUploadControls = React.createClass({
     render: function () {
 
 
-        return (
-            <Paper className="FileUploadControls row" >
-                <div className="col-xs-12" style={{'padding':'24px'}}>
-                    <div className="row">
-                        <div className="col-sm-6 hidden-xs-down background">
-                        </div>
-
-                        <div className="col-xs-12 col-sm-6"
-                        style={{'display':'flex','flexDirection':'column','justifyContent':'center','alignItems':'center'}}>
-
-                            <div className="file-wrapper" onClick={this.clickFileInputField}
-                                 style={{'width':'100%','maxWidth':'250px', 'margin':'10px'}}>
-                                <RaisedButton label="Select Files" primary={true} style={{'width':'100%'}}>
-                                    <input type="file"
-                                           ref="fileInputField"
-                                           onChange={this.handleFileChange}
-                                           multiple="true"/>
-                                </RaisedButton>
+        if (this.props.mode === "full")
+        {
+            return (
+                <Paper className="FileUploadControls row">
+                    <div className="col-xs-12" style={{'padding': '24px'}}>
+                        <div className="row">
+                            <div className="col-sm-6 hidden-xs-down background">
                             </div>
-                            <div className="file-wrapper" onClick={this.clickFolderInputField}
-                                 style={{'width':'100%', 'maxWidth':'250px', 'margin':'10px'}}>
-                                <RaisedButton label="Select Folder" primary={true} style={{'width':'100%'}}>
-                                    <input type="file"
-                                           ref="folderInputField"
-                                           onChange={this.handleFolderChange}
-                                           multiple="true" webkitdirectory="webkitdirectory" directory="true"/>
-                                </RaisedButton>
+
+                            <div className="col-xs-12 col-sm-6"
+                                 style={{
+                                     'display': 'flex',
+                                     'flexDirection': 'column',
+                                     'justifyContent': 'center',
+                                     'alignItems': 'center'
+                                 }}>
+
+                                <div className="file-wrapper" onClick={this.clickFileInputField}
+                                     style={{'width': '100%', 'maxWidth': '250px', 'margin': '10px'}}>
+                                    <RaisedButton label="Select Files" primary={true} style={{'width': '100%'}}>
+                                        <input type="file"
+                                               ref="fileInputField"
+                                               onChange={this.handleFileChange}
+                                               multiple="true"/>
+                                    </RaisedButton>
+                                </div>
+                                <div className="file-wrapper" onClick={this.clickFolderInputField}
+                                     style={{'width': '100%', 'maxWidth': '250px', 'margin': '10px'}}>
+                                    <RaisedButton label="Select Folder" primary={true} style={{'width': '100%'}}>
+                                        <input type="file"
+                                               id="folderInputField"
+                                               ref="folderInputField"
+                                               onChange={this.handleFolderChange}
+                                               multiple="true" />
+                                    </RaisedButton>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </Paper>
+            )
+        }
+        else
+        {
+            return (
+
+                <div className="FileUploadControls" style={{
+                    'display': 'flex'
+                }}>
+
+                        <div className="file-wrapper" onClick={this.clickFileInputField}
+                             style={{'width': '100%', 'maxWidth': '250px', 'margin': '10px'}}>
+                            <RaisedButton
+                                label="Add Files"
+                                icon={<AddFileBtn/>}
+                                primary={false} style={{'width': '100%'}}>
+                                <input type="file"
+                                       ref="fileInputField"
+                                       onChange={this.handleFileChange}
+                                       multiple="true"/>
+                            </RaisedButton>
+                        </div>
+                        <div className="file-wrapper" onClick={this.clickFolderInputField}
+                             style={{'width': '100%', 'maxWidth': '250px', 'margin': '10px'}}>
+                            <RaisedButton
+                                label="Add Folder"
+                                icon={<AddFolderBtn/>}
+                                primary={false} style={{'width': '100%'}}>
+                                <input type="file"
+                                       id="folderInputFieldMin"
+                                       ref="folderInputFieldMin"
+                                       onChange={this.handleFolderChange}
+                                       multiple="true" />
+                            </RaisedButton>
+                        </div>
+
                 </div>
-            </Paper>
-        )
+
+            )
+        }
     }
 
 });
