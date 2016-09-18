@@ -43,15 +43,20 @@ module.exports = React.createClass({
 
 
     getListItem: function (items_) {
-        return items_.map((item_)=> {
-            return (
-                <ListItem key={item_.path}
-                          primaryText={item_.name}
-                          onTouchTap={()=>{this._onSelectHandler(item_.path)}}
-                          nestedItems={this.getListItem(item_.children)}
-                          style={{'fontSize':'13px', 'lineHeight':'13px'}}/>
-            );
-        })
+        if( items_ )
+        {
+            return items_.map((item_) => {
+                return (
+                    <ListItem key={item_.path}
+                              primaryText={item_.name}
+                              onTouchTap={() => {
+                                  this._onSelectHandler(item_.path)
+                              }}
+                              nestedItems={this.getListItem(item_.children)}
+                              style={{'fontSize': '13px', 'lineHeight': '13px'}}/>
+                );
+            });
+        }
 
         //leftIcon={<FolderIcon />}
         //leftIcon={<IconButton iconClassName="material-icons" >folder</IconButton>}

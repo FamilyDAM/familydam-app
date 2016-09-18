@@ -239,7 +239,6 @@ module.exports = React.createClass({
 
     removeFilter: function (data) {
         this.setState({'files': [], 'isLoading': true});
-
         ImageActions.removeFilter.onNext(data);
     },
 
@@ -338,14 +337,15 @@ module.exports = React.createClass({
         }
     },
 
-    renderChip(data) {
+    renderChip(data_) {
         return (
             <Chip
-                key={data.key}
-                onRequestDelete={this.removeFilter}
-                style={{'margin':'4'}}
-            >
-                {data.name}
+                key={data_.path}
+                onRequestDelete={() => {
+                    this.removeFilter(data_);
+                }}
+                style={{'margin':'4'}}>
+                {data_.name}
             </Chip>
         );
     },
@@ -382,19 +382,7 @@ module.exports = React.createClass({
         return (
             <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
 
-                <div className="container-fluid photo-body" style={{'width':'100%'}}>
-                    <div className="row" style={{'width':'100%'}}>
-                        <div className="col-xs-12">
-                            <DropDownMenu onChange={this.handleGroupByChange} value="date:day" style={{'width':'250px'}}>
-                                <MenuItem value="date:day" primaryText="Group By Day"/>
-                                <MenuItem value="date:month" primaryText="Group By Month"/>
-                                <MenuItem value="date:year"  primaryText="Group By Year"/>
-                                <MenuItem value="gps:location" primaryText="Group By Location"/>
-                                <MenuItem value="tag:person" primaryText="Group By Person"/>
-                                <MenuItem value="tag:tag" primaryText="Group By Tag"/>
-                            </DropDownMenu>
-                        </div>
-                    </div>
+                <div className="container-fluid photo-body" style={{'width':'100%', 'marginTop':'10px'}}>
                     <div className="row">
                         <div className="col-xs-12" style={{'fontSize':'14px', 'display': 'flex', 'flexWrap': 'wrap'}}>
                             {this.state.filters.date.map(this.renderChip, this)}
@@ -408,6 +396,22 @@ module.exports = React.createClass({
                 <div style={{'display':'flex', 'flexDirection':'row', 'flexGrow':1, 'justifyContent':'space-around'}}>
                     <div
                         style={_leftSidebar}>
+                        <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'75px'}}>
+                            <div className="row" style={{'width':'100%'}}>
+                                <div className="col-xs-12">
+                                    <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>Group Photos</Subheader>
+                                    <DropDownMenu onChange={this.handleGroupByChange} value="date:day">
+                                        <MenuItem value="date:day" primaryText="Group By Day"/>
+                                        <MenuItem value="date:month" primaryText="Group By Month"/>
+                                        <MenuItem value="date:year"  primaryText="Group By Year"/>
+                                        <MenuItem value="gps:location" primaryText="Group By Location"/>
+                                        <MenuItem value="tag:person" primaryText="Group By Person"/>
+                                        <MenuItem value="tag:tag" primaryText="Group By Tag"/>
+                                    </DropDownMenu>
+                                </div>
+                            </div>
+                        </Paper>
+                        <br/>
                         <Paper zDepth={1} style={{'backgroundColor':'#fff', 'minHeight':'250px'}}>
                             <TreeList
                                 title="Filter Photos By Path"

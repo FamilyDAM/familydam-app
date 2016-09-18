@@ -78,7 +78,50 @@ var GridGroup = React.createClass({
 
         //console.log("{MaterialGallery.GridGroup} Start Render() | groups:" + this.props.groups.length);
         return (
-            <div key="g1" style={{'width':'100%'}}>
+            <div className="row" style={{'width':'100%', 'padding':'20px'}}>
+
+                {this.props.groups.map(function (item_, indx_) {
+                    return (
+                            <div className="col-xs-12" key={item_.label}>
+                                <Subheader>{item_.label}</Subheader>
+
+                                <div className="row">
+                                    {item_.children.map((img_) => (
+                                            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xlg-2" style={{'height':'200px'}}>
+                                                <div
+                                                    style={{'width':'100%', 'height':'100%', 'position':'relative'}}>
+                                                    <img
+                                                        src="data:image/png;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                                                        data-src={img_.src}
+                                                        style={{'height':'100%', 'width':'100%'}}
+                                                        onClick={ ()=>{ImageActions.selectImage.onNext(img_);} }/>
+
+                                                    <div style={{'position': 'absolute','left': '0px', 'right': '0px', 'bottom': '0px', 'height': '68px', 'display': 'flex', 'alignItems': 'center', 'background': 'rgba(0, 0, 0, 0.4)'}}>
+                                                        <span style={{'fontSize':'12px','fontSize':'1.2rem','color':'white'}}>{img_.name}</span>
+                                                        <IconButton
+                                                            iconClassName="material-icons"
+                                                            onClick={() => {this.context.router.push({pathname:'photos/details', query:{path:img_.path}}) }}
+                                                            iconStyle={{'color':'white'}}>launch</IconButton>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    ))}
+
+                                </div>
+                            </div>
+
+                        );
+
+                 }.bind(this))}
+            </div>
+        );
+    },
+
+    renderOrig: function () {
+
+        //console.log("{MaterialGallery.GridGroup} Start Render() | groups:" + this.props.groups.length);
+        return (
+            <div key="g1" style={{'width':'100%', 'padding':'20px'}}>
 
                 {this.props.groups.map(function (item_, indx_) {
                     return (

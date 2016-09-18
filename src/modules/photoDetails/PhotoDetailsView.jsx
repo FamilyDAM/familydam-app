@@ -15,14 +15,20 @@ import {
 import {
     Dialog,
     FlatButton,
-    Paper
+    Paper,
+    Tabs,
+    Tab
 } from 'material-ui';
 
+var Rating = require('react-rating');
+
 var Tags = require('./../../components/tags/Tags.jsx');
+var ExifMap = require('./../../components/exifMap/ExifMap.jsx');
+var ExifData = require('./../../components/exifData/ExifData.jsx');
 
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');
-var PreferenceStore = require('./../../stores/PreferenceStore');
+var PrefabserenceStore = require('./../../stores/PreferenceStore');
 var ContentStore = require('./../../stores/ContentStore');
 
 var NodeActions = require('./../../actions/NodeActions');
@@ -343,7 +349,7 @@ module.exports = React.createClass({
         }
 
         return (
-            <div className="photoDetailsView container">
+            <div className="photoDetailsView container-fluid">
                 <Dialog
                     title="Delete Confirmation"
                     actions={deleteActions}
@@ -359,21 +365,21 @@ module.exports = React.createClass({
                     <section className="col-sm-12" style={{'margin':'20px'}}>
                         <div className="container-fluid">
                             <div className="row">
-                                <div className="col-sm-1">
+                                <div className="col-sm-1 col-md-2">
                                     {this.state.prevId?
                                     <Link to={'photo/' +this.state.prevId }  >
                                         <Glyphicon glyph="chevron-left" style={{'fontSize':'48px', 'color':'#eee', 'top':'200px'}}/>
                                     </Link>
                                     :''}
                                 </div>
-                                <div className="col-sm-10">
+                                <div className="col-sm-10 col-md-8" style={{'display':'flex','justifyContent':'center'}}>
                                     <img id="editableImage"
                                          ref="editableImage"
                                          src={this.state.imagePath}
-                                        style={{'height': '500px'}}
+                                        style={{'height': '500px', 'justifyContent':'center'}}
                                         className="center-block" />
                                 </div>
-                                <div className="col-sm-1">
+                                <div className="col-sm-1 col-md-2">
                                     {this.state.nextId?
                                     <Link to={'photo/' +this.state.nextId }  >
                                         <Glyphicon glyph="chevron-right" style={{'fontSize':'48px', 'color':'#eee', 'top':'200px'}}/>
@@ -477,9 +483,9 @@ module.exports = React.createClass({
                             <br/><br/><br/><br/>
                             <div className="row" style={{'marginTop': '30px', 'minHeight': '400px'}}>
 
-                                <Tabs defaultActiveKey={1} animation={false} style={{'display':'none'}} >
+                                <Tabs initialSelectedIndex={1} style={{'display':'none'}} >
 
-                                    <Tab eventKey={1} tab="Renditions">
+                                    <Tab label="Renditions">
                                         <div style={{
                                             'borderRight': '1px solid #eee',
                                             'borderLeft': '1px solid #eee'
@@ -497,7 +503,7 @@ module.exports = React.createClass({
                                     </Tab>
 
 
-                                    <Tab eventKey={2} tab="Similar or Duplicate">
+                                    <Tab label="Similar or Duplicate">
                                         <div style={{
                                             'borderRight': '1px solid #eee',
                                             'borderLeft': '1px solid #eee'

@@ -21,20 +21,7 @@ var ExifData = React.createClass({
 
 
     getDefaultProps: function(){
-        return {'exif': {
-            'Exif IFD0':{
-                'Make':{'description':''},
-                'Model':{'description':''},
-                'Focal_Length':{'description':''},
-                'Lens_Specification':{'description':''},
-                'F-Number':{'description':''},
-                'Shutter_Speed_Value':{'description':''},
-                'ISO_Speed_Ratings':{'description':''}
-            },
-            'Exif SubIFD':{
-                'Flash':{'description':''}
-            }
-        }}
+        return {}
     },
 
     getInitialState: function(){
@@ -52,103 +39,113 @@ var ExifData = React.createClass({
 
 
     render: function() {
-        var _this = this;
+        debugger;
+
+        if( !this.props.exif )return(<div/>);
+
+        var exif = {
+            "make":"",
+            "model":"",
+            "focal_length":"",
+            "lens_specification":"",
+            "f_number":"",
+            "shutter_speed":"",
+            "iso_speed":"",
+            "flash":""
+        };
+
         try
         {
-            if( this.props.exif == undefined ){
-                this.props.exif = {};
+
+            //pull out values
+            if( this.props.exif['Exif IFD0'] && this.props.exif['Exif IFD0']['Make'] )
+            {
+                exif.make = this.props.exif['Exif IFD0']['Make'].description;
+            }else if( this.props.exif['Exif SubIFD'] && this.props.exif['Exif SubIFD']['Make'] )
+            {
+                exif.make = this.props.exif['Exif SubIFD']['Make'].description;
+            }else if( this.props.exif['Xmp'] && this.props.exif['Xmp']['Make'] )
+            {
+                exif.make = this.props.exif['Xmp']['Make'].description;
             }
 
-            if (this.props.exif['Exif IFD0'] === undefined)
+            if( this.props.exif['Exif IFD0'] && this.props.exif['Exif IFD0']['Model'] )
             {
-                this.props.exif['Exif IFD0'] = {};
-            }
-            if (this.props.exif['Exif SubIFD'] === undefined)
+                exif.model = this.props.exif['Exif IFD0']['Model'].description;
+            }else if( this.props.exif['Exif SubIFD'] && this.props.exif['Exif SubIFD']['Model'] )
             {
-                this.props.exif['Exif SubIFD'] = {};
-            }
-
-            if (this.props.exif['Exif IFD0']['Make'] === undefined)
+                exif.model = this.props.exif['Exif SubIFD']['Model'].description;
+            }else if( this.props.exif['Xmp'] && this.props.exif['Xmp']['Model'] )
             {
-                this.props.exif['Exif IFD0']['Make'] = {};
-            }
-            if (this.props.exif['Exif IFD0']['Make'].description === undefined)
-            {
-                this.props.exif['Exif IFD0']['Make'].description = "";
+                exif.model = this.props.exif['Xmp']['Model'].description;
             }
 
-            if (this.props.exif['Exif IFD0']['Model'] === undefined)
+            if( this.props.exif['Exif IFD0'] && this.props.exif['Exif IFD0']['Focal_Length'] )
             {
-                this.props.exif['Exif IFD0']['Model'] = {};
-            }
-            if (this.props.exif['Exif IFD0']['Model'].description === undefined)
+                exif.focal_length = this.props.exif['Exif IFD0']['Focal_Length'].description;
+            }else if( this.props.exif['Exif SubIFD'] && this.props.exif['Exif SubIFD']['Make'] )
             {
-                this.props.exif['Exif IFD0']['Model'].description = "";
-            }
-
-            if (this.props.exif['Exif IFD0']['Focal_Length'] === undefined)
+                exif.focal_length = this.props.exif['Exif SubIFD']['Focal_Length'].description;
+            }else if( this.props.exif['Xmp'] && this.props.exif['Xmp']['Focal_Length'] )
             {
-                this.props.exif['Exif IFD0']['Focal_Length'] = {};
-            }
-            if (this.props.exif['Exif IFD0']['Focal_Length'].description === undefined)
-            {
-                this.props.exif['Exif IFD0']['Focal_Length'].description = "";
+                exif.focal_length = this.props.exif['Xmp']['Focal_Length'].description;
             }
 
-            if (this.props.exif['Exif IFD0']['Lens_Specification'] === undefined)
+            if( this.props.exif['Exif IFD0'] && this.props.exif['Exif IFD0']['Lens_Specification'] )
             {
-                this.props.exif['Exif IFD0']['Lens_Specification'] = {};
-            }
-            if (this.props.exif['Exif IFD0']['Lens_Specification'].description === undefined)
+                exif.lens_specification = this.props.exif['Exif IFD0']['Lens_Specification'].description;
+            }else if( this.props.exif['Exif SubIFD'] && this.props.exif['Exif SubIFD']['Lens_Specification'] )
             {
-                this.props.exif['Exif IFD0']['Lens_Specification'].description = "";
-            }
-
-            if (this.props.exif['Exif IFD0']['F-Number'] === undefined)
+                exif.lens_specification = this.props.exif['Exif SubIFD']['Lens_Specification'].description;
+            }else if( this.props.exif['Xmp'] && this.props.exif['Xmp']['Lens_Specification'] )
             {
-                this.props.exif['Exif IFD0']['F-Number'] = {};
-            }
-            if (this.props.exif['Exif IFD0']['F-Number'].description === undefined)
-            {
-                this.props.exif['Exif IFD0']['F-Number'].description = "";
+                exif.lens_specification = this.props.exif['Xmp']['Lens_Specification'].description;
             }
 
-            if (this.props.exif['Exif IFD0']['Focal_Length'] === undefined)
+            if( this.props.exif['Exif IFD0'] && this.props.exif['Exif IFD0']['F-Number'] )
             {
-                this.props.exif['Exif IFD0']['Focal_Length'] = {};
-            }
-            if (this.props.exif['Exif IFD0']['Focal_Length'].description === undefined)
+                exif.f_number = this.props.exif['Exif IFD0']['F-Number'].description;
+            }else if( this.props.exif['Exif SubIFD'] && this.props.exif['Exif SubIFD']['F-Number'] )
             {
-                this.props.exif['Exif IFD0']['Focal_Length'].description = "";
-            }
-
-            if (this.props.exif['Exif IFD0']['Shutter_Speed_Value'] === undefined)
+                exif.f_number = this.props.exif['Exif SubIFD']['F-Number'].description;
+            }else if( this.props.exif['Xmp'] && this.props.exif['Xmp']['F-Number'] )
             {
-                this.props.exif['Exif IFD0']['Shutter_Speed_Value'] = {};
-            }
-            if (this.props.exif['Exif IFD0']['Shutter_Speed_Value'].description === undefined)
-            {
-                this.props.exif['Exif IFD0']['Shutter_Speed_Value'].description = "";
+                exif.f_number = this.props.exif['Xmp']['F-Number'].description;
             }
 
-            if (this.props.exif['Exif IFD0']['ISO_Speed_Ratings'] === undefined)
+            if( this.props.exif['Exif IFD0'] && this.props.exif['Exif IFD0']['Shutter_Speed_Value'] )
             {
-                this.props.exif['Exif IFD0']['ISO_Speed_Ratings'] = {};
-            }
-            if (this.props.exif['Exif IFD0']['ISO_Speed_Ratings'].description === undefined)
+                exif.shutter_speed = this.props.exif['Exif IFD0']['Shutter_Speed_Value'].description;
+            }else if( this.props.exif['Exif SubIFD'] && this.props.exif['Exif SubIFD']['Shutter_Speed_Value'] )
             {
-                this.props.exif['Exif IFD0']['ISO_Speed_Ratings'].description = "";
-            }
-
-            if (this.props.exif['Exif SubIFD']['Flash'] === undefined)
+                exif.shutter_speed = this.props.exif['Exif SubIFD']['Shutter_Speed_Value'].description;
+            }else if( this.props.exif['Xmp'] && this.props.exif['Xmp']['Shutter_Speed_Value'] )
             {
-                this.props.exif['Exif SubIFD']['Flash'] = {};
-            }
-            if (this.props.exif['Exif SubIFD']['Flash'].description === undefined)
-            {
-                this.props.exif['Exif SubIFD']['Flash'].description = "";
+                exif.shutter_speed = this.props.exif['Xmp']['Shutter_Speed_Value'].description;
             }
 
+            if( this.props.exif['Exif IFD0'] && this.props.exif['Exif IFD0']['ISO_Speed_Ratings'] )
+            {
+                exif.iso_speed = this.props.exif['Exif IFD0']['ISO_Speed_Ratings'].description;
+            }else if( this.props.exif['Exif SubIFD'] && this.props.exif['Exif SubIFD']['ISO_Speed_Ratings'] )
+            {
+                exif.iso_speed = this.props.exif['Exif SubIFD']['ISO_Speed_Ratings'].description;
+            }else if( this.props.exif['Xmp'] && this.props.exif['Xmp']['ISO_Speed_Ratings'] )
+            {
+                exif.iso_speed = this.props.exif['Xmp']['ISO_Speed_Ratings'].description;
+            }
+
+            if( this.props.exif['Exif IFD0'] && this.props.exif['Exif IFD0']['Flash'] )
+            {
+                exif.flash = this.props.exif['Exif IFD0']['Flash'].description;
+            }else if( this.props.exif['Exif SubIFD'] && this.props.exif['Exif SubIFD']['Flash'] )
+            {
+                exif.flash = this.props.exif['Exif SubIFD']['Flash'].description;
+            }else if( this.props.exif['Xmp'] && this.props.exif['Xmp']['Flash'] )
+            {
+                exif.flash = this.props.exif['Xmp']['Flash'].description;
+            }
+            debugger;
 
             return (
                 <div className="ExifDataComponent">
@@ -162,47 +159,11 @@ var ExifData = React.createClass({
                             </td>
                             <td colSpan="3">
                                 <h6>
-                                    {this.props.exif['Exif IFD0']['Make'].description} {this.props.exif['Exif IFD0']['Model'].description}<br/>
-                                    {this.props.exif['Exif SubIFD']['Focal_Length'].description}<br/>
-                                    {this.props.exif['Exif SubIFD']['Lens_Specification'].description}<br/>
+                                    {exif.make} {exif.model}<br/>
+                                    {exif.f_number}  {exif.focal_length}<br/>
+                                    {exif.shutter_speed} {exif.iso_speed.length>0?exif.iso_speed+'iso':''}<br/>
+                                    {exif.lens_specification}<br/>
                                 </h6>
-                            </td>
-                        </tr>
-                    </table>
-                    <br/>
-                    <table style={{'width':'300px', 'borderSpacing':'0px', 'padding':'0px'}}>
-                        <tr>
-                            <td colSpan="2" style={{'width':'50%'}}>
-                                <h6><img src="assets/icons/ic_photo_camera_48px.svg"
-                                         style={{'width': '18px', 'height': '18px'}}/>
-                                    &nbsp;{this.props.exif['Exif SubIFD']['F-Number'].description}</h6>
-                            </td>
-                            <td colSpan="2" style={{'width':'50%'}}>
-                                <h6><img src="assets/icons/ic_photo_camera_48px.svg"
-                                         style={{'width': '18px', 'height': '18px'}}/>
-                                    &nbsp;{this.props.exif['Exif SubIFD']['Focal_Length'].description}</h6>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2">
-                                <h6><img src="assets/icons/ic_photo_camera_48px.svg"
-                                         style={{'width': '18px', 'height': '18px'}}/>
-                                    &nbsp;{this.props.exif['Exif SubIFD']['Shutter_Speed_Value'].description}</h6>
-                            </td>
-                            <td colSpan="2">
-                                <h6><img src="assets/icons/ic_photo_camera_48px.svg"
-                                         style={{'width': '18px', 'height': '18px'}}/>
-                                    &nbsp;{this.props.exif['Exif SubIFD']['ISO_Speed_Ratings'].description} ISO</h6>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colSpan="2">
-                                <h6><img src="assets/icons/ic_photo_camera_48px.svg"
-                                         style={{'width': '18px', 'height': '18px'}}/>
-                                    &nbsp;Flash: {this.props.exif['Exif SubIFD']['Flash'].description}</h6>
-                            </td>
-                            <td colSpan="2">
-
                             </td>
                         </tr>
                     </table>
@@ -210,8 +171,8 @@ var ExifData = React.createClass({
             )
 
         }catch(err_){
-            //console.log("Error Rendering ExifData Component");
-            //console.dir(err_);
+            console.log("Error Rendering ExifData Component");
+            console.dir(err_);
 
             return (<div></div>)
         }

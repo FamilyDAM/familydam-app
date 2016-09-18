@@ -85,17 +85,18 @@ module.exports = {
         ImageActions.removeFilter.subscribe(function(data){
             var _filters = this.filters.value;
 
-            var _type = "tag";
+            var _type = data.type;
             var _name = data;
-            if( data.indexOf(":") > -1)
-            {
-                _type = data.substr(0, data.indexOf(":"));
-                _name = data.substr(data.indexOf(":")+1);
-            }
+
+            //if( data.indexOf(":") > -1){
+                //_type = data.substr(0, data.indexOf(":"));
+                //_name = data.substr(data.indexOf(":")+1);
+            //}
 
 
             if( _type === "path" ){
 
+                _name = data.name;
                 var _pathList = [];
                 for (var L = 0; L < _filters.paths.length; L++) {
                     var _path = _filters.paths[L];
@@ -108,6 +109,7 @@ module.exports = {
             }
             else if( _type === "date" ){
 
+                _name = data.name;
                 var _dateList = [];
                 for (var k = 0; k < _filters.date.length; k++) {
                     var _date = _filters.date[k];
@@ -120,7 +122,7 @@ module.exports = {
             }
             else if( _type === "people" )
             {
-
+                _name = data.name;
                 var _peopleList = [];
                 for (var j = 0; j < _filters.people.length; j++) {
                     var _people = _filters.people[j];
@@ -133,7 +135,7 @@ module.exports = {
             }
             else if( _type === "tag" )
             {
-
+                _name = data.name;
                 var _tags = [];
                 for (var i = 0; i < _filters.tags.length; i++) {
                     var _tag = _filters.tags[i];
