@@ -13,9 +13,12 @@ import {
     Link} from 'react-router';
 
 import {
+    Chip,
     Dialog,
     FlatButton,
     Paper,
+    RaisedButton,
+    Subheader,
     Tabs,
     Tab
 } from 'material-ui';
@@ -306,7 +309,6 @@ module.exports = React.createClass({
 
 
     handleOnPeopleRemove: function (people_) {
-
         var pos = this.state.photo['dam:people'].indexOf(people_);
         if (pos > -1)
         {
@@ -319,6 +321,7 @@ module.exports = React.createClass({
 
 
     handleDelete:function(){
+        window.scrollTo(0,0);
         this.setState({'showDeleteConfirmation':true});
     },
 
@@ -362,7 +365,7 @@ module.exports = React.createClass({
                 </Dialog>
 
                 <Paper className="row">
-                    <section className="col-sm-12" style={{'margin':'20px'}}>
+                    <section className="col-sm-12">
                         <div className="container-fluid">
                             <div className="row">
                                 <div className="col-sm-1 col-md-2">
@@ -438,13 +441,13 @@ module.exports = React.createClass({
                             </div>
 
                             <div className="row">
-                                <div className="col-sm-6">
+                                <div className="col-xs-6 col-md-6">
                                     <div ref="savingLabel" style={{'display':'none'}}>
                                         <h4>Saving...</h4>
                                     </div>
 
 
-                                    <h5>Notes:</h5>
+                                    <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>Notes:</Subheader>
                                     <textarea
                                         value={this.state.photo['dam:note']}
                                         onChange={this.handleOnNoteChange}
@@ -453,78 +456,68 @@ module.exports = React.createClass({
 
 
                                     <div style={{'padding': '5px'}}>
-                                        <Tags
-                                            title="People"
-                                            tags={this.state.photo['dam:people']}
-                                            onAdd={this.handleOnPeopleAdd}
-                                            onRemove={this.handleOnPeopleRemove}/>
+
+                                        <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>People:</Subheader>
+
+                                        <input type="text" ref="personName"/>
+                                        <RaisedButton label="Add Name"
+                                                      default="true"
+                                                      onClick={() => {this.handleOnPeopleAdd(this.refs.personName.value)}}/>
+                                        <br style={{'clear':'left'}}/>
+
+                                        {this.state.photo['dam:people'].map(function(data_, idx){
+                                            return(
+                                                <Chip
+                                                    key={data_}
+                                                    onRequestDelete={() => {
+                                                        this.handleOnPeopleRemove(data_);
+                                                    }}
+                                                    style={{'margin':'4', 'float':'left'}}>
+                                                    {data_}
+                                                </Chip>
+                                            );
+                                        }.bind(this))}
+
+
                                     </div>
 
                                     <div style={{'padding': '5px'}}>
-                                        <Tags
-                                            title="Tags"
-                                            tags={this.state.photo['dam:tags']}
-                                            onAdd={this.handleOnTagAdd}
-                                            onRemove={this.handleOnTagRemove}/>
+                                        <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>Tags:</Subheader>
+
+
+                                        <input type="text" ref="tagName"/>
+                                        <RaisedButton label="Add Tag"
+                                                      default="true"
+                                                      onClick={() => {this.handleOnTagAdd(this.refs.tagName.value)}}/>
+                                        <br style={{'clear':'left'}}/>
+
+                                        {this.state.photo['dam:tags'].map(function(data_, idx){
+                                            return(
+                                                <Chip
+                                                    key={data_}
+                                                    onRequestDelete={() => {
+                                                        this.handleOnTagRemove(data_);
+                                                    }}
+                                                    style={{'margin':'4', 'float':'left'}}>
+                                                    {data_}
+                                                </Chip>
+                                            );
+                                        }.bind(this))}
+
                                     </div>
                                 </div>
 
 
-                                <div className="col-sm-12 col-md-6">
+                                <div className="col-xs-12 col-md-5 col-md-offset-1">
+                                    <ExifData exif={this.state.photo['dam:metadata']}/>
+
                                     <div>
                                         <ExifMap gps={this.state.gps} />
-                                        <hr style={{'marginTop': '15px', 'marginBottom': '15px'}}/>
                                     </div>
-
-                                    <ExifData exif={this.state.photo['dam:metadata']}/>
                                 </div>
                             </div>
 
-                            <br/><br/><br/><br/>
-                            <div className="row" style={{'marginTop': '30px', 'minHeight': '400px'}}>
-
-                                <Tabs initialSelectedIndex={1} style={{'display':'none'}} >
-
-                                    <Tab label="Renditions">
-                                        <div style={{
-                                            'borderRight': '1px solid #eee',
-                                            'borderLeft': '1px solid #eee'
-                                        }}>
-                                            <div style={{
-                                                'minWidth': '150px',
-                                                'minHeight': '150px',
-                                                'float': 'left',
-                                                'padding': '10px',
-                                                'textAlign':'center', 'verticle':'middle'
-                                            }}>
-                                                (Coming Soon)
-                                            </div>
-                                        </div>
-                                    </Tab>
-
-
-                                    <Tab label="Similar or Duplicate">
-                                        <div style={{
-                                            'borderRight': '1px solid #eee',
-                                            'borderLeft': '1px solid #eee'
-                                        }}>
-                                            <div style={{
-                                                'minWidth': '150px',
-                                                'minHeight': '150px',
-                                                'float': 'left',
-                                                'padding': '10px',
-                                                'textAlign':'center', 'verticle':'middle'
-                                            }}>
-                                                (Coming Soon)
-                                            </div>
-
-                                        </div>
-                                    </Tab>
-
-                                </Tabs>
-
-                            </div>
-
+                            <br/><br/>
 
                         </div>
                     </section>

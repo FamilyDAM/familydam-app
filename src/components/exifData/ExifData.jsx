@@ -12,6 +12,9 @@ var proj4 = require('proj4');
 var GeoPoint = require('./../../assets/js/GeoPoint');
 var TokenField = require('bootstrap-tokenfield');
 
+import {
+    Subheader
+} from 'material-ui';
 
 var ExifData = React.createClass({
 
@@ -39,7 +42,6 @@ var ExifData = React.createClass({
 
 
     render: function() {
-        debugger;
 
         if( !this.props.exif )return(<div/>);
 
@@ -145,13 +147,14 @@ var ExifData = React.createClass({
             {
                 exif.flash = this.props.exif['Xmp']['Flash'].description;
             }
-            debugger;
 
             return (
                 <div className="ExifDataComponent">
 
-                    <h5>Camera Settings:</h5>
+                    <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>Camera Info</Subheader>
+
                     <table >
+                        <tbody>
                         <tr>
                             <td style={{'width': '60px'}}>
                                 <img src="assets/icons/ic_photo_camera_48px.svg"
@@ -161,11 +164,12 @@ var ExifData = React.createClass({
                                 <h6>
                                     {exif.make} {exif.model}<br/>
                                     {exif.f_number}  {exif.focal_length}<br/>
-                                    {exif.shutter_speed} {exif.iso_speed.length>0?exif.iso_speed+'iso':''}<br/>
+                                    {exif.shutter_speed} {exif.iso_speed.length>0?exif.iso_speed+' ISO':''}<br/>
                                     {exif.lens_specification}<br/>
                                 </h6>
                             </td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
             )
