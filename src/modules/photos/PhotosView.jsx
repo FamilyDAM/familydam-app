@@ -344,7 +344,7 @@ module.exports = React.createClass({
                 onRequestDelete={() => {
                     this.removeFilter(data_);
                 }}
-                style={{'margin':'4'}}>
+                style={{'margin':'4px'}}>
                 {data_.name}
             </Chip>
         );

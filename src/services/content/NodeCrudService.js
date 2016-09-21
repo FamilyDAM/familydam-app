@@ -84,6 +84,7 @@ module.exports = {
         var _url = data_.path;
         var _data = JSON.stringify(data_);
 
+
         $.ajax({
             method: "post",
             url: _url,
@@ -128,15 +129,25 @@ module.exports = {
     updateNode: function (data_) {
         var _this = this;
         var _url = data_.path;
-        
+
+        var _data = new FormData();
+        for(var item in data_.props){
+            _data.append(item, data_.props[item]);
+        }
+
         $.ajax({
             method: "post",
-            url: data_.path,
-            data: $.param(data_.props, true),
+            url: _url,
+            data: _data,
+            cache: false,
+            contentType: false,
             processData: false,
             'xhrFields': {
                 withCredentials: true
-            }
+            },
+            headers: {
+                'Accept':'application/json'
+            },
 
         }).then(function (data_, status_, xhr_) {
 
