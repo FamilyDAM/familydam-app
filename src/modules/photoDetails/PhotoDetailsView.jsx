@@ -24,7 +24,7 @@ import {
     Tab
 } from 'material-ui';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-import FolderIcon from 'material-ui/svg-icons/file/folder';
+import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 
 var Rating = require('react-rating');
 
@@ -164,6 +164,7 @@ module.exports = React.createClass({
                 results['dam:tags'].push(_tag);
             }
 
+            debugger;
 
             // set some local props for easier rendering
             var imagePath = results._links.resize.replace("{size}", 1024).replace("{format}", "jpg");
@@ -383,13 +384,19 @@ module.exports = React.createClass({
             return (<div/>);
         }
 
+
         return (
             <div>
                 <div style={{'display': 'flex', 'flexDirection': 'column', 'height': '55px'}}>
                     <Toolbar style={{'display': 'flex', 'height': '50px', 'alignItems': 'center'}}>
                         <ToolbarGroup firstChild={true}
                                       style={{'flexGrow': 1, 'justifyContent': 'flex-start', 'float': 'left'}}>
-                            <FolderIcon/>
+
+                            <BackIcon
+                                style={{'marginLeft':'10px'}}
+                                onClick={() => {
+                                    window.history.go(-1);
+                                }}/>
 
                         </ToolbarGroup>
                         <ToolbarGroup style={{'flexGrow': 0, 'justifyContent': 'flex-end', 'float': 'right'}}>
