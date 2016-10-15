@@ -31,7 +31,9 @@ import {
     ToolbarSeparator
 } from 'material-ui';
 import FolderIcon from 'material-ui/svg-icons/file/folder';
+import NewFolderIcon from 'material-ui/svg-icons/file/create-new-folder';
 import FileIcon from 'material-ui/svg-icons/action/description';
+import FileUpload from 'material-ui/svg-icons/file/file-upload';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 
 
@@ -481,7 +483,7 @@ module.exports = React.createClass({
                             primary={true}
                             disabled={!this.state.canAddFile}
                             onTouchTap={()=>{ this.context.router.push('/upload')}}
-                            icon={<IconButton iconClassName="material-icons">file_upload</IconButton>}
+                            icon={<FileUpload/>}
                         />
 
                         <FlatButton
@@ -489,7 +491,7 @@ module.exports = React.createClass({
                             primary={true}
                             disabled={!this.state.canAddFolder}
                             onTouchTap={()=>{this.setState({'showAddFolderDialog':true})}}
-                            icon={<IconButton iconClassName="material-icons">create_new_folder</IconButton>}
+                            icon={<NewFolderIcon/>}
                         />
 
                     </ToolbarGroup>

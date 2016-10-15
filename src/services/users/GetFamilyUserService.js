@@ -36,9 +36,6 @@ module.exports = {
      */
     getUsers: function(user_)
     {
-
-        debugger;
-
         return $.ajax({
                     'method':'get'
                     ,'url': PreferenceStore.getBaseUrl() +"/bin/familydam/api/v1/users/"

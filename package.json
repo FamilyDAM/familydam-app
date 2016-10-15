@@ -22,7 +22,7 @@
     "ladda-bootstrap": "git+https://github.com/msurguy/ladda-bootstrap.git",
     "masonry-layout": "^3.3.2",
     "matchdep": "^0.3.0",
-    "material-ui": "^0.15.4",
+    "material-ui": "^0.16.0",
     "moment": "^2.10.6",
     "multipart": "^0.1.5",
     "node-is": "^0.5.2",

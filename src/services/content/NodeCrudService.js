@@ -25,7 +25,7 @@ module.exports = {
     deleteSink: undefined,
 
     subscribe: function () {
-        console.log("{Node CRUD Service} subscribe");
+        //console.log("{Node CRUD Service} subscribe");
 
         this.getSink = NodeActions.getNode.sink;
         this.createSink = NodeActions.createNode.sink;
@@ -44,7 +44,7 @@ module.exports = {
      * @returns {*}
      */
     getNode: function (path_) {
-        
+
         var _this = this;
         var _url = path_ +".graph.-1.json/nt:file/jcr:uuid,name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes,dam:metadata,dam:tags,dam:people,dam:note,dam:rating";
 

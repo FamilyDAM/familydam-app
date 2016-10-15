@@ -174,7 +174,7 @@ module.exports = React.createClass({
                         <LinkContainer to="users">
                             <FlatButton label="Cancel"/>
                         </LinkContainer>
-                        <RaisedButton
+                        <FlatButton
                             label="Save Settings"
                             ref="saveBtn" id="saveBtn"
                             onClick={this.handleSave}
@@ -262,8 +262,8 @@ module.exports = React.createClass({
                 </div>
                 <div className="row">
                     <div className="col-sm-12">
-                        <Tabs defaultActiveKey={1}>
-                            <Tab eventKey={1} label='Cloud Drives'>
+                        <Tabs >
+                            <Tab  label='Cloud Drives'>
 
                                 <Table >
                                     <TableHeader enableSelectAll={false} adjustForCheckbox={false}
@@ -306,7 +306,7 @@ module.exports = React.createClass({
                             </Tab>
 
 
-                            <Tab eventKey={2} label='Web Sites'>
+                            <Tab  label='Web Sites'>
                                 <Table >
                                     <TableHeader enableSelectAll={false} adjustForCheckbox={false}
                                                  displaySelectAll={false}>
@@ -348,7 +348,7 @@ module.exports = React.createClass({
                             </Tab>
 
 
-                            <Tab eventKey={3} label='Email Accounts'>
+                            <Tab  label='Email Accounts'>
                                 <Table >
                                     <TableHeader enableSelectAll={false} adjustForCheckbox={false}
                                                  displaySelectAll={false}>
@@ -404,7 +404,7 @@ module.exports = React.createClass({
                             </Tab>
 
 
-                            <Tab eventKey={4} label='Permissions'>
+                            <Tab  label='Permissions'>
                                 <br/>(Coming Soon)<br/>
 
                             </Tab>

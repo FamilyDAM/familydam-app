@@ -86,8 +86,10 @@ module.exports = {
     },
 
     setCurrentUser: function (data_) {
-        window.localStorage.setItem("currentUser", JSON.stringify(data_));
-        this.currentUser.onNext(data_);
+        if( !this.getCurrentUser() || this.getCurrentUser().username === data_.username ) {
+            window.localStorage.setItem("currentUser", JSON.stringify(data_));
+            this.currentUser.onNext(data_);
+        }
     }
 
 };

@@ -124,7 +124,7 @@ module.exports = React.createClass({
                         if (path_.navigateTo)
                         {
                             return ( <li key={path_.level +'-' +path_.label}>
-                                <Link to={path_.navigateTo} params={path_.params}>{path_.label}</Link>
+                                <Link to={{ pathname: path_.navigateTo, params: path_.params }}>{path_.label}</Link>
                             </li> );
                         } else
                         {

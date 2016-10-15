@@ -98,7 +98,7 @@ module.exports = React.createClass({
     },
 
     selectUser: function(user_){
-
+debugger;
         if( UserStore.getCurrentUser().isFamilyAdmin || UserStore.getCurrentUser().username == user_ )
         {
             this.context.router.push({pathname: '/users/' + user_});
@@ -108,6 +108,7 @@ module.exports = React.createClass({
     },
 
     addUser:function(event_){
+        debugger;
         if( UserStore.getCurrentUser().isFamilyAdmin )
         {
             this.context.router.push({pathname:'/users/add'})
@@ -131,12 +132,12 @@ module.exports = React.createClass({
                                 <Subheader>Users</Subheader>
                                 {this.state.users.map(function (user, index) {
                                     return (<ListItem key={user.username}
-                                                      onTouchTap={()=>this.selectUser(user.username)}>{user.firstName} {user.lastName}</ListItem>);
+                                                      onClick={()=>this.selectUser(user.username)}>{user.firstName} {user.lastName}</ListItem>);
                                 }.bind(this))}
                             </List>
 
                             <FlatButton label="Add User"
-                                        onTouchTap={this.addUser}/>
+                                        onClick={this.addUser}/>
                         </Paper>
                     </div>
 

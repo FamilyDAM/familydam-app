@@ -37,6 +37,7 @@ module.exports = {
         }
         _data.username = data_.username;
 
+        debugger;
         var _props = {
             ':name': data_.username,
             'pwd': data_.password,

@@ -33,10 +33,9 @@ module.exports = {
      */
     saveUser: function(data_)
     {
-        debugger;
         var _data = {};
         _data.username = data_.username;
-       var _props = {
+        var _props = {
             'firstName':data_.firstName,
             'lastName':data_.lastName,
             'email':data_.email
@@ -53,7 +52,6 @@ module.exports = {
             }
         }).then(function(results, status_, xhr_){
 
-            debugger;
             this.sink.onNext(true);
 
         }.bind(this), function (xhr_, status_, errorThrown_){

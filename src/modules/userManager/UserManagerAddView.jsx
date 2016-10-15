@@ -60,22 +60,23 @@ module.exports = React.createClass({
         this.state.user = {};
 
 
-        debugger;
-        this.saveUserSubscription = UserActions.saveUser.sink.subscribe(function (data_) {
+        this.saveUserSubscription = UserActions.createUser.sink.subscribe(function (data_) {
 
-            debugger;
             setTimeout(function () {
                 //stop save spinner
                 this.setState({isLoading: false});
+
+                debugger;
+                this.context.router.push({
+                    pathname: '/users'
+                })
+
             }.bind(this), 500);
 
-            this.context.router.push({
-                pathname: '/users'
-            })
+
 
         }.bind(this), function (data_) {
             //error
-            debugger;
             setTimeout(function () {
                 //stop save spinner
                 this.setState({isLoading: false});
@@ -103,6 +104,7 @@ module.exports = React.createClass({
 
 
         if( _field == "isFamilyAdmin"){
+            debugger;
             this.state.user.isFamilyAdmin = (_val=="on")?true:false;
         }
         else if( _field == "password")
@@ -145,7 +147,7 @@ module.exports = React.createClass({
                         <LinkContainer to="users">
                             <FlatButton label="Cancel"/>
                         </LinkContainer>
-                        <RaisedButton
+                        <FlatButton
                             label="Save Settings"
                             ref="saveBtn" id="saveBtn"
                             onClick={this.handleSave}

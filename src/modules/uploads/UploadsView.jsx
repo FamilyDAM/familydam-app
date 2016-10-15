@@ -193,7 +193,7 @@ module.exports = React.createClass({
                 label="Close"
                 primary={true}
                 disabled={!this.state.enableClose}
-                onTouchTap={this.handleDialogClose}
+                onClick={this.handleDialogClose}
             />,
         ];
 
