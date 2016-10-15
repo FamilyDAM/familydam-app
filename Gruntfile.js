@@ -201,7 +201,7 @@ module.exports = function (grunt) {
                     expand: true,
                     dot: true,
                     cwd: '<%= options.dist %>',
-                    dest: './../server-content-repository/target/classes/static',
+                    dest: './../osgi-dashboard-app/target/classes/SLING-INF/content/dashboard',
                     src: [
                         '**/*.*'
                     ]
@@ -332,9 +332,9 @@ module.exports = function (grunt) {
             'shared-lib': {
                 entry: './<%= options.app %>/shared-lib.js',
                 compile: './<%= options.dist %>/shared-lib.js',
-                debug: false,
+                debug: false
             }
-        },
+        }
 
 
     });

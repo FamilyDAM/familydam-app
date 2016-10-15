@@ -18,14 +18,14 @@ module.exports = {
     //_baseUrl : "",
     _rootFileDirectory : "/content/dam-files/",
 
-    //logged in user, start with default admin/admin 
-    //admin/admin is changed on the system after the first user has been created so 
+    //logged in user, start with default admin/admin
+    //admin/admin is changed on the system after the first user has been created so
     //this will be reset after user login
     username : "admin",
     password : "admin",
 
     subscribe: function() {
-        console.log("{PreferenceStore}.init()");
+        //console.log("{PreferenceStore}.init()");
     },
 
     getBaseUrl: function () {

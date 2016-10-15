@@ -32,6 +32,7 @@ import {
 } from 'material-ui';
 import FolderIcon from 'material-ui/svg-icons/file/folder';
 import FileIcon from 'material-ui/svg-icons/action/description';
+import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 
 
 
@@ -184,7 +185,7 @@ module.exports = React.createClass({
                     this.state.addNodeRefs.push(data_[i]);
                 }
             }
-            
+
             this.state.isDirTreeLoading = false;
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
@@ -345,11 +346,13 @@ module.exports = React.createClass({
                 //return <DirectoryRow key={dir_.path} dir={dir_}/>
                 return (
                     <TableRow key={'dir-' +index_}>
-                        <TableRowColumn colSpan="2"
+                        <TableRowColumn  style={{'width':'50px'}}>
+                            <FolderIcon
+                                style={{'width':'50px', 'height':'50px', 'minWidth':'25px', 'minHeight':'25px'}}/>
+                        </TableRowColumn>
+                        <TableRowColumn colSpan="3"
                             onTouchTap={() => {this.context.router.push({pathname:'/files', query:{'path':dir_.path}}) }}>
                             <div style={{'display':'flex', 'alignItems':'center'}}>
-                                <FolderIcon
-                                    style={{'width':'25px', 'height':'25px', 'minWidth':'25px', 'minHeight':'25px'}}/>
                                 <span style={{'paddingLeft':'10px'}}><Link
                                     to={{pathname: '/files', query:{'path':dir_.path}}}>{dir_.name}</Link></span>
                             </div>
@@ -383,16 +386,18 @@ module.exports = React.createClass({
 
                     return (
                         <TableRow key={file_.path}>
-                            <TableRowColumn colSpan="2">
-                                    <Link to={ {pathname:'photos/details',query:{'path': file_.path}} }><img
-                                        src={file_._links.thumb}
-                                        style={{'width':'50px', 'height':'50px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></Link>
+                            <TableRowColumn  style={{'width':'50px'}}>
+                                <Link to={ {pathname:'photos/details',query:{'path': file_.path}} }><img
+                                    src={file_._links.thumb}
+                                    style={{'maxWidth':'75px', 'height':'75px', 'minWidth':'50px', 'minHeight':'50px','cursor':'pointer'}}/></Link>
+                            </TableRowColumn>
+                            <TableRowColumn colSpan="3">
                                     <span style={{'paddingLeft':'10px','cursor':'pointer'}}><Link
                                         to={{pathname: 'photos/details', query:{'path':file_.path}}}><span>{file_.name}</span></Link></span>
 
                             </TableRowColumn>
                             <TableRowColumn colSpan="1">{_dt}</TableRowColumn>
-                            <TableRowColumn colSpan="1" style={{'display':'flex','alignItems':'center'}}>
+                            <TableRowColumn colSpan="1">
 
                                 <IconButton iconClassName="material-icons"
                                             onClick={() => {this.context.router.push({pathname:'photos/details', query:{path:file_.path}}) }}>launch</IconButton>
@@ -419,9 +424,11 @@ module.exports = React.createClass({
                 {
                     return (
                         <TableRow key={file_.path}>
-                            <TableRowColumn colSpan="2">
+                            <TableRowColumn style={{'width':'50px'}}>
+                                <FileIcon/>
+                            </TableRowColumn>
+                            <TableRowColumn colSpan="3">
                                 <div  style={{'display':'flex','alignItems':'center'}}>
-                                    <FileIcon/>
                                     <span style={{'paddingLeft':'10px'}}>{file_.name}</span>
                                 </div>
                             </TableRowColumn>
@@ -451,8 +458,18 @@ module.exports = React.createClass({
         return (
             <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
                 <Toolbar style={{'display':'flex', 'height':'50px', 'alignItems':'center'}}>
-                    <ToolbarGroup firstChild={true}  style={{'flexGrow':1, 'justifyContent':'flex-start', 'float':'left'}}>
+                    <ToolbarGroup firstChild={true}  style={{'flexGrow':1, 'justifyContent':'flex-start', 'float':'left', 'marginTop':'10px'}}>
+
+
+                        <BackIcon
+                            style={{'marginLeft':'10px', 'marginTop':'12px'}}
+                            onClick={() => {
+                                window.history.go(-1);
+                            }}/>
+
                         <IconButton iconClassName="material-icons">folder</IconButton>
+
+                        <Breadcrumb path={this.state.selectedPath} style={{'paddingLeft': '0px;'}}/>
 
                     </ToolbarGroup>
                     <ToolbarGroup style={{'flexGrow':0, 'justifyContent':'flex-end', 'float':'right'}}>
@@ -531,7 +548,8 @@ module.exports = React.createClass({
                             >
                                 <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                     <TableRow>
-                                        <TableHeaderColumn colSpan="2">Name</TableHeaderColumn>
+                                        <TableHeaderColumn style={{'width':'50px'}}></TableHeaderColumn>
+                                        <TableHeaderColumn colSpan="3">Name</TableHeaderColumn>
                                         <TableHeaderColumn colSpan="1">Created</TableHeaderColumn>
                                         <TableHeaderColumn colSpan="1">Actions</TableHeaderColumn>
                                     </TableRow>

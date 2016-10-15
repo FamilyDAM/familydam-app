@@ -16,7 +16,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{PhotoSearch Service} subscribe");
+        //console.log("{PhotoSearch Service} subscribe");
         this.sink = ImageActions.search.sink;
         ImageActions.search.source.subscribe(this.execute.bind(this));
     },

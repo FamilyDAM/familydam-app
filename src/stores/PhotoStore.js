@@ -24,7 +24,7 @@ module.exports = {
         }),
 
     subscribe: function(){
-        console.log("{PhotoStore} init()");
+        //console.log("{PhotoStore} init()");
 
         ImageActions.addFilter.subscribe(function(data){
 

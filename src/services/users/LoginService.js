@@ -31,7 +31,7 @@ module.exports = {
      */
     login: function(data_)
     {
-        console.log("{Login Service} login(" +data_.username +"," +data_.password +")");
+        //console.log("{Login Service} login(" +data_.username +"," +data_.password +")");
         var _this = this;
         var _salt = new Date().getTime();
         var _url = PreferenceStore.getBaseUrl() +'/j_security_check?';
@@ -43,9 +43,9 @@ module.exports = {
                     'method':'post'
                     ,'url': _url
                     ,'data':_data
-                
+
                 }).then(function(result_, status_, xhr_){
-            
+
                     UserActions.getUser.source.onNext(data_.username);
                     //send results to the store
                     //_this.sink.onNext(data_);
@@ -58,9 +58,9 @@ module.exports = {
                     }else
                     {
                         var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                        _this.sink.onError(_error);
+                        this.sink.onError(_error);
                     }
-                });
+                }.bind(this));
 
     }
 };

@@ -20,7 +20,7 @@ module.exports = {
 
     subscribe: function()
     {
-        console.log("{ContentStore}.init()");
+        //console.log("{ContentStore}.init()");
 
         NodeActions.getNode.sink.subscribe(this.setCurrentNode.bind(this));
     },

@@ -32,72 +32,7 @@ var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
 var UserStore = require('../../stores/UserStore');
 
-var NavigationActions = require('./../../actions/NavigationActions');
-
-const LoadingIcon = (props) => (
-    <SvgIcon {...props}>
-        <svg width='24px' height='24px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
-             preserveAspectRatio="xMidYMid" className="uil-default">
-            <rect x="0" y="0" width="100" height="100" fill="none" className="bk"></rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(0 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0s' repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(30 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.08333333333333333s'
-                         repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(60 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.16666666666666666s'
-                         repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(90 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.25s' repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(120 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.3333333333333333s'
-                         repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(150 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.4166666666666667s'
-                         repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(180 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5s' repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(210 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5833333333333334s'
-                         repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(240 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.6666666666666666s'
-                         repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(270 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.75s' repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(300 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.8333333333333334s'
-                         repeatCount='indefinite'/>
-            </rect>
-            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
-                  transform='rotate(330 50 50) translate(0 -30)'>
-                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.9166666666666666s'
-                         repeatCount='indefinite'/>
-            </rect>
-        </svg>
-    </SvgIcon>
-);
+var LoadingIcon = require('./../../components/loadingIcon/LoadingIcon.jsx');
 
 
 
@@ -108,26 +43,25 @@ module.exports = React.createClass({
         router: React.PropTypes.object.isRequired
     },
 
-    
+
     getInitialState: function () {
         return {
             user: {},
             empty: "",
-            saveLoading: false,
-            savePwdLoading: false,
+            isLoading: false,
+            isPwdLoading: false,
             savePasswordLoading: false
         }
     },
 
 
     componentDidMount: function () {
-        console.log("{UserManagerDetailView} componentDidMount");
+        //console.log("{UserManagerDetailView} componentDidMount");
 
         // pull
         this.state.user = {};
 
-
-        this.loadUserSubscription = UserActions.getFamilyUser.sink.subscribe(function (data_) {
+        this.loadUserSubscription = UserActions.getUser.sink.subscribe(function (data_) {
             this.state.user = data_;
             this.state.savePasswordLoading = true;
             if (this.isMounted()) this.forceUpdate();
@@ -137,27 +71,28 @@ module.exports = React.createClass({
         this.saveUserSubscription = UserActions.saveUser.sink.subscribe(function (data_) {
             setTimeout(function () {
                 //stop save spinner
-                this.setState({saveLoading: false});
+                this.setState({isLoading: false});
             }.bind(this), 500);
         }.bind(this), function (data_) {
             //error
             setTimeout(function () {
                 //stop save spinner
-                this.setState({saveLoading: false});
+                this.setState({isLoading: false});
             }.bind(this), 500);
         }.bind(this));
+
 
 
         this.changePasswordSubscription = UserActions.changePassword.sink.subscribe(function (data_) {
             setTimeout(function () {
                 //stop save spinner
-                this.setState({savePwdLoading: false});
+                this.setState({isPwdLoading: false});
             }.bind(this), 500);
         }.bind(this), function (data_) {
             //error
             setTimeout(function () {
                 //stop save spinner
-                this.setState({savePwdLoading: false});
+                this.setState({isPwdLoading: false});
             }.bind(this), 500);
         }.bind(this));
 
@@ -167,7 +102,7 @@ module.exports = React.createClass({
         if( UserStore.getCurrentUser().isFamilyAdmin || UserStore.getCurrentUser().username == userid )
         {
             //Load user
-            UserActions.getFamilyUser.source.onNext(userid);
+            UserActions.getUser.source.onNext(userid);
         }else{
             this.context.router.push({pathname: '/users/'});
             UserActions.alert.onNext("You are not allowed to edit other users.");
@@ -189,7 +124,7 @@ module.exports = React.createClass({
             if( UserStore.getCurrentUser().isFamilyAdmin || UserStore.getCurrentUser().username == userid )
             {
                 //Load user
-                UserActions.getFamilyUser.source.onNext(userid);
+                UserActions.getUser.source.onNext(userid);
             }else{
                 this.context.router.push({pathname: '/users/'});
                 UserActions.alert.onNext("You are not allowed to edit other users.");
@@ -203,17 +138,12 @@ module.exports = React.createClass({
         var _field = event_.currentTarget.id;
         var _val = event_.currentTarget.value;
         this.state.user[_field] = _val;
-        if (this.isMounted()) this.forceUpdate();
+
+        this.setState(this.state);
     },
 
     handleSave: function (event_) {
-
-        if (this.saveBtn !== undefined)
-        {
-            this.saveBtn.start();
-        }
-
-        this.setState({saveLoading: true});
+        this.setState({isLoading: true});
         UserActions.saveUser.source.onNext(this.state.user);
     },
 
@@ -225,8 +155,8 @@ module.exports = React.createClass({
         }
 
         this.state.user.psasword = this.refs.password.value;
-        
-        this.setState({savePwdLoading: true});
+
+        this.setState({isPwdLoading: true});
         UserActions.changePassword.source.onNext(this.state.user);
     },
 
@@ -234,7 +164,8 @@ module.exports = React.createClass({
         var _this = this;
 
         return (
-            <div className="container-fluid userDetailsView" style={{'padding':'20px', 'height':'calc(100vh - 250px)', 'min-height': '500px'}}>
+            <div className="container-fluid userDetailsView" style={{'padding':'20px', 'height':'calc(100vh - 250px)', 'minHeight': '500px'}}>
+                <form autoComplete="off">
                 <div className="row">
                     <div className="col-sm-4">
                         <h3>{this.state.user.firstName} {this.state.user.lastName}</h3>
@@ -246,7 +177,7 @@ module.exports = React.createClass({
                         <RaisedButton
                             label="Save Settings"
                             ref="saveBtn" id="saveBtn"
-                            onTouchTap={this.handleSave}
+                            onClick={this.handleSave}
                             primary={true}
                             icon={this.state.isLoading?<LoadingIcon style={{'width':'25px', 'height':'25px'}}/>:<span/>}/>
                     </div>
@@ -262,7 +193,7 @@ module.exports = React.createClass({
                                     type="text"
                                     ref="firstName"
                                     id="firstName"
-                                    defaultValue={this.state.user.firstName}
+                                    value={this.state.user.firstName}
                                     floatingLabelText="First Name"
                                     onChange={this.handleChange}
                                     style={{'width':'100%'}}
@@ -274,7 +205,7 @@ module.exports = React.createClass({
                                     type="text"
                                     ref="lastName"
                                     id="lastName"
-                                    defaultValue={this.state.user.lastName}
+                                    value={this.state.user.lastName}
                                     floatingLabelText="Last Name"
                                     onChange={this.handleChange}
                                     style={{'width':'100%'}}
@@ -287,9 +218,10 @@ module.exports = React.createClass({
                                     type="text"
                                     ref="email"
                                     id="email"
-                                    defaultValue={this.state.user.email}
+                                    value={this.state.user.email}
                                     floatingLabelText="Email"
                                     onChange={this.handleChange}
+                                    autoComplete="off"
                                     style={{'width':'100%'}}
                                 />
                             </div>
@@ -315,10 +247,9 @@ module.exports = React.createClass({
                         <FlatButton
                             label="Change Password"
                             ref="savePasswordBtn"
-                            id="savePasswordBtn"
                             onTouchTap={this.handleResetPasswordClick}
                             style={{'paddingLeft':'16px'}}
-                            icon={this.state.savePwdLoading?<LoadingIcon style={{'width':'25px', 'height':'25px'}}/>:<span/>}/>
+                            icon={this.state.isPwdLoading?<LoadingIcon style={{'width':'25px', 'height':'25px'}}/>:<span/>}/>
 
 
                         <br/><br/>
@@ -480,6 +411,7 @@ module.exports = React.createClass({
                         </Tabs>
                     </div>
                 </div>
+                </form>
             </div>
 
         );

@@ -8,13 +8,13 @@ var Rx = require('rx');
 module.exports = {
 
     alert: new Rx.Subject(),
-    
+
     getUsers: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
     createUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
-    getUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
-    
+    getUser: {'source':new Rx.Subject(), 'sink':new Rx.ReplaySubject(1)},
+
     getFamilyUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
     saveUser: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},

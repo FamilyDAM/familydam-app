@@ -18,7 +18,7 @@ module.exports = {
 
 
     subscribe: function() {
-        console.log("{UploadStore}.init()");
+        //console.log("{UploadStore}.init()");
 
         UploadActions.addFileAction.subscribe(this.addFile.bind(this));
         //UploadActions.removeFileAction.subscribe(this.removeFile.bind(this));
@@ -80,7 +80,7 @@ module.exports = {
 
     uploadAllFiles: function (dir_) {
         //var _this = this;
-        console.log("{upload all files} count=" +this._files.length);
+        //console.log("{upload all files} count=" +this._files.length);
 
         UploadActions.startUpload.onNext({count:this._files.length});
 

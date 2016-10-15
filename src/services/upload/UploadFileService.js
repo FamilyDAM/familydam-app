@@ -56,13 +56,13 @@ module.exports = {
             {
                 console.dir(file);
                 if( file.path ){
-                    console.log("check access");
+                    //console.log("check access");
                     this.checkAccess(file).then(
                         function (v0) {
-                            console.log(v0);
+                                                                                                                                                                                                                               console.log(v0);
                             if( v0.visible )
                             {
-                                console.log("visible, copy");
+                                //console.log("visible, copy");
                                 this.copyLocalFile(file).then(
                                     function (v1) {
                                         this.uploadNextFile();
@@ -71,7 +71,7 @@ module.exports = {
                                         this.uploadNextFile();
                                     }.bind(this));
                             }else{
-                                console.log("not visible, upload");
+                                //console.log("not visible, upload");
                                 this.uploadFile(file).then(
                                     function (v2) {
                                         this.uploadNextFile();
@@ -87,7 +87,7 @@ module.exports = {
                         }.bind(this));
                 }else
                 {
-                    console.log("else clause, upload");
+                    //console.log("else clause, upload");
                     this.uploadFile(file).then(
                         function (v) {
                             this.uploadNextFile();
@@ -257,7 +257,7 @@ module.exports = {
      */
     copyLocalFile: function (file_) {
         var _this = this;
-        
+
         if ( !file_.recursive )
         {
             file_.recursive = true;

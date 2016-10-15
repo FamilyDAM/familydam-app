@@ -77,8 +77,8 @@ var FileUploadView = React.createClass({
         UploadActions.removeFileAction.onNext(item_);
 
     },
-    
-    
+
+
     handleUploadSingleFile: function(file_, event_, component_){
         //console.dir(item_);
         var _files = [];
@@ -102,7 +102,7 @@ var FileUploadView = React.createClass({
     render: function () {
         var _this = this;
 
-        
+
         var _fileList = UploadStore.getFiles();
         var _fileListSize = _fileList.length;
 
@@ -180,7 +180,8 @@ var FileUploadView = React.createClass({
                                                         <TableRowColumn colSpan="1">
                                                             <IconButton
                                                                     tooltip="Upload Single File"
-                                                                    onClick={()=>{_this.handleUploadSingleFile(result_)}}><FontIcon className="material-icons">backup</FontIcon></IconButton><IconButton
+                                                                    onClick={()=>{_this.handleUploadSingleFile(result_)}}><FontIcon className="material-icons">backup</FontIcon></IconButton>
+                                                            <IconButton
                                                                     tooltip="Remove File"
                                                                     onClick={()=>{_this.handleRemoveFile(result_)}}><FontIcon className="material-icons">delete_forever</FontIcon></IconButton></TableRowColumn>
                                                     </TableRow>

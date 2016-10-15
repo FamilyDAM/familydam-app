@@ -36,11 +36,12 @@ module.exports = {
      */
     getUsers: function(user_)
     {
-        var _url = "/home/users/" +user_.substr(0,1) +"/" +user_  +".tidy.0.json";
+
+        debugger;
 
         return $.ajax({
                     'method':'get'
-                    ,'url': _url
+                    ,'url': PreferenceStore.getBaseUrl() +"/bin/familydam/api/v1/users/"
                     , cache: false
                     ,'xhrFields': {
                         withCredentials: true

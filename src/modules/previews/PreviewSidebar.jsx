@@ -41,7 +41,7 @@ module.exports = React.createClass({
 
     componentWillReceiveProps:function(nextProps)
     {
-        console.log("{PreviewSidebar} componentWillReceiveProps");
+        //console.log("{PreviewSidebar} componentWillReceiveProps");
 
         // reset state
         this.state.isImage = false;

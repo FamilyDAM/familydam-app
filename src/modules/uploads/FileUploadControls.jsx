@@ -94,7 +94,7 @@ var FileUploadControls = React.createClass({
     handleFolderChange: function (event_) {
         //console.dir(event_);
         var _files = event_.currentTarget.files;
-        console.log("File Selection Event Handler | files=" + _files.length);
+        //console.log("File Selection Event Handler | files=" + _files.length);
         //console.dir(_files);
 
         for (var i = 0; i < _files.length; i++)
@@ -116,7 +116,7 @@ var FileUploadControls = React.createClass({
         ;
 
 
-        console.log("File Selection Event Handler | Finished file loop");
+        //console.log("File Selection Event Handler | Finished file loop");
         UploadActions.addFileAction.onNext(_files);
 
         //save for later, dir check

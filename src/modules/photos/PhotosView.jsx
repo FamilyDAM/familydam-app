@@ -11,18 +11,11 @@ import {Router, Link} from 'react-router';
 import {
     AppBar,
     Chip,
-    CircularProgress,
-    Drawer,
     DropDownMenu,
     IconButton,
     MenuItem,
-    GridList,
-    GridTile,
     Paper,
     Subheader,
-    Toolbar,
-    ToolbarGroup,
-    ToolbarSeparator,
     StarBorder
 } from 'material-ui';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
@@ -89,7 +82,7 @@ module.exports = React.createClass({
     componentWillMount: function () {
         var _this = this;
 
-        console.log("{PhotosView} componentWillMount");
+        //console.log("{PhotosView} componentWillMount");
 
         // update the breadcrumb
         var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'params': {}, 'level': 1};

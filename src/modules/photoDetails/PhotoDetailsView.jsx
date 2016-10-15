@@ -164,7 +164,6 @@ module.exports = React.createClass({
                 results['dam:tags'].push(_tag);
             }
 
-            debugger;
 
             // set some local props for easier rendering
             var imagePath = results._links.resize.replace("{size}", 1024).replace("{format}", "jpg");

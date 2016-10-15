@@ -39,11 +39,11 @@ module.exports = {
 
         var _props = {
             ':name': data_.username,
+            'pwd': data_.password,
+            'pwdConfirm': data_.password,
             'firstName': data_.userProps.firstName,
             'lastName': data_.userProps.lastName,
             'email': data_.userProps.email,
-            'pwd': data_.password,
-            'pwdConfirm': data_.password,
             'isFamilyAdmin': data_.isFamilyAdmin
         };
 
@@ -58,9 +58,9 @@ module.exports = {
             }
         }).then(function (results, status_, xhr_) {
 
-            _this.sink.onNext(true);
+            this.sink.onNext(true);
 
-        }, function (xhr_, status_, errorThrown_) {
+        }.bind(this), function (xhr_, status_, errorThrown_) {
 
             //send the error to the store (through the sink observer
             if (xhr_.status == 401)
@@ -79,9 +79,9 @@ module.exports = {
             else
             {
                 var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
-                _this.sink.onError(_error);
+                this.sink.onError(_error);
             }
-        });
+        }.bind(this));
 
     }
 

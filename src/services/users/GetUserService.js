@@ -19,13 +19,14 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
+
         //console.log("{GetUser Service} subscribe");
         this.sink = UserActions.getUser.sink;
 
 
         //refresh the list after any user data is saved
         UserActions.getUser.source.subscribe(function (user_){
-            this.getUsers(user_);
+            this.getUser(user_);
         }.bind(this));
     },
 
@@ -34,15 +35,13 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    getUsers: function(user_)
+    getUser: function(user_)
     {
-        var _this = this;
-        //var _url = "/home/users/" +user_.substr(0,1) +"/" +user_  +".tidy.0.json";
-        var _url = "/system/userManager/user/" +user_  +".tidy.0.json";
 
         return $.ajax({
                     'method':'get'
-                    ,'url': _url
+                    ,'url': PreferenceStore.getBaseUrl() +"/system/userManager/user/" +user_ +".tidy.1.json"
+                    , data: {'user':user_}
                     , cache: false
                     ,'xhrFields': {
                         withCredentials: true
@@ -51,18 +50,17 @@ module.exports = {
                 }).then(function(results, status_, xhr_){
 
                     results.username = user_;
-                    _this.sink.onNext(results);
+                    this.sink.onNext(results);
 
-                }, function (xhr_, status_, errorThrown_){
-            
+                }.bind(this), function (xhr_, status_, errorThrown_){
                     //send the error to the store (through the sink observer
                     if( xhr_.status == 401){
                         AuthActions.loginRedirect.onNext(true);
                     } else {
                         var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                        _this.sink.onError(_error);
+                        this.sink.onError(_error);
                     }
-                });
+                }.bind(this));
 
     }
 

@@ -10,7 +10,6 @@
 var React = require('react');
 var proj4 = require('proj4');
 var GeoPoint = require('./../../assets/js/GeoPoint');
-var TokenField = require('bootstrap-tokenfield');
 
 import {
     Subheader

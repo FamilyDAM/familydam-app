@@ -19,7 +19,7 @@ module.exports = {
     results : new Rx.BehaviorSubject([]),
 
     subscribe: function() {
-        console.log("{SearchStore}.init()");
+        //console.log("{SearchStore}.init()");
 
         FileActions.getFiles.sink.distinctUntilChanged().subscribe(function(data_){
             this.results.onNext(data_);

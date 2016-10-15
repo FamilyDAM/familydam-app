@@ -22,7 +22,7 @@ module.exports = {
 
         try
         {
-            console.log("{UserStore}.subscribe()");
+            //console.log("{UserStore}.subscribe()");
 
             this.currentUser = new Rx.BehaviorSubject(this.getCurrentUser());
             this.users = new Rx.BehaviorSubject(undefined);
@@ -42,12 +42,12 @@ module.exports = {
             {
                 UserActions.getUser.source.subscribe(function (data_) {
                     this.users.forEach(function (users_) {
-                        for (var i = 0; i < users_.length; i++)
-                        {
-                            var _u = users_[i];
-                            if (_u.id === data_)
-                            {
-                                UserActions.loadUser.sink.onNext(_u);
+                        if( users_ ) {
+                            for (var i = 0; i < users_.length; i++) {
+                                var _u = users_[i];
+                                if (_u.id === data_) {
+                                    UserActions.loadUser.sink.onNext(_u);
+                                }
                             }
                         }
                     }, this);

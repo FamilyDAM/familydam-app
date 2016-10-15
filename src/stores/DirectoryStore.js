@@ -27,7 +27,7 @@ module.exports = {
 
 
     subscribe: function() {
-        console.log("{DirectoryStore}.init()");
+        //console.log("{DirectoryStore}.init()");
 
         FileActions.getFiles.source.distinctUntilChanged().subscribe(function (data_) {
             if( data_ )

@@ -23,7 +23,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{GetFiles Service} subscribe");
+        //console.log("{GetFiles Service} subscribe");
         this.sink = DirectoryActions.createFolder.sink;
         DirectoryActions.createFolder.source.distinctUntilChanged().subscribe(this.createDirectory.bind(this));
     },

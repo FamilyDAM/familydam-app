@@ -34,14 +34,14 @@ module.exports = {
      */
     getUsers: function()
     {
-        var _this = this;
 
         return $.ajax({
                     'method':'get'
-                    ,'url': PreferenceStore.getBaseUrl() +'/system/userManager/user.tidy.1.json'
+                    ,'url': PreferenceStore.getBaseUrl() +"/system/userManager/user.tidy.1.json"
                     , cache: false
 
                 }).then(function(results, status_, xhr_){
+
                     var list = [];
 
                     for(var key in results)
@@ -65,18 +65,18 @@ module.exports = {
                         if( a.username < b.username) return -1;
                         return 0;
                     });
-                    _this.sink.onNext(_sortedUsers);
+                    this.sink.onNext(_sortedUsers);
 
-                }, function (xhr_, status_, errorThrown_){
-            
+                }.bind(this), function (xhr_, status_, errorThrown_){
+
                     //send the error to the store (through the sink observer
                     if( xhr_.status == 401){
                         AuthActions.loginRedirect.onNext(true);
                     } else {
                         var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                        _this.sink.onError(_error);
+                        this.sink.onError(_error);
                     }
-                });
+                }.bind(this));
 
     }
 

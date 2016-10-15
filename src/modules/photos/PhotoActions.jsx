@@ -165,7 +165,7 @@ module.exports =  React.createClass({
                 }
             }
         }
-        
+
 
         try{
             return (
@@ -191,7 +191,7 @@ module.exports =  React.createClass({
                             tags={this.state.peopleTags}
                             onAdd={this.handleOnPeopleAdd}
                             onRemove={this.handleOnPeopleRemove}/>
-                        <p tooltip="current people on some or all images">
+                        <p>
                             <strong>current people:</strong> {_people.join(",")}
                         </p>
                     </div>
@@ -204,7 +204,7 @@ module.exports =  React.createClass({
                             tags={this.state.tags}
                             onAdd={this.handleOnTagAdd}
                             onRemove={this.handleOnTagRemove}/>
-                        <p tooltip="current tags on some or all images">
+                        <p>
                             <strong>current tags:</strong> {_tags.join(",")}
                         </p>
                     </div>

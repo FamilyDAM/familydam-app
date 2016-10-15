@@ -16,7 +16,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{PhotoTagsList Service} subscribe");
+        //console.log("{PhotoTagsList Service} subscribe");
         this.sink = ImageActions.tagsList.sink;
         ImageActions.tagsList.source.subscribe(this.execute.bind(this));
     },

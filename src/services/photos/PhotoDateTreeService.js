@@ -16,7 +16,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{PhotoDateTree Service} subscribe");
+        //console.log("{PhotoDateTree Service} subscribe");
         this.sink = ImageActions.dateTree.sink;
         ImageActions.dateTree.source.subscribe(this.execute.bind(this));
     },

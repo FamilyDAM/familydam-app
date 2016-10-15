@@ -33,6 +33,7 @@ module.exports = {
      */
     saveUser: function(data_)
     {
+        debugger;
         var _data = {};
         _data.username = data_.username;
        var _props = {
@@ -44,7 +45,7 @@ module.exports = {
         var _this = this;
         return $.ajax({
             'method':'post'
-            ,'url': "/home/users/" +data_.username.substr(0,1) +"/" +data_.username +".json"
+            ,'url': PreferenceStore.getBaseUrl() +"/system/userManager/user/" +_data.username +".update.json"
             , 'data': _props
             , cache: false
             ,'xhrFields': {
@@ -52,18 +53,19 @@ module.exports = {
             }
         }).then(function(results, status_, xhr_){
 
-            _this.sink.onNext(true);
+            debugger;
+            this.sink.onNext(true);
 
-        }, function (xhr_, status_, errorThrown_){
+        }.bind(this), function (xhr_, status_, errorThrown_){
 
             //send the error to the store (through the sink observer
             if( xhr_.status == 401){
                 AuthActions.loginRedirect.onNext(true);
             } else {
                 var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                _this.sink.onError(_error);
+                this.sink.onError(_error);
             }
-        });
+        }.bind(this));
 
     }
 

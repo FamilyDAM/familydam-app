@@ -16,7 +16,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{GetBase64Url Service} subscribe");
+        //console.log("{GetBase64Url Service} subscribe");
         this.sink = ImageActions.getBase64Url.sink;
         ImageActions.getBase64Url.source.subscribe(this.getBase64Url.bind(this));
     },
@@ -30,7 +30,7 @@ module.exports = {
     {
         if( id_ !== undefined )
         {
-            console.log("{GetBase64Url Service} getBase64Url()");
+            //console.log("{GetBase64Url Service} getBase64Url()");
 
             var _this = this;
             var _url = PreferenceStore.getBaseUrl() + "/api/" +id_ +"/base64/";
@@ -44,7 +44,7 @@ module.exports = {
 
             }).then(function (data_, status_, xhr_) {
 
-                console.log("{GetBase64Url Service} getBase64Url() success");
+                //console.log("{GetBase64Url Service} getBase64Url() success");
 
                 _this.sink.onNext(data_);
 

@@ -14,14 +14,14 @@ module.exports = {
     files: new Rx.BehaviorSubject([]),
 
     subscribe: function(){
-        console.log("{FileStore} init()");
+        //console.log("{FileStore} init()");
 
         FileActions.getFiles.sink.subscribe(this.setFiles.bind(this));
     },
 
     setFiles: function(data_){
 
-        
+
         if( data_._embedded.children === undefined ){
             this.files.onNext([]);
         }else

@@ -12,7 +12,7 @@ module.exports = {
     sink:undefined,
 
     subscribe : function(){
-        console.log("{GetFiles Service} subscribe");
+        //console.log("{GetFiles Service} subscribe");
         this.sink = FileActions.getFiles.sink;
         FileActions.getFiles.source.distinctUntilChanged().subscribe(this.getFiles.bind(this));
     },
@@ -26,7 +26,7 @@ module.exports = {
     {
         if( path_ !== undefined && path_.length > 0 )
         {
-            console.log("{GetFiles Service} getFiles()");
+            //console.log("{GetFiles Service} getFiles()");
 
             var _this = this;
             var _url =  path_ +".graph.1.json/nt:file,nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
