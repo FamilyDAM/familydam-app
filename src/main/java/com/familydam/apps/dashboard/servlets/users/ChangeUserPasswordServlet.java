@@ -19,6 +19,8 @@
 package com.familydam.apps.dashboard.servlets.users;
 
 import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.JcrConstants;
@@ -37,6 +39,7 @@ import org.apache.jackrabbit.value.LongValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.jcr.base.util.AccessControlUtil;
@@ -66,11 +69,12 @@ import java.util.Set;
  * <p>
  * Annotations below are short version of:
  */
-@SlingServlet(
-        resourceTypes = "sling/servlet/default",
-        selectors = "password",
-        extensions = "json",
-        methods = "POST")
+@SlingServlet(paths = {"/bin/familydam/api/v1/users"}, metatype = true)
+@Properties({
+        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.ChangeUserPasswordServlet", propertyPrivate = false),
+        @Property(name = "service.description", value = "ChangePasswordServlet  Description", propertyPrivate = false),
+        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+})
 public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 {
 
@@ -103,12 +107,14 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 
             UserManager userManager = ((JackrabbitSession) session).getUserManager();
             Authorizable sessionUser = userManager.getAuthorizable(session.getUserID());
-            Authorizable user = userManager.getAuthorizableByPath(resourcePath);
+
+            Authorizable user = userManager.getAuthorizable( request.getParameter("username") );
             Authorizable group = userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_ADMIN_GROUP);
             if( group.isGroup() ) {
                 if( ((Group) group).isMember(sessionUser) || sessionUser.getID().equalsIgnoreCase(user.getID()) ) {
-                    ((User) user).changePassword(request.getParameter("newPwd"));
-                    response.setStatus(200);
+                    ((User) user).changePassword(  request.getParameter("userProps[newPwd]")  );
+                    response.setStatus(202);
+                    response.getOutputStream().write("{}".getBytes());
                     response.setContentType("application/json");
                 }
                 else
