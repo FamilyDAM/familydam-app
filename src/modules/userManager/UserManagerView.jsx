@@ -44,14 +44,13 @@ module.exports = React.createClass({
 
 
     componentDidMount: function () {
-        //console.log("{UserManagerView} componentDidMount");
+        console.log("{UserManagerView} componentDidMount");
 
         // handle get all users
         this.getUsersSubscription = UserActions.getUsers.sink.subscribe(function (data_) {
             this.state.users = data_;
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
-
 
         // after a user has been created, add them to the array
         this.createUsersSubscription = UserActions.createUser.sink.subscribe(function (data_) {
@@ -60,7 +59,6 @@ module.exports = React.createClass({
             UserActions.getUsers.source.onNext(true);
         }.bind(this));
 
-
         // request user list
         UserActions.getUsers.source.onNext(true);
 
@@ -68,9 +66,11 @@ module.exports = React.createClass({
 
 
     componentWillUnmount: function () {
+        console.log("{UserManagerView} componentWillUnmount");
         if (this.getUsersSubscription !== undefined) this.getUsersSubscription.dispose();
         if (this.createUsersSubscription !== undefined) this.createUsersSubscription.dispose();
     },
+
 
     handleAddUser: function (event_) {
         this.openCreateUser();
@@ -98,21 +98,23 @@ module.exports = React.createClass({
     },
 
     selectUser: function(user_){
-debugger;
+
         if( UserStore.getCurrentUser().isFamilyAdmin || UserStore.getCurrentUser().username == user_ )
         {
             this.context.router.push({pathname: '/users/' + user_});
         }else{
-            UserActions.alert.onNext("You are not allowed to edit other users. #3");
+            debugger;
+            UserActions.alert.onNext("You are not allowed to edit other users.");
         }
     },
 
     addUser:function(event_){
-        debugger;
+
         if( UserStore.getCurrentUser().isFamilyAdmin )
         {
             this.context.router.push({pathname:'/users/add'})
         }else{
+            debugger;
             UserActions.alert.onNext("You are not allowed to add new family members.");
         }
     },

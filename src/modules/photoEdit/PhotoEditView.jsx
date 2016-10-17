@@ -7,7 +7,9 @@
 // Used in TodoApp
 var React = require('react');
 import {Router, Link} from 'react-router';
-
+import {
+    FlatButton
+} from 'material-ui';
 
 var NavigationActions = require('./../../actions/NavigationActions');
 var NodeActions = require('./../../actions/NodeActions');
@@ -122,13 +124,6 @@ module.exports = React.createClass({
                 <div className="row">
                     <div className="col-sm-10 col-sm-offset-1">
 
-                        <Button ref="saveBtn" id="saveBtn"
-                            data-style="expand-left"
-                            data-spinner-size={30}
-                            data-spinner-color="#000"
-                            bsStyle='primary'
-                            className="ladda-button pull-right"
-                            onClick={this.saveImage}>Save Version</Button>
 
                     </div>
                 </div>

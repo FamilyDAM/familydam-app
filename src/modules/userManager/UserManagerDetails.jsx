@@ -32,7 +32,74 @@ var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
 var UserStore = require('../../stores/UserStore');
 
-var LoadingIcon = require('./../../components/loadingIcon/LoadingIcon.jsx');
+//var LoadingIcon = require('./../../components/loadingIcon/LoadingIcon.jsx');
+
+
+// have todefine this locally, we get a DOM error if we import it
+const LoadingIcon = (props) => (
+    <SvgIcon {...props}>
+        <svg width='24px' height='24px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
+             preserveAspectRatio="xMidYMid" className="uil-default">
+            <rect x="0" y="0" width="100" height="100" fill="none" className="bk"></rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(0 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0s' repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(30 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.08333333333333333s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(60 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.16666666666666666s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(90 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.25s' repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(120 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.3333333333333333s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(150 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.4166666666666667s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(180 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5s' repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(210 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5833333333333334s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(240 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.6666666666666666s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(270 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.75s' repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(300 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.8333333333333334s'
+                         repeatCount='indefinite'/>
+            </rect>
+            <rect x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#ffffff'
+                  transform='rotate(330 50 50) translate(0 -30)'>
+                <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.9166666666666666s'
+                         repeatCount='indefinite'/>
+            </rect>
+        </svg>
+    </SvgIcon>
+);
 
 
 
@@ -105,6 +172,7 @@ module.exports = React.createClass({
             UserActions.getUser.source.onNext(userid);
         }else{
             this.context.router.push({pathname: '/users/'});
+            debugger;
             UserActions.alert.onNext("You are not allowed to edit other users.");
         }
 
@@ -149,12 +217,12 @@ module.exports = React.createClass({
 
     handleResetPasswordClick: function (event_) {
 
-        if (this.savePasswordBtn !== undefined)
+        if (this.refs.savePasswordBtn)
         {
-            this.savePasswordBtn.start();
+            //this.savePasswordBtn.start();
         }
 
-        this.state.user.psasword = this.refs.password.value;
+        this.state.user.password = this.refs.password.getValue();
 
         this.setState({isPwdLoading: true});
         UserActions.changePassword.source.onNext(this.state.user);
@@ -174,11 +242,11 @@ module.exports = React.createClass({
                         <LinkContainer to="users">
                             <FlatButton label="Cancel"/>
                         </LinkContainer>
-                        <FlatButton
-                            label="Save Settings"
-                            ref="saveBtn" id="saveBtn"
-                            onClick={this.handleSave}
+
+                        <RaisedButton
+                            label="Save"
                             primary={true}
+                            onClick={this.handleSave}
                             icon={this.state.isLoading?<LoadingIcon style={{'width':'25px', 'height':'25px'}}/>:<span/>}/>
                     </div>
                 </div>

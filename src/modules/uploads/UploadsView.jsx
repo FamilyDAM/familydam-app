@@ -66,11 +66,11 @@ module.exports = React.createClass({
             showUploadProgressDialog: false,
             enableClose: false,
             enableRetry: false,
-            completedFiles:0,
-            errorFiles:0,
-            totalFiles:0,
-            currentFile:"",
-            uploadMessage:""
+            completedFiles: 0,
+            errorFiles: 0,
+            totalFiles: 0,
+            currentFile: "",
+            uploadMessage: ""
         };
     },
 
@@ -82,51 +82,50 @@ module.exports = React.createClass({
 
         this.currentFolderSubscription = DirectoryStore.currentFolder.subscribe(function (d_) {
             var _uploadPath = d_.path;
-            if (d_.path.substring(d_.path.length - 1) != "/")
-            {
+            if (d_.path.substring(d_.path.length - 1) != "/") {
                 _uploadPath = d_.path + "/";
             }
 
             this.state.currentFolder = d_.path;
             this.state.uploadPath = _uploadPath;
-            if( this.isMounted() ) this.forceUpdate();
+            if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
 
         // upload dialog status actions
-        this.startUploadSubscription = UploadActions.startUpload.subscribe(function(data_){
+        this.startUploadSubscription = UploadActions.startUpload.subscribe(function (data_) {
             //this.state.totalFiles = data_.count;
             //this.state.showUploadProgressDialog = true;
 
-            this.setState({"totalFiles":data_.count, "showUploadProgressDialog":true });
+            this.setState({"totalFiles": data_.count, "showUploadProgressDialog": true});
             //if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
 
 
-        this.UploadStartedSubscription = UploadActions.uploadStarted.subscribe(function(data_){
+        this.UploadStartedSubscription = UploadActions.uploadStarted.subscribe(function (data_) {
             //this.state.totalFiles = this.state.totalFiles+1;
 
-            if( data_.webkitRelativePath.length > 0 ) {
-                this.setState({"currentFile":data_.webkitRelativePath});
+            if (data_.webkitRelativePath.length > 0) {
+                this.setState({"currentFile": data_.webkitRelativePath});
                 //this.state.currentFile = data_.webkitRelativePath;
-            }else{
-                this.setState({"currentFile":data_.name});
+            } else {
+                this.setState({"currentFile": data_.name});
                 //this.state.currentFile = data_.name;
             }
             //if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
 
 
-        this.UploadCompleteSubscription = UploadActions.uploadCompleted.subscribe(function(data_){
+        this.UploadCompleteSubscription = UploadActions.uploadCompleted.subscribe(function (data_) {
 
             var stateProps = {};
-            stateProps.completedFiles = this.state.completedFiles+1;
+            stateProps.completedFiles = this.state.completedFiles + 1;
             stateProps.currentFile = "";
 
             var _totals = this.state.completedFiles + this.state.errorFiles;
-            if( this.state.totalFiles >= _totals ){
-                stateProps.enableClose=true;
-                stateProps.enableRetry=this.state.errorFiles>0;
+            if (this.state.totalFiles >= _totals) {
+                stateProps.enableClose = true;
+                stateProps.enableRetry = this.state.errorFiles > 0;
             }
 
             this.setState(stateProps);
@@ -134,20 +133,19 @@ module.exports = React.createClass({
         }.bind(this));
 
 
-        this.UploadErrorSubscription = UploadActions.uploadError.subscribe(function(data_){
+        this.UploadErrorSubscription = UploadActions.uploadError.subscribe(function (data_) {
             //this.state.currentFile = "";
-            this.setState({"errorFiles":this.state.errorFiles+1});
+            this.setState({"errorFiles": this.state.errorFiles + 1});
 
             //if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
 
 
-        this.UploadMessageSubscription = UploadActions.uploadMessage.subscribe(function(data_){
+        this.UploadMessageSubscription = UploadActions.uploadMessage.subscribe(function (data_) {
             //this.state.currentFile = "";
-            if( data_.substr(0, 1) != "{")
-            {
-                this.setState({'uploadMessage': "Completed", "enableClose":true});
-            }else{
+            if (data_.substr(0, 1) != "{") {
+                this.setState({'uploadMessage': "Completed", "enableClose": true});
+            } else {
                 this.setState({'uploadMessage': data_});
             }
             //if( this.isMounted() ) this.forceUpdate();
@@ -155,28 +153,29 @@ module.exports = React.createClass({
     },
 
     componentWillUnmount: function () {
-        if (this.currentFolderSubscription !== undefined){
+        if (this.currentFolderSubscription !== undefined) {
             this.currentFolderSubscription.dispose();
         }
 
-        if( this.startUploadSubscription ) this.UploadCompleteSubscription.dispose();
-        if( this.UploadStartedSubscription ) this.UploadStartedSubscription.dispose();
-        if( this.UploadErrorSubscription ) this.UploadCompleteSubscription.dispose();
-        if( this.UploadCompleteSubscription ) this.UploadCompleteSubscription.dispose();
-        if( this.UploadMessageSubscription ) this.UploadMessageSubscription.dispose();
+        if (this.startUploadSubscription) this.UploadCompleteSubscription.dispose();
+        if (this.UploadStartedSubscription) this.UploadStartedSubscription.dispose();
+        if (this.UploadErrorSubscription) this.UploadCompleteSubscription.dispose();
+        if (this.UploadCompleteSubscription) this.UploadCompleteSubscription.dispose();
+        if (this.UploadMessageSubscription) this.UploadMessageSubscription.dispose();
     },
 
 
+    handleDialogClose: function () {
+        this.setState({
+            showUploadProgressDialog: false,
+            enableClose: false,
+            enableRetry: false,
+            completedFiles: 0,
+            errorFiles: 0,
+            totalFiles: 0
+        });
 
-    handleDialogClose:function(){
-      this.setState({
-          showUploadProgressDialog: false,
-          enableClose: false,
-          enableRetry: false,
-          completedFiles:0,
-          errorFiles:0,
-          totalFiles:0
-      });
+        UploadActions.removeAllFilesAction.onNext(true);
     },
 
 
@@ -184,11 +183,11 @@ module.exports = React.createClass({
 
         const actions = [
             /* <FlatButton
-                label="Retry"
-                primary={true}
-                disabled={!this.state.enableRetry}
-                onTouchTap={this.handleDialogClose}
-            />, */
+             label="Retry"
+             primary={true}
+             disabled={!this.state.enableRetry}
+             onTouchTap={this.handleDialogClose}
+             />, */
             <FlatButton
                 label="Close"
                 primary={true}
@@ -200,20 +199,20 @@ module.exports = React.createClass({
 
         return (
 
-            <div className="row" style={{'backgroundColor':'rgb(245, 245, 245)'}}>
-                <Paper className="col-xs-12" style={{'backgroundColor':'rgb(245, 245, 245)'}}>
-                    <Toolbar style={{'backgroundColor':'rgb(245, 245, 245)'}}>
-                        <ToolbarGroup firstChild={true} style={{'float':'left'}}>
+            <div className="row" style={{'backgroundColor': 'rgb(245, 245, 245)'}}>
+                <Paper className="col-xs-12" style={{'backgroundColor': 'rgb(245, 245, 245)'}}>
+                    <Toolbar style={{'backgroundColor': 'rgb(245, 245, 245)'}}>
+                        <ToolbarGroup firstChild={true} style={{'float': 'left'}}>
                             <IconButton iconClassName="material-icons">folder</IconButton>
                             <Breadcrumb path={this.state.currentFolder}/>
                         </ToolbarGroup>
-                        <ToolbarGroup style={{'float':'left'}}>
+                        <ToolbarGroup style={{'float': 'left'}}>
 
                         </ToolbarGroup>
                     </Toolbar>
                 </Paper>
 
-                <div className="col-xs-11 col-offset-1" style={{'top':'24px', 'flexGrow': '1'}}>
+                <div className="col-xs-11 col-offset-1" style={{'top': '24px', 'flexGrow': '1'}}>
 
                     <FileUploadView
                         currentFolder={this.state.currentFolder}
@@ -226,28 +225,28 @@ module.exports = React.createClass({
                         open={this.state.showUploadProgressDialog}
                     >
                         {(() => {
-                            if( this.state.totalFiles > 0 )
-                            {
-                                return(
+                            if (this.state.totalFiles > 0) {
+                                return (
                                     <div>
-                                        Total File Progress {this.state.completedFiles} / {this.state.totalFiles} ({this.state.errorFiles} Errors)
+                                        Total File Progress {this.state.completedFiles} / {this.state.totalFiles}
+                                        ({this.state.errorFiles} Errors)
                                         <br/><br/>
                                         <LinearProgress
                                             mode="determinate"
                                             max={this.state.totalFiles}
                                             min={this.state.completedFiles}
-                                            style={{'height':'10px'}}/>
+                                            style={{'height': '10px'}}/>
                                         <br/>
                                         <span>{this.state.uploadMessage}</span>
                                     </div>
                                 );
-                            }else{
-                                return(
+                            } else {
+                                return (
                                     <div>
                                         Preparing Files
                                         <LinearProgress
                                             mode="indeterminate"
-                                            style={{'height':'10px'}}/>
+                                            style={{'height': '10px'}}/>
                                     </div>
                                 );
                             }

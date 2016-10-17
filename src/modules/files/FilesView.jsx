@@ -404,8 +404,6 @@ module.exports = React.createClass({
                                 <IconButton iconClassName="material-icons"
                                             onClick={() => {this.context.router.push({pathname:'photos/details', query:{path:file_.path}}) }}>launch</IconButton>
 
-                                <IconButton iconClassName="material-icons"
-                                            onClick={()=>{this.context.router.push({pathname:'photos/edit', query:{path:file_.path}}) }}>edit</IconButton>
 
                                 <a href={file_.path} download><IconButton iconClassName="material-icons"
                                                                           data-path={file_._links.download}>file_download</IconButton></a>

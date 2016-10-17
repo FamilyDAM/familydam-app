@@ -469,14 +469,6 @@ module.exports = React.createClass({
                                             'height': '36px'
                                         }}/></a>
 
-                                        <Link
-                                            to={{pathname: 'photos/edit', query: {path: this.state.photo._links.self}}}>
-                                            <img src="assets/icons/ic_mode_edit_24px.svg" style={{
-                                                'width': '36px',
-                                                'height': '36px'
-                                            }}/>
-                                        </Link>
-
                                         <img src="assets/icons/ic_delete_24px.svg" style={{
                                             'width': '36px',
                                             'height': '36px'

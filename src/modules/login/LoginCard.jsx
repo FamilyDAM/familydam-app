@@ -62,6 +62,12 @@ module.exports = React.createClass({
     },
 
 
+    componentWillUnmount: function(){
+        if( this.currentUserStoreSubscription ){
+            this.currentUserStoreSubscription.dispose();
+        }
+    },
+
 
 
     /**
@@ -77,7 +83,7 @@ module.exports = React.createClass({
 
         AuthActions.login.source.onNext({'username':_username, 'password':_password});
 
-        UserStore.currentUser.subscribe(function(data_){
+        this.currentUserStoreSubscription = UserStore.currentUser.subscribe(function(data_){
             // redirect to dashboard
             if( data_ )
             {

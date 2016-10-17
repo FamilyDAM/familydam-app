@@ -41,7 +41,7 @@ module.exports = {
         var _this = this;
         return $.ajax({
             'method':'post'
-            ,'url': PreferenceStore.getBaseUrl() +"/bin/familydam/api/v1/user." +user_ +".json"
+            ,'url': PreferenceStore.getBaseUrl() +"/bin/familydam/api/v1/users"
             , 'data': _data
             , cache: false
             ,'xhrFields': {

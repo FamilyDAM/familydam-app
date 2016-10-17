@@ -21,13 +21,13 @@ module.exports = React.createClass({
 
 
     componentDidMount: function () {
-        //console.log("{UserManagerDetailView} componentWillMount");
+        console.log("{UserManagerDetailView} componentWillMount");
 
     },
 
 
     componentWillUnmount: function () {
-
+        console.log("{UserManagerDetailView} componentWillUnmount");
     },
 
 
