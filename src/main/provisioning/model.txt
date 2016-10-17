@@ -42,7 +42,7 @@
     image.handlers.version=0.1.1-SNAPSHOT
 
 [artifacts]
-   com.familydam.osgi/core/${core.version}
-   com.familydam.osgi/app-dashboard/${dashboard.version}
-   com.familydam.osgi/image-handlers/${image.handlers.version}
+   com.familydam.osgi/osgi-core/${core.version}
+   com.familydam.osgi/osgi-dashboard-app/${dashboard.version}
+   com.familydam.osgi/osgi-image-handlers/${image.handlers.version}
 

@@ -19,7 +19,7 @@
     <version>0.1.0</version>
     <packaging>slingstart</packaging>
 
-    <name>FamilyDAM Repository (Sling)</name>
+    <name>client-repository</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,20 +28,20 @@
     <dependencies>
         <dependency>
             <groupId>com.familydam.osgi</groupId>
-            <artifactId>core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>osgi-core</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.familydam.osgi</groupId>
-            <artifactId>app-dashboard</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <artifactId>osgi-dashboard-app</artifactId>
+            <version>0.1.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.familydam.osgi</groupId>
-            <artifactId>image-handlers</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>osgi-image-handlers</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
