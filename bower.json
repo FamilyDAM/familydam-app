@@ -9,6 +9,6 @@
     "bootstrap-tokenfield": "~0.12.1"
   },
   "resolutions": {
-    "react": ">= 15.2.0"
+    "jquery": "1.9.1"
   }
 }

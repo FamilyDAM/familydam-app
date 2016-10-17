@@ -72,7 +72,7 @@ module.exports = function (grunt) {
             },
             html: {
                 files: ['<%= options.app %>/*.html'],
-                tasks: ['newer:copy:dashboard'],
+                tasks: ['copy:dashboard'],
                 options: {
                     livereload: true
                 }
