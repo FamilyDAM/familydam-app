@@ -30,6 +30,7 @@ import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.ReferencePolicyOption;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.jackrabbit.oak.commons.IOUtils;
 import org.apache.jackrabbit.oak.plugins.segment.SegmentStream;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -47,11 +48,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Dictionary;
 
 /**
@@ -219,19 +216,15 @@ public class ImageThumbnailServlet extends SlingSafeMethodsServlet
     {
         try {
             response.setContentType(contentType);
-            int _len = new Long(((SegmentStream) newImageIS).getLength()).intValue();
+
+            int _len = new Long(newImageIS.available()).intValue();
+            if( newImageIS instanceof SegmentStream ){
+                _len = new Long(((SegmentStream) newImageIS).getLength()).intValue();
+            }
             response.setContentLength(_len);
 
+            IOUtils.copy(newImageIS, response.getOutputStream());
 
-            byte[] buffer = new byte[10240];
-            try (
-                    InputStream input = newImageIS;
-                    OutputStream output = response.getOutputStream();
-            ) {
-                for (int length = 0; (length = input.read(buffer)) > 0; ) {
-                    output.write(buffer, 0, length);
-                }
-            }
         }catch(Exception ex){
             ex.printStackTrace();
         }
