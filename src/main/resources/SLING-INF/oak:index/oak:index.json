@@ -1,0 +1,23 @@
+{
+  "familydamProperties": {
+    "jcr:primaryType": "oak:QueryIndexDefinition",
+    "declaringNodeTypes": [
+      "nt:file",
+      "dam:file",
+      "dam:image",
+
+      "dam:music",
+      "dam:video"
+    ],
+    "propertyNames": [
+      "dam:tags",
+      "dam:people",
+      "dam:datecreated",
+      "datecreated",
+      "jcr:primartyType",
+      "jcr:mixinTypes"
+    ],
+    "type": "property",
+    "reindex": false
+  }
+}

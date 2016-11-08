@@ -64,3 +64,8 @@
 [dam:video] mixin
 - dam:datecreated (STRING)
 + dam:metadata (nt:unstructured)
+
+[dam:movie] mixin
+- dam:datecreated (STRING)
++ dam:metadata (nt:unstructured)
+
