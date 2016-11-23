@@ -5,7 +5,10 @@
 package com.familydam.apps.dashboard.servlets.photos;
 
 import com.familydam.apps.dashboard.daos.TreeDao;
+import com.familydam.apps.dashboard.services.TagIndexGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -23,14 +26,20 @@ import java.util.Map;
  * Created by mnimer on 3/25/16.
  */
 @SlingServlet(
-        resourceTypes = "sling/servlet/default",
-        selectors = "tags",
-        extensions = "json",
-        methods = "GET")
+        paths = {"/bin/familydam/api/v1/images/tags"}, metatype = true
+)
+@Properties({
+        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.TagListServlet", propertyPrivate = false),
+        @Property(name = "service.description", value = "TagListServlet  Description", propertyPrivate = false),
+        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+})
 public class TagListServlet extends SlingSafeMethodsServlet
 {
     @Reference
     private TreeDao treeDao;
+
+    private TagIndexGenerator tagIndexGenerator = new TagIndexGenerator();
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
 
@@ -45,6 +54,12 @@ public class TagListServlet extends SlingSafeMethodsServlet
         try {
 
             session = request.getResourceResolver().adaptTo(Session.class);
+
+            if( !tagIndexGenerator.indexExists(session) )
+            {
+                tagIndexGenerator.rebuild(session);
+            }
+
 
             List<Map> tree = treeDao.tagList(session, resourcePath);
 

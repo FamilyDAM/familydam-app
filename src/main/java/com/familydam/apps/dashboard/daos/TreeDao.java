@@ -6,6 +6,8 @@ package com.familydam.apps.dashboard.daos;
 
 import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
 import com.familydam.apps.dashboard.exceptions.UnknownINodeException;
+import com.familydam.apps.dashboard.services.PeopleIndexGenerator;
+import com.familydam.apps.dashboard.services.TagIndexGenerator;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 import org.slf4j.Logger;
@@ -45,9 +47,14 @@ public class TreeDao
     SimpleDateFormat dfMonth2 = new SimpleDateFormat("MM");
     SimpleDateFormat dfDay = new SimpleDateFormat("dd");
 
+    TagIndexGenerator tagIndexGenerator;
+    PeopleIndexGenerator peopleIndexGenerator;
+
 
     public TreeDao()
     {
+        tagIndexGenerator = new TagIndexGenerator();
+        peopleIndexGenerator = new PeopleIndexGenerator();
     }
 
 
@@ -60,6 +67,10 @@ public class TreeDao
      */
     public Map dateTree(Session session, String path_) throws RepositoryException, UnknownINodeException
     {
+
+
+
+
         StringBuffer sql = new StringBuffer("SELECT [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "]  FROM [dam:image] where [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "] is not null");
 
 
@@ -141,8 +152,13 @@ public class TreeDao
      */
     public List<Map> tagList(Session session, String path_) throws RepositoryException, UnknownINodeException
     {
-        StringBuffer sql = new StringBuffer("SELECT [dam:tags]  FROM [dam:image] where [dam:tags] is not null");
-        return queryForListAndCount(session, "dam:tags", sql);
+
+        if( !tagIndexGenerator.indexExists(session) ){
+            tagIndexGenerator.rebuild(session);
+        }
+
+        //return cached list
+        return tagIndexGenerator.getList(session);
     }
 
 
@@ -155,8 +171,12 @@ public class TreeDao
      */
     public List<Map> peopleList(Session session, String path_) throws RepositoryException, UnknownINodeException
     {
-        StringBuffer sql = new StringBuffer("SELECT [dam:people]  FROM [dam:image] where [dam:people] is not null");
-        return queryForListAndCount(session, "dam:people", sql);
+        if( !peopleIndexGenerator.indexExists(session) ){
+            peopleIndexGenerator.rebuild(session);
+        }
+
+        //return cached list
+        return peopleIndexGenerator.getList(session);
     }
 
 

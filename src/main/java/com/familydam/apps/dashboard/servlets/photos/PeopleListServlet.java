@@ -5,7 +5,10 @@
 package com.familydam.apps.dashboard.servlets.photos;
 
 import com.familydam.apps.dashboard.daos.TreeDao;
+import com.familydam.apps.dashboard.services.PeopleIndexGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -23,14 +26,20 @@ import java.util.Map;
  * Created by mnimer on 3/25/16.
  */
 @SlingServlet(
-        resourceTypes = "sling/servlet/default",
-        selectors = "people",
-        extensions = "json",
-        methods = "GET")
+        paths = {"/bin/familydam/api/v1/images/people"}, metatype = true
+)
+@Properties({
+        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.PeopleListServlet", propertyPrivate = false),
+        @Property(name = "service.description", value = "PeopleListServlet  Description", propertyPrivate = false),
+        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+})
 public class PeopleListServlet extends SlingSafeMethodsServlet
 {
     @Reference
     private TreeDao treeDao;
+
+    private PeopleIndexGenerator peopleIndexGenerator = new PeopleIndexGenerator();
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
 
@@ -45,6 +54,11 @@ public class PeopleListServlet extends SlingSafeMethodsServlet
         try {
 
             session = request.getResourceResolver().adaptTo(Session.class);
+
+            if( !peopleIndexGenerator.indexExists(session) )
+            {
+                peopleIndexGenerator.rebuild(session);
+            }
 
             List<Map> tree = treeDao.peopleList(session, resourcePath);
 

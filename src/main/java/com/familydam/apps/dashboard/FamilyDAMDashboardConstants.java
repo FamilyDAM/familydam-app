@@ -32,6 +32,13 @@ public class FamilyDAMDashboardConstants
     public static final String DAM_VIDEO = "dam:video";
     public static final String DAM_DATECREATED = "dam:datecreated";
 
+    //Cache nodes
+    public static final String CACHES = "caches";
+    public static final String INDEXES = "indexes";
+    public static final String PHOTO_TAGS = "photo-tags";
+    public static final String PHOTO_PEOPLE = "photo-people";
+    public static final String PHOTO_DATES = "photo-dates";
+
     //Hateoas
     public static final String HATEAOS_CONTENTTYPE = "application/hal+json";
     public static final String HATEAOS_EMBEDDED = "_embedded";
