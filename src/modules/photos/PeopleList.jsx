@@ -4,18 +4,20 @@
 /** jsx React.DOM */
 var React = require('react');
 import { Router, Link } from 'react-router';
+import { TagCloud } from "react-tagcloud";
+
 
 var ImageActions = require('../../actions/ImageActions');
 var PhotoStore = require('./../../stores/PhotoStore');
 
 module.exports =  React.createClass({
-    
+
     getDefaultProps: function(){
         return {
             people:[]
         };
     },
-    
+
     getInitialState: function(){
         return {}
     },
@@ -24,11 +26,22 @@ module.exports =  React.createClass({
         ImageActions.peopleList.source.onNext(true);
 
 
-        PhotoStore.people.subscribe(function(data){
+        this.peopleSubscription = PhotoStore.people.subscribe(function(data){
+            for( var key in data ){
+                data[key]['value'] = data[key].name;
+            }
             this.state.people = data;
-            if (this.isMounted()) this.forceUpdate();
+            this.setState({'people':data});
         }.bind(this));
+
     },
+
+    componentWillUnmount: function(){
+        if( this.peopleSubscription ){
+            this.peopleSubscription.dispose();
+        }
+    },
+
 
     selectItem: function(obj, event, id){
         if( this.props.onSelect !== undefined ){
@@ -38,6 +51,20 @@ module.exports =  React.createClass({
     },
 
     render: function() {
+
+        return (
+            <TagCloud minSize={12}
+                      maxSize={35}
+                      colorOptions={{
+                          hue: 'blue'
+                      }}
+                      tags={this.state.people}
+                      style={{'padding':'5px'}}
+                      onClick={tag => this.selectItem(tag)} />
+        );
+    },
+
+    renderOld: function() {
 
         var list = [];
         try

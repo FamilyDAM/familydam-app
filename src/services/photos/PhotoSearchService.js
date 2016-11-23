@@ -26,18 +26,22 @@ module.exports = {
      * @param val_
      * @returns {*}
      */
-    execute: function(filters_)
+    execute: function(args_)
     {
-        if( filters_ !== undefined )
+        if( args_.filters )
         {
+            if( !args_.offset ){
+                args_.offset = 0;
+            }
+
             var _this = this;
-            var _url = "/content.image.search.json?type=dam:image&limit=100&offset=0";
+            var _url = "/content.image.search.json?type=dam:image&limit=100&offset=" +args_.offset;
 
             return $.ajax({
                 'method': "POST",
                 'url': _url,
                 'contentType': "application/json",
-                'data':  JSON.stringify(filters_),
+                'data':  JSON.stringify(args_.filters),
                 'headers': {
                     'X-Auth-Token': UserStore.token.value
                 }

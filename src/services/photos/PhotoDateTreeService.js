@@ -33,7 +33,7 @@ module.exports = {
             //console.log("{PhotoDateTree Service} execute()");
 
             var _this = this;
-            var _url = '/content.datetree.json';
+            var _url = '/bin/familydam/api/v1/images/dates';
 
             return $.ajax({
                 'method': "get",

@@ -75,7 +75,7 @@ module.exports = {
             }
 
             this.filters.onNext(_filters);
-            ImageActions.search.source.onNext(_filters);
+            ImageActions.search.source.onNext({"filters":_filters, "offset":0});
 
         }.bind(this));
 
@@ -147,7 +147,7 @@ module.exports = {
 
             }
 
-            ImageActions.search.source.onNext(_filters);
+            ImageActions.search.source.onNext({"filters":_filters, "offset":0});
         }.bind(this));
 
 

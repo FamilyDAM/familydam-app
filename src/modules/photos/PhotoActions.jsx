@@ -4,7 +4,7 @@
 /** jsx React.DOM */
 var React = require('react');
 import { Router, Link } from 'react-router';
-
+import ChipInput from 'material-ui-chip-input';
 
 import {
     Subheader,
@@ -34,6 +34,40 @@ module.exports =  React.createClass({
     },
 
 
+    componentWillMount:function(){
+        //debugger;
+    },
+
+    componentWillReceiveProps:function(nextProps, props){
+        this.props = nextProps;
+
+        var _people = [];
+        var _tags = [];
+
+        for (var i = 0; i < this.props.images.length; i++) {
+            var _img = this.props.images[i];
+
+            for (var j = 0; j < _img.people.length; j++) {
+                var obj = _img.people[j];
+                var pos = _people.indexOf(obj);
+                if (pos == -1) {
+                    _people.push(obj);
+                }
+            }
+
+            for (var k = 0; k < _img.tags.length; k++) {
+                var obj = _img.tags[k];
+                var pos = _tags.indexOf(obj);
+                if (pos == -1) {
+                    _tags.push(obj);
+                }
+            }
+        }
+
+        this.setState({"peopleTags":_people, "tags":_tags});
+    },
+
+
     handleOnClose:function(e_){
         if( this.props.onClose !== undefined ){
             this.props.onClose(e_);
@@ -46,9 +80,16 @@ module.exports =  React.createClass({
         var pos = this.state.peopleTags.indexOf(people_);
         if (pos == -1)
         {
-            this.state.peopleTags.push(people_);
-            if( this.isMounted() ) this.forceUpdate();
-            this.save("people", this.state.peopleTags);
+            var _peopleTags = this.state.peopleTags;
+            _peopleTags.push(people_);
+            this.setState({"peopleTags":_peopleTags});
+
+            for (var i = 0; i < this.props.images.length; i++) {
+                var img = this.props.images[i];
+                img.people.push(people_);
+            }
+
+            this.save("dam:people", "+" +people_, true);
         }
     },
 
@@ -58,9 +99,18 @@ module.exports =  React.createClass({
         var pos = this.state.peopleTags.indexOf(people_);
         if (pos > -1)
         {
-            this.state.peopleTags.splice(pos, 1);
-            if( this.isMounted() ) this.forceUpdate();
-            this.save("people", this.state.peopleTags);
+            var _people = this.state.peopleTags;
+            _people.splice(pos, 1);
+            this.setState({"peopleTags":_people});
+
+            for (var i = 0; i < this.props.images.length; i++) {
+                var img = this.props.images[i];
+                var pos = img.people.indexOf(people_);
+                img.people.splice(pos,1);
+            }
+
+
+            this.save("dam:people", "-" +people_, true);
         }
     },
 
@@ -70,74 +120,70 @@ module.exports =  React.createClass({
         var pos = this.state.tags.indexOf(tag_);
         if (pos == -1)
         {
-            this.state.tags.push(tag_);
-            if( this.isMounted() ) this.forceUpdate();
-            this.save("tags", this.state.tags);
+            var _tags = this.state.tags;
+            _tags.push(tag_);
+            this.setState({"tags":_tags});
+
+            for (var i = 0; i < this.props.images.length; i++) {
+                var img = this.props.images[i];
+                img.tags.push(tag_);
+            }
+
+            this.save("dam:tags", "+" +tag_, true);
         }
     },
+
 
     handleOnTagRemove: function (tag_) {
         var pos = this.state.tags.indexOf(tag_);
         if (pos > -1)
         {
+            var _tags = this.state.tags;
+            _tags.splice(pos, 1);
+            this.setState({"tags":_tags});
+
+            for (var i = 0; i < this.props.images.length; i++) {
+                var img = this.props.images[i];
+                var pos = img.tags.indexOf(tag_);
+                img.tags.splice(pos,1);
+            }
+
             this.state.tags.splice(pos, 1);
             if( this.isMounted() ) this.forceUpdate();
-            this.save("tags", this.state.tags);
+            this.save("dam:tags", "-" +tag_, true);
         }
     },
 
 
-    save: function (prop_, vals_) {
 
-        for (var i = 0; i < this.props.images.length; i++)
-        {
+    save: function (property_, val_, patch_) {
+
+        for (var i = 0; i < this.props.images.length; i++) {
             var _img = this.props.images[i];
-            var _data = {'path':_img.path, props:{}};
-            _data.props['dam:' +prop_] = _img[prop_];
+            var _path = _img.path;
 
-            for (var j = 0; j < vals_.length; j++)
-            {
-                var obj = vals_[j];
-                if( _data.props['dam:' +prop_].indexOf( obj ) == -1 )
-                {
-                    _data.props['dam:' +prop_].push(obj);
-                }
+
+            var _data = {'path': _path, props: {}};
+            _data.props[property_] = val_;
+            if (patch_) {
+                _data.props[property_ + "@Patch"] = "true";
             }
 
 
+            //$(this.refs.savingLabel.getDOMNode()).show();
+            //window.status = "Saving Changes";
             NodeActions.updateNode.source.onNext(_data);
 
             NodeActions.updateNode.sink.subscribe(
                 function (id_) {
-                    if( this.isMounted() ) this.forceUpdate();
-                }.bind(this)
-            );
+                    //do nothing on successful save
+                    //$(this.refs.savingLabel.getDOMNode()).hide();
+                }.bind(this), function (err_) {
+                    alert(err_.status + ":" + err_.statusText + "\n" + err_.responseText);
+                }.bind(this));
         }
-
     },
 
-
-
-    save2: function (property_) {
-        var _path = this.state.photo.path;
-        var _val = this.state.photo[property_];
-
-        var _data = {'path':_path, props:{}};
-        _data.props[property_] = _val;
-
-        //$(this.refs.savingLabel.getDOMNode()).show();
-        //window.status = "Saving Changes";
-
-        NodeActions.updateNode.source.onNext(_data);
-
-        NodeActions.updateNode.sink.subscribe(
-            function (id_) {
-                //do nothing on successful save
-                //$(this.refs.savingLabel.getDOMNode()).hide();
-            }.bind(this), function(err_){
-                alert(err_.status +":" +err_.statusText +"\n" +err_.responseText);
-            }.bind(this));
-    },
 
 
     render: function() {
@@ -184,29 +230,25 @@ module.exports =  React.createClass({
                     </div>
 
                     <div style={{'padding': '5px', 'clear':'left'}}>
-                        <Subheader>Add people tag to all images</Subheader>
-                        <Tags
-                            placeholder="Enter People"
-                            title="People"
-                            tags={this.state.peopleTags}
-                            onAdd={this.handleOnPeopleAdd}
-                            onRemove={this.handleOnPeopleRemove}/>
-                        <p>
-                            <strong>current people:</strong> {_people.join(",")}
-                        </p>
+                        <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>People</Subheader>
+                        <ChipInput
+                            hintText="Add people to ALL selected images"
+                            value={this.state.peopleTags}
+                            onRequestAdd={(chip) => this.handleOnPeopleAdd(chip)}
+                            onRequestDelete={(chip) => this.handleOnPeopleRemove(chip)}
+                        />
+
                     </div>
 
                     <div style={{'padding': '5px'}}>
-                        <Subheader>Add keyword tag to all images</Subheader>
-                        <Tags
-                            placeholder="Enter Tags"
-                            title="&nbsp;&nbsp;&nbsp;Tags"
-                            tags={this.state.tags}
-                            onAdd={this.handleOnTagAdd}
-                            onRemove={this.handleOnTagRemove}/>
-                        <p>
-                            <strong>current tags:</strong> {_tags.join(",")}
-                        </p>
+                        <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>Tags</Subheader>
+                        <ChipInput
+                            hintText="Add tag to ALL selected images"
+                            value={this.state.tags}
+                            onRequestAdd={(chip) => this.handleOnTagAdd(chip)}
+                            onRequestDelete={(chip) => this.handleOnTagRemove(chip)}
+                        />
+
                     </div>
 
                     <hr/>

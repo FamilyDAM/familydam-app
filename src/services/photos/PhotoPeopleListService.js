@@ -32,7 +32,7 @@ module.exports = {
         {
             //console.log("{PhotoPeopleList Service} execute()");
             var _this = this;
-            var _url = "/content.people.json";
+            var _url = "/bin/familydam/api/v1/images/people";
 
             return $.ajax({
                 'method': "get",

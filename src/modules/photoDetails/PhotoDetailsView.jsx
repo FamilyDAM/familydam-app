@@ -25,6 +25,7 @@ import {
 } from 'material-ui';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
+import ChipInput from 'material-ui-chip-input';
 
 var Rating = require('react-rating');
 
@@ -323,10 +324,6 @@ module.exports = React.createClass({
     },
 
     handleOnPeopleAdd: function (people_) {
-        if (!this.state.photo['dam:people'] )
-        {
-            this.state.photo['dam:people'] = [];
-        }
 
         var pos = this.state.photo['dam:people'].indexOf(people_);
         if (pos == -1)
@@ -339,6 +336,7 @@ module.exports = React.createClass({
 
 
     handleOnPeopleRemove: function (people_) {
+
         var pos = this.state.photo['dam:people'].indexOf(people_);
         if (pos > -1)
         {
@@ -523,27 +521,12 @@ module.exports = React.createClass({
                                                 'alignItems': 'flex-start'
                                             }}>People:</Subheader>
 
-                                            <input type="text" ref="personName"/>
-                                            <RaisedButton label="Add Name"
-                                                          default="true"
-                                                          onClick={() => {
-                                                              this.handleOnPeopleAdd(this.refs.personName.value)
-                                                          }}/>
-                                            <br style={{'clear': 'left'}}/>
-
-                                            {this.state.photo['dam:people'].map(function (data_, idx) {
-                                                return (
-                                                    <Chip
-                                                        key={data_}
-                                                        onRequestDelete={() => {
-                                                            this.handleOnPeopleRemove(data_);
-                                                        }}
-                                                        style={{'margin': '4px', 'float': 'left'}}>
-                                                        {data_}
-                                                    </Chip>
-                                                );
-                                            }.bind(this))}
-
+                                            <ChipInput
+                                                hintText="Add people in image"
+                                                value={this.state.photo['dam:people']}
+                                                onRequestAdd={(chip) => this.handleOnPeopleAdd(chip)}
+                                                onRequestDelete={(chip) => this.handleOnPeopleRemove(chip)}
+                                            />
 
                                         </div>
 
@@ -553,27 +536,12 @@ module.exports = React.createClass({
                                                 'alignItems': 'flex-start'
                                             }}>Tags:</Subheader>
 
-
-                                            <input type="text" ref="tagName"/>
-                                            <RaisedButton label="Add Tag"
-                                                          default="true"
-                                                          onClick={() => {
-                                                              this.handleOnTagAdd(this.refs.tagName.value)
-                                                          }}/>
-                                            <br style={{'clear': 'left'}}/>
-
-                                            {this.state.photo['dam:tags'].map(function (data_, idx) {
-                                                return (
-                                                    <Chip
-                                                        key={data_}
-                                                        onRequestDelete={() => {
-                                                            this.handleOnTagRemove(data_);
-                                                        }}
-                                                        style={{'margin': '4px', 'float': 'left'}}>
-                                                        {data_}
-                                                    </Chip>
-                                                );
-                                            }.bind(this))}
+                                            <ChipInput
+                                                hintText="Describe image with tags"
+                                                value={this.state.photo['dam:tags']}
+                                                onRequestAdd={(chip) => this.handleOnTagAdd(chip)}
+                                                onRequestDelete={(chip) => this.handleOnTagRemove(chip)}
+                                            />
 
                                         </div>
                                     </div>

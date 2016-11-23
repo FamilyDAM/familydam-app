@@ -32,14 +32,12 @@ module.exports = React.createClass({
         NavigationActions.openAppSidebar.onNext(true);
 
         this.userAlertSubscription = UserActions.alert.subscribe( function(data_){
-            debugger;
             this.setState({
                 snackBarOpen:true,
                 snackBarMessage:data_
             });
 
             setTimeout(function () {
-                debugger;
                 this.setState({
                     snackBarOpen:false,
                     snackBarMessage:"NO REASON"

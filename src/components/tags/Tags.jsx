@@ -80,6 +80,10 @@ module.exports = React.createClass({
 
     render: function () {
 
+        if( !this.props.tags ){
+            this.props.tags = [];
+        }
+
         return (
 
             <div className="TagComponent input-group">

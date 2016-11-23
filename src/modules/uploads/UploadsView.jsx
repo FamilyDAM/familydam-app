@@ -143,11 +143,7 @@ module.exports = React.createClass({
 
         this.UploadMessageSubscription = UploadActions.uploadMessage.subscribe(function (data_) {
             //this.state.currentFile = "";
-            if (data_.substr(0, 1) != "{") {
-                this.setState({'uploadMessage': "Completed", "enableClose": true});
-            } else {
-                this.setState({'uploadMessage': data_});
-            }
+            this.setState({'uploadMessage': data_});
             //if( this.isMounted() ) this.forceUpdate();
         }.bind(this));
     },
@@ -229,10 +225,10 @@ module.exports = React.createClass({
                                 return (
                                     <div>
                                         Total File Progress {this.state.completedFiles} / {this.state.totalFiles}
-                                        ({this.state.errorFiles} Errors)
+                                         ({this.state.errorFiles} Errors)
                                         <br/><br/>
                                         <LinearProgress
-                                            mode="determinate"
+                                            mode="indeterminate"
                                             max={this.state.totalFiles}
                                             min={this.state.completedFiles}
                                             style={{'height': '10px'}}/>

@@ -103,7 +103,6 @@ module.exports = React.createClass({
         {
             this.context.router.push({pathname: '/users/' + user_});
         }else{
-            debugger;
             UserActions.alert.onNext("You are not allowed to edit other users.");
         }
     },
@@ -114,7 +113,6 @@ module.exports = React.createClass({
         {
             this.context.router.push({pathname:'/users/add'})
         }else{
-            debugger;
             UserActions.alert.onNext("You are not allowed to add new family members.");
         }
     },

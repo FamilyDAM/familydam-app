@@ -4,19 +4,19 @@
 /** jsx React.DOM */
 var React = require('react');
 import { Router, Link } from 'react-router';
-
+import { TagCloud } from "react-tagcloud";
 
 var ImageActions = require('../../actions/ImageActions');
 var PhotoStore = require('./../../stores/PhotoStore');
 
 module.exports =  React.createClass({
-    
+
     getDefaultProps: function(){
         return {
             tags:{}
         };
     },
-    
+
     getInitialState: function(){
         return {}
     },
@@ -26,11 +26,23 @@ module.exports =  React.createClass({
         ImageActions.tagsList.source.onNext(true);
 
         // subscribe to changes
-        PhotoStore.tags.subscribe(function(data){
+        this.tagSubscription = PhotoStore.tags.subscribe(function(data){
+
+            for( var key in data ){
+                data[key]['value'] = data[key].name;
+            }
             this.state.tags = data;
+
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
+    },
+
+
+    componentWillUnmount: function(){
+        if( this.tagSubscription ){
+            this.tagSubscription.dispose();
+        }
     },
 
 
@@ -44,6 +56,28 @@ module.exports =  React.createClass({
 
     render: function() {
 
+        if( !this.state.tags ){
+            this.state.tags = {};
+        }
+
+        return (
+
+            <TagCloud minSize={12}
+                      maxSize={35}
+                      colorOptions={{
+                          luminosity: 'light',
+                          hue: 'blue'
+                      }}
+                      tags={this.state.tags}
+                      style={{'padding':'5px'}}
+                      onClick={tag => this.selectItem(tag)} />
+        )
+    },
+
+
+
+    renderOld: function() {
+
         var list = [];
         try
         {
@@ -54,7 +88,7 @@ module.exports =  React.createClass({
 
             return (
                 <div className="tagList">
-                    <ul>
+                    <ul >
                         {list}
                     </ul>
                     <br/>

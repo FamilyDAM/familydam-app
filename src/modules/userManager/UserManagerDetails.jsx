@@ -172,7 +172,6 @@ module.exports = React.createClass({
             UserActions.getUser.source.onNext(userid);
         }else{
             this.context.router.push({pathname: '/users/'});
-            debugger;
             UserActions.alert.onNext("You are not allowed to edit other users.");
         }
 

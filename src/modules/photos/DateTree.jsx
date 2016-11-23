@@ -15,14 +15,14 @@ var Tree = require('../../components/folderTree/Tree.jsx');
 var LoadingIcon = require('../../components/loadingIcon/LoadingIcon.jsx');
 
 module.exports =  React.createClass({
-   
+
 
     getDefaultProps: function(){
         return {
             tree: []
         };
     },
-    
+
     getInitialState: function(){
         return {
             isLoading:true
@@ -49,7 +49,7 @@ module.exports =  React.createClass({
 
     },
 
-    
+
     componentWillUnmount: function () {
         if (this.dateTreeSubscription !== undefined) this.dateTreeSubscription.dispose();
     },
@@ -65,13 +65,26 @@ module.exports =  React.createClass({
 
         var elements = [];
         $.each(items_, (indx_, item_)=> {
-            elements.push(
-                <ListItem key={item_.key}
-                          primaryText={item_.name}
-                          onTouchTap={()=>{this._onSelectHandler(item_)}}
-                          nestedItems={this.getListItem(item_.children)}
-                          style={{'fontSize':'13px', 'lineHeight':'13px'}}/>
-            );
+
+            if( typeof(item_) == "object" ) {
+
+                var children = [];
+                for (var key in item_) {
+                    if (["count", "key", "name", "year", "month", "day", "jcr:primaryType", "nt:unstructured"].indexOf(key) == -1) {
+                        children.push(item_[key]);
+                    }
+                };
+
+                elements.push(
+                    <ListItem key={item_.key}
+                              primaryText={item_.name}
+                              onTouchTap={() => {
+                                  this._onSelectHandler(item_)
+                              }}
+                              nestedItems={this.getListItem(children)}
+                              style={{'fontSize': '13px', 'lineHeight': '13px'}}/>
+                );
+            }
         });
 
         return elements;

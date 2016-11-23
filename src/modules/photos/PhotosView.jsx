@@ -21,6 +21,7 @@ import {
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 
+
 var NodeActions = require('../../actions/NodeActions');
 var FileActions = require('../../actions/FileActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
@@ -68,7 +69,8 @@ module.exports = React.createClass({
             isDateTreeLoading:false,
             isPeopleTreeLoading:false,
             isTagTreeLoading:false,
-            openPreview:false
+            openPreview:false,
+            offset:0
         };
     },
 
@@ -88,18 +90,21 @@ module.exports = React.createClass({
         var _pathData = {'label': 'Photos', 'navigateTo': "photos", 'params': {}, 'level': 1};
         NavigationActions.currentPath.onNext(_pathData);
 
+
         this.filtersSubscription = PhotoStore.filters.subscribe(function (data_) {
             this.state.filters = data_;
 
             //on Initial load, or when filters change run initial search to populate the view
-            ImageActions.search.source.onNext(this.state.filters);
+            ImageActions.search.source.onNext({'filters':this.state.filters, 'offset':0});
 
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
 
         this.searchSubscription = ImageActions.search.sink.subscribe(function (data_) {
-            this.setState({'files': data_, isLoading: false});
+
+            this.state.files = this.state.files.concat(data_);
+            this.setState({'files': this.state.files, isLoading: false});
             //this.state.isLoading = false;
             //this.state.files = data_;
             //if( this.isMounted()) this.forceUpdate();
@@ -156,7 +161,7 @@ module.exports = React.createClass({
 
 
     componentWillUnmount: function () {
-        window.removeEventListener("resize", this.updateDimensions);
+        window.removeEventListener("scroll", this.handleScroll);
 
         if (this.filtersSubscription !== undefined) this.filtersSubscription.dispose();
         if (this.searchSubscription !== undefined) this.filtersSubscription.dispose();
@@ -164,14 +169,23 @@ module.exports = React.createClass({
         if (this.refreshDirectoriesSubscription !== undefined) this.refreshDirectoriesSubscription.dispose();
     },
 
+
     componentDidMount: function () {
-        this.updateDimensions();
-        window.addEventListener("resize", this.updateDimensions);
+        window.addEventListener("scrollX", this.handleScroll);
     },
 
-    updateDimensions: function () {
-        this.setState({width: $(window).width(), height: ($(window).height() - 130) + 'px'});
+
+
+    handleScroll: function () {
+        debugger;
+        if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight-500) ) {
+            // you're at the bottom of the page
+            //console.log("SCROLL - near the bottom");
+            this.state.offset = this.state.offset+1;
+            ImageActions.search.source.onNext({'filters':this.state.filters, 'offset':this.state.offset});
+        }
     },
+
 
     handleLogout: function (event_) {
         //todo, logout and redirect back to /
@@ -351,7 +365,7 @@ module.exports = React.createClass({
             flexDirection:'column',
             flexGrow:0,
             flexShrink:0,
-            minWidth:'240px',
+            width:'240px',
             margin:'20px'};
 
         if( this.state.openPreview ){
@@ -453,6 +467,7 @@ module.exports = React.createClass({
                                     }
                                 })()}
                             </div>
+
                             <TagList
                                 onSelect={this.addFilter}/>
                         </Paper>

@@ -33,7 +33,7 @@ module.exports = {
             //console.log("{PhotoTagsList Service} execute()");
 
             var _this = this;
-            var _url = "/content.tags.json";
+            var _url = "/bin/familydam/api/v1/images/tags";
 
             return $.ajax({
                 'method': "get",
