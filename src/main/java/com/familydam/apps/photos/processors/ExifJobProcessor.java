@@ -72,7 +72,7 @@ public class ExifJobProcessor implements JobConsumer
             }
 
 
-            new ImageExifParser().parseExif(new BufferedInputStream(is), _node);
+            new ImageExifParser(resolverFactory).parseExif(new BufferedInputStream(is), _node);
 
             session.save();
 

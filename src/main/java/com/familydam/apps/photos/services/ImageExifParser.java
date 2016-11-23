@@ -11,8 +11,14 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.familydam.apps.photos.FamilyDAMConstants;
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +33,26 @@ import java.util.Date;
 /**
  * Created by mnimer on 3/5/16.
  */
-public class ImageExifParser
+@Component
+public class ImageExifParser implements IExifParser
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+
+    @Reference
+    private ResourceResolverFactory resolverFactory;
+
+    public ImageExifParser() {
+    }
+
+    public ImageExifParser(ResourceResolverFactory resolverFactory) {
+        this.resolverFactory = resolverFactory;
+    }
+
+    @Activate
+    protected void activate(final BundleContext bundleContext) {
+        bundleContext.toString();
+    }
 
     public Node parseExif(InputStream is, Node node) throws RepositoryException, ImageProcessingException, IOException
     {
@@ -75,9 +98,9 @@ public class ImageExifParser
             SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
             String dateCreated = dateFormat.format(date);
             node.setProperty(FamilyDAMConstants.DAM_DATECREATED, dateCreated);
-
+            new DateCreatedIndexGenerator(resolverFactory).addToIndex(null, new String[]{dateCreated});
         }
-        catch (ImageProcessingException ipe) {
+        catch (Exception ipe) {
             //swallow
             // File Format is not Supported - todo: log node & path
             log.warn(node.getPath() +" | " +ipe.getMessage());
