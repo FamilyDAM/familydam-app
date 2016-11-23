@@ -1,5 +1,5 @@
 {
-  "jcr:primaryType": "nt:folder",
+  "jcr:primaryType": "sling:Folder",
   "jcr:mixinTypes": ["dam:systemfolder"],
   "thumbnails": {
     "jcr:primaryType": "nt:folder",

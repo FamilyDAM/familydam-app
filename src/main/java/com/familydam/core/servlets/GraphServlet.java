@@ -108,7 +108,19 @@ public class GraphServlet extends SlingAllMethodsServlet
     }
 
 
-        @Override
+    /**
+     *
+     *
+     *
+     * alt query:
+     * SELECT * FROM [nt:base] where ISDESCENDANTNODE('/content/dam-files/mike/Photos') and ( [jcr:primaryType] = 'sling:Folder'  ) order by [jcr:path]
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
     {
         log.info("Run GRAPH Servlet");

@@ -1,23 +1,170 @@
 {
-  "familydamProperties": {
+  "familydam_primarytypes": {
+    "evaluatePathRestrictions": true,
+    "compatVersion": 2,
+    "type": "lucene",
+    "async": "async",
     "jcr:primaryType": "oak:QueryIndexDefinition",
-    "declaringNodeTypes": [
-      "nt:file",
-      "dam:file",
-      "dam:image",
+    "indexRules": {
+      "jcr:primaryType": "nt:unstructured",
+      "nt:base": {
+        "jcr:primaryType": "nt:unstructured",
+        "properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "path": {
+            "ordered": true,
+            "name": "jcr:path",
+            "jcr:primaryType": "nt:unstructured"
+          },
+          "primaryType": {
+            "name": "jcr:primaryType",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured"
+          }
+        }
+      }
+    }
+  },
 
-      "dam:music",
-      "dam:video"
-    ],
-    "propertyNames": [
-      "dam:tags",
-      "dam:people",
-      "dam:datecreated",
-      "datecreated",
-      "jcr:primartyType",
-      "jcr:mixinTypes"
-    ],
-    "type": "property",
-    "reindex": false
+  "familydam_datetree": {
+    "evaluatePathRestrictions": true,
+    "compatVersion": 2,
+    "type": "lucene",
+    "async": "async",
+    "jcr:primaryType": "oak:QueryIndexDefinition",
+    "indexRules": {
+      "jcr:primaryType": "nt:unstructured",
+      "dam:image": {
+        "jcr:primaryType": "nt:unstructured",
+        "properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "primaryType": {
+            "name": "jcr:primaryType",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured"
+          }
+        }
+      }
+    }
+  },
+
+  "familydam_datequery": {
+    "compatVersion": 2,
+    "type": "lucene",
+    "async": "async",
+    "jcr:primaryType": "oak:QueryIndexDefinition",
+    "indexRules": {
+      "jcr:primaryType": "nt:unstructured",
+      "dam:image": {
+        "jcr:primaryType": "nt:unstructured",
+        "properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "datecreated": {
+            "name": "dam:datecreated",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured",
+            "notNullCheckEnabled": true
+          }
+        }
+      }
+    }
+  },
+
+  "familydam_peoplelist": {
+    "compatVersion": 2,
+    "type": "lucene",
+    "async": "async",
+    "jcr:primaryType": "oak:QueryIndexDefinition",
+    "indexRules": {
+      "jcr:primaryType": "nt:unstructured",
+      "dam:image": {
+        "jcr:primaryType": "nt:unstructured",
+        "properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "people": {
+            "name": "dam:people",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured",
+            "notNullCheckEnabled": true
+          }
+        }
+      }
+    }
+  },
+
+  "familydam_taglist": {
+    "compatVersion": 2,
+    "type": "lucene",
+    "async": "async",
+    "jcr:primaryType": "oak:QueryIndexDefinition",
+    "indexRules": {
+      "jcr:primaryType": "nt:unstructured",
+      "dam:image": {
+        "jcr:primaryType": "nt:unstructured",
+        "properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "tags": {
+            "name": "dam:tags",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured",
+            "notNullCheckEnabled": true
+          }
+        }
+      }
+    }
+  },
+
+  "familydam_photosearch":{
+    "evaluatePathRestrictions": true,
+    "compatVersion": 2,
+    "type": "lucene",
+    "async": "async",
+    "jcr:primaryType": "oak:QueryIndexDefinition",
+    "indexRules": {
+      "jcr:primaryType": "nt:unstructured",
+      "dam:image": {
+        "jcr:primaryType": "nt:unstructured",
+        "properties": {
+          "jcr:primaryType": "nt:unstructured",
+          "tags": {
+            "name": "dam:tags",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured",
+            "notNullCheckEnabled": true
+          },
+          "people_4": {
+            "name": "function*lower*@dam:people",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured"
+          },
+          "tags_6": {
+            "name": "function*lower*@dam:tags",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured"
+          },
+          "datecreated": {
+            "name": "dam:datecreated",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured"
+          },
+          "people": {
+            "name": "dam:people",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured",
+            "notNullCheckEnabled": true
+          },
+          "datecreated_2": {
+            "ordered": true,
+            "name": "datecreated",
+            "jcr:primaryType": "nt:unstructured"
+          },
+          "primaryType": {
+            "name": "jcr:primaryType",
+            "propertyIndex": true,
+            "jcr:primaryType": "nt:unstructured"
+          }
+        }
+      }
+    }
   }
 }
