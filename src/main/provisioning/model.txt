@@ -22,11 +22,12 @@
   org.apache.sling/org.apache.sling.resourceaccesssecurity/1.0.0
   org.apache.felix/org.apache.felix.shell/1.4.3
   org.apache.felix/org.apache.felix.shell.remote/1.1.2
+#  org.apache.sling/org.apache.sling.query/3.0.0
+
 
 #[configurations]
 #org.apache.sling.engine.impl.auth.SlingAuthenticator [format=properties]
 #  auth.annonymous=true
-
 
 
 

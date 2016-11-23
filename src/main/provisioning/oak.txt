@@ -86,12 +86,12 @@
     groupPrivilegeNames=["jcr:read"]
 
 [configurations runModes=oak_tar]
-  org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService
+  org.apache.jackrabbit.oak.segment.SegmentNodeStoreService
     name="FamilyDAM\ NodeStore"
     customBlobStore=B"false"
 
   org.apache.jackrabbit.oak.plugins.blob.datastore.FileDataStore
-    minRecordLength=I"1000000"
+    minRecordLength=I"1024"
 
 
 [configurations runModes=oak_mongo]

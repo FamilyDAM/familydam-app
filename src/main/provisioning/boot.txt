@@ -64,6 +64,15 @@
 #[configurations runModes=:remove]
 #     org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService.localIndexDir
 
+#org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService
+#    oak.lucene=debug
+
+
+#org.apache.sling.servlets.post.impl.SlingPostServlet
+#    servlet.post.autoCheckout=B"true"
+#    servlet.post.autoCheckin=B"true"
+#    servlet.post.checkinNewVersionableNodes=B"true"
+
 :bootstrap
   uninstall org.apache.sling.launchpad.content
 
