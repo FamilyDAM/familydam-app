@@ -6,7 +6,7 @@
   "private": true,
   "directories": {
     "app": ".build-app",
-    "output": ".build-binary/0.1.0"
+    "output": "build-binary/0.1.0"
   },
   "dependencies": {
     "dialog": "^0.1.8",
@@ -43,7 +43,9 @@
     "appId": "com.FamilyDAM.desktop",
     "asar": false,
     "category": "public.app-category.productivity",
-    "win": {},
+    "win": {
+      "noMsi": true
+    },
     "dmg": {
       "contents": [
         {
@@ -63,13 +65,13 @@
   },
   "scripts": {
     "all": "npm run clean && npm run build",
-    "start:osx": "open ./.build-binary/0.1.0/mac/FamilyDAM.app",
-    "clean": "rm -rf .dist && rm -rf .build-binary ",
+    "start:osx": "open ./build-binary/0.1.0/mac/FamilyDAM.app",
+    "clean": "rm -rf .dist && rm -rf build-binary ",
     "build": "npm run build:app && npm run build:osx && npm run build:win",
     "build:app": "grunt build",
     "build:osx": "build -m",
     "build:win": "build -w",
-    "package:osx": "npm run ./node_modules/.bin/electron-packager ./.build-binary $npm_package_productName --app-version=$npm_package_version --version=$npm_package_electron_version --out=.dist --ignore='^/.dist$|node_modules|.sass-cache|src' --platform=darwin --arch=x64 --sign='Developer ID Application: 11:58 Labs (000000)' --icon=icon.icns --overwrite",
-    "package:win": "npm run ./node_modules/.bin/electron-packager ./.build-binary $npm_package_productName --app-version=$npm_package_version --version=$npm_package_electron_version --out=.dist --ignore='^/.dist$|node_modules|.sass-cache|src' --platform=win32 --arch=ia32 --version-string.CompanyName='11:58 Labs' --version-string.LegalCopyright='Copyright (C) 2016 11:58 Labs' --version-string.FileDescription=$npm_package_productName --version-string.OriginalFilename='FamilyDAM.exe' --version-string.InternalName=$npm_package_productName --version-string.ProductName=$npm_package_productName --version-string.ProductVersion=$npm_package_version --asar=true --icon=logo.ico --overwrite"
+    "package:osx": "npm run ./node_modules/.bin/electron-packager ./build-binary $npm_package_productName --app-version=$npm_package_version --version=$npm_package_electron_version --out=.dist --ignore='^/.dist$|node_modules|.sass-cache|src' --platform=darwin --arch=x64 --sign='Developer ID Application: 11:58 Labs (000000)' --icon=icon.icns --overwrite",
+    "package:win": "npm run ./node_modules/.bin/electron-packager ./build-binary $npm_package_productName --app-version=$npm_package_version --version=$npm_package_electron_version --out=.dist --ignore='^/.dist$|node_modules|.sass-cache|src' --platform=win32 --arch=ia32 --version-string.CompanyName='11:58 Labs' --version-string.LegalCopyright='Copyright (C) 2016 11:58 Labs' --version-string.FileDescription=$npm_package_productName --version-string.OriginalFilename='FamilyDAM.exe' --version-string.InternalName=$npm_package_productName --version-string.ProductName=$npm_package_productName --version-string.ProductVersion=$npm_package_version --asar=true --icon=logo.ico --overwrite"
   }
 }

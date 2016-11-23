@@ -173,7 +173,7 @@
             var cmd = "java";
             var _repo = settings_['storageLocation'];
             //var args = ['-jar',  jarPath, '-p', jarPort, '-Dspring.profiles.active='+settings_['profile'], '-Dapp-root', settings_['storageLocation'] ];
-            var args = ['-jar',  jarPath, '-p',  jarPort, '-c', settings_['storageLocation'], '-Dspring.profiles.active='+settings_['profile'] ];
+            var args = ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005', '-jar',  jarPath, '-p',  jarPort, '-c', settings_['storageLocation'], '-Dspring.profiles.active='+settings_['profile'] ];
 
 
             logger.debug("check java version");
