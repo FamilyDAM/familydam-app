@@ -146,6 +146,7 @@ public class NodeMapper
             }
             catch (ValueFormatException ex) {
                 //swallow and do nothing
+                ex.printStackTrace();
             }
         }
         file.setPeople(_people);
@@ -153,17 +154,15 @@ public class NodeMapper
 
         try {
             if (node.hasProperty(FamilyDAMDashboardConstants.DAM_DATECREATED)) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = sdf.parse(node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getString());
-                Calendar cal = sdf.getCalendar();
-                file.setDateCreated(cal);
+                file.setDateCreated(node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getDate());
             } else {
                 file.setDateCreated(Calendar.getInstance());
             }
         }
         catch (Exception pe) {
             //todo: decide what to do
-            pe.printStackTrace();
+            //pe.printStackTrace();
+            file.setDateCreated(Calendar.getInstance());
         }
 
         return file;

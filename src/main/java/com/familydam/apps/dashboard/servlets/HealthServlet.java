@@ -4,7 +4,6 @@
 
 package com.familydam.apps.dashboard.servlets;
 
-import com.familydam.apps.dashboard.daos.TreeDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
@@ -29,8 +28,6 @@ public class HealthServlet extends SlingSafeMethodsServlet
 {
     public final Logger log = LoggerFactory.getLogger(HealthServlet.class);
 
-    @Reference
-    private TreeDao treeDao;
     private ObjectMapper objectMapper = new ObjectMapper();
 
 
