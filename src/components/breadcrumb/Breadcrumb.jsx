@@ -12,7 +12,10 @@ var NavigationActions = require('../../actions/NavigationActions');
 module.exports = React.createClass({
 
     getDefaultProps: function () {
-        return {path: ""};
+        return {
+            path: "",
+            "style":""
+        };
     },
 
 
@@ -118,7 +121,7 @@ module.exports = React.createClass({
     render: function () {
 
         return (
-            <div style={{'display':'flex', 'alignItems':'center'}}>
+            <div >
                 <ol className="breadcrumb">
                     {this.state.paths.map(function (path_) {
                         if (path_.navigateTo)

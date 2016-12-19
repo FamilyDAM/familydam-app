@@ -70,7 +70,8 @@ module.exports = React.createClass({
             isPeopleTreeLoading:false,
             isTagTreeLoading:false,
             openPreview:false,
-            offset:0
+            offset:0,
+            groupBy:'date:day'
         };
     },
 
@@ -103,11 +104,25 @@ module.exports = React.createClass({
 
         this.searchSubscription = ImageActions.search.sink.subscribe(function (data_) {
 
-            this.state.files = this.state.files.concat(data_);
-            this.setState({'files': this.state.files, isLoading: false});
-            //this.state.isLoading = false;
-            //this.state.files = data_;
-            //if( this.isMounted()) this.forceUpdate();
+            for(var item in data_){
+                var val = data_[item].value;
+                var groupFound = false;
+
+                for(var group in this.state.files){
+                    if( this.state.files[group].value == val ){
+                        groupFound = true;
+                        this.state.files[group].children = this.state.files[group].children.concat(data_[item].children);
+                        break;
+                    }
+                }
+
+                if( !groupFound ){
+                    this.state.files.push( data_[item] );
+                }
+            }
+
+            this.setState({'files': this.state.files, 'isLoading': false});
+
         }.bind(this));
 
 
@@ -120,6 +135,7 @@ module.exports = React.createClass({
 
         //Listen for directory changes
         this.directoriesSubscription = DirectoryStore.directories.subscribe(function (data_) {
+
             var isChild = false;
             for (var i = 0; i < this.state.addNodeRefs.length; i++)
             {
@@ -171,18 +187,27 @@ module.exports = React.createClass({
 
 
     componentDidMount: function () {
-        window.addEventListener("scrollX", this.handleScroll);
+        //debugger;
+        //window.addEventListener("scrollX", this.handleScroll);
+        //window.addEventListener("scrollY", this.handleScroll);
+        window.addEventListener("scroll", this.handleScroll);
     },
 
 
 
-    handleScroll: function () {
-        debugger;
-        if ( (window.innerHeight + window.scrollY) >= (document.body.offsetHeight-500) ) {
-            // you're at the bottom of the page
-            //console.log("SCROLL - near the bottom");
-            this.state.offset = this.state.offset+1;
-            ImageActions.search.source.onNext({'filters':this.state.filters, 'offset':this.state.offset});
+    handleScroll: function (event_) {
+
+        if( !this.state.isLoading ) {
+            if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500)) {
+                // you're at the bottom of the page
+                //console.log("SCROLL - near the bottom");
+                this.state.isLoading = true;
+                this.state.offset = this.state.offset + 1;
+                ImageActions.search.source.onNext({
+                    'filters': this.state.filters,
+                    'offset': this.state.offset
+                });
+            }
         }
     },
 
@@ -236,7 +261,7 @@ module.exports = React.createClass({
 
 
     handleGroupByChange: function(event_, key_, payload_) {
-        this.setState({'files': [], 'isLoading': true});
+        this.setState({'files': [], 'isLoading': true, 'groupBy':payload_});
 
         var data = {};
         data.type = "group";
@@ -386,6 +411,12 @@ module.exports = React.createClass({
             _rightSidebar['width'] = '25%';
         };
 
+
+        var _displayLoadingMessage = false;
+        if( this.state.isLoading ){//&& this.state.offset>0 ){
+            _displayLoadingMessage = true;
+        };
+
         return (
             <div style={{'display':'flex', 'flexDirection':'column', 'minHeight':'calc(100vh - 65px)'}}>
 
@@ -407,13 +438,10 @@ module.exports = React.createClass({
                             <div className="row" style={{'width':'100%'}}>
                                 <div className="col-xs-12">
                                     <Subheader style={{'display':'flex', 'alignItems':'flex-start'}}>Group Photos</Subheader>
-                                    <DropDownMenu onChange={this.handleGroupByChange} value="date:day">
-                                        <MenuItem value="date:day" primaryText="Group By Day"/>
-                                        <MenuItem value="date:month" primaryText="Group By Month"/>
-                                        <MenuItem value="date:year"  primaryText="Group By Year"/>
-                                        <MenuItem value="gps:location" primaryText="Group By Location"/>
-                                        <MenuItem value="tag:person" primaryText="Group By Person"/>
-                                        <MenuItem value="tag:tag" primaryText="Group By Tag"/>
+                                    <DropDownMenu onChange={this.handleGroupByChange} value={this.state.groupBy}>
+                                        <MenuItem value={"date:day"} primaryText="Group By Day"/>
+                                        <MenuItem value={"date:month"} primaryText="Group By Month"/>
+                                        <MenuItem value={"date:year"}  primaryText="Group By Year"/>
                                     </DropDownMenu>
                                 </div>
                             </div>
@@ -480,7 +508,15 @@ module.exports = React.createClass({
                                 onChange={this.handleImageToggle}
                                 isLoading={this.state.isLoading}
                                 files={this.state.files}/>
+
+                            <div style={{'width':'100%', 'height':'65px', 'clear':'left', 'textAlign':'center', 'display': _displayLoadingMessage?'block':'none'}}>
+                                <span style={{'lineHeight':'65px', 'textAlign':'center'}}>
+                                   <LoadingIcon color="#757575" style={{'width':'36px', 'height':'36px'}}/> Loading More
+                                </span>
+                            </div>
+
                         </Paper>
+
                     </div>
 
 
@@ -497,160 +533,11 @@ module.exports = React.createClass({
                 </div>
             </div>
 
+
         )
     }
 
 
-    /****
-     *
-
-     renderOld: function () {
-
-        var _this = this;
-        var tableClass = "card main-content col-xs-8 col-sm-9 col-md-9 col-lg-10";
-        var asideClass = "box body-sidebar col-xs-4 col-sm-3 col-md-3 col-lg-2";
-        var asideRightClass = "card hidden col-xs-4 col-sm-3 col-md-3";
-
-        if (this.state.selectedImages.length > 0)
-        {
-            tableClass = "card main-content col-xs-8 col-sm-9 col-md-6 col-lg-7";
-            asideClass = "box body-sidebar hidden-xs hidden-sm col-md-3 col-lg-2";
-            asideRightClass = "card hidden-xs hidden-sm col-md-3 col-lg-3";
-        }
-
-        var asideStyle = {};
-        asideStyle['height'] = this.state.height;
-
-        var sectionStyle = {};
-        //sectionStyle['overflow'] = 'scroll';
-        //sectionStyle['height'] = this.state.height;
-
-
-        try
-        {
-
-            return (
-
-                <div className="photosView container-fluid">
-                    <div className="row">
-
-                        <aside className={asideClass} style={asideStyle}>
-
-                            <div className="boxRow content" style={{'minHeight':'200px'}}>
-                                <SidebarSection label="Filter by folder" open={true}>
-                                    <Tree
-                                        baseDir="/content/dam-files"
-                                        onSelect={(e_)=>{
-                                            e_.type = "path";
-                                            this.addFilter(e_);
-                                        }}/>
-                                </SidebarSection>
-                                <br/>
-                                <SidebarSection label="Filter by date" open={true}>
-                                    <DateTree
-                                        onSelect={(e_)=>{
-                                            e_.type = "date";
-                                            this.addFilter(e_);
-                                        }}/>
-                                </SidebarSection>
-                                <br/>
-                                <SidebarSection label="Filter by people" open={true}>
-                                    <PeopleList
-                                        onSelect={this.addFilter}/>
-                                </SidebarSection>
-                                <br/>
-                                <SidebarSection label="Filter by tag" open={true}>
-                                    <TagList
-                                        onSelect={this.addFilter}/>
-                                </SidebarSection>
-
-                            </div>
-
-
-                            <div className=" boxRow footer">
-                                <AppSidebar />
-                            </div>
-
-                        </aside>
-
-                        <section className={tableClass} style={sectionStyle}>
-                            <div className="container-fluid photo-body">
-
-
-                                <div>
-                                    <DropdownButton id="groupByOptions" title="Group By:"
-                                                    onSelect={this.handleGroupByChange}>
-                                        <MenuItem eventKey="date:day">Group By Day</MenuItem>
-                                        <MenuItem eventKey="date:month">Group By Month</MenuItem>
-                                        <MenuItem eventKey="date:year">Group By Year</MenuItem>
-                                        <MenuItem eventKey="gps:location">Group By Location</MenuItem>
-                                        <MenuItem eventKey="tag:person">Group By Person</MenuItem>
-                                        <MenuItem eventKey="tag:tag">Group By Tag</MenuItem>
-                                    </DropdownButton>
-
-
-                                    <Tags
-                                        title="Filters"
-                                        tags={this.state.filters}
-                                        onAdd={this.addFreeFormFilter}
-                                        onRemove={this.removeFilter}
-                                    />
-                                </div>
-
-                                {(() => {
-                                    if (this.state.isLoading)
-                                    {
-                                        return (
-                                            <div className="loadingPanel text-center">
-                                                <i className="fa fa-spinner fa-spin fa-4x fa-fw margin-bottom"
-                                                   style={{'marginTop':'50px'}}></i>
-                                            </div>
-                                        );
-                                    }
-                                })()}
-
-
-                                {this.state.files.map(function (item_, indx_) {
-                                    return (
-                                        <div key={'group-' +indx_}>
-                                            <SidebarSection
-                                                style={{'height':'60px'}}
-                                                label={item_.label}/>
-
-
-                                            <div style={{'clear':'left'}}>
-                                                <IsotopeGallery
-                                                    id={'gallery-' +indx_}
-                                                    onToggle={this.handleImageToggle}
-                                                    images={item_.children}/>
-                                            </div>
-                                        </div>
-                                    )
-                                }.bind(this))}
-
-                            </div>
-                        </section>
-
-                        <aside className={asideRightClass}>
-                            <PhotoActions
-                                images={this.state.selectedImages}
-                                onClose={this.handleActionClose}/>
-                        </aside>
-                    </div>
-
-
-                    <Fab glyph="plus" linkTo="upload"/>
-
-                    <br/>
-                </div>
-            );
-        } catch (err_)
-        {
-            console.log(err_);
-            return (<div>{err_}</div>);
-        }
-    }
-     ****/
 
 });
 

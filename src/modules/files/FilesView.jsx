@@ -469,7 +469,7 @@ module.exports = React.createClass({
 
                         <IconButton iconClassName="material-icons">folder</IconButton>
 
-                        <Breadcrumb path={this.state.selectedPath} style={{'paddingLeft': '0px;'}}/>
+                        <Breadcrumb path={this.state.selectedPath} style={{'marginLeft': '-30px;', 'display':'flex', 'alignItems':'center'}}/>
 
                     </ToolbarGroup>
                     <ToolbarGroup style={{'flexGrow':0, 'justifyContent':'flex-end', 'float':'right'}}>

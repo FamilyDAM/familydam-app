@@ -10,7 +10,6 @@ var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import cyan500 from 'material-ui/styles/colors';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 //import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
@@ -30,6 +29,21 @@ var NavigationActions = require('../../actions/NavigationActions');
 var UserStore = require('./../../stores/UserStore');
 
 const muiThemeLight = getMuiTheme(lightBaseTheme);
+
+const muiThemeCustom = getMuiTheme({
+    palette: {
+        "primary1Color":"#3f51b5",
+        "primary2Color":"#4fc3f7",
+        "primary3Color":"#bdbdbd",
+        "accent1Color":"#ff6e40",
+        "accent2Color":"#f5f5f5",
+        "accent3Color":"#9e9e9e"
+    },
+    appBar: {
+        height: 65,
+    },
+});
+
 //const muiThemeDark = getMuiTheme(darkBaseTheme);
 /*****************DashboardView.jsx
  import {
@@ -170,7 +184,7 @@ module.exports = React.createClass({
         try
         {
             return (
-                <MuiThemeProvider muiTheme={muiThemeLight}>
+                <MuiThemeProvider muiTheme={muiThemeCustom}>
                     <div className="dashboardView" style={{'display':'flex', 'flexDirection':'column'}}>
 
                         <header>

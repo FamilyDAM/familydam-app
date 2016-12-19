@@ -32,6 +32,7 @@ var Rating = require('react-rating');
 var Tags = require('./../../components/tags/Tags.jsx');
 var ExifMap = require('./../../components/exifMap/ExifMap.jsx');
 var ExifData = require('./../../components/exifData/ExifData.jsx');
+var Breadcrumb = require('../../components/breadcrumb/Breadcrumb.jsx');
 
 var UserStore = require('./../../stores/UserStore');
 var SearchStore = require('./../../stores/SearchStore');
@@ -387,13 +388,15 @@ module.exports = React.createClass({
                 <div style={{'display': 'flex', 'flexDirection': 'column', 'height': '55px'}}>
                     <Toolbar style={{'display': 'flex', 'height': '50px', 'alignItems': 'center'}}>
                         <ToolbarGroup firstChild={true}
-                                      style={{'flexGrow': 1, 'justifyContent': 'flex-start', 'float': 'left'}}>
+                                      style={{'flexGrow': 1, 'justifyContent': 'flex-start', 'float': 'left', 'alignItems':'center'}}>
 
                             <BackIcon
                                 style={{'marginLeft':'10px'}}
                                 onClick={() => {
                                     window.history.go(-1);
                                 }}/>
+
+                            <Breadcrumb path={this.state.path.substring(0, this.state.path.lastIndexOf('/')+1)} style={{'marginLeft': '-10px;'}}/>
 
                         </ToolbarGroup>
                         <ToolbarGroup style={{'flexGrow': 0, 'justifyContent': 'flex-end', 'float': 'right'}}>
