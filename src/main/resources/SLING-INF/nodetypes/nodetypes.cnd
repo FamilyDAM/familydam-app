@@ -54,11 +54,14 @@
 
 [dam:image] mixin
 - dam:datecreated (STRING)
+- dam:dateexifparsed (DATE)
+- dam:datephashparsed (DATE)
 + dam:metadata (nt:unstructured)
 + dam:renditions (nt:folder)
 
 [dam:music] mixin
 - dam:datecreated (STRING)
+- dam:dateid3parsed (DATE)
 + dam:metadata (nt:unstructured)
 
 [dam:video] mixin
