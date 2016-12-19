@@ -20,14 +20,10 @@ package com.familydam.apps.photos.servlets;
 
 import com.familydam.apps.photos.FamilyDAMConstants;
 import com.familydam.apps.photos.services.ImageResizeService;
-import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.PropertyOption;
 import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.ReferenceCardinality;
-import org.apache.felix.scr.annotations.ReferencePolicy;
-import org.apache.felix.scr.annotations.ReferencePolicyOption;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.oak.commons.IOUtils;
@@ -48,7 +44,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Dictionary;
 
 /**

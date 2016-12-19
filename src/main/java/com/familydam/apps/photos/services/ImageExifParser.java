@@ -14,7 +14,6 @@ import com.familydam.apps.photos.FamilyDAMConstants;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.sling.api.resource.ResourceResolverFactory;
@@ -26,7 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
@@ -56,6 +55,8 @@ public class ImageExifParser implements IExifParser
 
     public Node parseExif(InputStream is, Node node) throws RepositoryException, ImageProcessingException, IOException
     {
+        log.info("Parse EXIF:" +node.getPath() );
+
         Node metadataNode = JcrUtils.getOrAddNode(node, FamilyDAMConstants.METADATA, "nt:unstructured");
 
         try {
@@ -95,10 +96,10 @@ public class ImageExifParser implements IExifParser
             }
 
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
-            String dateCreated = dateFormat.format(date);
-            node.setProperty(FamilyDAMConstants.DAM_DATECREATED, dateCreated);
-            new DateCreatedIndexGenerator(resolverFactory).addToIndex(null, new String[]{dateCreated});
+            Calendar dateCreatedCal = Calendar.getInstance();
+            dateCreatedCal.setTime(date);
+            node.setProperty(FamilyDAMConstants.DAM_DATECREATED, dateCreatedCal);
+            new DateCreatedIndexGenerator(resolverFactory).addToIndex(null, new Calendar[]{dateCreatedCal});
         }
         catch (Exception ipe) {
             //swallow

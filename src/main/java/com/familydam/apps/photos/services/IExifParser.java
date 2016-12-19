@@ -1,7 +1,6 @@
 package com.familydam.apps.photos.services;
 
 import com.drew.imaging.ImageProcessingException;
-import org.apache.felix.scr.annotations.Component;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;

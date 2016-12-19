@@ -13,6 +13,7 @@ import org.apache.sling.api.SlingConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -86,8 +87,8 @@ public class ImageNodeEventListener implements EventHandler
 
 
                         // start jobs
-                        this.jobManager.addJob(FamilyDAMConstants.EXIF_JOB_TOPIC, payload);
-                        this.jobManager.addJob(FamilyDAMConstants.PHASH_JOB_TOPIC, payload);
+                        Job exifJob = this.jobManager.addJob(FamilyDAMConstants.EXIF_JOB_TOPIC, payload);
+                        Job phashJob = this.jobManager.addJob(FamilyDAMConstants.PHASH_JOB_TOPIC, payload);
 
                         log.debug("The FamilyDAM IMAGE jobs have been created for: {}", propPath);
 

@@ -22,7 +22,7 @@
     <groupId>com.familydam.osgi</groupId>
     <artifactId>osgi-image-handlers</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.3-SNAPSHOT</version>
     <name>OSGI Image Handlers</name>
     <description>Various image handlers for the FamilyDAM application</description>
 
