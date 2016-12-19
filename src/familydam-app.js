@@ -60,11 +60,13 @@ app.on('ready', function() {
         }
 
 
-        logger.debug("Start Repository");
-        app.startServerApplication(_settings);
-
-        logger.debug("Load splash screen");
+        logger.debug("Load Splash Screen");
         app.loadSplashApplication();
+
+
+        logger.debug("Start Repository");
+        configurationManager.initializeStorageLocation(_settings);
+        app.startServerApplication(_settings);
 
 
         /***
@@ -173,6 +175,7 @@ app.loadSplashApplication = function(){
     splashWindow.loadURL('file://' + __dirname + '/apps/splash/index.html');
     splashWindow.show();
     splashWindow.focus();
+    //splashWindow.openDevTools();
 
 
     /** useful snippet of code, saving it for future reference

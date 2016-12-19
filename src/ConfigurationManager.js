@@ -153,7 +153,7 @@
         console.log("DIR:" + __dirname );
         console.log("Load configuration window (" +new Date() +")  file://" + __dirname + "/apps/config/index.html");
 
-        configWindow.openDevTools();
+        //configWindow.openDevTools();
         configWindow.loadURL('file://' + __dirname + '/apps/config/index.html');
         configWindow.webContents.on('did-finish-load', function()
             {
@@ -225,7 +225,10 @@
 
         getSettings: function(){
             return settings;
-        }
+        },
+
+
+        initializeStorageLocation: initializeStorageLocation
 
     };
 
