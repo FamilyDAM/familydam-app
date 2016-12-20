@@ -5,6 +5,7 @@
 package com.familydam.apps.photos.processors;
 
 import com.familydam.apps.photos.FamilyDAMConstants;
+import com.familydam.apps.photos.services.ImageExifParser;
 import com.familydam.apps.photos.services.ImagePHash;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
@@ -24,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.Calendar;
 
 /**
  * Created by mnimer on 3/5/16.
@@ -71,9 +73,13 @@ public class PHashJobProcessor implements JobConsumer
             }
 
 
-            ImagePHash pHash = new ImagePHash();
-            String hash = pHash.getHash(new BufferedInputStream(is));
-            _node.setProperty("phash", hash);
+            try {
+                ImagePHash pHash = new ImagePHash();
+                String hash = pHash.getHash(new BufferedInputStream(is));
+                _node.setProperty("phash", hash);
+            }finally {
+                _node.setProperty("dam:datephashparsed", Calendar.getInstance());
+            }
 
             session.save();
 

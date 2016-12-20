@@ -1,14 +1,17 @@
 package com.familydam.apps.photos.cron;
 
 import com.familydam.apps.photos.FamilyDAMConstants;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
+import com.google.common.util.concurrent.AbstractScheduledService;
+import org.apache.felix.scr.annotations.*;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.event.impl.jobs.queues.QueueServices;
+import org.apache.sling.event.impl.support.Environment;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.apache.sling.event.jobs.ScheduledJobInfo;
+import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,21 +21,19 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Check all dam:images for images that have not had their EXIF date parsed
  *
  * Created by mike on 12/18/16.
  */
-@Component(immediate = true)
+@Component(metatype = true, immediate = true)
 @Service(value = Runnable.class)
 @org.apache.felix.scr.annotations.Properties({
-        @org.apache.felix.scr.annotations.Property(name = "scheduler.period", value = "*/2 * * * *"), //"15 0 * * *" == 12:15am
-        @org.apache.felix.scr.annotations.Property(name="scheduler.concurrent", boolValue=true)
+        @Property(name = "scheduler.expression", value = "0 0 1 1/1 * ? *",
+                label="Quartz Cron Expression", description="Quartz Scheduler specific cron expression. Do not put unix cron expression"), //1:00am // 0 0/1 * 1/1 * ? * == 1min
+        @Property(name="scheduler.concurrent", propertyPrivate=true, boolValue=false)
 })
 public class EXIFParseValidationCronJob implements Runnable {
 
@@ -45,6 +46,12 @@ public class EXIFParseValidationCronJob implements Runnable {
 
     @Reference
     private ResourceResolverFactory resolverFactory;
+
+
+    @Activate
+    protected void activate(ComponentContext componentContext) throws Exception {
+        this.logger.info("EXIFParseValidationCronJob");
+    }
 
     @Override
     public void run() {
@@ -72,27 +79,26 @@ public class EXIFParseValidationCronJob implements Runnable {
             {
                 Node n = (Node)nodeItr.next();
 
-                Calendar exifDT = n.getProperty("dam:dateexifparsed").getDate();
-                Calendar phashDT = n.getProperty("dam:datephashparsed").getDate();
 
                 // create JOB payload
                 final Map<String, Object> payload = new HashMap<String, Object>();
                 payload.put("resourcePath", n.getPath());
-                payload.put("resourceType", n.getPrimaryNodeType());
+                payload.put("resourceType", n.getPrimaryNodeType().getName());
                 payload.put("eventUserId", session.getUserID());
 
-                if( exifDT == null ){
+                if( !n.hasProperty("dam:dateexifparsed") || n.getProperty("dam:dateexifparsed") == null ){
                     Boolean exifJobExists = false;
 
                     ScheduledJobInfo jobInfo = null;
-                    for (Object o : payload.values()) {
-                        jobInfo = (ScheduledJobInfo)o;
+                    Iterator itr = jobs.iterator();
+                    while( itr.hasNext() ){
+                        jobInfo = (ScheduledJobInfo)itr.next();
                         exifJobExists = jobInfo.getJobTopic().equalsIgnoreCase(FamilyDAMConstants.EXIF_JOB_TOPIC) && jobInfo.getJobProperties().get("resourcePath").equals(n.getPath());
                         if( exifJobExists  ) break;
                     }
 
                     if( !exifJobExists ) {
-                        Job exifJob = this.jobManager.addJob(FamilyDAMConstants.EXIF_JOB_TOPIC, payload);
+                        Job phashJob = this.jobManager.addJob(FamilyDAMConstants.EXIF_JOB_TOPIC, payload);
                     }else if(jobInfo != null){
                         jobInfo.reschedule();
                     }
@@ -100,12 +106,13 @@ public class EXIFParseValidationCronJob implements Runnable {
 
 
 
-                if( phashDT == null ){
+                if( !n.hasProperty("dam:datephashparsed") || n.getProperty("dam:datephashparsed") == null ){
                     Boolean phashJobExists = false;
 
                     ScheduledJobInfo jobInfo = null;
-                    for (Object o : payload.values()) {
-                        jobInfo = (ScheduledJobInfo)o;
+                    Iterator itr = jobs.iterator();
+                    while( itr.hasNext() ){
+                        jobInfo = (ScheduledJobInfo)itr.next();
                         phashJobExists = jobInfo.getJobTopic().equalsIgnoreCase(FamilyDAMConstants.PHASH_JOB_TOPIC) && jobInfo.getJobProperties().get("resourcePath").equals(n.getPath());
                         if( phashJobExists  ) break;
                     }

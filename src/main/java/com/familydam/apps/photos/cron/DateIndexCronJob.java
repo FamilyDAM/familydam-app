@@ -13,7 +13,7 @@ import javax.jcr.Session;
 /**
  * Created by mike on 12/18/16.
  */
-@Component
+@Component(immediate = true)
 @Service(value = Runnable.class)
 @Properties({
         @Property(name = "scheduler.period", value = "30 0 * * *"), //12:30am

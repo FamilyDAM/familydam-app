@@ -8,6 +8,7 @@ import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
 import com.familydam.apps.photos.daos.TreeDao;
 import com.familydam.apps.photos.services.DateCreatedIndexGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
@@ -20,6 +21,9 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.json.sling.ResourceTraversor;
+import org.osgi.service.component.ComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -40,6 +44,9 @@ import java.io.IOException;
 })
 public class DateTreeServlet extends SlingSafeMethodsServlet
 {
+    /** Logger. */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Reference
     private TreeDao treeDao;
 
@@ -47,6 +54,12 @@ public class DateTreeServlet extends SlingSafeMethodsServlet
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+
+
+    @Activate
+    protected void activate(ComponentContext componentContext) throws Exception {
+        this.logger.info("DateTreeServlet");
+    }
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException

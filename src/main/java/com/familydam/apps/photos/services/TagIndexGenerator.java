@@ -3,6 +3,7 @@ package com.familydam.apps.photos.services;
 import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.value.LongValue;
@@ -19,7 +20,8 @@ import java.util.*;
 /**
  * Created by mike on 11/11/16.
  */
-@Component
+@Component(immediate = true)
+@Service(value= TagIndexGenerator.class)
 public class TagIndexGenerator
 {
     /** Logger. */

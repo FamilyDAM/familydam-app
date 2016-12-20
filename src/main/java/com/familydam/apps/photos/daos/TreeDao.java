@@ -8,8 +8,10 @@ import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
 import com.familydam.apps.dashboard.exceptions.UnknownINodeException;
 import com.familydam.apps.photos.services.PeopleIndexGenerator;
 import com.familydam.apps.photos.services.TagIndexGenerator;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +50,13 @@ public class TreeDao
         tagIndexGenerator = new TagIndexGenerator();
         peopleIndexGenerator = new PeopleIndexGenerator();
     }
+
+
+    @Activate
+    protected void activate(ComponentContext componentContext) throws Exception {
+        this.log.info("TreeDao");
+    }
+
 
 
     /**

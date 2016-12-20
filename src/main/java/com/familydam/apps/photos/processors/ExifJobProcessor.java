@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.Calendar;
 
 /**
  * Created by mnimer on 3/5/16.
@@ -72,8 +73,11 @@ public class ExifJobProcessor implements JobConsumer
             }
 
 
-            new ImageExifParser(resolverFactory).parseExif(new BufferedInputStream(is), _node);
-
+            try {
+                new ImageExifParser(resolverFactory).parseExif(new BufferedInputStream(is), _node);
+            }finally {
+                _node.setProperty("dam:dateexifparsed", Calendar.getInstance());
+            }
             session.save();
 
             log.trace("EXIF Metadata has been parsed for the file {}", resourceName);
