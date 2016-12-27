@@ -2,8 +2,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 
-const {app} = require('electron');  // Module to control application life.
-const {BrowserWindow} = require('electron');  // Module to create native browser window.
+const {app, BrowserWindow, ipcMain} = require('electron');  // Module to control application life.
 var http = require('http');
 var fs = require('fs');
 var serverManager = require('./ServerManager');
@@ -23,8 +22,8 @@ var isServerReady = false;
 app.on('ready', function() {
 
     // Log level
-    logger.transports.console.level = 'debug';
-    logger.transports.file.level = 'debug';
+    logger.transports.console.level = 'info';
+    logger.transports.file.level = 'info';
     /**
      * Set output format template. Available variables:
      * Main: {level}, {text}
@@ -32,6 +31,9 @@ app.on('ready', function() {
      */
     logger.transports.console.format = '{h}:{i}:{s}:{ms} {text}';
 
+
+    // Report crashes to our server.
+    //app.crashReporter.start();
 
 
     // Create the browser window.
@@ -55,7 +57,7 @@ app.on('ready', function() {
             logger.transports.file.file = _settings['storageLocation'] +"/desktop.log";// fs.createWriteStream options, must be set before first logging
             logger.transports.file.streamConfig = { flags: 'w' };
             // set existed file stream
-            logger.transports.file.stream = fs.createWriteStream(_settings['storageLocation'] +"/desktop.log");
+            logger.transports.file.stream = fs.createWriteStream(_settings['storageLocation'] +"cd /desktop.log");
 
         }
 
@@ -92,7 +94,6 @@ app.on('ready', function() {
          ***/
     }
 });
-
 
 
 
@@ -172,17 +173,19 @@ app.loadSplashApplication = function(){
     configWindow.hide();
 
     // and load the index.html of the app.
+    //splashWindow.openDevTools();
     splashWindow.loadURL('file://' + __dirname + '/apps/splash/index.html');
     splashWindow.show();
     splashWindow.focus();
-    //splashWindow.openDevTools();
 
-
-    /** useful snippet of code, saving it for future reference
      splashWindow.webContents.on('did-finish-load', function() {
-        splashWindow.webContents.executeJavaScript("alert('start splash page');");
-    });
-     **/
+        //useful snippet of code, saving it for future reference
+        //splashWindow.webContents.executeJavaScript("alert('start splash page');");
+
+         app.sendClientMessage("start-status", {"code":"check-updates", "message":"Checking for updates...", "progress":"0%"}, true);
+         app.sendClientMessage("start-status", {"code":"starting-repository", "message":"Starting Repository...", "progress":"0%"}, true);
+
+     });
 
 
 };
@@ -192,8 +195,8 @@ app.loadDashboardApplication = function(host, port){
 
     console.log("{loadDashboardApplication} " +"http://" +host +":" +port +"/index.html");
 
-    splashWindow.hide();
-    configWindow.hide();
+    splashWindow.destroy();
+    configWindow.destroy();
     mainWindow.maximize();
     mainWindow.show();
 
@@ -272,6 +275,8 @@ app.sendClientMessage = function(_type, _message, _logToConsole)
         console.dir(_type);
         console.dir(_message);
     }
+
+    splashWindow.webContents.send(_type, _message);
     if (splashWindow !== undefined && splashWindow.webContents != null) splashWindow.webContents.send(_type, _message);
     if (mainWindow !== undefined && mainWindow.webContents != null) mainWindow.webContents.send(_type, _message);
 };

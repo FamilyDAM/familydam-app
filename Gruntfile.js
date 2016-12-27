@@ -2,7 +2,8 @@ module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('build', ['clean', 'jshint', 'copy:app', 'copy:splash', 'copy:app-configwizard', 'copy:repository']);
+    grunt.registerTask('default', ['build']);
+    grunt.registerTask('build', ['clean', 'jshint', 'copy:app', 'copy:splash', 'babel', 'copy:app-configwizard', 'copy:repository']);
     grunt.registerTask('build-dev', ['build', 'watch']);
     //grunt.registerTask('build-electron', ['clean:binaryDist', 'electron']);
 
@@ -20,6 +21,23 @@ module.exports = function(grunt) {
         options: options,
         pkg: grunt.file.readJSON('package.json'),
 
+
+
+        babel: {
+            "options": {
+                "sourceMap": true,
+                "plugins": ["transform-es2015-modules-commonjs"] //This is the line to be added.
+            },
+            dist: {
+                files: [{
+                    "expand": true,
+                    "cwd": "src/apps/splash",
+                    "src": ["*.js"],
+                    "dest": ".build-app/apps/splash",
+                    "ext": ".js"
+                }]
+            }
+        },
 
         watch: {
             src: {
@@ -59,7 +77,6 @@ module.exports = function(grunt) {
         },
 
 
-
         copy: {
             app: {
                 files: [{
@@ -72,7 +89,8 @@ module.exports = function(grunt) {
                         '**/*.json',
                         '*.{html,ico,png,txt}',
                         '**/*.css',
-                        'resources/**/*',
+                        '**/*.ttf',
+                        'assets/**/*',
                         '.htaccess'
                     ]
                 }]
@@ -128,9 +146,7 @@ module.exports = function(grunt) {
             all: [
                 '<%= options.app %>*.js'
             ]
-        }
-
-
+        },
 
     });
 
