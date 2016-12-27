@@ -69,9 +69,6 @@ public class TreeDao
     public Map dateTree(Session session, String path_) throws RepositoryException, UnknownINodeException
     {
 
-
-
-
         StringBuffer sql = new StringBuffer("SELECT [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "]  FROM [dam:image] where [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "] is not null");
 
 

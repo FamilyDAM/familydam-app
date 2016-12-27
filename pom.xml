@@ -191,6 +191,27 @@
         </dependency>
 
 
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+
+
+
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -247,10 +268,10 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Private-Package>
-                            com.familydam.apps.photos.*,com.familydam.apps.photos.servlets.*,com.familydam.apps.photos.cron.*
+                            com.familydam.apps.photos.*,com.familydam.apps.photos.servlets.*,com.familydam.apps.photos.cron.*,com.familydam.apps.photos.daos.*
                         </Private-Package>
                         <Export-Package />
-                        <Embed-Dependency>metadata-extractor,xmpcore,imgscalr-lib,im4java,commons-imaging,thumbnailator</Embed-Dependency>
+                        <Embed-Dependency>metadata-extractor,xmpcore,imgscalr-lib,im4java,commons-imaging,thumbnailator,jackson-databind,jackson-annotations,jackson-core</Embed-Dependency>
                         <Import-Package>
                             *;resolution:=optional
                         </Import-Package>
