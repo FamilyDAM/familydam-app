@@ -38,8 +38,8 @@
 #        resize-library="image-magik"
 
 [variables]
-    core.version=0.1.1-SNAPSHOT
-    dashboard.version=0.1.2-SNAPSHOT
+    core.version=0.1.4-SNAPSHOT
+    dashboard.version=0.1.4-SNAPSHOT
     photos.version=0.1.4-SNAPSHOT
 
 [artifacts]
