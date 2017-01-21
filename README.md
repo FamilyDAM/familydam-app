@@ -1,4 +1,4 @@
-FamilyD.A.M. | Digial Asset Manager for Families
+FamilyD.A.M. | Digital Asset Manager for Families
 ==============
 
 
