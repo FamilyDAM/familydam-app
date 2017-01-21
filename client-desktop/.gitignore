@@ -1,0 +1,15 @@
+out
+dist
+builds
+target
+node_modules
+bower_components
+binary-dist
+.sass-cache
+.tmp
+npm-debug.log
+*.iml
+*.ipr
+*.iws
+.build-app
+.build-binary
