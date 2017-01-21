@@ -65,6 +65,7 @@ module.exports = React.createClass({
             addNodeRefs: [],
             treeData: [],
             isLoading: true,
+            isAddDataLoaded: false,
             isDirTreeLoading:false,
             isDateTreeLoading:false,
             isPeopleTreeLoading:false,
@@ -83,7 +84,6 @@ module.exports = React.createClass({
     },
 
     componentWillMount: function () {
-        var _this = this;
 
         //console.log("{PhotosView} componentWillMount");
 
@@ -96,13 +96,20 @@ module.exports = React.createClass({
             this.state.filters = data_;
 
             //on Initial load, or when filters change run initial search to populate the view
-            ImageActions.search.source.onNext({'filters':this.state.filters, 'offset':0});
+            ImageActions.search.source.onNext({'filters':this.state.filters, 'offset':this.state.offset});
 
             if (this.isMounted()) this.forceUpdate();
         }.bind(this));
 
 
         this.searchSubscription = ImageActions.search.sink.subscribe(function (data_) {
+
+            if( data_.length == 0 ){
+                this.state.isAddDataLoaded = true;
+            }else{
+                this.state.isAddDataLoaded = false;
+            }
+
 
             for(var item in data_){
                 var val = data_[item].value;
@@ -201,12 +208,14 @@ module.exports = React.createClass({
             if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500)) {
                 // you're at the bottom of the page
                 //console.log("SCROLL - near the bottom");
-                this.state.isLoading = true;
-                this.state.offset = this.state.offset + 1;
-                ImageActions.search.source.onNext({
-                    'filters': this.state.filters,
-                    'offset': this.state.offset
-                });
+                if( !this.state.isAddDataLoaded ) {
+                    this.state.isLoading = true;
+                    this.state.offset = this.state.offset + 1;
+                    ImageActions.search.source.onNext({
+                        'filters': this.state.filters,
+                        'offset': this.state.offset
+                    });
+                }
             }
         }
     },
@@ -275,7 +284,8 @@ module.exports = React.createClass({
     },
 
     addFilter: function (data) {
-        this.setState({'files': [], 'isLoading': true});
+        //criteria has changed, reset defaults
+        this.setState({'files': [], 'isLoading': true, 'offset':0});
 
         if (data.type == "path")
         {
@@ -372,7 +382,7 @@ module.exports = React.createClass({
     renderChip(data_) {
         return (
             <Chip
-                key={data_.path}
+                key={data_.path +"_" +Math.random()}
                 onRequestDelete={() => {
                     this.removeFilter(data_);
                 }}
