@@ -103,9 +103,7 @@ app.configureAutoUpdator = function(port){
 
         // error connecting to update server, so we start
         app.sendClientMessage("start-status", {"code":"starting-repository", "message":"Starting Repository...", "progress":"0%"}, true);
-        var _settings = configurationManager.getSettings();
-        configurationManager.initializeStorageLocation(_settings);
-        app.startServerApplication(_settings);
+        app.startServerApplication();
     });
     autoUpdater.on('checking-for-update', function(){
         logger.info("checking for update");
@@ -117,9 +115,7 @@ app.configureAutoUpdator = function(port){
 
         // up to date, start the repo
         app.sendClientMessage("start-status", {"code":"starting-repository", "message":"Starting Repository...", "progress":"0%"}, true);
-        var _settings = configurationManager.getSettings();
-        configurationManager.initializeStorageLocation(_settings);
-        app.startServerApplication(_settings);
+        app.startServerApplication();
     });
 
     autoUpdater.on('update-available', function(){
@@ -212,15 +208,15 @@ app.configureWindows = function(){
 
 
 
-app.startServerApplication = function(_settings){
+app.startServerApplication = function(){
 
     logger.info("Start Embedded Repository");
-    if( !_settings ){
-        _settings = configurationManager.getSettings();
-    }
-    logger.debug(_settings);
-    serverManager.startServer(_settings, app, this.splashWindow, this.configWindow, this.mainWindow );
 
+    var _settings = configurationManager.getSettings();
+    logger.debug(_settings);
+
+    configurationManager.initializeStorageLocation(_settings);
+    serverManager.startServer(_settings, app, this.splashWindow, this.configWindow, this.mainWindow );
 };
 
 
