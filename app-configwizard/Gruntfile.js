@@ -2,19 +2,19 @@ module.exports = function (grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('default', ['build-babel-dev', 'watch']);//, 'connect'
-    grunt.registerTask('default-prod', ['build-babel-prod', 'watch']);//, 'connect'
+    grunt.registerTask('default', ['build-dev', 'watch']);//, 'connect'
+    grunt.registerTask('default-prod', ['build-prod', 'watch']);//, 'connect'
 
 
     grunt.registerTask('build-css', ['compass']);
     grunt.registerTask('build-babel-js-dashboard', ['jshint', 'babel', 'browserify2:dashboard']);
 
 
-    grunt.registerTask('build-babel-dev', [
+    grunt.registerTask('build-dev', [
         'clean:dist', 'build-css', 'copy:locales', 'babel', 'copy:dashboard', 'jshint', 'browserify2:dashboard'
     ]);
     /*, 'build-atom-shell-app'*/
-    grunt.registerTask('build-babel-prod', [
+    grunt.registerTask('build-prod', [
         'clean:dist', 'build-css', 'babel', 'copy', 'jshint', 'browserify2:dashboard', 'uglify'
     ]);
     /*, 'build-atom-shell-app'*/
