@@ -5,6 +5,7 @@ target
 .sass-cache
 .build-app
 build-binary
+bower_components
 node_modules
 *.iml
 *.idea
