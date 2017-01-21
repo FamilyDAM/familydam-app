@@ -2,9 +2,14 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 
-const {app, BrowserWindow, ipcMain} = require('electron');  // Module to control application life.
+const {app, BrowserWindow, autoUpdater} = require('electron');  // Module to control application life.
+const appVersion = require('./package.json').version;
+const os = require('os').platform();
+
+//var autoUpdater = require('auto-updater');
 var http = require('http');
 var fs = require('fs');
+
 var serverManager = require('./ServerManager');
 var configurationManager = require('./ConfigurationManager');
 //logger
@@ -16,6 +21,9 @@ var splashWindow = null;
 var configWindow = null;
 var mainWindow = null;
 var isServerReady = false;
+
+// Version checking URL
+var updateFeed = 'http://localhost:8080/api/v1/version';
 
 // This method will be called when atom-shell has done everything
 // initialization and ready for creating browser windows.
@@ -35,9 +43,12 @@ app.on('ready', function() {
     // Report crashes to our server.
     //app.crashReporter.start();
 
+    app.configureAutoUpdator();
+
 
     // Create the browser window.
-    app.setupWindows();
+    app.configureWindows();
+
 
     var isReady = configurationManager.initializeServer(app, configWindow, splashWindow, mainWindow);
 
@@ -57,43 +68,94 @@ app.on('ready', function() {
             logger.transports.file.file = _settings['storageLocation'] +"/desktop.log";// fs.createWriteStream options, must be set before first logging
             logger.transports.file.streamConfig = { flags: 'w' };
             // set existed file stream
-            logger.transports.file.stream = fs.createWriteStream(_settings['storageLocation'] +"cd /desktop.log");
+            logger.transports.file.stream = fs.createWriteStream(_settings['storageLocation'] +"/desktop.log");
 
         }
 
+        configurationManager.setSettings(_settings);
 
         logger.debug("Load Splash Screen");
-        app.loadSplashApplication();
+        app.loadSplashApplication(true);
 
-
-        logger.debug("Start Repository");
-        configurationManager.initializeStorageLocation(_settings);
-        app.startServerApplication(_settings);
-
-
-        /***
-         // Show splash screen, while starting embedded server
-         app.loadSplashApplication();
-
-
-         // setup check status
-         var timer = setInterval(function(){
-            //check if server is ready, before closing. Otherwise wait 2secs and try again.
-            if( _this.isServerReady )
-            {
-                clearTimeout(timer);
-                _this.splashWindow = null;
-                _this.loadDashboardApplication(_settings.port);
-            }else{
-                _this.checkServer(_settings.port);
-            }
-        }, 2000);
-
-         // start embedded java server
-         app.startServerApplication(_settings);
-         ***/
     }
 });
+
+
+
+/******************************
+ * App level functions
+ *
+ * @see https://medium.com/@svilen/auto-updating-apps-for-windows-and-osx-using-electron-the-complete-guide-4aa7a50b904c#.6s9bal46q
+ */
+app.configureAutoUpdator = function(port){
+
+    if (process.env.NODE_ENV !== 'development')
+    {
+        updateFeed = os === 'darwin' ?
+            updateFeed +'/mac' :
+            updateFeed +'/win32';
+    }
+
+    autoUpdater.setFeedURL(updateFeed + '?v=' + appVersion);
+
+    autoUpdater.on('error', function(err){
+        logger.error(err)
+
+        // error connecting to update server, so we start
+        app.sendClientMessage("start-status", {"code":"starting-repository", "message":"Starting Repository...", "progress":"0%"}, true);
+        var _settings = configurationManager.getSettings();
+        configurationManager.initializeStorageLocation(_settings);
+        app.startServerApplication(_settings);
+    });
+    autoUpdater.on('checking-for-update', function(){
+        logger.info("checking for update");
+        app.sendClientMessage("start-status", {"code":"check-updates", "message":"Checking for updates...", "progress":"0%"}, true);
+    });
+
+    autoUpdater.on('update-not-available', function(){
+        logger.debug("update not available, Start Repository");
+
+        // up to date, start the repo
+        app.sendClientMessage("start-status", {"code":"starting-repository", "message":"Starting Repository...", "progress":"0%"}, true);
+        var _settings = configurationManager.getSettings();
+        configurationManager.initializeStorageLocation(_settings);
+        app.startServerApplication(_settings);
+    });
+
+    autoUpdater.on('update-available', function(){
+        logger.info("update-available");
+        app.sendClientMessage("start-status", {"code":"update-available", "message":"Update Available, downloading...", "progress":"0%"}, true);
+    });
+
+    autoUpdater.on('update-downloaded', function(event, releaseNotes, releaseName, releaseDate, updateUrl){
+        logger.info("update-downloaded");
+        //console.dir(event);
+        //logger.info("releaseNotes: " +releaseNotes);
+        //logger.info("releaseName: " +releaseName);
+        //logger.info("releaseDate: " +releaseDate);
+        //logger.info("updateUrl: " +updateUrl);
+
+        app.sendClientMessage("start-status", {"code":"update-available", "message":"Update Download, restarting...", "progress":"0%"}, true);
+
+        autoUpdater.quitAndInstall();
+        app.quit();
+
+
+        // re-create the browser window.
+        //app.configureWindows();
+
+        //reload splash app
+        //app.loadSplashApplication(false);
+
+        //start repository
+        //app.startServerApplication(_settings);
+    });
+
+
+};
+
+
+
 
 
 
@@ -116,7 +178,7 @@ app.checkServer = function(port){
 /**
  * Setup all of the primary windows here, so we will also have a reference to close them.
  */
-app.setupWindows = function(){
+app.configureWindows = function(){
     splashWindow = new BrowserWindow({width:600, height:400, center:true, frame:true, show:false});//, type:"splash"});
     configWindow = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false});//, type:"desktop"});
     mainWindow = new BrowserWindow({
@@ -162,51 +224,57 @@ app.setupWindows = function(){
 app.startServerApplication = function(_settings){
 
     logger.info("Start Embedded Repository");
+    if( !_settings ){
+        _settings = configurationManager.getSettings();
+    }
     logger.debug(_settings);
     serverManager.startServer(_settings, app, this.splashWindow, this.configWindow, this.mainWindow );
 
 };
 
 
-app.loadSplashApplication = function(){
+app.loadSplashApplication = function(checkupdate_){
 
-    configWindow.hide();
+    if( !checkupdate_ )  checkupdate_=true;
+    if( configWindow )  configWindow.hide();
 
     // and load the index.html of the app.
     //splashWindow.openDevTools();
-    splashWindow.loadURL('file://' + __dirname + '/apps/splash/index.html');
-    splashWindow.show();
-    splashWindow.focus();
+    if( splashWindow ) {
+        splashWindow.loadURL('file://' + __dirname + '/apps/splash/index.html');
+        splashWindow.show();
+        splashWindow.focus();
 
-     splashWindow.webContents.on('did-finish-load', function() {
-        //useful snippet of code, saving it for future reference
-        //splashWindow.webContents.executeJavaScript("alert('start splash page');");
 
-         app.sendClientMessage("start-status", {"code":"check-updates", "message":"Checking for updates...", "progress":"0%"}, true);
-         app.sendClientMessage("start-status", {"code":"starting-repository", "message":"Starting Repository...", "progress":"0%"}, true);
-
-     });
-
+        splashWindow.webContents.on('did-finish-load', function() {
+            //useful snippet of code, saving it for future reference
+            //splashWindow.webContents.executeJavaScript("alert('start splash page');");
+            logger.info("splash screen loaded, checking for updates");
+            if( checkupdate_ ) {
+                autoUpdater.checkForUpdates();
+            }else{
+                app.startServerApplication()
+            }
+        });
+    }
 
 };
 
 
 app.loadDashboardApplication = function(host, port){
 
-    console.log("{loadDashboardApplication} " +"http://" +host +":" +port +"/index.html");
+    logger.info("{loadDashboardApplication} " +"http://" +host +":" +port +"/index.html");
 
-    splashWindow.destroy();
-    configWindow.destroy();
+    if( splashWindow ) splashWindow.destroy();
+    if( configWindow ) configWindow.destroy();
+
     mainWindow.maximize();
     mainWindow.show();
-
     // Open the devtools.
-    mainWindow.openDevTools();
-
+    //mainWindow.openDevTools();
 
     //mainWindow.loadUrl('file://' + __dirname  +'/apps/dashboard/index.html');
     mainWindow.loadURL("http://" +host +":" +port +"/index.html");
-
 
 };
 
@@ -217,13 +285,24 @@ app.loadDashboardApplication = function(host, port){
  * Event Handlers
  */
 process.on('exit', function () {
+    logger.info("exit");
     serverManager.kill();
 });
 
 
 // Quit when all windows are closed.
 app.on('will-quit', function() {
+    logger.info("will-quit");
     serverManager.kill();
+});
+
+// Quit after auto update
+app.on('before-quit', function(event_) {
+    logger.info("before-quit");
+    console.dir(event_);
+
+    serverManager.kill();
+
 });
 
 
@@ -238,7 +317,7 @@ app.on('window-all-closed', function() {
 
 // Called when user tries to open a new url to leave the application
 app.on('open-url', function(event, path) {
-    console.log("Open-URL: " +path);
+    logger.info("Open-URL: " +path);
 
     // Create the browser window.
     var childWindow = new BrowserWindow({width:1024, height:800, frame:true});
@@ -257,7 +336,7 @@ app.on('open-url', function(event, path) {
 
 //todo: Called when user tries to open a new url to leave the application.
 app.on('open-file', function(event, url) {
-    console.log("TODO Open-FILE: " +url);
+    logger.info("TODO Open-FILE: " +url);
 });
 
 
@@ -271,13 +350,14 @@ app.sendClientMessage = function(_type, _message, _logToConsole)
 {
     if( _logToConsole )
     {
-        console.log("{sendClientMessage}");
+        logger.info("{sendClientMessage}");
         console.dir(_type);
         console.dir(_message);
     }
 
-    splashWindow.webContents.send(_type, _message);
-    if (splashWindow !== undefined && splashWindow.webContents != null) splashWindow.webContents.send(_type, _message);
-    if (mainWindow !== undefined && mainWindow.webContents != null) mainWindow.webContents.send(_type, _message);
+    if( _type && _message ) {
+        if (splashWindow && splashWindow.webContents ) splashWindow.webContents.send(_type, _message);
+        if (mainWindow  && mainWindow.webContents ) mainWindow.webContents.send(_type, _message);
+    }
 };
 

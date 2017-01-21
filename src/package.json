@@ -2,7 +2,7 @@
   "name": "FamilyDAM",
   "productName": "FamilyDAM",
   "description": "A Digital Asset Manager for Families.  Keep it local! Keep it safe!",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "main": "main.js",
   "author":"Mike Nimer",
   "homepage": "https://github.com/FamilyDAM/client-desktop",

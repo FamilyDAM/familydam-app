@@ -28,6 +28,7 @@
     var os = require('os');
     var fs = require('fs');
     var http = require('http');
+    var logger = require('electron-log');
     var serverManager = require('./ServerManager');
 
     var settings = {};
@@ -196,11 +197,11 @@
             fs.writeFile( __dirname +'/resources/systemprops.json',  encodedSettings, {'encoding':'utf8'}, function (err, data)
             {
                 console.dir(settings);
-                console.log("** Initialize Storage");
+                logger.info("** Initialize Storage Folder");
                 initializeStorageLocation(settings);
-                console.log("** Start JCR Server");
-                app.startServerApplication(settings);
-                console.log("** load splash screen");
+                //logger.infoconsole.log("Start JCR Server");
+                //app.startServerApplication(settings);
+                //show splash screen
                 app.loadSplashApplication();
 
             });
@@ -225,6 +226,10 @@
 
         getSettings: function(){
             return settings;
+        },
+
+        setSettings: function(settings_){
+            settings = settings_;
         },
 
 

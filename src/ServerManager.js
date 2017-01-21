@@ -81,7 +81,7 @@
                 }
             }).on('error', function (e)
             {
-                logger.error("error: " + e.message);
+                //logger.error("error: " + e.message);
                 return false;
             });
 
@@ -132,7 +132,7 @@
         }
         catch (err)
         {
-            logger.debug("[ERROR] ** " +err);
+            logger.error(err);
         }
     }
 
@@ -215,22 +215,22 @@
             prc.unref();
             prc.stdout.setEncoding("utf8");
             prc.stdout.on('data', function (data) {
-                logger.debug("[data] " + data);
+                //logger.debug("[data] " + data);
                 //processStdOut(data, outLogFile);
             });
             prc.stderr.on('data', function (data) {
-                logger.debug("[ERR] " + data);
+                //logger.debug("[ERR] " + data);
             });
             prc.on('exit', function (data, a2, a3) {
-                logger.debug("[exit] " + data + ":" + a2 + ":" + a3);
+                //logger.debug("[exit] " + data + ":" + a2 + ":" + a3);
             });
         },
 
         kill : function()
         {
             logger.info("Kill Repository");
-            if( prc !== undefined ) prc.kill();
-            if( checkServerInterval !== undefined ) clearInterval(checkServerInterval);
+            if( prc ) prc.kill();
+            if( checkServerInterval ) clearInterval(checkServerInterval);
         }
     };
 
