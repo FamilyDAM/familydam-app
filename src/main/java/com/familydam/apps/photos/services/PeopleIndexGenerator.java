@@ -1,6 +1,6 @@
 package com.familydam.apps.photos.services;
 
-import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+import com.familydam.apps.photos.FamilyDAMConstants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -40,9 +40,9 @@ public class PeopleIndexGenerator
      */
     public boolean indexExists(Session session) throws RepositoryException
     {
-        Node _caches = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+        Node _caches = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
 
-        if( _caches.hasNode(FamilyDAMDashboardConstants.INDEXES) && _caches.getNode(FamilyDAMDashboardConstants.INDEXES).hasNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE))
+        if( _caches.hasNode(FamilyDAMConstants.INDEXES) && _caches.getNode(FamilyDAMConstants.INDEXES).hasNode(FamilyDAMConstants.PHOTO_PEOPLE))
         {
             return true;
         }
@@ -59,19 +59,19 @@ public class PeopleIndexGenerator
      */
     public void addToIndex(Session session, String[] items) throws RepositoryException
     {
-        Node cacheNode = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+        Node cacheNode = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
         //index
-        if( !cacheNode.hasNode(FamilyDAMDashboardConstants.INDEXES) ){
-            cacheNode.addNode(FamilyDAMDashboardConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
+        if( !cacheNode.hasNode(FamilyDAMConstants.INDEXES) ){
+            cacheNode.addNode(FamilyDAMConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
+        Node indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
         //tagList
-        if( !indexNode.hasNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE) ){
-            indexNode.addNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE, JcrConstants.NT_UNSTRUCTURED);
+        if( !indexNode.hasNode(FamilyDAMConstants.PHOTO_PEOPLE) ){
+            indexNode.addNode(FamilyDAMConstants.PHOTO_PEOPLE, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node peopleListNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE);
+        Node peopleListNode = indexNode.getNode(FamilyDAMConstants.PHOTO_PEOPLE);
 
 
         for (String key : items) {
@@ -105,7 +105,7 @@ public class PeopleIndexGenerator
      */
     public List<Map> getList(Session session) throws RepositoryException
     {
-        String _path = "/" +FamilyDAMDashboardConstants.CACHES +"/" +FamilyDAMDashboardConstants.INDEXES +"/" +FamilyDAMDashboardConstants.PHOTO_PEOPLE;
+        String _path = "/" +FamilyDAMConstants.CACHES +"/" +FamilyDAMConstants.INDEXES +"/" +FamilyDAMConstants.PHOTO_PEOPLE;
         Node treeNode = JcrUtils.getOrCreateByPath(_path, JcrConstants.NT_UNSTRUCTURED, session);
 
         List<Map> results = new ArrayList<>();
@@ -134,9 +134,9 @@ public class PeopleIndexGenerator
     {
         //since we are rebuilding, let's delete it if it exists
         if( indexExists(session) ){
-            Node cacheNode = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
-            Node indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
-            Node peopleListNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE);
+            Node cacheNode = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
+            Node indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
+            Node peopleListNode = indexNode.getNode(FamilyDAMConstants.PHOTO_PEOPLE);
             peopleListNode.remove();
             session.save();
         }
@@ -186,19 +186,19 @@ public class PeopleIndexGenerator
 
 
 
-        Node cacheNode = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+        Node cacheNode = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
         //index
-        if( !cacheNode.hasNode(FamilyDAMDashboardConstants.INDEXES) ){
-            cacheNode.addNode(FamilyDAMDashboardConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
+        if( !cacheNode.hasNode(FamilyDAMConstants.INDEXES) ){
+            cacheNode.addNode(FamilyDAMConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
+        Node indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
         //tagList
-        if( !indexNode.hasNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE) ){
-            indexNode.addNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE, JcrConstants.NT_UNSTRUCTURED);
+        if( !indexNode.hasNode(FamilyDAMConstants.PHOTO_PEOPLE) ){
+            indexNode.addNode(FamilyDAMConstants.PHOTO_PEOPLE, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node peopleListNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE);
+        Node peopleListNode = indexNode.getNode(FamilyDAMConstants.PHOTO_PEOPLE);
 
 
         for (String key : _nodeMap.keySet()) {

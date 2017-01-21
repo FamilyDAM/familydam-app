@@ -64,7 +64,6 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
         if( limit == null ){
             limit = 100;
         }
-        limit = 1000;
 
         Integer offset = new Integer(request.getParameter("offset"));
         if( offset == null ){
@@ -89,9 +88,13 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
             }
 
 
-            StringBuffer sql = new StringBuffer("SELECT * FROM [").append(type).append("] ");
+            //StringBuffer sql = new StringBuffer("SELECT * FROM [").append(type).append("] ");
+            //sql.append(" WHERE [jcr:primaryType] = 'nt:file'");
+            //sql.append(" AND ISDESCENDANTNODE(file, ").append(resourcePath).append(")");
 
-            sql.append(" WHERE [jcr:primaryType] = 'nt:file'");
+            StringBuffer sql = new StringBuffer("SELECT * FROM [nt:file] as file ");
+            sql.append(" WHERE [jcr:mixinTypes] = '").append(type).append("'");
+
 
             boolean hasTags = false;
             boolean hasPeople = false;
@@ -148,12 +151,15 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
                     hasPath = true;
                     for (int i = 0; i < _paths.size(); i++) {
                         Map _path = _paths.get(i);
-                        pathClause.append(" ISDESCENDANTNODE([" +_path.get("path") +"]) ");
+                        //pathClause.append(" ISDESCENDANTNODE([" +_path.get("path") +"]) ");
+                        pathClause.append(" [jcr:path] like '").append(_path.get("path")).append("/%'");
                         if( i >= 0 && i < (_paths.size()-1) ){
                             pathClause.append(" OR ");
                         }
                     }
                 }
+            }else{
+                sql.append(" AND [jcr:path] like '").append(resourcePath).append("/%'");
             }
 
 

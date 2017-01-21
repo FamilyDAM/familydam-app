@@ -4,8 +4,9 @@
 
 package com.familydam.apps.photos.daos;
 
-import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+
 import com.familydam.apps.dashboard.exceptions.UnknownINodeException;
+import com.familydam.apps.photos.FamilyDAMConstants;
 import com.familydam.apps.photos.services.PeopleIndexGenerator;
 import com.familydam.apps.photos.services.TagIndexGenerator;
 import org.apache.felix.scr.annotations.Activate;
@@ -69,7 +70,7 @@ public class TreeDao
     public Map dateTree(Session session, String path_) throws RepositoryException, UnknownINodeException
     {
 
-        StringBuffer sql = new StringBuffer("SELECT [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "]  FROM [dam:image] where [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "] is not null");
+        StringBuffer sql = new StringBuffer("SELECT [" + FamilyDAMConstants.DAM_DATECREATED + "]  FROM [dam:image] where [" + FamilyDAMConstants.DAM_DATECREATED + "] is not null");
 
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -88,7 +89,7 @@ public class TreeDao
 
             Row row = nodeItr.nextRow();
 
-            String date = row.getValue(FamilyDAMDashboardConstants.DAM_DATECREATED).getString();
+            String date = row.getValue(FamilyDAMConstants.DAM_DATECREATED).getString();
             String[] dateParts = date.split("-");
 
 

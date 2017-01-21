@@ -1,6 +1,6 @@
 package com.familydam.apps.photos.services;
 
-import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+import com.familydam.apps.photos.FamilyDAMConstants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -57,36 +57,55 @@ public class DateCreatedIndexGenerator
     public void rebuild(Session session) throws RepositoryException
     {
         //since we are rebuilding, let's delete it if it exists
+        Node cacheNode = null;
+        Node indexNode = null;
+        Node dateListNode = null;
         if( indexExists(session) ){
-            Node cacheNode = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
-            Node indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
-            Node peopleListNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_DATES);
-            peopleListNode.remove();
+            cacheNode = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
+            indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
+            if( indexNode.hasNode(FamilyDAMConstants.PHOTO_DATES) ) {
+                dateListNode = indexNode.getNode(FamilyDAMConstants.PHOTO_DATES);
+                dateListNode.remove();
+            }
             session.save();
         }
 
 
+        try {
 
-        StringBuffer sql = new StringBuffer("SELECT [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "]  FROM [dam:image] where [" + FamilyDAMDashboardConstants.DAM_DATECREATED + "] is not null");
+            //StringBuffer sql = new StringBuffer("SELECT [" + FamilyDAMConstants.DAM_DATECREATED + "]  FROM [nt:file]  WHERE [jcr:mixinTypes] = ' dam:image' AND [" + FamilyDAMConstants.DAM_DATECREATED + "] is not null");
+            StringBuffer sql = new StringBuffer("SELECT [").append(FamilyDAMConstants.DAM_DATECREATED).append("]  FROM [nt:file] WHERE [jcr:path] like '/content/%'  AND [jcr:mixinTypes] = '").append(FamilyDAMConstants.DAM_IMAGE).append("' AND [").append(FamilyDAMConstants.DAM_DATECREATED).append("] is not null");
 
-        QueryManager queryManager = session.getWorkspace().getQueryManager();
-        //Query query = queryManager.createQuery(sql, "JCR-SQL2");
-        Query query = queryManager.createQuery(sql.toString(), Query.JCR_SQL2);
+            QueryManager queryManager = session.getWorkspace().getQueryManager();
+            //Query query = queryManager.createQuery(sql, "JCR-SQL2");
+            Query query = queryManager.createQuery(sql.toString(), Query.JCR_SQL2);
 
-        // Execute the query and get the results ...
-        QueryResult result = query.execute();
+            // Execute the query and get the results ...
+            QueryResult result = query.execute();
 
-        RowIterator nodeItr = result.getRows();
-        while (nodeItr.hasNext()) {
+            RowIterator nodeItr = result.getRows();
+            while (nodeItr.hasNext()) {
 
-            Row row = nodeItr.nextRow();
+                Row row = nodeItr.nextRow();
 
-            Calendar date = row.getValue(FamilyDAMDashboardConstants.DAM_DATECREATED).getDate();
+                Calendar date = row.getValue(FamilyDAMConstants.DAM_DATECREATED).getDate();
 
-            parseAndSaveDate(session, date);
+                parseAndSaveDate(session, date);
+            }
+
+            if( !dateListNode.getNodes().hasNext() )
+            {
+                dateListNode.remove();
+            }
+
+            session.save();
+
+        }catch (Exception ex){
+            if( dateListNode != null ) {
+                dateListNode.remove();
+                session.save();
+            }
         }
-
-        session.save();
     }
 
 
@@ -99,9 +118,9 @@ public class DateCreatedIndexGenerator
      */
     public boolean indexExists(Session session) throws RepositoryException
     {
-        Node _caches = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+        Node _caches = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
 
-        if( _caches.hasNode(FamilyDAMDashboardConstants.INDEXES) && _caches.getNode(FamilyDAMDashboardConstants.INDEXES).hasNode(FamilyDAMDashboardConstants.PHOTO_PEOPLE))
+        if( _caches.hasNode(FamilyDAMConstants.INDEXES) && _caches.getNode(FamilyDAMConstants.INDEXES).hasNode(FamilyDAMConstants.PHOTO_PEOPLE))
         {
             return true;
         }
@@ -155,7 +174,7 @@ public class DateCreatedIndexGenerator
      */
     public List<Map> getList(Session session) throws RepositoryException
     {
-        String _path = "/" +FamilyDAMDashboardConstants.CACHES +"/" +FamilyDAMDashboardConstants.INDEXES +"/" +FamilyDAMDashboardConstants.PHOTO_PEOPLE;
+        String _path = "/" +FamilyDAMConstants.CACHES +"/" +FamilyDAMConstants.INDEXES +"/" +FamilyDAMConstants.PHOTO_PEOPLE;
         Node treeNode = JcrUtils.getOrCreateByPath(_path, JcrConstants.NT_UNSTRUCTURED, session);
 
         List<Map> results = new ArrayList<>();
@@ -178,19 +197,19 @@ public class DateCreatedIndexGenerator
 
     private void parseAndSaveDate(Session session, Calendar date_) throws RepositoryException
     {
-        Node cacheNode = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+        Node cacheNode = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
         //index
-        if( !cacheNode.hasNode(FamilyDAMDashboardConstants.INDEXES) ){
-            cacheNode.addNode(FamilyDAMDashboardConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
+        if( !cacheNode.hasNode(FamilyDAMConstants.INDEXES) ){
+            cacheNode.addNode(FamilyDAMConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
+        Node indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
         //tagList
-        if( !indexNode.hasNode(FamilyDAMDashboardConstants.PHOTO_DATES) ){
-            indexNode.addNode(FamilyDAMDashboardConstants.PHOTO_DATES, JcrConstants.NT_UNSTRUCTURED);
+        if( !indexNode.hasNode(FamilyDAMConstants.PHOTO_DATES) ){
+            indexNode.addNode(FamilyDAMConstants.PHOTO_DATES, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node dateNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_DATES);
+        Node dateNode = indexNode.getNode(FamilyDAMConstants.PHOTO_DATES);
 
 
 

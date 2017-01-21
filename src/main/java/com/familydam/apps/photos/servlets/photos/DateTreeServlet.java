@@ -4,7 +4,8 @@
 
 package com.familydam.apps.photos.servlets.photos;
 
-import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+
+import com.familydam.apps.photos.FamilyDAMConstants;
 import com.familydam.apps.photos.daos.TreeDao;
 import com.familydam.apps.photos.services.DateCreatedIndexGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,23 +74,28 @@ public class DateTreeServlet extends SlingSafeMethodsServlet
 
             session = request.getResourceResolver().adaptTo(Session.class);
 
-            Node cacheNode = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+            Node cacheNode = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
 
             Node indexNode;
-            if( cacheNode.hasNode(FamilyDAMDashboardConstants.INDEXES) ) {
-                 indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
+            if( cacheNode.hasNode(FamilyDAMConstants.INDEXES) ) {
+                 indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
             }else{
-                cacheNode.addNode(FamilyDAMDashboardConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
-                indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
+                cacheNode.addNode(FamilyDAMConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
+                indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
             }
 
             Node dateNode;
-            if(  indexNode.hasNode(FamilyDAMDashboardConstants.PHOTO_DATES)  ) {
-                dateNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_DATES);
+            if(  indexNode.hasNode(FamilyDAMConstants.PHOTO_DATES)  ) {
+                dateNode = indexNode.getNode(FamilyDAMConstants.PHOTO_DATES);
             } else {
                 dateIndexGenerator.rebuild(session);
 
-                dateNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_DATES);
+                if( !indexNode.hasNode(FamilyDAMConstants.PHOTO_DATES) ){
+                    indexNode.addNode(FamilyDAMConstants.PHOTO_DATES, JcrConstants.NT_UNSTRUCTURED);
+                    session.save();
+                }
+
+                dateNode = indexNode.getNode(FamilyDAMConstants.PHOTO_DATES);
             }
 
 

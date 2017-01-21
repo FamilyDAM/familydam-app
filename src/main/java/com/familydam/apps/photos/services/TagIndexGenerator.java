@@ -1,6 +1,7 @@
 package com.familydam.apps.photos.services;
 
-import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+
+import com.familydam.apps.photos.FamilyDAMConstants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -35,9 +36,9 @@ public class TagIndexGenerator
 
     public boolean indexExists(Session session) throws RepositoryException
     {
-        Node _caches = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+        Node _caches = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
 
-        if( _caches.hasNode(FamilyDAMDashboardConstants.INDEXES) && _caches.getNode(FamilyDAMDashboardConstants.INDEXES).hasNode(FamilyDAMDashboardConstants.PHOTO_TAGS))
+        if( _caches.hasNode(FamilyDAMConstants.INDEXES) && _caches.getNode(FamilyDAMConstants.INDEXES).hasNode(FamilyDAMConstants.PHOTO_TAGS))
         {
             return true;
         }
@@ -50,19 +51,19 @@ public class TagIndexGenerator
 
     public void addToIndex(Session session, String[] items) throws RepositoryException
     {
-        Node cacheNode = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+        Node cacheNode = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
         //index
-        if( !cacheNode.hasNode(FamilyDAMDashboardConstants.INDEXES) ){
-            cacheNode.addNode(FamilyDAMDashboardConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
+        if( !cacheNode.hasNode(FamilyDAMConstants.INDEXES) ){
+            cacheNode.addNode(FamilyDAMConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
+        Node indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
         //tagList
-        if( !indexNode.hasNode(FamilyDAMDashboardConstants.PHOTO_TAGS) ){
-            indexNode.addNode(FamilyDAMDashboardConstants.PHOTO_TAGS, JcrConstants.NT_UNSTRUCTURED);
+        if( !indexNode.hasNode(FamilyDAMConstants.PHOTO_TAGS) ){
+            indexNode.addNode(FamilyDAMConstants.PHOTO_TAGS, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node tagListNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_TAGS);
+        Node tagListNode = indexNode.getNode(FamilyDAMConstants.PHOTO_TAGS);
 
 
         for (String key : items) {
@@ -86,7 +87,7 @@ public class TagIndexGenerator
 
     public List<Map> getList(Session session) throws RepositoryException
     {
-        String _path = "/" +FamilyDAMDashboardConstants.CACHES +"/" +FamilyDAMDashboardConstants.INDEXES +"/" +FamilyDAMDashboardConstants.PHOTO_TAGS;
+        String _path = "/" +FamilyDAMConstants.CACHES +"/" +FamilyDAMConstants.INDEXES +"/" +FamilyDAMConstants.PHOTO_TAGS;
         Node treeNode = JcrUtils.getOrCreateByPath(_path, JcrConstants.NT_UNSTRUCTURED, session);
 
         List<Map> results = new ArrayList<>();
@@ -111,7 +112,7 @@ public class TagIndexGenerator
     {
         //since we are rebuilding, let's delete it if it exists
         if( indexExists(session) ){
-            session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES).remove();
+            session.getRootNode().getNode(FamilyDAMConstants.CACHES).remove();
             session.save();
         }
 
@@ -158,19 +159,19 @@ public class TagIndexGenerator
         }
 
 
-        Node cacheNode = session.getRootNode().getNode(FamilyDAMDashboardConstants.CACHES);
+        Node cacheNode = session.getRootNode().getNode(FamilyDAMConstants.CACHES);
         //index
-        if( !cacheNode.hasNode(FamilyDAMDashboardConstants.INDEXES) ){
-            cacheNode.addNode(FamilyDAMDashboardConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
+        if( !cacheNode.hasNode(FamilyDAMConstants.INDEXES) ){
+            cacheNode.addNode(FamilyDAMConstants.INDEXES, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node indexNode = cacheNode.getNode(FamilyDAMDashboardConstants.INDEXES);
+        Node indexNode = cacheNode.getNode(FamilyDAMConstants.INDEXES);
         //tagList
-        if( !indexNode.hasNode(FamilyDAMDashboardConstants.PHOTO_TAGS) ){
-            indexNode.addNode(FamilyDAMDashboardConstants.PHOTO_TAGS, JcrConstants.NT_UNSTRUCTURED);
+        if( !indexNode.hasNode(FamilyDAMConstants.PHOTO_TAGS) ){
+            indexNode.addNode(FamilyDAMConstants.PHOTO_TAGS, JcrConstants.NT_UNSTRUCTURED);
             session.save();
         }
-        Node tagListNode = indexNode.getNode(FamilyDAMDashboardConstants.PHOTO_TAGS);
+        Node tagListNode = indexNode.getNode(FamilyDAMConstants.PHOTO_TAGS);
 
 
         for (String key : _nodeMap.keySet()) {
