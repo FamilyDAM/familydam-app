@@ -55,7 +55,7 @@ SettingsStore.locale.subscribe(function (locale_) {
         <IntlProvider locale={i18n.locales[0]} messages={i18n.messages}>
             <Router history={appHistory}>
                 <Route path="/"  component={MainView}>
-                    <IndexRoute component={WelcomeView}/>
+                    <IndexRoute component={StorageView}/>
                     <Route path="welcome" component={WelcomeView}/>
                     <Route path="storage" component={StorageView}/>
                 </Route>

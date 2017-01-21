@@ -4,7 +4,10 @@
 
 /** jsx React.DOM */
 var React = require('react');
-import {Link} from 'react-router';
+
+var Router = require('react-router');
+var RouteHandler = Router.RouteHandler;
+var Link = Router.Link;
 
 import {FormattedMessage, FormattedPlural,FormattedDate} from 'react-intl';
 

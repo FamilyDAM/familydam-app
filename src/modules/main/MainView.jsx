@@ -23,6 +23,17 @@ module.exports = React.createClass({
 
 
 
+    /** removed for now
+     <li><Link to="welcome">
+         <FormattedMessage
+         id="nav.welcome"
+         defaultMessage="Welcome"
+         description='Welcome menu item'
+         /></Link></li>
+     */
+
+
+
     render: function() {
         return (
             <div className="container-fluid">
@@ -40,12 +51,7 @@ module.exports = React.createClass({
                 <div className="row main">
                     <aside >
                         <ul>
-                            <li><Link to="welcome">
-                                <FormattedMessage
-                                    id="nav.welcome"
-                                    defaultMessage="Welcome"
-                                    description='Welcome menu item'
-                                /></Link></li>
+
                             <li><Link to="storage">
                                 <FormattedMessage
                                     id="nav.storage"
