@@ -22,7 +22,7 @@
     <groupId>com.familydam.osgi</groupId>
     <artifactId>osgi-core</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.4-SNAPSHOT</version>
     <name>OSGI Core</name>
     <description></description>
 
