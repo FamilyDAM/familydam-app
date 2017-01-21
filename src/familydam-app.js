@@ -23,7 +23,7 @@ var mainWindow = null;
 var isServerReady = false;
 
 // Version checking URL
-var updateFeed = 'http://localhost:8080/api/v1/version';
+var updateFeed = 'http://www.familydam.com/api/v1/version';
 
 // This method will be called when atom-shell has done everything
 // initialization and ready for creating browser windows.
@@ -140,15 +140,6 @@ app.configureAutoUpdator = function(port){
         autoUpdater.quitAndInstall();
         app.quit();
 
-
-        // re-create the browser window.
-        //app.configureWindows();
-
-        //reload splash app
-        //app.loadSplashApplication(false);
-
-        //start repository
-        //app.startServerApplication(_settings);
     });
 
 
