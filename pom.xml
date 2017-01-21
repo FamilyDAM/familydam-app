@@ -23,7 +23,7 @@
     <groupId>com.familydam.osgi</groupId>
     <artifactId>osgi-dashboard-app</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.4-SNAPSHOT</version>
     <name>OSGI Dashboard App</name>
     <description></description>
 
