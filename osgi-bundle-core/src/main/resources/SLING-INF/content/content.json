@@ -1,0 +1,22 @@
+{
+  "jcr:primaryType": "nt:folder",
+  "dashboard": {
+    "jcr:primaryType": "nt:folder"
+  },
+  "dam-files": {
+    "jcr:primaryType": "nt:folder",
+    "jcr:mixinTypes": ["dam:contentfolder"]
+  },
+  "dam-cloud": {
+    "jcr:primaryType": "nt:folder",
+    "jcr:mixinTypes": ["dam:contentfolder"]
+  },
+  "dam-email": {
+    "jcr:primaryType": "nt:folder",
+    "jcr:mixinTypes": ["dam:contentfolder"]
+  },
+  "dam-web": {
+    "jcr:primaryType": "nt:folder",
+    "jcr:mixinTypes": ["dam:contentfolder"]
+  }
+}
