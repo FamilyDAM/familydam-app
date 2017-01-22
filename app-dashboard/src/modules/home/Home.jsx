@@ -58,8 +58,24 @@ module.exports = React.createClass({
 
         return (
             <div className="homesView" style={{'display':'flex', 'flexDirection':'row', 'alignItems':'stretch', 'width':'100%', 'height':'calc(100vh - 65px)'}}>
-                <div style={{'display':'flex', 'alignItems':'center', 'width':'100%'}}>
-                    <h3 style={{'margin':'0px auto'}}>Select an App To Start</h3>
+                <div style={{'display':'flex', 'alignItems':'center', 'width':'70%'}}>
+                    <h3 style={{'margin':'0px auto'}}>Select an App To Start!</h3>
+                </div>
+                <div style={{'display':'flex', 'alignItems':'top', 'width':'30%', "margin":"20px"}}>
+                    <div style={{"border":"1px solid", "height":'150px', "width":"100%", "alignItems": "center", "display": "flex", "flexDirection":"column", "backgroundColor":"rgb(255, 255, 255)"}}>
+                        <div style={{'display':'flex', 'flexDirection':'row', "height":"60%"}}>
+                            <h2 style={{'padding':'10px'}}>Tip!</h2>
+                            <span style={{'padding':'10px'}}>Did you know that you can mount the FamilyDAM system as a local WebDav drive.</span>
+                        </div>
+                        <div>
+                            http://localhost:9000/content
+                        </div>
+                        <div>
+                            <a href="https://support.apple.com/kb/ph18514?locale=en_US">Mac instructions</a>
+                            &nbsp;&nbsp;&nbsp;
+                            <a href="https://www.onemetric.com.au/documentation/windows/mounting-a-webdav-share-windows-7">Win instructions</a>
+                        </div>
+                    </div>
                 </div>
 
                 <footer>
