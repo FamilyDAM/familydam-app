@@ -197,6 +197,16 @@
 
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>${project.basedir}/../app-dashboard/dist</directory>
+                <targetPath>${project.basedir}/target/classes/SLING-INF/content/dashboard</targetPath>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
+
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -262,68 +272,10 @@
             </plugin>
         </plugins>
 
-        <resources>
-            <resource>
-                <directory>${project.basedir}/../app-dashboard/dist</directory>
-                <targetPath>${project.basedir}/target/classes/SLING-INF/content/dashboard</targetPath>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
     </build>
 
 
     <profiles>
-        <profile>
-            <id>build-clients</id>
-
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.4.0</version>
-                        <executions>
-                            <!-- run npm install of each project -->
-                            <!--
-                            <execution>
-                                <id>exec-npm-install-dashboard</id>
-                                <phase>generate-sources</phase>
-                                <configuration>
-                                    <executable>npm</executable>
-                                    <workingDirectory>./app-dashboard</workingDirectory>
-                                    <arguments>
-                                        <argument>install</argument>
-                                    </arguments>
-                                </configuration>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                            </execution>
-                            -->
-
-
-
-                            <!-- run grunt build on each project -->
-                            <execution>
-                                <id>exec-grunt-dashboard</id>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <executable>grunt</executable>
-                                    <workingDirectory>./../app-dashboard</workingDirectory>
-                                    <arguments>
-                                        <argument>build-babel-prod</argument>
-                                    </arguments>
-                                </configuration>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>autoInstallBundle</id>
             <build>
