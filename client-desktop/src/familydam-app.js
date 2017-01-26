@@ -9,17 +9,20 @@ const os = require('os').platform();
 //var autoUpdater = require('auto-updater');
 var http = require('http');
 var fs = require('fs');
+var logger = require('electron-log');
 
 var serverManager = require('./ServerManager');
 var configurationManager = require('./ConfigurationManager');
-//logger
-var logger = require('electron-log');
+var socialManager = require('./SocialManager');
+
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the javascript object is GCed.
 var splashWindow = null;
 var configWindow = null;
 var mainWindow = null;
+var socialAuthWindow = null;
 var isServerReady = false;
 
 // Version checking URL
@@ -50,8 +53,12 @@ app.on('ready', function() {
     app.configureWindows();
 
 
-    var isReady = configurationManager.initializeServer(app, configWindow, splashWindow, mainWindow);
 
+    //setup IPC Subscriptions
+    socialManager.subscribe();
+
+
+    var isReady = configurationManager.initializeServer(app, configWindow, splashWindow, mainWindow);
 
     if( isReady )
     {
@@ -96,7 +103,7 @@ app.configureAutoUpdator = function(port){
             updateFeed +'/win32';
     }
 
-    autoUpdater.setFeedURL(updateFeed + '?v=' + appVersion);
+    //autoUpdater.setFeedURL(updateFeed + '?v=' + appVersion);
 
     autoUpdater.on('error', function(err){
         logger.error(err)
@@ -168,6 +175,7 @@ app.checkServer = function(port){
 app.configureWindows = function(){
     splashWindow = new BrowserWindow({width:600, height:400, center:true, frame:true, show:false});//, type:"splash"});
     configWindow = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false});//, type:"desktop"});
+
     mainWindow = new BrowserWindow({
         width:1024,
         height:800,
@@ -237,11 +245,15 @@ app.loadSplashApplication = function(checkupdate_){
             //useful snippet of code, saving it for future reference
             //splashWindow.webContents.executeJavaScript("alert('start splash page');");
             logger.info("splash screen loaded, checking for updates");
+
+            app.startServerApplication()
+            /**
             if( checkupdate_ ) {
                 autoUpdater.checkForUpdates();
             }else{
                 app.startServerApplication()
-            }
+            }**/
+
         });
     }
 
@@ -258,7 +270,7 @@ app.loadDashboardApplication = function(host, port){
     mainWindow.maximize();
     mainWindow.show();
     // Open the devtools.
-    //mainWindow.openDevTools();
+    mainWindow.openDevTools();
 
     //mainWindow.loadUrl('file://' + __dirname  +'/apps/dashboard/index.html');
     mainWindow.loadURL("http://" +host +":" +port +"/index.html");
