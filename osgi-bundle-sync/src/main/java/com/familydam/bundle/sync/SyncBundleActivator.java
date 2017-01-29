@@ -2,7 +2,7 @@
  * Copyright (c) 2016  Mike Nimer & 11:58 Labs
  */
 
-package com.familydam.core;
+package com.familydam.bundle.sync;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -19,7 +19,9 @@ public class SyncBundleActivator implements BundleActivator
     @Override public void start(BundleContext bundleContext) throws Exception
     {
         log.trace("Starting FamilyDAM-Sync Bundle");
-        //todo, move content folder creation to this folder
+
+
+        //TODO: manully run cron jobs on startup
     }
 
 

@@ -19,6 +19,7 @@
 package com.familydam.apps.dashboard.servlets.users;
 
 import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+import com.familydam.core.helpers.KeyEncryption;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
@@ -58,15 +59,11 @@ import javax.jcr.security.AccessControlException;
 import javax.jcr.security.Privilege;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,6 +92,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet
     @Reference
     private ResourceResolverFactory resolverFactory;
 
+    private KeyEncryption keyEncryption = new KeyEncryption();
 
     /**
      * Rest endpoint to create new users
@@ -373,43 +371,24 @@ public class CreateUserServlet extends SlingAllMethodsServlet
     private void createSecurityKeys(Session session_, User user_) throws RepositoryException
     {
 
-        String _publicKeyStr = null;
-        String _privateKeyStr = null;
-
         try {
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-            kpg.initialize(2048);
-            KeyPair kp = kpg.genKeyPair();
-            Key publicKey = kp.getPublic();
-            Key privateKey = kp.getPrivate();
-
-            KeyFactory fact = KeyFactory.getInstance("RSA");
-            RSAPublicKeySpec pub = fact.getKeySpec(publicKey, RSAPublicKeySpec.class);
-            RSAPrivateKeySpec priv = fact.getKeySpec(privateKey, RSAPrivateKeySpec.class);
-
-            Map keys = new HashMap();
-
-            // make sure the user has an UUID
             Node userNode = session_.getNode(user_.getPath());
             Node securityNode = userNode.addNode("dam:security", "nt:unstructured");
-            securityNode.setProperty("keyAlgorithm", fact.getAlgorithm());
-            securityNode.setProperty("keyProvider", fact.getProvider().toString());
-            securityNode.setProperty("publicKeyModulus", new StringValue( pub.getModulus().toString() ) );
-            securityNode.setProperty("publicKeyExponent", new StringValue( pub.getPublicExponent().toString() ) );
-            securityNode.setProperty("privateKeyModulus", new StringValue( priv.getModulus().toString() ) );
-            securityNode.setProperty("privateKeyExponent", new StringValue( priv.getPrivateExponent().toString() ) );
             session_.save();
 
-            // remove READ access for this user
+            keyEncryption.generateKeys(securityNode, session_);
+
+            // remove all access for this user
             assignPermission(session_, user_.getPrincipal(), securityNode, null, new String[]{Privilege.JCR_ALL});
 
+            // remove all access for the anonymouse user
             UserManager userManager = ((JackrabbitSession) session_).getUserManager();
             User anonUser = (User) userManager.getAuthorizable("anonymous");
             //assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_WRITE});
             assignPermission(session_, anonUser.getPrincipal(), securityNode, null, new String[]{Privilege.JCR_ALL});
 
 
-        }catch(NoSuchAlgorithmException|InvalidKeySpecException ex){
+        }catch(Exception ex){
             ex.printStackTrace();
         }
 

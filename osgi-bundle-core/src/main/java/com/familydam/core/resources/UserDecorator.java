@@ -38,7 +38,7 @@ public class UserDecorator implements ResourceDecorator
                     && resource.getPath().startsWith("/home/users")
                     && resource.adaptTo(Node.class) != null
                     && resource.adaptTo(Node.class).hasNode("dam:security")) {
-                resource.adaptTo(Node.class).getNode("dam:security").remove();
+                //resource.adaptTo(Node.class).getNode("dam:security").remove();
             }
         }catch(Exception re){}
 
