@@ -1,16 +1,14 @@
 package com.familydam.core.helpers;
 
-import org.apache.felix.scr.annotations.*;
-import org.apache.jackrabbit.rmi.value.StringValue;
-import org.apache.sling.jcr.resource.JcrResourceUtil;
+import com.familydam.core.FamilyDAMCoreConstants;
 
 import javax.crypto.Cipher;
-import javax.jcr.*;
+import javax.jcr.Binary;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -24,10 +22,6 @@ import java.util.Base64;
 public class KeyEncryption
 {
 
-    public static final String PUBLIC_KEY = "publicKey";
-    public static final String PUBLIC_KEY_BASE64 = "publicKeyBase64";
-    public static final String PRIVATE_KEY = "privateKey";
-    public static final String PRIVATE_KEY_BASE64 = "privateKeyBase64";
 
 
 
@@ -113,14 +107,14 @@ public class KeyEncryption
 
             //save base 64
             String encodedKey = new String(Base64.getEncoder().encode(key.getPublic().getEncoded()), Charset.forName("UTF-8"));
-            securityNode.setProperty(PRIVATE_KEY_BASE64, adminSession.getValueFactory().createValue(encodedKey));
+            securityNode.setProperty(FamilyDAMCoreConstants.PRIVATE_KEY_BASE64, adminSession.getValueFactory().createValue(encodedKey));
 
 
             //Save file
             InputStream stream = new BufferedInputStream( new ByteArrayInputStream(key.getPublic().getEncoded()) );
 
             Node folder = securityNode;
-            Node file = folder.addNode(PRIVATE_KEY,"nt:file");
+            Node file = folder.addNode(FamilyDAMCoreConstants.PRIVATE_KEY,"nt:file");
             Node content = file.addNode("jcr:content","nt:resource");
             Binary binary = adminSession.getValueFactory().createBinary(stream);
             content.setProperty("jcr:data",binary);
@@ -144,13 +138,13 @@ public class KeyEncryption
 
             //save base 64
             String encodedKey = new String(Base64.getEncoder().encode(key.getPublic().getEncoded()), Charset.forName("UTF-8"));
-            securityNode.setProperty(PUBLIC_KEY_BASE64, adminSession.getValueFactory().createValue(encodedKey));
+            securityNode.setProperty(FamilyDAMCoreConstants.PUBLIC_KEY_BASE64, adminSession.getValueFactory().createValue(encodedKey));
 
             //save file
             InputStream stream = new BufferedInputStream( new ByteArrayInputStream(key.getPublic().getEncoded()) );
 
             Node folder = securityNode;
-            Node file = folder.addNode(PUBLIC_KEY,"nt:file");
+            Node file = folder.addNode(FamilyDAMCoreConstants.PUBLIC_KEY,"nt:file");
             Node content = file.addNode("jcr:content","nt:resource");
             Binary binary = adminSession.getValueFactory().createBinary(stream);
             content.setProperty("jcr:data",binary);

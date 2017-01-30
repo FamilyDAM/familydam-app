@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.base</artifactId>
-            <version>2.3.0</version>
+            <version>2.4.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -254,7 +254,7 @@
                         <Import-Package>
                             org.slf4j;version="[1.5,2)",
                             com.familydam.core.*,
-                            *
+
                         </Import-Package>
                     </instructions>
                 </configuration>

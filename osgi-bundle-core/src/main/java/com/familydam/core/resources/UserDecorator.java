@@ -18,9 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by mnimer on 6/2/16.
  */
-@Service
-@Component
-@Property(name = "service.description", value = "remove secure user properties")
+//@Service
+//@Component
+//@Property(name = "service.description", value = "remove secure user properties")
 public class UserDecorator implements ResourceDecorator
 {
     @Reference
@@ -38,7 +38,7 @@ public class UserDecorator implements ResourceDecorator
                     && resource.getPath().startsWith("/home/users")
                     && resource.adaptTo(Node.class) != null
                     && resource.adaptTo(Node.class).hasNode("dam:security")) {
-                //resource.adaptTo(Node.class).getNode("dam:security").remove();
+                resource.adaptTo(Node.class).getNode("dam:security").remove();
             }
         }catch(Exception re){}
 

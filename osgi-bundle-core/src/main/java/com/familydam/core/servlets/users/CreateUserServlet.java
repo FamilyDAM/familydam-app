@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.familydam.apps.dashboard.servlets.users;
+package com.familydam.core.servlets.users;
 
-import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+import com.familydam.core.FamilyDAMCoreConstants;
 import com.familydam.core.helpers.KeyEncryption;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -26,18 +26,9 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.JackrabbitSession;
-import org.apache.jackrabbit.api.security.user.Authorizable;
-import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
-import org.apache.jackrabbit.api.security.user.Group;
-import org.apache.jackrabbit.api.security.user.QueryBuilder;
-import org.apache.jackrabbit.api.security.user.User;
-import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.jackrabbit.api.security.user.*;
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.value.BooleanValue;
-import org.apache.jackrabbit.value.DateValue;
-import org.apache.jackrabbit.value.DoubleValue;
-import org.apache.jackrabbit.value.LongValue;
-import org.apache.jackrabbit.value.StringValue;
+import org.apache.jackrabbit.value.*;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.LoginException;
@@ -59,18 +50,8 @@ import javax.jcr.security.AccessControlException;
 import javax.jcr.security.Privilege;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * Hello World Servlet registered by path
@@ -79,7 +60,7 @@ import java.util.Set;
  */
 @SlingServlet(paths = {"/bin/familydam/api/v1/users"}, metatype = true)
 @Properties({
-        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.CreateUserServlet", propertyPrivate = false),
+        @Property(name = "service.pid", value = "CreateUserServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CreateUserServlet  Description", propertyPrivate = false),
         @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
 })
@@ -92,7 +73,6 @@ public class CreateUserServlet extends SlingAllMethodsServlet
     @Reference
     private ResourceResolverFactory resolverFactory;
 
-    private KeyEncryption keyEncryption = new KeyEncryption();
 
     /**
      * Rest endpoint to create new users
@@ -151,7 +131,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             User user = createUser(adminSession, request);//createUser(activeSession, request);
             assignToGroup(activeSession, user, request);
             createDefaultFolders(adminSession, user);
-            createSecurityKeys(adminSession, user);
+            // moved to observer: createSecurityKeys(adminSession, user);
 
 
             response.setStatus(201);
@@ -264,9 +244,9 @@ public class CreateUserServlet extends SlingAllMethodsServlet
     {
 
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
-        Group familyGroup = (Group) userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_GROUP);
+        Group familyGroup = (Group) userManager.getAuthorizable(FamilyDAMCoreConstants.FAMILY_GROUP);
         if (familyGroup == null) {
-            familyGroup = userManager.createGroup(FamilyDAMDashboardConstants.FAMILY_GROUP);
+            familyGroup = userManager.createGroup(FamilyDAMCoreConstants.FAMILY_GROUP);
         }
         //now add the user to the family group
         familyGroup.addMember(user_);
@@ -274,10 +254,10 @@ public class CreateUserServlet extends SlingAllMethodsServlet
 
 
         // if this family group is empty and this is the first user, make them an admin
-        if (user_.isAdmin() || (user_.getProperty(FamilyDAMDashboardConstants.IS_FAMILY_ADMIN) != null && user_.getProperty(FamilyDAMDashboardConstants.IS_FAMILY_ADMIN)[0].getBoolean())) {
-            Group familyAdminGroup = (Group) userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_ADMIN_GROUP);
+        if (user_.isAdmin() || (user_.getProperty(FamilyDAMCoreConstants.IS_FAMILY_ADMIN) != null && user_.getProperty(FamilyDAMCoreConstants.IS_FAMILY_ADMIN)[0].getBoolean())) {
+            Group familyAdminGroup = (Group) userManager.getAuthorizable(FamilyDAMCoreConstants.FAMILY_ADMIN_GROUP);
             if (familyAdminGroup == null) {
-                familyAdminGroup = userManager.createGroup(FamilyDAMDashboardConstants.FAMILY_ADMIN_GROUP);
+                familyAdminGroup = userManager.createGroup(FamilyDAMCoreConstants.FAMILY_ADMIN_GROUP);
             }
             user_.setProperty("isFamilyAdmin", new BooleanValue(true));
             familyAdminGroup.addMember(user_);
@@ -297,7 +277,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet
     private void createDefaultFolders(Session session_, User user_) throws RepositoryException
     {
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
-        Group familyGroup = (Group) userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_GROUP);
+        Group familyGroup = (Group) userManager.getAuthorizable(FamilyDAMCoreConstants.FAMILY_GROUP);
 
 
         //find system folder (parent folders)
@@ -360,39 +340,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet
     }
 
 
-    /**
-     * Generate a public/private key for each user.
-     * @param session_
-     * @param user_
-     * @throws RepositoryException
-     *
-     * @See http://www.javamex.com/tutorials/cryptography/rsa_encryption.shtml
-     */
-    private void createSecurityKeys(Session session_, User user_) throws RepositoryException
-    {
 
-        try {
-            Node userNode = session_.getNode(user_.getPath());
-            Node securityNode = userNode.addNode("dam:security", "nt:unstructured");
-            session_.save();
-
-            keyEncryption.generateKeys(securityNode, session_);
-
-            // remove all access for this user
-            assignPermission(session_, user_.getPrincipal(), securityNode, null, new String[]{Privilege.JCR_ALL});
-
-            // remove all access for the anonymouse user
-            UserManager userManager = ((JackrabbitSession) session_).getUserManager();
-            User anonUser = (User) userManager.getAuthorizable("anonymous");
-            //assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_WRITE});
-            assignPermission(session_, anonUser.getPrincipal(), securityNode, null, new String[]{Privilege.JCR_ALL});
-
-
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
-
-    }
 
 
     /**

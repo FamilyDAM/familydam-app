@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.familydam.apps.dashboard.servlets.users;
+package com.familydam.core.servlets.users;
 
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -42,7 +42,7 @@ import java.io.IOException;
  */
 @SlingServlet(paths = {"/bin/familydam/api/v1/auth/ping"}, metatype = true)
 @Properties({
-        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.CheckAuthServlet", propertyPrivate = false),
+        @Property(name = "service.pid", value = "CheckAuthServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CheckAuthServlet  Description", propertyPrivate = false),
         @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
 })
