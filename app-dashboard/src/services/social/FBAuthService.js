@@ -27,7 +27,9 @@ module.exports = {
      */
     execute: function(args_)
     {
-        var _url = "http://localhost:8080/api/v1/social/fb/auth?userId=12345";
+        var user = UserStore.getCurrentUser();
+
+        var _url = "http://localhost:8080/api/v1/social/fb/auth?token=" +user.jwtToken;
 
         if( electronRequire ) {
             electronRequire("electron").shell.openExternal(_url);// +UserStore.getCurrentUser().getId());

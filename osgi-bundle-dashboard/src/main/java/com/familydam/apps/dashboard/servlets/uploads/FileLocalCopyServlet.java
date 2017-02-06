@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.FileLocalCopyServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "FileLocalCopyServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 public class FileLocalCopyServlet extends SlingAllMethodsServlet
 {

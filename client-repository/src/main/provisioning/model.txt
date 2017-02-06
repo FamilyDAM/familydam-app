@@ -51,4 +51,4 @@
 
 [configurations]
 com.familydam.bundle.sync.cron.PullFamilyDAMUserEvents [format=properties]
-    queue.url=http://localhost:8080/api/v1/events/{token}
+    queue.url=http://localhost:8080/api/v1/events/

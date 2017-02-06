@@ -142,6 +142,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-ocm</artifactId>
+            <version>1.6-SNAPSHOT</version>
+        </dependency>
+        -->
+
 
         <!-- Jackson -->
         <dependency>
@@ -191,6 +199,12 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.jcr-mock</artifactId>
+            <version>1.2.0</version>
+        </dependency>
     </dependencies>
 
 
@@ -223,6 +237,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -235,6 +250,8 @@
                         <Bundle-Activator>com.familydam.bundle.sync.SyncBundleActivator</Bundle-Activator>
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Embed-Dependency>jackson-databind,jackson-annotations,jackson-core</Embed-Dependency>
+                        <Import-Dependency>org.apache.jackrabbit,org.apache.commons.io</Import-Dependency>
+                        <!--Export-Package>com.familydam.bundle.sync.services*,com.familydam.bundle.sync.cron*</Export-Package-->
                         <Private-Package>
                             com.familydam.bundles.sync.*
                         </Private-Package>
@@ -248,8 +265,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>7</source>
-                    <target>7</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
             <plugin>

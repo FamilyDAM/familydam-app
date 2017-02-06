@@ -17,17 +17,31 @@
 package com.familydam.apps;
 
 import junit.framework.TestCase;
+import org.apache.sling.testing.mock.jcr.MockJcr;
+import org.junit.Test;
+
+import javax.jcr.Repository;
+import javax.jcr.Session;
 
 /**
  * Unit test for By Path Servlet.
  */
-public class ListDatesServletTest extends TestCase {
+public class FacebookServiceTest //extends TestCase
+{
 
     /**
-     * Rigourous Test :-)
+     *
      */
-    public void testByPathServlet() {
-        assertTrue(true);
+    //@Test
+    public void savePosts() {
+        // get session
+        Session session = MockJcr.newSession();
+
+        // get repository
+        Repository repository = MockJcr.newRepository();
+
+
+
     }
     
 }

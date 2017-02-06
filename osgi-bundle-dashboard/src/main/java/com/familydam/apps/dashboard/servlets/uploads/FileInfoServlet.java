@@ -30,7 +30,7 @@ import java.util.Map;
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.FileInfoServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "FileInfoServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 public class FileInfoServlet extends SlingAllMethodsServlet
 {

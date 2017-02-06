@@ -62,7 +62,7 @@ import java.util.*;
 @Properties({
         @Property(name = "service.pid", value = "CreateUserServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CreateUserServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 @SuppressWarnings("serial")
 public class CreateUserServlet extends SlingAllMethodsServlet
@@ -150,7 +150,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet
             //remove the user if the save failed at any point
             try {
                 if (adminSession != null && userManager != null) {
-                    userManager.getAuthorizable(((Value[]) request.getParameterMap().get(":name"))[0].toString().toLowerCase()).remove();
+                    userManager.getAuthorizable(((Object[]) request.getParameterMap().get(":name"))[0].toString().toLowerCase()).remove();
                     adminSession.save();
                 }
             }catch(RepositoryException re){}
@@ -296,10 +296,11 @@ public class CreateUserServlet extends SlingAllMethodsServlet
 
             if (!node.getPath().equals("/")) {
 
-                Node _node = JcrUtils.getOrAddNode(node, user_.getID(), JcrConstants.NT_FOLDER);
+                Node _node = JcrUtils.getOrAddNode(node, user_.getID(), JcrConstants.NT_UNSTRUCTURED);
                 _node.addMixin("mix:created");
                 _node.addMixin("dam:extensible");
                 _node.addMixin("dam:userfolder");
+                _node.addMixin("dam:folder");
 
                 if( node.getName().equals("dam-files") || node.getName().equals("dam-cloud")) {
                     _node.addMixin("mix:versionable");
@@ -333,9 +334,10 @@ public class CreateUserServlet extends SlingAllMethodsServlet
         String[] folders = new String[]{"Documents", "Movies", "Music", "Photos"};
 
         for (String folder : folders) {
-            Node _node = JcrUtils.getOrAddNode(node, folder, JcrConstants.NT_FOLDER);
+            Node _node = JcrUtils.getOrAddNode(node, folder, JcrConstants.NT_UNSTRUCTURED);
             _node.addMixin("mix:created");
             _node.addMixin("dam:extensible");
+            _node.addMixin("dam:folder");
         }
     }
 

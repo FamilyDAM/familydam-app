@@ -144,7 +144,7 @@ public class UserNodeEventListener implements EventHandler
                 props.put("familyId", new StringValue(familyId).getString());
                 String jwtToken = registerUserandGetJWTToken(props, secNode.getProperty(FamilyDAMCoreConstants.PUBLIC_KEY_BASE64).getString().getBytes(Charset.forName("UTF-8")));
 
-                secNode.setProperty(FamilyDAMCoreConstants.JWT_TOKEN, jwtToken);
+                userNode.setProperty(FamilyDAMCoreConstants.JWT_TOKEN, jwtToken);
                 session.save();
             }catch(HttpHostConnectException hhcex){
                 hhcex.printStackTrace();
@@ -197,13 +197,6 @@ public class UserNodeEventListener implements EventHandler
 
     private String registerUserandGetJWTToken(Map user, byte[] publicBytes64) throws RepositoryException,IOException
     {
-        HttpClientBuilder builder = HttpClientBuilder.create();
-        CloseableHttpClient httpClient = builder.build();
-
-        HttpPost request = new HttpPost(this.registerUserUrl);
-        request.addHeader("accept", "application/json");
-
-
 
         String token = Request.Post(this.registerUserUrl)
                 .useExpectContinue()

@@ -1,50 +1,50 @@
 package com.familydam.bundle.sync.cron;
 
+import com.familydam.bundle.sync.FamilyDAMSyncConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.felix.scr.annotations.*;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.HttpClientUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpVersion;
+import org.apache.http.StatusLine;
+import org.apache.http.client.fluent.Request;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.JackrabbitSession;
-import org.apache.jackrabbit.api.security.user.*;
-import org.apache.jackrabbit.oak.commons.IOUtils;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.QueryBuilder;
+import org.apache.jackrabbit.api.security.user.User;
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.oak.commons.PropertiesUtil;
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
-import org.apache.sling.commons.osgi.OsgiUtil;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Dictionary;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by mike on 1/26/17.
+ *
  * @see - http://www.docjar.com/docs/api/org/quartz/CronTrigger.html for patterns
  */
 @Component(metatype = true, immediate = true)
 @Service(value = Runnable.class)
 @Properties({
-        @Property(name = "scheduler.period", value = "0 * * * * ?"), //every 1mins
-        @Property(name="scheduler.concurrent", boolValue=false),
-        @Property(name="scheduler.runOn", value="SINGLE"),
+        @Property(name = "scheduler.expression", value = "0 * * * * ?"), //every 1mins
+        @Property(name = "scheduler.concurrent", boolValue = false),
+        @Property(name = "scheduler.runOn", value = "SINGLE"),
         @Property(name = "service.enabled", boolValue = true, label = "Enabled", description = "Enable/Disable the Scheduled Service"),
-        @Property(name="queue.url", propertyPrivate=false, value = "http://localhost:8080/api/v1/events/{token}")
+        @Property(name = "queue.url", propertyPrivate = false, value = "http://localhost:8080/api/v1/events")
 })
-public class PullFamilyDAMUserEvents implements Runnable
-{
-    /** Logger. */
+public class PullFamilyDAMUserEvents implements Runnable {
+    /**
+     * Logger.
+     */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
@@ -59,17 +59,16 @@ public class PullFamilyDAMUserEvents implements Runnable
         Dictionary<?, ?> props = ctx.getProperties();
 
         this.enabled = PropertiesUtil.toBoolean(props.get("service.enabled"), true);
-        this.queueUrl = PropertiesUtil.toString(props.get("queue.url"), "http://localhost:8080/api/v1/events/{token}");
+        this.queueUrl = PropertiesUtil.toString(props.get("queue.url"), "http://localhost:8080/api/v1/events");
 
-        run(); //run on startup
+        //run(); //run on startup
     }
-
 
 
     @Override
     public void run() {
 
-        if( this.enabled  ) {
+        if (this.enabled) {
             JackrabbitSession adminSession = null;
             UserManager userManager = null;
 
@@ -82,7 +81,6 @@ public class PullFamilyDAMUserEvents implements Runnable
                 userManager = adminSession.getUserManager();
                 Iterator<Authorizable> users = userManager.findAuthorizables(new org.apache.jackrabbit.api.security.user.Query() {
                     public <T> void build(QueryBuilder<T> builder) {
-                        builder.setCondition(builder.neq("rep:principalName", new StringValue("anonymous")));
                         builder.setCondition(builder.and(builder.neq("rep:principalName", new StringValue("admin")), builder.neq("rep:principalName", new StringValue("anonymous"))));
                         builder.setSortOrder("@rep:principalName", QueryBuilder.Direction.ASCENDING);
                         builder.setSelector(User.class);
@@ -92,28 +90,49 @@ public class PullFamilyDAMUserEvents implements Runnable
 
                 while (users.hasNext()) {
                     Authorizable _user = users.next();
+                    Node userNode = adminSession.getNode(_user.getPath());
+                    Node secNode = userNode.getNode(FamilyDAMSyncConstants.USER_DAM_SECURITY);
 
-                    if (_user.hasProperty("token")) {
-                        HttpClientBuilder builder = HttpClientBuilder.create();
-                        CloseableHttpClient httpClient = builder.build();
+                    try{
+                        if ( userNode.hasProperty("jwtToken") ) {
+
+                            String token = userNode.getProperty("jwtToken").getString();
+                            List<Map> events = Request.Get(this.queueUrl)
+                                    .useExpectContinue()
+                                    .version(HttpVersion.HTTP_1_1)
+                                    .addHeader("Authorization", token)
+                                    .execute().handleResponse(response -> {
+                                        StatusLine statusLine = response.getStatusLine();
+                                        HttpEntity entity = response.getEntity();
+                                        if (statusLine.getStatusCode() == 200) {
+
+                                            ObjectMapper mapper = new ObjectMapper();
+                                            List results = mapper.readValue(entity.getContent(), List.class);
+                                            return results;
+                                        }
+                                        return Collections.EMPTY_LIST;
+                                    });
 
 
-                        HttpGet getRequest = new HttpGet(this.queueUrl.replace("{token}", _user.getProperty("token").toString()));
-                        getRequest.addHeader("accept", "application/json");
+                            for (Map event : events) {
+                                if( ((String)event.get("type")).equalsIgnoreCase("fb_login_token") )
+                                {
+                                    if( !secNode.hasNode("facebook") ){
+                                        secNode.addNode("facebook", JcrConstants.NT_UNSTRUCTURED);
+                                    }
 
-                        try {
-                            CloseableHttpResponse response = httpClient.execute(getRequest);
-
-                            if (response.getStatusLine().getStatusCode() == 200) {
-                                Map props = new ObjectMapper().readValue(response.getEntity().getContent(), Map.class);
+                                    Node fbNode = secNode.getNode("facebook");
+                                    fbNode.setProperty("access_token", (String)((Map)event.get("message")).get("access_token")  );
+                                    fbNode.setProperty("token_type", (String)((Map)event.get("message")).get("token_type")  );
+                                    fbNode.setProperty("expires_in", (Integer)((Map)event.get("message")).get("expires_in")  );
+                                    adminSession.save();
+                                }
                             }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            // error handling
-                        } finally {
-                            HttpClientUtils.closeQuietly(httpClient);
                         }
+
+                    }catch(RepositoryException re){
+                        re.printStackTrace();
+                        //swallow
                     }
                 }
 

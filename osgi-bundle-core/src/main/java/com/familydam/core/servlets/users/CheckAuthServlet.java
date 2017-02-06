@@ -44,7 +44,7 @@ import java.io.IOException;
 @Properties({
         @Property(name = "service.pid", value = "CheckAuthServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CheckAuthServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 @SuppressWarnings("serial")
 public class CheckAuthServlet extends SlingAllMethodsServlet

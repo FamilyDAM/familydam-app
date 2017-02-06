@@ -58,7 +58,7 @@ import java.util.*;
 @Properties({
         @Property(name = "service.pid", value = "ChangeUserPasswordServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "ChangePasswordServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 {
@@ -259,7 +259,7 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 
             if (!node.getPath().equals("/")) {
 
-                Node _node = JcrUtils.getOrAddNode(node, user_.getID(), JcrConstants.NT_FOLDER);
+                Node _node = JcrUtils.getOrAddNode(node, user_.getID(), JcrConstants.NT_UNSTRUCTURED);
                 _node.addMixin("mix:created");
                 _node.addMixin("dam:extensible");
                 _node.addMixin("dam:userfolder");

@@ -71,8 +71,7 @@ public class HateaosDecorator implements ResourceDecorator
     private boolean isFolder(Resource resource)
     {
         try {
-            return resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:folder")
-                    || resource.adaptTo(javax.jcr.Node.class).isNodeType("sling:Folder");
+            return resource.adaptTo(javax.jcr.Node.class).isNodeType("dam:folder");
         }
         catch (RepositoryException re) {
             return false;
@@ -85,8 +84,7 @@ public class HateaosDecorator implements ResourceDecorator
         try {
             if( !resource.isResourceType("sling:syntheticStarResource") ) {
                 return resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:file")
-                        || resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:folder")
-                        || resource.adaptTo(javax.jcr.Node.class).isNodeType("sling:Folder");
+                        || resource.adaptTo(javax.jcr.Node.class).isNodeType("dam:folder");
             }
         }
         catch (Exception re) {
