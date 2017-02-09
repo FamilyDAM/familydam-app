@@ -45,7 +45,7 @@ import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 @Component(metatype = true, immediate = true)
 @Service(value = Runnable.class)
 @Properties({
-        @Property(name = "scheduler.expression", value = "0 0 0/1 * * ?"), //every 1mins
+        @Property(name = "scheduler.expression", value = "0 0 0/1 * * ?"), //every hour
         @Property(name = "scheduler.concurrent", boolValue = false),
         @Property(name = "scheduler.runOn", value = "SINGLE"),
         @Property(name = "service.enabled", boolValue = true, label = "Enabled", description = "Enable/Disable the Scheduled Service"),
