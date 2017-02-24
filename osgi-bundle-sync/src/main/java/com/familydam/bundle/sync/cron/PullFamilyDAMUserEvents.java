@@ -127,6 +127,17 @@ public class PullFamilyDAMUserEvents implements Runnable {
                                     fbNode.setProperty("expires_in", (Integer)((Map)event.get("message")).get("expires_in")  );
                                     adminSession.save();
                                 }
+                                else if( ((String)event.get("type")).equalsIgnoreCase("twitter_login_token") )
+                                {
+                                    if( !secNode.hasNode("twitter") ){
+                                        secNode.addNode("twitter", JcrConstants.NT_UNSTRUCTURED);
+                                    }
+
+                                    Node twitterNode = secNode.getNode("twitter");
+                                    twitterNode.setProperty("token", (String)((Map)event.get("message")).get("token")  );
+                                    twitterNode.setProperty("tokenSecret", (String)((Map)event.get("message")).get("tokenSecret")  );
+                                    adminSession.save();
+                                }
                             }
                         }
 

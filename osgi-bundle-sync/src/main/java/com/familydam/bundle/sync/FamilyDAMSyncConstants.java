@@ -18,6 +18,8 @@ public class FamilyDAMSyncConstants
 
     //properties
     public static final String ACCESS_TOKEN = "access_token";
+    public static final String TWITTER_TOKEN = "token";
+    public static final String TWITTER_TOKEN_SECRET = "tokenSecret";
 }
 
 
