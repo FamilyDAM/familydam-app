@@ -41,7 +41,7 @@ import java.io.IOException;
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.DateTreeServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "DateTreeServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 public class DateTreeServlet extends SlingSafeMethodsServlet
 {

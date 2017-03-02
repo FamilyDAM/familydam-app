@@ -178,7 +178,7 @@
 
             logger.debug("check java version");
             version_prc = exec("java -version", {encoding: 'utf8'}, (error, stdout, stderr) => {
-                console.log("err=" +error);
+                logger.error(error);
                 if (error) {
                     dialog.showErrorBox("Startup Error", "Unknown error.\nMake sure you have the latest version of Java installed\nhttps://java.com\n\n" +error);
                     return;

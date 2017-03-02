@@ -5,10 +5,10 @@
   "devDependencies": {},
   "scripts": {
     "clean": "cd client-desktop && npm run clean && cd .. && mvn clean",
-    "build": "npm run build-server && npm run build-apps && npm run build-client",
+    "build": "npm run build-repo && npm run build-apps && npm run build-client",
     "build-apps": "cd app-configwizard && grunt build-dev && cd ../app-dashboard && grunt build-dev",
     "build-client": "cd client-desktop && npm run build:app && npm run build:osx",
-    "build-server": "mvn install -DskipTests=true",
+    "build-repo": "mvn install -DskipTests=true",
     "start:osx": "open client-desktop/build-binary/0.1.0/mac/FamilyDAM.app"
   }
 }

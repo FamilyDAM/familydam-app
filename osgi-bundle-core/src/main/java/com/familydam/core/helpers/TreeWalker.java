@@ -90,17 +90,10 @@ public class TreeWalker
             if( includeTypes != null ){
                 boolean bExists = false;
                 for (String includeType : includeTypes) {
-                    if( _resource.getResourceType().equalsIgnoreCase(includeType) )
-                    {
-                        bExists = true;
-                    }else {
-                        String[] mixinTypesRaw = (String[]) _resource.getValueMap().get("jcr:mixinTypes");
-                        if( mixinTypesRaw != null) {
-                            List<String> mixinTypes = Arrays.asList(mixinTypesRaw);
-                            if (mixinTypes.indexOf(includeType) > -1) {
-                                bExists = true;
-                            }
-                        }
+                    try {
+                        bExists = _resource.adaptTo(Node.class).isNodeType(includeType);
+                    }catch(RepositoryException re){
+                        bExists = false;
                     }
                 }
                 if( !bExists ) continue;
@@ -251,8 +244,7 @@ public class TreeWalker
     private boolean isFolder(Resource resource)
     {
         try {
-            return resource.adaptTo(javax.jcr.Node.class).isNodeType("nt:folder")
-                    || resource.adaptTo(javax.jcr.Node.class).isNodeType("sling:Folder");
+            return resource.adaptTo(javax.jcr.Node.class).isNodeType("dam:folder");
         }
         catch (RepositoryException re) {
             return false;

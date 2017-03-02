@@ -54,6 +54,7 @@ module.exports = React.createClass({
 
         // after a user has been created, add them to the array
         this.createUsersSubscription = UserActions.createUser.sink.subscribe(function (data_) {
+            debugger;
             this.closeCreateUser();
             //refresh user list
             UserActions.getUsers.source.onNext(true);
@@ -66,6 +67,8 @@ module.exports = React.createClass({
 
 
     componentWillUnmount: function () {
+        debugger;
+
         console.log("{UserManagerView} componentWillUnmount");
         if (this.getUsersSubscription !== undefined) this.getUsersSubscription.dispose();
         if (this.createUsersSubscription !== undefined) this.createUsersSubscription.dispose();

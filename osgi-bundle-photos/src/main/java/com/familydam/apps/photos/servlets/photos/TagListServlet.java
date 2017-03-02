@@ -31,7 +31,7 @@ import java.util.Map;
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.TagListServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "TagListServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 public class TagListServlet extends SlingSafeMethodsServlet
 {

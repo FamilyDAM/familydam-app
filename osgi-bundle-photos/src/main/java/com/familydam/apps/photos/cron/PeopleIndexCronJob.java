@@ -16,7 +16,7 @@ import javax.jcr.Session;
 @Component
 @Service(value = Runnable.class)
 @Properties({
-        @Property(name = "scheduler.period", value = "0 0 * * *"), //12:00am
+        @Property(name = "scheduler.period", value = "1 * * * *"), //12:00am
         @Property(name="scheduler.concurrent", boolValue=false)
 })
 public class PeopleIndexCronJob implements Runnable {

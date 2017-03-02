@@ -343,7 +343,7 @@ module.exports = React.createClass({
 
         var folderRows = this.state.files
             .filter(function (data_) {
-                return data_["jcr:primaryType"] === "nt:folder" || data_["jcr:primaryType"] === "sling:Folder";
+                return data_["jcr:primaryType"] === "nt:unstructured";
             }).map(function (dir_, index_) {
                 //return <DirectoryRow key={dir_.path} dir={dir_}/>
                 return (

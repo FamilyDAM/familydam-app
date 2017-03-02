@@ -9,11 +9,7 @@ package com.familydam.apps.dashboard;
  */
 public class FamilyDAMDashboardConstants
 {
-    public static final String IS_FAMILY_ADMIN = "isFamilyAdmin";
 
-    // Security Groups
-    public static final String FAMILY_ADMIN_GROUP = "family_admin_group";
-    public static final String FAMILY_GROUP = "family_group";
 
 
     // paths

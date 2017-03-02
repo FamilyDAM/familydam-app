@@ -39,7 +39,7 @@ module.exports = {
         if( path_ !== undefined && path_.length > 0 )
         {
 
-            var _url = path_ + ".graph.4.json/nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
+            var _url = path_ + ".graph.4.json/dam:folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
             //console.dir(UserStore.token.value);
 

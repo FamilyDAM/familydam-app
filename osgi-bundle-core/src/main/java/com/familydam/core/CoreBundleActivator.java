@@ -22,6 +22,7 @@ public class CoreBundleActivator implements BundleActivator
     {
         log.trace("Starting FamilyDAM-Core Bundle");
         //todo, move content folder creation to this folder
+
     }
 
 
@@ -29,4 +30,7 @@ public class CoreBundleActivator implements BundleActivator
     {
         log.trace("Stopping FamilyDAM-Core Bundle");
     }
+
+
+
 }

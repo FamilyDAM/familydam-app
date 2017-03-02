@@ -47,7 +47,7 @@ module.exports = {
         return $.ajax({
                     method: "post",
                     url: _dir,
-                    data: {':name':_name, 'jcr:primaryType':'nt:folder'},
+                    data: {':name':_name, 'jcr:mixins':'dam:folder'},
                     'xhrFields': {
                         withCredentials: true
                     }

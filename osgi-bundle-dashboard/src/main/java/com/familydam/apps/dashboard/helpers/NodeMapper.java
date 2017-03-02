@@ -34,7 +34,10 @@ public class NodeMapper
     public static INode map(Node node) throws RepositoryException, UnknownINodeException
     {
 
-        if (node.getPrimaryNodeType().isNodeType(JcrConstants.NT_FOLDER)) {
+        if (node.getPrimaryNodeType().isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+            return mapDirectoryNode(node);
+
+        }else if (node.getPrimaryNodeType().isNodeType(JcrConstants.NT_FOLDER)) {
             return mapDirectoryNode(node);
 
         } else if (node.getPrimaryNodeType().isNodeType(JcrConstants.NT_FILE)) {

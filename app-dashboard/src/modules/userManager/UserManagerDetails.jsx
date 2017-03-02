@@ -4,6 +4,7 @@
 /** jsx React.DOM */
 
 var React = require('react');
+
 import {Router, Link} from 'react-router';
 import {
     FlatButton,
@@ -30,6 +31,7 @@ var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
+var SocialActions = require('../../actions/SocialActions');
 var UserStore = require('../../stores/UserStore');
 
 //var LoadingIcon = require('./../../components/loadingIcon/LoadingIcon.jsx');
@@ -227,6 +229,14 @@ module.exports = React.createClass({
         UserActions.changePassword.source.onNext(this.state.user);
     },
 
+
+    handleFacebookAuth: function (event_) {
+        //Start the FB auth chain
+        SocialActions.authFacebook.source.onNext(true);
+    },
+
+
+
     render: function () {
         var _this = this;
 
@@ -384,7 +394,7 @@ module.exports = React.createClass({
                                     <TableBody displayRowCheckbox={false}>
                                         <TableRow>
                                             <TableRowColumn colSpan={3}>
-                                                Facebook (coming soon)
+                                                Facebook
                                             </TableRowColumn>
                                             <TableRowColumn>
                                                 <Toggle
@@ -393,7 +403,7 @@ module.exports = React.createClass({
                                                 />
                                             </TableRowColumn>
                                             <TableRowColumn>
-                                                <RaisedButton disabled={true} label="Authorize"/>
+                                                <RaisedButton label="Authorize" onClick={this.handleFacebookAuth}/>
                                             </TableRowColumn>
                                         </TableRow>
                                         <TableRow>

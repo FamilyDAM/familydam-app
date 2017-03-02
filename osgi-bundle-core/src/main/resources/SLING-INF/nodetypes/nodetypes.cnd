@@ -31,6 +31,7 @@
 [dam:systemfolder] mixin
 [dam:contentfolder] mixin
 [dam:userfolder] mixin
+[dam:folder] mixin
 
 
 
@@ -48,6 +49,9 @@
 + dam:friends (nt:unstructured)
 
 
+[dam:facebook_post] mixin
+[dam:facebook_location] mixin
+
 
 [dam:file] mixin
 - dam:datecreated (STRING)
@@ -57,7 +61,7 @@
 - dam:dateexifparsed (DATE)
 - dam:datephashparsed (DATE)
 + dam:metadata (nt:unstructured)
-+ dam:renditions (nt:folder)
++ dam:renditions (nt:unstructured)
 
 [dam:music] mixin
 - dam:datecreated (STRING)

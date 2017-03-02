@@ -34,6 +34,19 @@
 
     <dependencies>
 
+
+        <dependency>
+            <groupId>com.familydam.osgi</groupId>
+            <artifactId>osgi-bundle-core</artifactId>
+            <version>0.1.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.familydam.osgi</groupId>
+            <artifactId>osgi-bundle-dashboard</artifactId>
+            <version>0.1.4-SNAPSHOT</version>
+        </dependency>
+
+
         <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
@@ -82,13 +95,6 @@
             <scope>provided</scope>
         </dependency>
 
-
-
-        <dependency>
-            <groupId>com.familydam.osgi</groupId>
-            <artifactId>osgi-dashboard-app</artifactId>
-            <version>0.1.2-SNAPSHOT</version>
-        </dependency>
 
 
         <dependency>

@@ -29,7 +29,7 @@ module.exports = {
             //console.log("{GetFiles Service} getFiles()");
 
             var _this = this;
-            var _url =  path_ +".graph.1.json/nt:file,nt:folder,sling:Folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
+            var _url =  path_ +".graph.1.json/nt:file,dam:folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
             return $.ajax({
                 'method': "get",
