@@ -15,12 +15,12 @@ import java.util.Dictionary;
 @Component(metatype = true, immediate = true)
 @Service(value = Runnable.class)
 @Properties({
-        @Property(name = "scheduler.expression", value = "0 0 0/1 * * ?"), //every hour
+        @Property(name = "scheduler.expression", value = "0 0 2 * * *"), //2am every day
         @Property(name = "scheduler.concurrent", boolValue = false),
         @Property(name = "scheduler.runOn", value = "SINGLE"),
         @Property(name = "service.enabled", boolValue = true, label = "Enabled", description = "Enable/Disable the Scheduled Service"),
 })
-public class SyncUserTimeline implements Runnable {
+public class SyncOldestUserTimeline implements Runnable {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -46,7 +46,7 @@ public class SyncUserTimeline implements Runnable {
         if (this.enabled) {
 
             // Sync user posts
-            twitterSyncService.syncUserPosts();
+            twitterSyncService.syncUserPosts(false);
 
         }
 

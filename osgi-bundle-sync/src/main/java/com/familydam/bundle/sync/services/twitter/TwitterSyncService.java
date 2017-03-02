@@ -25,10 +25,19 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.LongPredicate;
+import java.util.function.ToLongFunction;
+import java.util.logging.StreamHandler;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static com.familydam.bundle.sync.FamilyDAMSyncConstants.TWITTER_TOKEN;
 import static com.familydam.bundle.sync.FamilyDAMSyncConstants.TWITTER_TOKEN_SECRET;
@@ -63,12 +72,10 @@ public class TwitterSyncService extends SyncService {
 
         twitterEndpoint = PropertiesUtil.toString(props.get("user.timeline.endpoint"), defaultEndpoint);
 
-        syncUserPosts();
-
     }
 
 
-    public void syncUserPosts() {
+    public void syncUserPosts(Boolean latest) {
 
         try {
             ResourceResolver adminResolver = getResourceResolver(resolverFactory);
@@ -93,25 +100,8 @@ public class TwitterSyncService extends SyncService {
                         String _endpoint = this.twitterEndpoint;
 
 
-                        // Find Min & Max twitter ids
-                        /**
-                         IntSummaryStatistics summaryStatistics = testList.stream()
-                            .mapToInt(Test::get("id"))
-                            .summaryStatistics();
 
-                         int max = summaryStatistics.getMax();
-                         int min = summaryStatistics.getMin();
-                         */
-
-
-                        URIBuilder builder = new URIBuilder(_endpoint);
-                        builder.setParameter("token", token);
-                        builder.setParameter("tokenSecret", tokenSecret);
-                        builder.setParameter("count", "100");
-                        builder.setParameter("trim_user", "true");
-
-
-                        URI _nextUrl = builder.build();
+                        URI _nextUrl = getUrl(adminSession, _endpoint, token, tokenSecret, latest);
                         while (_nextUrl != null) {
                             List events = Request.Get(_nextUrl)
                                     .useExpectContinue()
@@ -143,9 +133,11 @@ public class TwitterSyncService extends SyncService {
 
                             //remove after adding max_id & since_id
                             _nextUrl = null;
-                            if( rows == 0 ){
+                            if( events.size() <= 1 ){
                                 _nextUrl = null;
                                 break;
+                            }else{
+                                _nextUrl = getUrl(adminSession, _endpoint, token, tokenSecret, latest);
                             }
 
                             //slow down so we don't trip twitter limits
@@ -165,6 +157,63 @@ public class TwitterSyncService extends SyncService {
         }
     }
 
+
+
+    public URI getUrl(Session session, String endpoint_, String token_, String tokenSecret_, Boolean latest) throws URISyntaxException, RepositoryException
+    {
+        Long min = -1l;
+        Long max = -1l;
+        LongSummaryStatistics summaryStatistics = getMinAndMaxTweetId(session);
+        if( summaryStatistics != null ) {
+            max = summaryStatistics.getMax();
+            min = summaryStatistics.getMin();
+        }
+
+
+        URIBuilder builder = new URIBuilder(endpoint_);
+        builder.setParameter("token", token_);
+        builder.setParameter("tokenSecret", tokenSecret_);
+        builder.setParameter("count", "100");
+        builder.setParameter("trim_user", "true");
+        if( min != -1 && latest){
+            builder.setParameter("since_id", max.toString());
+        }
+        if( max != -1 && !latest ){
+            builder.setParameter("max_id", min.toString());
+        }
+
+        return builder.build();
+    }
+
+
+    public LongSummaryStatistics getMinAndMaxTweetId(Session session) throws RepositoryException
+    {
+        // Find Min & Max twitter ids
+        QueryManager queryManager = session.getWorkspace().getQueryManager();
+        //Query query = queryManager.createQuery(sql, "JCR-SQL2");
+        Query query = queryManager.createQuery("select * from [dam:twitter_tweet]", Query.JCR_SQL2);
+        // Execute the query and get the results ...
+        QueryResult result = query.execute();
+
+        if( !result.getRows().hasNext() )
+        {
+            return null;
+        }
+
+        Spliterator<Node> spliterator = Spliterators.spliteratorUnknownSize(
+                result.getNodes(), Spliterator.NONNULL);
+
+        Stream<Node> stream = StreamSupport.stream(spliterator, false);
+        LongSummaryStatistics summaryStatistics = stream.mapToLong(value->{
+            try {
+                return  value.getProperty("id").getLong();
+            } catch (RepositoryException ex) {
+                return -1;
+            }
+        }).filter(value -> value > -1).summaryStatistics();
+
+        return summaryStatistics;
+    }
 
 
 
