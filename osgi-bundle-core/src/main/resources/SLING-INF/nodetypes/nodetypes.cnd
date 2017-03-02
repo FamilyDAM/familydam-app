@@ -52,6 +52,8 @@
 [dam:facebook_post] mixin
 [dam:facebook_location] mixin
 
+[dam:twitter_tweet] mixin
+
 
 [dam:file] mixin
 - dam:datecreated (STRING)

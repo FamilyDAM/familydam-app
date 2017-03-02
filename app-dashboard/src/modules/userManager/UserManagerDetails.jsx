@@ -234,6 +234,10 @@ module.exports = React.createClass({
         //Start the FB auth chain
         SocialActions.authFacebook.source.onNext(true);
     },
+    handleTwitterAuth: function (event_) {
+        //Start the FB auth chain
+        SocialActions.authTwitter.source.onNext(true);
+    },
 
 
 
@@ -340,6 +344,49 @@ module.exports = React.createClass({
                 <div className="row">
                     <div className="col-sm-12">
                         <Tabs >
+
+                            <Tab  label='Web Sites'>
+                                <Table >
+                                    <TableHeader enableSelectAll={false} adjustForCheckbox={false}
+                                                 displaySelectAll={false}>
+                                        <TableRow>
+                                            <TableHeaderColumn colSpan={5} tooltip="Service">Service</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody displayRowCheckbox={false}>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
+                                                Facebook
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Sync"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton label="Authorize" onClick={()=>this.handleFacebookAuth()}/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
+                                                Twitter (coming soon)
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Sync"
+                                                    disabled={true}
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton label="Authorize" onClick={()=>this.handleTwitterAuth()}/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </Tab>
+
+
                             <Tab  label='Cloud Drives'>
 
                                 <Table >
@@ -382,47 +429,6 @@ module.exports = React.createClass({
                                 </Table>
                             </Tab>
 
-
-                            <Tab  label='Web Sites'>
-                                <Table >
-                                    <TableHeader enableSelectAll={false} adjustForCheckbox={false}
-                                                 displaySelectAll={false}>
-                                        <TableRow>
-                                            <TableHeaderColumn colSpan={5} tooltip="Service">Service</TableHeaderColumn>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody displayRowCheckbox={false}>
-                                        <TableRow>
-                                            <TableRowColumn colSpan={3}>
-                                                Facebook
-                                            </TableRowColumn>
-                                            <TableRowColumn>
-                                                <Toggle
-                                                    label="Sync"
-                                                    disabled={true}
-                                                />
-                                            </TableRowColumn>
-                                            <TableRowColumn>
-                                                <RaisedButton label="Authorize" onClick={this.handleFacebookAuth}/>
-                                            </TableRowColumn>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableRowColumn colSpan={3}>
-                                                Twitter (coming soon)
-                                            </TableRowColumn>
-                                            <TableRowColumn>
-                                                <Toggle
-                                                    label="Sync"
-                                                    disabled={true}
-                                                />
-                                            </TableRowColumn>
-                                            <TableRowColumn>
-                                                <RaisedButton disabled={true} label="Authorize"/>
-                                            </TableRowColumn>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </Tab>
 
 
                             <Tab  label='Email Accounts'>

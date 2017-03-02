@@ -2,6 +2,7 @@ package com.familydam.bundle.sync.services.facebook;
 
 import com.familydam.apps.dashboard.servlets.HealthServlet;
 import com.familydam.bundle.sync.FamilyDAMSyncConstants;
+import com.familydam.bundle.sync.services.SyncService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.*;
@@ -58,12 +59,12 @@ import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
         @Property(name = "graphql.endpoint", label = "endpoint", description = "GraphQL endpoint"),
         @Property(name = "graphql.fields", label = "fields", description = "GraphQL fields to return")
 })
-public class FacebookSyncService
+public class FacebookSyncService extends SyncService
 {
     public final Logger log = LoggerFactory.getLogger(FacebookSyncService.class);
 
     @Reference
-    private ResourceResolverFactory resolverFactory;
+    public ResourceResolverFactory resolverFactory;
 
     SimpleDateFormat dataFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
@@ -96,7 +97,7 @@ public class FacebookSyncService
     {
 
         try {
-            ResourceResolver adminResolver = getResourceResolver();
+            ResourceResolver adminResolver = getResourceResolver(resolverFactory);
             JackrabbitSession adminSession = (JackrabbitSession)getAdminSession(adminResolver);
 
             //get FamilyDAM users
@@ -173,39 +174,6 @@ public class FacebookSyncService
             log.error(le.getMessage(), le);
         }
     }
-
-
-
-
-
-
-    ResourceResolver getResourceResolver() throws LoginException {
-        JackrabbitSession adminSession = null;
-        UserManager userManager = null;
-
-        ResourceResolver adminResolver = resolverFactory.getAdministrativeResourceResolver(null);
-        return adminResolver;
-    }
-
-
-    Session getAdminSession(ResourceResolver adminResolver) throws LoginException {
-        return (JackrabbitSession) adminResolver.adaptTo(Session.class);
-    }
-
-
-    Iterator<Authorizable> getUsers(JackrabbitSession adminSession) throws RepositoryException {
-        UserManager userManager = adminSession.getUserManager();
-        return userManager.findAuthorizables(new org.apache.jackrabbit.api.security.user.Query() {
-            public <T> void build(QueryBuilder<T> builder) {
-                builder.setCondition(builder.neq("rep:principalName", new StringValue("anonymous")));
-                builder.setCondition(builder.and(builder.neq("rep:principalName", new StringValue("admin")), builder.neq("rep:principalName", new StringValue("anonymous"))));
-                builder.setSortOrder("@rep:principalName", QueryBuilder.Direction.ASCENDING);
-                builder.setSelector(User.class);
-            }
-        });
-    }
-
-
 
 
 

@@ -10,6 +10,7 @@ module.exports = {
     alert: new Rx.Subject(),
 
     authFacebook: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+    authTwitter: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
 
 };
 

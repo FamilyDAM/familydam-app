@@ -19,6 +19,7 @@ var PhotoPeopleListService = require('./photos/PhotoPeopleListService');
 var PhotoDateTreeService = require('./photos/PhotoDateTreeService');
 var PhotoSearchService = require('./photos/PhotoSearchService');
 var FBAuthService = require('./social/FBAuthService');
+var TwitterAuthService = require('./social/TwitterAuthService');
 
 
 module.exports = {
@@ -42,5 +43,6 @@ module.exports = {
         PhotoDateTreeService.subscribe();
         PhotoSearchService.subscribe();
         FBAuthService.subscribe();
+        TwitterAuthService.subscribe();
     }
 };
