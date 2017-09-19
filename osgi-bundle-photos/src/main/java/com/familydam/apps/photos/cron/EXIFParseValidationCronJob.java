@@ -1,13 +1,9 @@
 package com.familydam.apps.photos.cron;
 
 import com.familydam.apps.photos.FamilyDAMConstants;
-import com.google.common.util.concurrent.AbstractScheduledService;
 import org.apache.felix.scr.annotations.*;
-import org.apache.felix.scr.annotations.Properties;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
-import org.apache.sling.event.impl.jobs.queues.QueueServices;
-import org.apache.sling.event.impl.support.Environment;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.apache.sling.event.jobs.ScheduledJobInfo;
@@ -21,7 +17,10 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Check all dam:images for images that have not had their EXIF date parsed

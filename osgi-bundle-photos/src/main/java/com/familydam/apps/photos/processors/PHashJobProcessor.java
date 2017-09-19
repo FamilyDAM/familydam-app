@@ -5,7 +5,6 @@
 package com.familydam.apps.photos.processors;
 
 import com.familydam.apps.photos.FamilyDAMConstants;
-import com.familydam.apps.photos.services.ImageExifParser;
 import com.familydam.apps.photos.services.ImagePHash;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;

@@ -14,7 +14,6 @@ import org.apache.sling.commons.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.security.AccessControlException;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;

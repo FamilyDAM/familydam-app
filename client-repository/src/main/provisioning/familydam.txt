@@ -1,0 +1,15 @@
+[feature name=familydam]
+#
+#    com.familydam.apps.photos.servlets.ImageThumbnailServlet
+#        resize-library="image-magik"
+
+[variables]
+    core.version=0.1.4-SNAPSHOT
+    dashboard.version=0.1.4-SNAPSHOT
+    photos.version=0.1.4-SNAPSHOT
+
+[artifacts]
+   com.familydam.osgi/osgi-bundle-core/${core.version}
+   com.familydam.osgi/osgi-bundle-dashboard/${dashboard.version}
+   com.familydam.osgi/osgi-bundle-photos/${photos.version}
+

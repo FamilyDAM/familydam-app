@@ -46,7 +46,7 @@ module.exports = {
 
                     for(var key in results)
                     {
-                        if( key != "admin" && key != "anonymous" )
+                        if( key != "admin" && key != "anonymous" && path.indexOf("/home/users/system/") === -1 )
                         {
                             var item = results[key];
                             item.username = key;

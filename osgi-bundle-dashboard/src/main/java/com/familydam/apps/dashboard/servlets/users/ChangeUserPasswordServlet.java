@@ -152,6 +152,7 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
             {
                 builder.setCondition(builder.neq("rep:principalName", new StringValue("anonymous")));
                 builder.setCondition(builder.and(builder.neq("rep:principalName", new StringValue("admin")), builder.neq("rep:principalName", new StringValue("anonymous"))));
+                builder.setCondition(builder.neq("jcr:primaryType", new StringValue("rep:SystemUser")));
                 builder.setSortOrder("@rep:principalName", QueryBuilder.Direction.ASCENDING);
                 builder.setSelector(User.class);
             }
