@@ -56,7 +56,8 @@
     org.apache.aries.subsystem/org.apache.aries.subsystem.core/2.0.6
     # dependency with javax.inject - required for Sling Models (SLING-4710)
     org.apache.geronimo.specs/geronimo-atinject_1.0_spec/1.0
-
+    # DEV only dependency, remove for release
+    org.apache.sling/org.apache.sling.tracer/1.0.0
 
 [configurations]
 # uninstall obsolete bundles which are neither not required anymore or are
@@ -67,11 +68,16 @@
 #org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProviderService
 #    oak.lucene=debug
 
-
 #org.apache.sling.servlets.post.impl.SlingPostServlet
 #    servlet.post.autoCheckout=B"true"
 #    servlet.post.autoCheckin=B"true"
 #    servlet.post.checkinNewVersionableNodes=B"true"
+
+
+# dev only, remove for release
+#org.apache.sling.tracer.internal.LogTracer
+#    enabled=true
+#    servletEnabled=true
 
 :bootstrap
   uninstall org.apache.sling.launchpad.content

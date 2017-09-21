@@ -16,30 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.familydam.apps.dashboard.servlets.users;
+package com.familydam.core.servlets.users;
 
-import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
+import com.familydam.core.FamilyDAMCoreConstants;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.JackrabbitSession;
-import org.apache.jackrabbit.api.security.user.Authorizable;
-import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
-import org.apache.jackrabbit.api.security.user.Group;
-import org.apache.jackrabbit.api.security.user.QueryBuilder;
-import org.apache.jackrabbit.api.security.user.User;
-import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.jackrabbit.api.security.user.*;
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.value.BooleanValue;
-import org.apache.jackrabbit.value.DateValue;
-import org.apache.jackrabbit.value.DoubleValue;
-import org.apache.jackrabbit.value.LongValue;
-import org.apache.jackrabbit.value.StringValue;
+import org.apache.jackrabbit.value.*;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.jcr.base.util.AccessControlUtil;
@@ -57,12 +47,7 @@ import javax.jcr.security.Privilege;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Hello World Servlet registered by path
@@ -71,9 +56,9 @@ import java.util.Set;
  */
 @SlingServlet(paths = {"/api/familydam/files/v1/user/password"}, metatype = true)
 @Properties({
-        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.ChangeUserPasswordServlet", propertyPrivate = false),
+        @Property(name = "service.pid", value = "ChangeUserPasswordServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "ChangePasswordServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 {
@@ -109,7 +94,7 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
             Authorizable sessionUser = userManager.getAuthorizable(session.getUserID());
 
             Authorizable user = userManager.getAuthorizable( request.getParameter("username") );
-            Authorizable group = userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_ADMIN_GROUP);
+            Authorizable group = userManager.getAuthorizable(FamilyDAMCoreConstants.FAMILY_ADMIN_GROUP);
             if( group.isGroup() ) {
                 if( ((Group) group).isMember(sessionUser) || sessionUser.getID().equalsIgnoreCase(user.getID()) ) {
                     ((User) user).changePassword(  request.getParameter("userProps[newPwd]")  );
@@ -173,7 +158,7 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
     {
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
 
-        Map<Object,Object[]> _userProps = request.getParameterMap();
+        Map<String,String[]> _userProps = request.getParameterMap();
 
         User _user = userManager.createUser(_userProps.get(":name")[0].toString().toLowerCase(), _userProps.get("pwd")[0].toString());
 
@@ -183,6 +168,7 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
                 continue;
             }
 
+            /** todo: fix
             if (_userProps.get(key)[0] instanceof Double[]) {
                 _user.setProperty(key.toString(), new DoubleValue((Double) _userProps.get(key)[0]));
             } else if (_userProps.get(key)[0] instanceof Boolean) {
@@ -195,8 +181,8 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
                 _user.setProperty(key.toString(), new DateValue(_cal));
             } else {
                 _user.setProperty(key.toString(), new StringValue(_userProps.get(key)[0].toString()));
-
             }
+             **/
         }
 
         session_.save();
@@ -223,9 +209,9 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
     {
 
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
-        Group familyGroup = (Group) userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_GROUP);
+        Group familyGroup = (Group) userManager.getAuthorizable(FamilyDAMCoreConstants.FAMILY_GROUP);
         if (familyGroup == null) {
-            familyGroup = userManager.createGroup(FamilyDAMDashboardConstants.FAMILY_GROUP);
+            familyGroup = userManager.createGroup(FamilyDAMCoreConstants.FAMILY_GROUP);
         }
         //now add the user to the family group
         familyGroup.addMember(user_);
@@ -233,10 +219,10 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 
 
         // if this family group is empty and this is the first user, make them an admin
-        if (user_.isAdmin() || (user_.getProperty(FamilyDAMDashboardConstants.IS_FAMILY_ADMIN) != null && user_.getProperty(FamilyDAMDashboardConstants.IS_FAMILY_ADMIN)[0].getBoolean())) {
-            Group familyAdminGroup = (Group) userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_ADMIN_GROUP);
+        if (user_.isAdmin() || (user_.getProperty(FamilyDAMCoreConstants.IS_FAMILY_ADMIN) != null && user_.getProperty(FamilyDAMCoreConstants.IS_FAMILY_ADMIN)[0].getBoolean())) {
+            Group familyAdminGroup = (Group) userManager.getAuthorizable(FamilyDAMCoreConstants.FAMILY_ADMIN_GROUP);
             if (familyAdminGroup == null) {
-                familyAdminGroup = userManager.createGroup(FamilyDAMDashboardConstants.FAMILY_ADMIN_GROUP);
+                familyAdminGroup = userManager.createGroup(FamilyDAMCoreConstants.FAMILY_ADMIN_GROUP);
             }
             familyAdminGroup.addMember(user_);
             //If the user is an admin give them jcr_all permissions to the whole system
@@ -256,7 +242,7 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
     private void createDefaultFolders(Session session_, User user_) throws RepositoryException
     {
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
-        Group familyGroup = (Group) userManager.getAuthorizable(FamilyDAMDashboardConstants.FAMILY_GROUP);
+        Group familyGroup = (Group) userManager.getAuthorizable(FamilyDAMCoreConstants.FAMILY_GROUP);
 
 
         //find system folder (parent folders)
@@ -275,7 +261,7 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 
             if (!node.getPath().equals("/")) {
 
-                Node _node = JcrUtils.getOrAddNode(node, user_.getID(), JcrConstants.NT_FOLDER);
+                Node _node = JcrUtils.getOrAddNode(node, user_.getID(), JcrConstants.NT_UNSTRUCTURED);
                 _node.addMixin("mix:created");
                 _node.addMixin("dam:extensible");
                 _node.addMixin("dam:userfolder");
@@ -324,7 +310,6 @@ public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 
             // finally set policy again & save
             //accessControlManager.setPolicy(list.getPath(), list);
-
             AccessControlUtil.replaceAccessControlEntry(session_,
                     node_.getPath(), _principal,
                     grantedPrivilegeNames.toArray(new String[grantedPrivilegeNames.size()]),

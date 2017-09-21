@@ -45,7 +45,7 @@ import java.util.*;
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.FileUploadServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "FileUploadServlet  Description", propertyPrivate = false),
-        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+        @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 public class FileUploadServlet extends SlingAllMethodsServlet
 {

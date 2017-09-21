@@ -55,7 +55,7 @@ public class GraphServlet extends SlingAllMethodsServlet
 {
     public final Logger log = LoggerFactory.getLogger(GraphServlet.class);
 
-    String[] defaultTypes = "nt:folder,nt:file".split(",");
+    String[] defaultTypes = "dam:folder,nt:file".split(",");
     String[] defaultSuffix = "name,path,index,parent,jcr:primaryType,jcr:created".split(",");
 
 

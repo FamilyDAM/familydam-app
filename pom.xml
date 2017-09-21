@@ -37,6 +37,7 @@
         <module>osgi-bundle-files</module>
         <module>osgi-bundle-cloudfiles</module>
         <module>osgi-bundle-photos</module>
+        <module>osgi-bundle-sync</module>
         <module>client-repository</module>
     </modules>
 

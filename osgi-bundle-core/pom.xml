@@ -29,6 +29,7 @@
 
 
     <dependencies>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -101,6 +102,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-commons</artifactId>
+            <version>2.13.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.base</artifactId>
             <version>3.0.2</version>
@@ -112,6 +119,52 @@
             <version>2.4.0</version>
             <scope>provided</scope>
         </dependency>
+
+
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+
+
+
+
+
+        <!-- http -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+
+
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -128,32 +181,22 @@
         </dependency>
 
 
-        <!-- Jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.8.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.8.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.8.7</version>
-        </dependency>
 
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <version>4.12</version>
+            <scope>compile</scope>
         </dependency>
+        <!--  Provide for Test Mocks  -->
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-junit4</artifactId>
+            <version>2.8.2</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -186,18 +229,30 @@
 
             <plugin>
                 <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+                <version>1.22.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-scr-scrdescriptor</id>
+                        <goals>
+                            <goal>scr</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
-                <version>3.0.0</version>
+                <version>3.2.0</version>
                 <configuration>
                     <instructions>
+                        <scanClasses>false</scanClasses>
                         <Bundle-Name>FamilyDAM Core</Bundle-Name>
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Bundle-Activator>com.familydam.core.CoreBundleActivator</Bundle-Activator>
-                        <Private-Package>
-                            com.familydam.core.*
-                        </Private-Package>
-                        <Embed-Dependency>gson,org.apache.sling.resourceaccesssecurity</Embed-Dependency>
+                        <Embed-Dependency>gson,jackson-databind,jackson-annotations,jackson-core</Embed-Dependency>
                         <Sling-Nodetypes>
                             SLING-INF/nodetypes/nodetypes.cnd
                         </Sling-Nodetypes>
@@ -206,6 +261,11 @@
                             SLING-INF/caches;overwrite:=false;uninstall:=true;path:=/,
                             SLING-INF/oak:index;overwrite:=false;overwriteProperties:=true;uninstall:=true;path:=/
                         </Sling-Initial-Content>
+                        <Export-Package>com.familydam.core.models*,com.cognifide.app.core*;version="${project.version}"</Export-Package>
+                        <Import-Package>
+                            org.slf4j;version="[1.5,2)",
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
