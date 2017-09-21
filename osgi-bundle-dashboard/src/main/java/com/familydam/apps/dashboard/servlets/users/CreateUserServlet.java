@@ -80,7 +80,7 @@ import java.util.Set;
  * <p>
  * Annotations below are short version of:
  */
-@SlingServlet(paths = {"/bin/familydam/api/v1/users"}, metatype = true)
+@SlingServlet(paths = {"/api/familydam/files/v1/users"}, metatype = true)
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.CreateUserServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CreateUserServlet  Description", propertyPrivate = false),

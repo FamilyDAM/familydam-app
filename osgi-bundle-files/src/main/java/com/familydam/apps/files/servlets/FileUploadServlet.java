@@ -40,7 +40,7 @@ import java.util.*;
  * Created by mnimer on 3/16/16.
  */
 @SlingServlet(
-        paths = {"/bin/familydam/api/v1/upload"}, metatype = true
+        paths = {"/api/familydam/files/v1/upload"}, metatype = true
 )
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.FileUploadServlet", propertyPrivate = false),

@@ -5,6 +5,8 @@
 package com.familydam.apps.dashboard.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -24,6 +26,11 @@ import java.util.Map;
 @SlingServlet(
         paths = {"/bin/familydam/api/v1/health"}, metatype = true
 )
+@Properties({
+        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.HealthServlet", propertyPrivate = false),
+        @Property(name = "service.description", value = "HealthServlet  Description", propertyPrivate = false),
+        @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
+})
 public class HealthServlet extends SlingSafeMethodsServlet
 {
     public final Logger log = LoggerFactory.getLogger(HealthServlet.class);

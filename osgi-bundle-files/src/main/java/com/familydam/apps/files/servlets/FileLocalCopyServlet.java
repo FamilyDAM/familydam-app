@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * Created by mnimer on 3/16/16.
  */
 @SlingServlet(
-        paths = {"/bin/familydam/files/api/v1/upload/copy"}, metatype = true
+        paths = {"/api/familydam/files/v1/upload/copy"}, metatype = true
 )
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.users.FileLocalCopyServlet", propertyPrivate = false),
