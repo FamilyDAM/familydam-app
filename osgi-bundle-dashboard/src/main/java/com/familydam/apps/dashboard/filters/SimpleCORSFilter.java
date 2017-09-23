@@ -50,14 +50,27 @@ public class SimpleCORSFilter implements Filter {
     /** default log. */
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-
     /** Configuration property to enable CORS requests */
     @Property(boolValue = true,label="Enable CORS?", description="Please check for enabling CORS for the following domains")
     private static final String CORS_ENABLED = "cors.enabled";
 
-    /** Configuration to allow requests from specific domains */
-    //@Property(label="Allowed Origins (cross domains)",value = "*", description="Please Enter http://:",unbounded = PropertyUnbounded.ARRAY)
-    //private static final String CORS_ALOOWED_ORIGINS = "cors.allowed.origins";
+    /**
+     * Component Activation.
+     * @param context component context
+     */
+    @Activate
+    protected void activate(final ComponentContext context) {
+        LOG.info("Activating Class {} ", getClass().getName());
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.Filter#destroy()
+     */
+    @Override
+    public void destroy() {
+        LOG.debug("Destroy invoked for class {}", this.getClass().getName());
+    }
+
 
     /* (non-Javadoc)
      * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
@@ -74,49 +87,24 @@ public class SimpleCORSFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
 
-        if (request instanceof SlingHttpServletRequest && response instanceof SlingHttpServletResponse) {
 
-            final SlingHttpServletRequest slingRequest = (SlingHttpServletRequest) request;
-            final SlingHttpServletResponse slingResponse = (SlingHttpServletResponse) response;
-            String origin = slingRequest.getHeader("Origin");
+        final SlingHttpServletRequest slingRequest = (SlingHttpServletRequest) request;
+        final SlingHttpServletResponse slingResponse = (SlingHttpServletResponse) response;
 
-            if( origin != null && origin.contains("localhost")) {
-                slingResponse.setHeader("Access-Control-Allow-Origin", origin);
-            }else{
-                slingResponse.setHeader("Access-Control-Allow-Origin", "*");
-            }
-            slingResponse.setHeader("Access-Control-Allow-Credentials", "true");
-            slingResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            slingResponse.addHeader("Access-Control-Allow-Headers", "Authorization,Content-Type,Accept,X-PINGOTHER,Origin,X-Requested-With");
-            //LOG.debug("Set response header for origin {} and flowing through filter chain",origin);
+        slingResponse.addHeader("Access-Control-Allow-Origin", slingRequest.getHeader("Origin"));
+        slingResponse.addHeader("Access-Control-Allow-Credentials", "true");
+        slingResponse.addHeader("Access-Control-Expose-Headers", "origin,x-requested-with,content-type,accept,Authorization");
+        if (slingRequest.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(slingRequest.getMethod()))
+        {
+            slingResponse.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+            slingResponse.addHeader("Access-Control-Allow-Headers", "origin,x-requested-with,content-type,accept,Authorization");
+            slingResponse.addHeader("Access-Control-Max-Age", "3600");
 
+        } else {
+            chain.doFilter(request, response);
         }
 
-        chain.doFilter(request, response);
-
 
     }
-    /**
-     * Component Activation.
-     * @param context component context
-     */
-    @Activate
-    protected void activate(final ComponentContext context) {
-        LOG.info("Activating Class {} ", getClass().getName());
-
-        final Dictionary props = context.getProperties();
-        //final Object corsenabledProp = props.get(CORS_ENABLED);
-        //final String[] corsallowedoriginsProp = PropertiesUtil.toStringArray(props.get(CORS_ALOOWED_ORIGINS));
-
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.Filter#destroy()
-     */
-    @Override
-    public void destroy() {
-        LOG.debug("Destroy invoked for class {}", this.getClass().getName());
-    }
-
 
 }

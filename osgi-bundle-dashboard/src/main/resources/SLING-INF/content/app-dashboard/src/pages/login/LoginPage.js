@@ -6,9 +6,12 @@ import {injectIntl} from 'react-intl';
 import {withStyles} from "material-ui/styles";
 
 import Clock from '../../components/clock/Clock';
+import {CircularProgress} from 'material-ui/Progress';
 
-import LoginCard from '../../components/logincard/LoginCard';
+import LoginCards from '../../components/logincards/LoginCards';
 import SignupCard from '../../components/signupcard/SignupCard';
+
+import UserActions from '../../actions/UserActions';
 
 
 const styleSheet = (theme) => ({
@@ -34,6 +37,15 @@ const styleSheet = (theme) => ({
         bottom:   '20px',
         left:     '40px',
         width:    '100%'
+    },
+    progress: {
+        margin: `0 ${theme.spacing.unit * 2}px`,
+        width: '100px',
+        height: '100px',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)'
     }
 });
 
@@ -43,6 +55,7 @@ class Login extends Component {
         super(props);
 
         this.state = {
+            isMounted:true,
             users: undefined,
             activeUser: undefined,
             backgrounds: [
@@ -56,25 +69,22 @@ class Login extends Component {
         };
     }
 
-
-    componentDidMount() {
-        /**
-        var _this = this;
-
-        AuthActions.logout.onNext(true);
-        UserActions.getUsers.source.onNext(true);
-
-        this.usersSubscription = UserStore.users.subscribe(function (results) {
-            _this.state.users = results;
-            if (_this.isMounted())  _this.forceUpdate();
+    componentWillMount(){
+        this.setState({"isMounted":true, "isLoading": true});
+        UserActions.getAllUsers.sink.takeWhile(() => this.state.isMounted).subscribe(users_ => {
+            debugger;
+            if (users_) {
+                this.setState({"isLoading": false, "users": users_});
+            }
         });
-         **/
+
+        UserActions.logout.source.next(true);
+        UserActions.getAllUsers.source.next(true);
     }
 
+
     componentWillUnmount() {
-        if (this.usersSubscription !== undefined){
-            //this.usersSubscription.dispose();
-        }
+        this.setState({"isMounted":false});
     }
 
 
@@ -92,16 +102,25 @@ class Login extends Component {
         var classes = this.props.classes;
         var randomBackground = this.state.backgrounds[0];
 
-        return (
-            <div className={classes.loginView} style={{background: "url('" + randomBackground + "') no-repeat"}}>
-
-                {(!this.state.users || this.state.users.length===0)? <SignupCard/> : <LoginCard/> }
-
-                <div className={classes.timeClock}>
-                    <Clock/>
+        debugger;
+        if( this.state.isLoading ){
+            return (
+                <div>
+                    <CircularProgress className={classes.progress} size={50}/>
                 </div>
-            </div>
-        );
+            );
+        }else {
+            return (
+                <div className={classes.loginView} style={{background: "url('" + randomBackground + "') no-repeat"}}>
+
+                    {(!this.state.users || this.state.users.length === 0) ? <SignupCard/> : <LoginCards/>}
+
+                    <div className={classes.timeClock}>
+                        <Clock/>
+                    </div>
+                </div>
+            );
+        }
     }
 }
 

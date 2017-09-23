@@ -17,7 +17,7 @@ public class FilesClientApp implements IClientApp
     Boolean isPrimary = true;
     Boolean isSecondary = false;
     String label = "Files";
-    String path = "/apps/app-files/index.html";
+    String path = "/app-files/index.html";
     List<String> roles = new ArrayList<>();
 
     @Activate

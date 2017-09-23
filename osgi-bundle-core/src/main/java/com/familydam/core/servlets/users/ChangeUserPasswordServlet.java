@@ -54,7 +54,7 @@ import java.util.*;
  * <p>
  * Annotations below are short version of:
  */
-@SlingServlet(paths = {"/api/familydam/files/v1/user/password"}, metatype = true)
+@SlingServlet(paths = {"/api/familydam/v1/core/user/password"}, metatype = true)
 @Properties({
         @Property(name = "service.pid", value = "ChangeUserPasswordServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "ChangePasswordServlet  Description", propertyPrivate = false),
@@ -63,7 +63,7 @@ import java.util.*;
 public class ChangeUserPasswordServlet extends SlingAllMethodsServlet
 {
 
-    private final Logger log = LoggerFactory.getLogger(CreateUserServlet.class);
+    private final Logger log = LoggerFactory.getLogger(ChangeUserPasswordServlet.class);
 
     @Reference
     private ResourceResolverFactory resolverFactory;

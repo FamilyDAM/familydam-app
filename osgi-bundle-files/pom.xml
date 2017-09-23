@@ -32,7 +32,8 @@
     <groupId>com.familydam.apps</groupId>
     <artifactId>osgi-bundle-files</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
+
 
     <name>OSGI File App Bundle</name>
     <description>com.familydam.bundles - osgi-bundle-files</description>
@@ -42,7 +43,7 @@
         <dependency>
             <groupId>com.familydam.osgi</groupId>
             <artifactId>osgi-bundle-core</artifactId>
-            <version>0.1.4-SNAPSHOT</version>
+            <version>0.2.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -246,7 +247,6 @@
                         <Private-Package></Private-Package>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
-                            SLING-INF/content/app-files/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/apps/app-files/,
                             SLING-INF/content/app-files/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-files/build,
                             SLING-INF/content/app-files/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/public,
                             SLING-INF/content/app-files/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/src,

@@ -57,7 +57,7 @@
     # dependency with javax.inject - required for Sling Models (SLING-4710)
     org.apache.geronimo.specs/geronimo-atinject_1.0_spec/1.0
     # DEV only dependency, remove for release
-    org.apache.sling/org.apache.sling.tracer/1.0.0
+    #org.apache.sling/org.apache.sling.tracer/1.0.0
 
 [configurations]
 # uninstall obsolete bundles which are neither not required anymore or are

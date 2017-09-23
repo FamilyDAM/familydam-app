@@ -9,6 +9,7 @@ package com.familydam.apps.dashboard;
  */
 public class FamilyDAMDashboardConstants
 {
+    public static final String IS_FAMILY_ADMIN = "isFamilyAdmin";
 
 
 

@@ -24,11 +24,11 @@ import java.util.Map;
  * Created by mnimer on 3/25/16.
  */
 @SlingServlet(
-        paths = {"/bin/familydam/api/v1/health"}, metatype = true
+        paths = {"/api/familydam/v1/dashboard/health"}, metatype = true
 )
 @Properties({
-        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.HealthServlet", propertyPrivate = false),
-        @Property(name = "service.description", value = "HealthServlet  Description", propertyPrivate = false),
+        @Property(name = "service.pid", value = "com.familydam.apps.dashboard.servlets.HealthCheck", propertyPrivate = false),
+        @Property(name = "service.description", value = "Dashboard HealthCheck", propertyPrivate = false),
         @Property(name = "service.vendor", value = "FamilyDAM Team", propertyPrivate = false)
 })
 public class HealthServlet extends SlingSafeMethodsServlet

@@ -40,7 +40,7 @@ import java.io.IOException;
  * <p>
  * Annotations below are short version of:
  */
-@SlingServlet(paths = {"/api/familydam/files/v1/auth/ping"}, metatype = true)
+@SlingServlet(paths = {"/api/familydam/v1/core/auth/ping"}, metatype = true)
 @Properties({
         @Property(name = "service.pid", value = "CheckAuthServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CheckAuthServlet  Description", propertyPrivate = false),

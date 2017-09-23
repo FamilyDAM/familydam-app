@@ -19,10 +19,10 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.familydam.osgi</groupId>
+    <groupId>com.familydam.apps</groupId>
     <artifactId>osgi-bundle-photos</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <name>OSGI Photos Bundle</name>
     <description>Services and Jobs for the PHOTOS sections of the FamilyDAM application</description>
 
@@ -38,17 +38,17 @@
         <dependency>
             <groupId>com.familydam.osgi</groupId>
             <artifactId>osgi-bundle-core</artifactId>
-            <version>0.1.4-SNAPSHOT</version>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.familydam.osgi</groupId>
+            <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-dashboard</artifactId>
-            <version>0.1.4-SNAPSHOT</version>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.familydam.osgi</groupId>
+            <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-dashboard</artifactId>
-            <version>0.1.4-SNAPSHOT</version>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
 
 
@@ -312,7 +312,6 @@
                         </Import-Package>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
-                            SLING-INF/content/app-photos/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/apps/app-photos/,
                             SLING-INF/content/app-photos/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-photos/build,
                             SLING-INF/content/app-photos/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-photos/public,
                             SLING-INF/content/app-photos/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-photos/src,

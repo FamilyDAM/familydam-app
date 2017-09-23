@@ -4,9 +4,12 @@
   "private": true,
   "dependencies": {
     "@reactivex/rxjs": "^5.4.3",
+    "flexboxgrid": "^6.3.1",
     "material-ui": "^1.0.0-beta.11",
     "moment": "^2.18.1",
+    "prop-types": "^15.5.10",
     "react": "^15.6.1",
+    "react-css-grid-layout": "^1.0.0",
     "react-dom": "^15.6.1",
     "react-intl": "^2.4.0",
     "react-router": "^4.2.0",

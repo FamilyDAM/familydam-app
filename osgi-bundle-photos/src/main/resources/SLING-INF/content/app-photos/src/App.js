@@ -15,7 +15,7 @@ class App extends Component {
             <br/>
             <a href="/">Home</a><br/>
             <a href="/app-files/index.html">Files</a><br/>
-            <a href="/app-cloudfiles/index.html">Cloud Files</a><br/>
+            <a href="/app-usermanager/index.html">User Manager</a><br/>
             <a href="/app-photos/index.html">Photos</a><br/>
         </p>
       </div>

@@ -57,7 +57,6 @@ import java.util.*;
         @Property(name = org.osgi.service.event.EventConstants.EVENT_TOPIC, value = SlingConstants.TOPIC_RESOURCE_ADDED),
         @Property(name="register.user.url", propertyPrivate=false, value = "http://localhost:8080/api/v1/user")
 })
-
 public class UserNodeEventListener implements EventHandler
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());

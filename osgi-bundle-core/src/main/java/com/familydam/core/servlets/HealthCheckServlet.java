@@ -28,7 +28,7 @@ import java.util.Map;
  * Created by mnimer on 3/16/16.
  */
 @SlingServlet(
-        paths = {"/api/familydam/core/v1/health"}, metatype = true
+        paths = {"/api/familydam/v1/core/health"}, metatype = true
 )
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.files.HealthCheck", propertyPrivate = false),

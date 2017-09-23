@@ -20,10 +20,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.familydam.osgi</groupId>
+    <groupId>com.familydam.apps</groupId>
     <artifactId>osgi-bundle-dashboard</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <name>OSGI Dashboard Bundle</name>
     <description></description>
 
@@ -38,20 +38,21 @@
         <dependency>
             <groupId>com.familydam.osgi</groupId>
             <artifactId>osgi-bundle-core</artifactId>
-            <version>0.1.4-SNAPSHOT</version>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
 
 
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
             <version>2.0</version>
+            <scope>provided</scope>
         </dependency>
 
 
@@ -73,6 +74,14 @@
             <version>2.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+            <version>1.12.0</version>
+            <scope>provided</scope>
+        </dependency>
+
 
 
         <dependency>
@@ -131,10 +140,35 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.osgi</artifactId>
+            <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--
+        <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-rmi</artifactId>
             <version>2.11.0</version>
             <scope>provided</scope>
+        </dependency>
+        -->
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.7.3</version>
         </dependency>
 
 
@@ -142,12 +176,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.5</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>1.12.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -169,29 +197,11 @@
         </dependency>
 
 
-        <!-- Jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.7.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.7.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.7.3</version>
-        </dependency>
-
-
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -213,7 +223,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.24.0</version>
+                <version>1.22.0</version>
                 <executions>
                     <execution>
                         <id>generate-scr-descriptor</id>
@@ -234,6 +244,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <!-- Stop bnd complaining about unused Private-Package instructions -->
                         <Bundle-Category>FamilyDAM</Bundle-Category>
+                        <Bundle-Activator>com.familydam.apps.dashboard.DashboardBundleActivator</Bundle-Activator>
                         <Embed-Dependency>portlet-api,commons-lang3,commons-io,commons-fileupload,org.apache.sling.commons.contentdetection,jackson-databind,jackson-annotations,jackson-core</Embed-Dependency>
                         <Private-Package></Private-Package>
                         <Sling-Initial-Content>
@@ -247,8 +258,8 @@
                             SLING-INF/content/app-dashboard/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/README.md
                         </Sling-Initial-Content>
                         <Import-Package>
-                            org.slf4j;version="[1.5,2)",
-                            com.familydam.core.*,
+                            org.slf4j;version="[1.7,2)",
+                            *
                         </Import-Package>
                     </instructions>
                 </configuration>

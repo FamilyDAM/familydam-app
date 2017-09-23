@@ -165,7 +165,9 @@
       "org.apache.sling.jcr.repoinit",\
       "org.apache.sling.jcr.resource",\
       "org.apache.sling.jcr.webconsole",\
-      "org.apache.sling.servlets.post"
+      "org.apache.sling.servlets.post",\
+      "osgi-bundle-core",\
+      "osgi-bundle-dashboard"
     ]
 
   # WebDAV servlet requires config now
