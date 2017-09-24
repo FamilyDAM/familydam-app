@@ -27,7 +27,7 @@ class GridContainer extends Component {
         }
 
         return (
-            <div style={_style}>{this.props.children}</div>
+            <div style={_style} {...this.props}>{this.props.children}</div>
         );
     }
 }

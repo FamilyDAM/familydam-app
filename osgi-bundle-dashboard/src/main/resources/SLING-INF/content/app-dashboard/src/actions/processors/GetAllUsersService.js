@@ -36,7 +36,7 @@ class GetAllUsersService {
             .withCredentials()
             .set('Accept', 'application/json')
             .end((err, results) => {
-                debugger;
+
                 if( !err ){
 
                     var list = [];
@@ -57,11 +57,9 @@ class GetAllUsersService {
                         return 0;
                     });
 
-                    debugger;
                     this.sink.next(_sortedUsers);
 
                 }else{
-                    debugger;
                     //send the error to the store (through the sink observer
                     if( err.status === 401){
                         AppActions.navigateTo.next("/");

@@ -4,15 +4,27 @@
 import React, {Component} from 'react';
 import {withStyles} from "material-ui/styles";
 
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-
+import LoginCard from './LoginCard';
 
 const styleSheet = (theme) => ({
-    foo:{}
+    outerContainer:{
+        display: 'grid',
+        gridGap: '24px',
+        gridTemplateRows: '1fr auto 1fr',
+        gridTemplateColumns: '1fr auto 1fr'
+    },
+    loginGrids:{
+        display: 'grid',
+        gridGap: '32px',
+        gridAutoFlow: 'column',
+        gridTemplateRows: 'repeat(2, 1fr)'
+    },
+    loginCardItem:{
+    }
 });
 
-class LoginCard extends Component {
+//  /* or 'row', 'row dense', 'column dense' */
+class LoginCards extends Component {
 
      constructor(props, context) {
         super(props);
@@ -20,6 +32,8 @@ class LoginCard extends Component {
         this.state = {
             selectedUser:null
         };
+
+        this.handleLogin = this.handleLogin.bind(this);
     }
 
 
@@ -37,31 +51,11 @@ class LoginCard extends Component {
     }
 
 
-    /**
-     * Submit form, on success redirect to the dashboard.
-     * @param event
-     */
-    handleLogin(event)
-    {
-        /**
-        var _this = this;
-        var _username = this.props.user.username;
-        var _password = this.state.password;
-
-        AuthActions.login.source.onNext({'username':_username, 'password':_password});
-
-        this.currentUserStoreSubscription = UserStore.currentUser.subscribe(function(data_){
-            // redirect to dashboard
-            if( data_ )
-            {
-                //_this.transitionTo("dashboard");
-                //this.context.router.push({pathname: '/dashboard'});
-            }
-        }.bind(this));
-         **/
-
+    handleLogin(username_, password_){
+        if (this.props.onLogin) {
+            this.props.onLogin(username_, password_);
+        }
     }
-
 
     /**
      * Select an inactive user
@@ -72,66 +66,47 @@ class LoginCard extends Component {
         this.props.onSelect(this.props.user);
     }
 
-    /**
-     * cancel active user
-     * @param event
-     */
-    handleCancel(event){
-        this.props.onCancel(this.props.user);
-    }
 
 
+    render(){
+        var classes = this.props.classes;
 
-    render() {
-
-        var overrideStyle = {};
-
-        var activeView;
-        if (this.props.mode !== "active") {
-            activeView = <div
-                            className="personCard panel center-block"
-                            style={{'padding':'5px'}}
-                            onTouchEnd={this.handleSelect}
-                            onClick={this.handleSelect}>
-                            <div className="box">&nbsp;</div>
-                            <h2 style={{'fontFamily':'Roboto', 'fontWeight':'400'}}>{this.props.user.firstName}</h2>
-                        </div>;
-        } else {
-            overrideStyle = {width:"100%"};
-
-            activeView= <div className="loginCard container" style={{'backgroundColor':'#fff', 'width':'500px', 'height':'250px'}}>
-                            <div className="row">
-                                <div className="col-xs-12 col-sm-4" style={{'padding':'5px'}}>
-                                    <div className="box">&nbsp;</div>
-                                    <h2 style={{'fontFamily':'Roboto', 'fontWeight':'400'}}>{this.props.user.firstName}</h2>
-                                </div>
-                                <div className="col-xs-12 col-sm-8" style={{'textAlign':'center'}}>
-                                    <br/>
-                                    <div>
-                                        <TextField
-                                            ref="pwdField"
-                                            type="password"
-                                            floatingLabelText={this.getIntlMessage('password')}
-                                            onChange={(e) => {this.setState({'password': e.target.value})}}
-                                        />
-
-                                    </div>
-                                    <div>
-                                        <Button onClick={this.handleCancel} label={this.getIntlMessage('cancel')} />
-                                        <Button onClick={this.handleLogin}  label={this.getIntlMessage('login')} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>;
+        let _users = [];
+        if( this.props.users ){
+            _users = this.props.users;
+            if( this.state.selectedUser !== null ) {
+                _users = _users.filter( (u)=>u.username === this.state.selectedUser.username );
+            }
         }
 
-        return (
-            <div style={overrideStyle}>{activeView}</div>
+        return(
+            <div className={classes.outerContainer}>
+                <div style={{'gridColumn': '2/3', 'gridRow':'2/3'}}>
+                    <div className={classes.loginGrids}>
+
+                        {_users.map((user)=> {
+                            return (
+                                <div key={user.username}  className={classes.loginCardItem}>
+                                    <LoginCard
+                                        user={user}
+                                        onLogin={this.handleLogin}
+                                        onCancel={(u)=>this.setState({"selectedUser":null})}
+                                        onSelect={(u)=>this.setState({"selectedUser":u})}/>
+                                </div>
+                            );
+                        })}
+
+                    </div>
+                </div>
+            </div>
         )
+
     }
+
+
 
 }
 
 
 
-export default withStyles(styleSheet)(LoginCard);
+export default withStyles(styleSheet)(LoginCards);

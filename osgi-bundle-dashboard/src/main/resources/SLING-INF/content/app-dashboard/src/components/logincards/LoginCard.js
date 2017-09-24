@@ -4,35 +4,51 @@
 import React, {Component} from 'react';
 import {withStyles} from "material-ui/styles";
 
-import TextField from 'material-ui/TextField';
+import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
-
+import ButtonBase from 'material-ui/ButtonBase';
+import TextField from "material-ui/TextField";
+import Typography from "material-ui/Typography";
+import AccountCircle from 'material-ui-icons/AccountCircle';
 
 const styleSheet = (theme) => ({
-    foo:{}
+    personalCard: {
+        border: '1px solid'
+    },
+    extendedContainer: {
+        display: 'grid',
+        gridGap: '16px',
+        gridTemplateColumn: '125px auto auto auto',
+        gridTemplateRows: '16px auto auto auto auto 16px'
+    }
 });
 
 class LoginCard extends Component {
 
-     constructor(props, context) {
+    constructor(props, context) {
         super(props);
 
         this.state = {
             user: {
-                "firstName":"",
-                "lastName":"",
-                "email":""
+                "firstName": "",
+                "lastName": "",
+                "email": ""
             },
-            mode: "inactive"
+            password:'',
+            mode: "minimal"
         };
+
+        this.handleSelect = this.handleSelect.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
+        this.handleLogin = this.handleLogin.bind(this);
     }
 
 
     componentDidMount() {
-        if(this.refs.pwdField) this.refs.pwdField.focus();
+        if (this.refs.pwdField) this.refs.pwdField.focus();
 
         /**
-        $(".loginCard").bind('keypress',function(e){
+         $(".loginCard").bind('keypress',function(e){
             if(e.keyCode === 13)
             {
                 this.handleLogin(e);
@@ -42,100 +58,126 @@ class LoginCard extends Component {
     }
 
 
-    componentWillUnmount(){
-        if( this.currentUserStoreSubscription ){
-            //this.currentUserStoreSubscription.dispose();
+    handleCancel() {
+        this.setState({mode: 'minimal'});
+
+        if (this.props.onCancel) {
+            this.props.onCancel();
+        }
+    }
+
+    handleLogin(){
+        if (this.props.onLogin) {
+            this.props.onLogin(this.props.user.username, this.state.password);
         }
     }
 
 
+    handleSelect() {
+        this.setState({mode: 'extended'});
 
-    /**
-     * Submit form, on success redirect to the dashboard.
-     * @param event
-     */
-    handleLogin(event)
-    {
-        /**
-        var _this = this;
-        var _username = this.props.user.username;
-        var _password = this.state.password;
-
-        AuthActions.login.source.onNext({'username':_username, 'password':_password});
-
-        this.currentUserStoreSubscription = UserStore.currentUser.subscribe(function(data_){
-            // redirect to dashboard
-            if( data_ )
-            {
-                //_this.transitionTo("dashboard");
-                //this.context.router.push({pathname: '/dashboard'});
-            }
-        }.bind(this));
-         **/
-
+        if (this.props.onSelect) {
+            this.props.onSelect(this.props.user);
+        }
     }
-
-
-    /**
-     * Select an inactive user
-     * @param event
-     */
-    handleSelect(event){
-        //event.target = this.getDOMNode();
-        this.props.onSelect(this.props.user);
-    }
-
-    /**
-     * cancel active user
-     * @param event
-     */
-    handleCancel(event){
-        this.props.onCancel(this.props.user);
-    }
-
 
 
     render() {
+        var classes = this.props.classes;
+
+        if (this.state.mode === "minimal") {
+            return (
+                <Paper style={{width: '150px', height: '176px'}}>
+                    <ButtonBase focusRipple
+                                onClick={this.handleSelect}
+                                style={{'width': '100%', 'backgroundColor': '#fff'}}>
+                        <AccountCircle
+                            style={{'width': 120, 'height': 120}}
+                        />
+                    </ButtonBase>
+                    <ButtonBase focusRipple
+                                onClick={this.handleSelect}
+                                style={{'width': '100%', 'backgroundColor': '#fff'}}>
+                        <h2 style={{'textAlign': 'center'}}>{this.props.user.firstName}</h2>
+                    </ButtonBase>
+                </Paper>
+            );
+        } else {
+            return (
+                <Paper style={{width: '450px', height: '200px'}}>
+                    <div className={classes.extendedContainer}>
+                        <div style={{gridRow: '2/5', gridColumn: '1', 'textAlign':'center'}}>
+                            <AccountCircle
+                                style={{'width': 120, 'height': 120}}
+                            />
+                        </div>
+                        <div style={{gridRow: '2', gridColumn: '2'}}>
+                            <Typography type="title" style={{'textAlign': 'left'}}>{this.props.user.firstName}</Typography>
+                        </div>
+                        <div style={{gridRow: '3', gridColumn: '2'}}>
+                            <TextField
+                                type="password"
+                                label="Password"
+                                required={true}
+                                style={{'width':'100%'}}
+                                value={this.state.password}
+                                onChange={(e)=>{this.setState({password:e.target.value})}}
+                            />
+                        </div>
+                        <div style={{gridRow: '4', gridColumn: '2'}}>
+                            <Button color="primary" onClick={this.handleCancel}>Cancel</Button>
+                            <Button raised color="primary" onClick={this.handleLogin}>Login</Button>
+                        </div>
+                    </div>
+                </Paper>
+            );
+        }
+    }
+
+
+    renderOld() {
 
         var overrideStyle = {};
 
         var activeView;
         if (this.props.mode !== "active") {
             activeView = <div
-                            className="personCard panel center-block"
-                            style={{'padding':'5px'}}
-                            onTouchEnd={this.handleSelect}
-                            onClick={this.handleSelect}>
-                            <div className="box">&nbsp;</div>
-                            <h2 style={{'fontFamily':'Roboto', 'fontWeight':'400'}}>{this.props.user.firstName}</h2>
-                        </div>;
+                className="personCard panel center-block"
+                style={{'padding': '5px'}}
+                onTouchEnd={this.handleSelect}
+                onClick={this.handleSelect}>
+                <div className="box">&nbsp;</div>
+                <h2 style={{'fontFamily': 'Roboto', 'fontWeight': '400'}}>{this.props.user.firstName}</h2>
+            </div>;
         } else {
-            overrideStyle = {width:"100%"};
+            overrideStyle = {width: "100%"};
 
-            activeView= <div className="loginCard container" style={{'backgroundColor':'#fff', 'width':'500px', 'height':'250px'}}>
-                            <div className="row">
-                                <div className="col-xs-12 col-sm-4" style={{'padding':'5px'}}>
-                                    <div className="box">&nbsp;</div>
-                                    <h2 style={{'fontFamily':'Roboto', 'fontWeight':'400'}}>{this.props.user.firstName}</h2>
-                                </div>
-                                <div className="col-xs-12 col-sm-8" style={{'textAlign':'center'}}>
-                                    <br/>
-                                    <div>
-                                        <TextField
-                                            ref="pwdField"
-                                            type="password"
-                                            floatingLabelText={this.getIntlMessage('password')}
-                                            onChange={(e) => {this.setState({'password': e.target.value})}}
-                                        />
+            activeView = <div className="loginCard container" style={{'backgroundColor': '#fff', 'width': '500px', 'height': '250px'}}>
+                <div className="row">
+                    <div className="col-xs-12 col-sm-4" style={{'padding': '5px'}}>
+                        <div className="box">&nbsp;</div>
+                        <h2 style={{'fontFamily': 'Roboto', 'fontWeight': '400'}}>{this.props.user.firstName}</h2>
+                    </div>
+                    <div className="col-xs-12 col-sm-8" style={{'textAlign': 'center'}}>
+                        <br/>
+                        <div>
+                            <TextField
+                                ref="pwdField"
+                                type="password"
+                                floatingLabelText={this.getIntlMessage('password')}
+                                onChange={(e) => {
+                                    this.setState({'password': e.target.value})
+                                }}
+                            />
 
-                                    </div>
-                                    <div>
-                                        <Button onClick={this.handleCancel} label={this.getIntlMessage('cancel')} />
-                                        <Button onClick={this.handleLogin}  label={this.getIntlMessage('login')} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>;
+                        </div>
+                        <div>
+                            <Button onClick={this.handleCancel} label={this.getIntlMessage('cancel')}/>
+                            <Button onClick={this.handleLogin} label={this.getIntlMessage('login')}/>
+                        </div>
+                    </div>
+                </div>
+            </div>;
         }
 
         return (
@@ -144,7 +186,6 @@ class LoginCard extends Component {
     }
 
 }
-
 
 
 export default withStyles(styleSheet)(LoginCard);

@@ -18,44 +18,30 @@
  */
 package com.familydam.apps.dashboard.servlets;
 
-import com.familydam.apps.dashboard.FamilyDAMDashboardConstants;
-import com.familydam.core.FamilyDAMCoreConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.JackrabbitSession;
-import org.apache.jackrabbit.api.security.user.*;
-import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.value.BooleanValue;
-import org.apache.jackrabbit.value.StringValue;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.QueryBuilder;
+import org.apache.jackrabbit.api.security.user.User;
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.LoginException;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.apache.sling.jcr.base.util.AccessControlUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.security.AccessControlException;
-import javax.jcr.security.Privilege;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.*;
 
 /**
@@ -63,16 +49,16 @@ import java.util.*;
  * <p>
  * Annotations below are short version of:
  */
-@SlingServlet(paths = {"/api/familydam/v1/dashboard/users"}, metatype = true)
+@SlingServlet(paths = {"/api/familydam/v1/dashboard/user"}, metatype = true)
 @Properties({
         @Property(name = "service.pid", value = "CreateUserServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CreateUserServlet  Description", propertyPrivate = false),
         @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
 @SuppressWarnings("serial")
-public class GetAllUsersServlet extends SlingAllMethodsServlet {
+public class GetUserServlet extends SlingAllMethodsServlet {
 
-    private final Logger log = LoggerFactory.getLogger(GetAllUsersServlet.class);
+    private final Logger log = LoggerFactory.getLogger(GetUserServlet.class);
 
     @Reference
     private ResourceResolverFactory resolverFactory;
@@ -112,9 +98,22 @@ public class GetAllUsersServlet extends SlingAllMethodsServlet {
 
             List<Map> users = getAllUsers(session, false);
 
-            response.setStatus(200);
-            response.setContentType("application/json");
-            response.getOutputStream().write(new ObjectMapper().writeValueAsString(users).getBytes());
+            // a brute force path (todo: optimize this in the jcr query)
+            boolean foundUser = false;
+            for (Map user : users) {
+                if( user.get("username").toString().equalsIgnoreCase(request.getParameter("username")) )
+                {
+                    foundUser = true;
+                    response.setStatus(200);
+                    response.setContentType("application/json");
+                    response.getOutputStream().write(new ObjectMapper().writeValueAsString(user).getBytes());
+                    break;
+                }
+            }
+
+            if( !foundUser ) {
+                response.setStatus(404);
+            }
         }catch (RepositoryException re){
             log.error(re.getMessage(), re);
             response.setStatus(500);

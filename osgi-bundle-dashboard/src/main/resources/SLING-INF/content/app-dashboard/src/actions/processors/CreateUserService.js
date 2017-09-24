@@ -46,15 +46,14 @@ class CreateUserService {
 
 
         request
-            .post('http://localhost:9000/api/familydam/v1/dashboard/user')
+            .post('http://localhost:9000/api/familydam/v1/dashboard/user/create')
             .send(_props)
             .withCredentials()
             .set('Accept', 'application/json')
             .end((err, res)=>{
-                debugger;
 
                 if( !err ){
-                    this.sink.onNext(true);
+                    this.sink.next(true);
                 }else{
                     //send the error to the store (through the sink observer
                     if (err.status === 401)

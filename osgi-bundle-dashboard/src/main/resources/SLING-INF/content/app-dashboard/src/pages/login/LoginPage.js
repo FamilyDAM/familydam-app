@@ -12,7 +12,7 @@ import LoginCards from '../../components/logincards/LoginCards';
 import SignupCard from '../../components/signupcard/SignupCard';
 
 import UserActions from '../../actions/UserActions';
-
+//import AppActions from '../../actions/AppActions';
 
 const styleSheet = (theme) => ({
     loginView: {
@@ -67,12 +67,15 @@ class Login extends Component {
                 //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933171/graphicstock/lake_GyXLZDKu__.jpg"
             ]
         };
+
+        this.handleLogin = this.handleLogin.bind(this);
+        this.handleCancelCardSelection = this.handleCancelCardSelection.bind(this);
+        this.handleCardSelection = this.handleCardSelection.bind(this);
     }
 
     componentWillMount(){
         this.setState({"isMounted":true, "isLoading": true});
         UserActions.getAllUsers.sink.takeWhile(() => this.state.isMounted).subscribe(users_ => {
-            debugger;
             if (users_) {
                 this.setState({"isLoading": false, "users": users_});
             }
@@ -98,11 +101,24 @@ class Login extends Component {
     }
 
 
+    /**
+     * Submit form, on success redirect to the dashboard.
+     * @param event
+     */
+    handleLogin(username_, password_)
+    {
+        UserActions.login.source.next({'username':username_, 'password':password_});
+        //bypass
+        //var _user = {'firstName':'mike','username':username_};
+        //window.localStorage.setItem("user", JSON.stringify(_user));
+        //UserActions.getUser.sink.next(_user);
+    }
+
+
     render() {
         var classes = this.props.classes;
         var randomBackground = this.state.backgrounds[0];
 
-        debugger;
         if( this.state.isLoading ){
             return (
                 <div>
@@ -113,7 +129,13 @@ class Login extends Component {
             return (
                 <div className={classes.loginView} style={{background: "url('" + randomBackground + "') no-repeat"}}>
 
-                    {(!this.state.users || this.state.users.length === 0) ? <SignupCard/> : <LoginCards/>}
+                    {(!this.state.users || this.state.users.length === 0) ?
+                        <SignupCard/>
+                        :
+                        <LoginCards
+                            users={this.state.users}
+                            onLogin={this.handleLogin}/>
+                    }
 
                     <div className={classes.timeClock}>
                         <Clock/>

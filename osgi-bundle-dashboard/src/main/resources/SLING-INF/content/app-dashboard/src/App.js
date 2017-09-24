@@ -7,8 +7,9 @@ import {CircularProgress} from 'material-ui/Progress';
 
 //views
 import LoginPage from './pages/login/LoginPage';
+import DashboardPage from './pages/dashboard/DashboardPage';
 
-import AppActions from './actions/AppActions';
+import UserActions from './actions/UserActions';
 
 
 const styleSheet = (theme) => ({
@@ -33,16 +34,28 @@ class App extends Component {
             "context": context,
             "locale": "en-EN",
             "isAuthenticated": false,
-            "isLoading": false
+            "isLoading": false,
+            "isMounted": true
         };
 
-        AppActions.navigateTo.subscribe((path) => {
-            if (path.substring(0, 3) === "://") {
-                window.location.href = path.substring(2);
-            }else{
-                window.location.href = path;
+    }
+
+
+    componentWillMount(){
+        this.setState({"isMounted":true});
+
+        UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
+            // redirect to dashboard
+            if( user_ )
+            {
+                this.setState({"isAuthenticated":true, "user": user_});
             }
         });
+    }
+
+
+    componentWillUnmount(){
+        this.setState({"isMounted":false});
     }
 
 
@@ -59,14 +72,11 @@ class App extends Component {
             );
         }
 
-
         return (
             <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
                 <Router>
                     <Switch>
-                        <Route path="/login" component={() => <LoginPage mode="login"/>}/>
-                        <Route path="/signup" component={() => <LoginPage mode="signup"/>}/>
-                        <Route path="/" component={() => this.state.isAuthenticated ? <LoginPage user={this.state.user}/> : <LoginPage mode="login"/>}/>
+                        <Route path="/" component={() => this.state.isAuthenticated ? <DashboardPage user={this.state.user}/> : <LoginPage mode="login"/>}/>
                     </Switch>
                 </Router>
             </IntlProvider>

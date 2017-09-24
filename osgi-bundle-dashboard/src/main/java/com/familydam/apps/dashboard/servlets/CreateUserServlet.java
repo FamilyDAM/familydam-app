@@ -68,7 +68,7 @@ import java.util.stream.StreamSupport;
  * <p>
  * Annotations below are short version of:
  */
-@SlingServlet(paths = {"/api/familydam/v1/dashboard/user"}, metatype = true)
+@SlingServlet(paths = {"/api/familydam/v1/dashboard/user/create"}, metatype = true)
 @Properties({
         @Property(name = "service.pid", value = "CreateUserServlet", propertyPrivate = false),
         @Property(name = "service.description", value = "CreateUserServlet  Description", propertyPrivate = false),

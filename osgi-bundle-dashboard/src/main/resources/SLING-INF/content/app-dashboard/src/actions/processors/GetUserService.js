@@ -2,67 +2,77 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-
-var Rx = require('rx');
-var PreferenceStore = require('../../stores/PreferenceStore');
-var UserActions = require('../../actions/UserActions');
-
+import AppActions from '../AppActions';
+import request from 'superagent';
 
 
 /**
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors
  * @type {{subscribe: Function, onNext: Function}}
  */
+class GetAllUsersService {
 
-module.exports = {
+    sink=undefined;
 
-    sink:undefined,
-
-    subscribe : function(){
-
-        //console.log("{GetUser Service} subscribe");
-        this.sink = UserActions.getUser.sink;
-
-
-        //refresh the list after any user data is saved
-        UserActions.getUser.source.subscribe(function (user_){
-            this.getUser(user_);
-        }.bind(this));
-    },
+    constructor(source_, sink_) {
+        //console.log("{GetUsers Service} subscribe");
+        this.sink = sink_;
+        source_.subscribe(this.getUsers.bind(this));
+    }
 
     /**
      * Return all of the users
      * @param val_
      * @returns {*}
      */
-    getUser: function(user_)
+    getUsers(username_)
     {
 
-        return $.ajax({
-                    'method':'get'
-                    ,'url': PreferenceStore.getBaseUrl() +"/system/userManager/user/" +user_ +".tidy.1.json"
-                    , data: {'user':user_}
-                    , cache: false
-                    ,'xhrFields': {
-                        withCredentials: true
+        request
+            .get('http://localhost:9000/api/familydam/v1/dashboard/user')
+            .query({'username':username_})
+            .withCredentials()
+            .set('Accept', 'application/json')
+            .end((err, results) => {
+
+                if( !err ){
+
+
+                    var list = [];
+
+                    for (var i = 0; i < results.body.length; i++) {
+                        var item = results.body[i];
+
+                        if (item.firstName === undefined) {
+                            item.firstName = item.username;
+                        }
+                        list.push(item);
+                        window.localStorage.setItem("user", item);
                     }
 
-                }).then(function(results, status_, xhr_){
 
-                    results.username = user_;
-                    this.sink.onNext(results);
+                    var _sortedUsers = list.sort(function (a, b) {
+                        if (a.username > b.username) return 1;
+                        if (a.username < b.username) return -1;
+                        return 0;
+                    });
 
-                }.bind(this), function (xhr_, status_, errorThrown_){
+                    this.sink.next(_sortedUsers);
+
+                }else{
                     //send the error to the store (through the sink observer
-                    if( xhr_.status == 401){
-                        AuthActions.loginRedirect.onNext(true);
+                    if( err.status === 401){
+                        AppActions.navigateTo.next("/");
                     } else {
-                        var _error = {'code':xhr_.status, 'status':xhr_.statusText, 'message': xhr_.responseText};
-                        this.sink.onError(_error);
+                        var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
+                        this.sink.error(_error);
                     }
-                }.bind(this));
+                }
+            });
 
     }
 
-};
+}
 
+
+export default GetAllUsersService;

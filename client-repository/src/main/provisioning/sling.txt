@@ -151,6 +151,7 @@
   # org.apache.sling.jcr.contentloader
   org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment-sling
     whitelist.name="sling"
+    whitelist.bypass=B"true"
     whitelist.bundles=[
       "org.apache.sling.discovery.commons",\
       "org.apache.sling.discovery.base",\
@@ -166,8 +167,8 @@
       "org.apache.sling.jcr.resource",\
       "org.apache.sling.jcr.webconsole",\
       "org.apache.sling.servlets.post",\
-      "osgi-bundle-core",\
-      "osgi-bundle-dashboard"
+      "com.familydam.osgi.bundle-core",\
+      "com.familydam.apps.osgi-bundle-dashboard"
     ]
 
   # WebDAV servlet requires config now
