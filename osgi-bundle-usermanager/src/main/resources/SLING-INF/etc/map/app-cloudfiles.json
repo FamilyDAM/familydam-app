@@ -1,5 +1,0 @@
-{
-  "jcr:primaryType": "sling:Folder",
-  "sling:match": "^[^/]+/[^/]+/app-cloudfiles",
-  "sling:internalRedirect": "/content/apps/app-cloudfiles/build"
-}
