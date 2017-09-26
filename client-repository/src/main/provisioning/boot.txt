@@ -81,6 +81,3 @@
 
 :bootstrap
   uninstall org.apache.sling.launchpad.content
-
-org.apache.sling.jcr.webdav.impl.servlets.SimpleWebDavServlet
-    dav.root="/drive"

@@ -4,16 +4,26 @@
   "private": true,
   "homepage": "/app-photos/",
   "dependencies": {
-    "material-ui": "^1.0.0-beta.11",
+    "@reactivex/rxjs": "^5.4.3",
+    "material-ui": "^1.0.0-beta.12",
+    "material-ui-icons": "^1.0.0-beta.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-scripts": "1.0.13"
+    "react-intl": "^2.4.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.0.13",
+    "rxjs": "^5.4.3",
+    "superagent": "^3.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "install": "yarn install"
+    "install": "yarn install",
+    "translate": "NODE_ENV=production babel ./src >/dev/null",
+    "manage:translations": "node ./scripts/translationRunner.js",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
   }
 }

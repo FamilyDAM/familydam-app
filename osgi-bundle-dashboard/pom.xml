@@ -249,7 +249,7 @@
                         <Private-Package></Private-Package>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
-                            SLING-INF/content/app-dashboard/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/,
+                            SLING-INF/content/index.html;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/,
                             SLING-INF/content/app-dashboard/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/build,
                             SLING-INF/content/app-dashboard/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/public,
                             SLING-INF/content/app-dashboard/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/src,

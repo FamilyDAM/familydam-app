@@ -30,7 +30,7 @@ import java.util.*;
  * Created by mnimer on 3/16/16.
  */
 @SlingServlet(
-        paths = {"/api/familydam/files/v1/health"}, metatype = true
+        paths = {"/api/familydam/v1/files/health"}, metatype = true
 )
 @Properties({
         @Property(name = "service.pid", value = "com.familydam.apps.files.HealthCheck", propertyPrivate = false),

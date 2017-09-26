@@ -7,58 +7,86 @@ import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service({IClientApp.class})
 @Component(immediate = true)
 public class UserManagerClientApp implements IClientApp
 {
-
-    ComponentContext context;
-    Boolean isPrimary = true;
-    Boolean isSecondary = false;
-    List<String> roles = new ArrayList<>();
+    Boolean primary = false;
+    Boolean secondary = true;
+    Boolean embedded = false;
+    Integer order = 1;
+    String slug = "user_manager";
     String label = "User Manager";
-    String path = "/app-usermanager/index.html";
+    String path = "://app-usermanager/index.html";
+    List<String> roles = Collections.EMPTY_LIST;
 
-    @Activate
-    protected void activate(ComponentContext context) {
-        this.context = context;
+    @Override
+    public Boolean getPrimary() {
+        return primary;
     }
 
-    protected void deactivate(ComponentContext context) {
-        this.context = null;
+    @Override
+    public void setPrimary(Boolean primary) {
+        this.primary = primary;
     }
 
-
-    public Boolean isPrimary() {
-        return isPrimary;
+    @Override
+    public Boolean getSecondary() {
+        return secondary;
     }
 
-    public void setIsPrimary(Boolean isPrimary) {
-        isPrimary = isPrimary;
+    @Override
+    public void setSecondary(Boolean secondary) {
+        this.secondary = secondary;
     }
 
-    public Boolean isSecondary() {
-        return isSecondary;
+    @Override
+    public Boolean getEmbedded() {
+        return embedded;
     }
 
-    public void setIsSecondary(Boolean isSecondary) {
-        isSecondary = isSecondary;
+    @Override
+    public void setEmbedded(Boolean embedded) {
+        this.embedded = embedded;
     }
 
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    @Override
+    public String getSlug() {
+        return slug;
+    }
+
+    @Override
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    @Override
     public String getLabel() {
         return label;
     }
 
+    @Override
     public void setLabel(String label) {
         this.label = label;
     }
 
+    @Override
     public String getPath() {
         return path;
     }
 
+    @Override
     public void setPath(String path) {
         this.path = path;
     }

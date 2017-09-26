@@ -246,13 +246,13 @@
                         <Private-Package></Private-Package>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
-                            SLING-INF/content/app-cloudfiles/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/apps/app-cloudfiles/,
-                            SLING-INF/content/app-cloudfiles/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-cloudfiles/build,
-                            SLING-INF/content/app-cloudfiles/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-cloudfiles/public,
-                            SLING-INF/content/app-cloudfiles/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-cloudfiles/src,
-                            SLING-INF/content/app-cloudfiles/.gitignore;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-cloudfiles/.gitignore,
-                            SLING-INF/content/app-cloudfiles/package.json;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-cloudfiles/package.json,
-                            SLING-INF/content/app-cloudfiles/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-cloudfiles/README.md
+                            SLING-INF/content/app-usermanager/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/apps/app-usermanager/,
+                            SLING-INF/content/app-usermanager/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-usermanager/build,
+                            SLING-INF/content/app-usermanager/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-usermanager/public,
+                            SLING-INF/content/app-usermanager/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-usermanager/src,
+                            SLING-INF/content/app-usermanager/.gitignore;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-usermanager/.gitignore,
+                            SLING-INF/content/app-usermanager/package.json;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-usermanager/package.json,
+                            SLING-INF/content/app-usermanager/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-usermanager/README.md
                         </Sling-Initial-Content>
                     </instructions>
                 </configuration>

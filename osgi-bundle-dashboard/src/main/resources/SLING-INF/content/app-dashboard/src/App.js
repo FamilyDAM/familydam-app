@@ -76,6 +76,7 @@ class App extends Component {
             <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
                 <Router>
                     <Switch>
+                        <Route path="/login" component={()=><LoginPage mode="login"/>}/>
                         <Route path="/" component={() => this.state.isAuthenticated ? <DashboardPage user={this.state.user}/> : <LoginPage mode="login"/>}/>
                     </Switch>
                 </Router>

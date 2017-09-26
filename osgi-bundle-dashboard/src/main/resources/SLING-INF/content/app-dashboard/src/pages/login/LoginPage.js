@@ -107,11 +107,11 @@ class Login extends Component {
      */
     handleLogin(username_, password_)
     {
-        UserActions.login.source.next({'username':username_, 'password':password_});
+        //UserActions.login.source.next({'username':username_, 'password':password_});
         //bypass
-        //var _user = {'firstName':'mike','username':username_};
-        //window.localStorage.setItem("user", JSON.stringify(_user));
-        //UserActions.getUser.sink.next(_user);
+        var _user = {'firstName':'mike','username':username_};
+        window.localStorage.setItem("user", JSON.stringify(_user));
+        UserActions.getUser.sink.next(_user);
     }
 
 

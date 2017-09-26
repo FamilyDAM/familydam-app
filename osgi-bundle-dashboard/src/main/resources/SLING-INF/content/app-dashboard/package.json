@@ -2,6 +2,7 @@
   "name": "app-files",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/dashboard",
   "dependencies": {
     "@reactivex/rxjs": "^5.4.3",
     "flexboxgrid": "^6.3.1",
