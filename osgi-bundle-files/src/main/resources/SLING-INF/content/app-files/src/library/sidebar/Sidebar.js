@@ -127,7 +127,7 @@ class Sidebar extends Component {
         var profileApp = this.findApp('user_manager', this.props.secondaryApps);
 
         return (
-            <Paper className={this.props.open?classes.sidebarOpen:classes.sidebarClosed} >
+            <Paper className={this.props.open?classes.sidebarOpen:classes.sidebarClosed}>
 
                 <Paper className={this.props.open?classes.sidebarUserInfo:classes.sidebarUserInfoClosed}>
                     <div className={classes.sidebarProfileIcon}>

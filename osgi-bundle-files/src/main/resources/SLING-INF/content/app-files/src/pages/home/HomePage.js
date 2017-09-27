@@ -7,12 +7,19 @@ import {injectIntl} from 'react-intl';
 import {withStyles} from "material-ui/styles";
 
 import {CircularProgress} from 'material-ui/Progress';
-import Typography from 'material-ui/Typography';
+import AppBar from 'material-ui/AppBar';
+import Button from 'material-ui/Button';
+import Toolbar from 'material-ui/Toolbar';
+import FileUpload from 'material-ui-icons/FileUpload';
+import FolderIcon from 'material-ui-icons/Folder';
+import NewFolderIcon from 'material-ui-icons/CreateNewFolder';
 
 
 import AppShell from '../../library/appShell/AppShell';
 import AppActions from '../../actions/AppActions';
-
+import Breadcrumb from '../../components/breadcrumb/Breadcrumb';
+import FileList from '../../components/filelist/FileList';
+import FileTree from '../../components/filetree/FileTree';
 
 const styleSheet = (theme) => ({
     progress: {
@@ -25,6 +32,23 @@ const styleSheet = (theme) => ({
         transform: 'translate(-50%, -50%)'
     },
 
+    toolbarContainer:{
+        display:'grid',
+        gridTemplateRows:'auto',
+        gridTemplateColumns:'48px auto auto'
+    },
+
+    main:{
+        padding:'24px'
+    },
+
+    mainGrid:{
+        height: '100%',
+        display:'grid',
+        gridGap:'16px',
+        gridTemplateRows:'1fr 1fr 1fr',
+        gridTemplateColumns:'2fr 6fr'
+    }
 });
 
 
@@ -36,7 +60,11 @@ class HomePage extends Component {
 
         this.state = {
             isMounted:true,
-            isLoading:false
+            isLoading:false,
+            canAddFile:true,
+            canAddFolder:true,
+            showAddFolderDialog:false,
+            selectedPath: "/content/dam-files",
         };
     }
 
@@ -69,13 +97,52 @@ class HomePage extends Component {
                     <CircularProgress className={classes.progress} size={50} />
                 </AppShell>
             );
-        }else {
-            return (
-                <AppShell>
-                    <Typography type="title">Welcome, to the File Browser</Typography>
-                </AppShell>
-            );
         }
+
+
+        return (
+            <AppShell>
+                <AppBar color="#EEEEEE" position="static" elevation="0">
+                    <Toolbar className={classes.toolbarContainer}>
+                        <div style={{gridRow:'1', gridColumn:'1'}}>
+                            <FolderIcon style={{width:'36px', height:'36px'}}/>
+                        </div>
+                        <div style={{gridRow:'1', gridColumn:'2'}}>
+                            <Breadcrumb path={this.state.selectedPath}/>
+                        </div>
+                        <div style={{gridRow:'1', gridColumn:'3', textAlign:'right'}}>
+                            <Button
+                                primary={true}
+                                disabled={!this.state.canAddFile}
+                                onClick={()=>{ AppActions.navigateTo.next('/upload')}}>
+                                <FileUpload/> Add Files
+                            </Button>
+
+                            <Button
+                                label="New Folder"
+                                primary={true}
+                                disabled={!this.state.canAddFolder}
+                                onClick={()=>{this.setState({'showAddFolderDialog':true})}}>
+                                <NewFolderIcon/> New Folder
+                            </Button>
+                        </div>
+                    </Toolbar>
+                </AppBar>
+
+
+                <div className={classes.main}>
+                    <div className={classes.mainGrid}>
+                        <FileTree
+                            style={{gridRow:"1", gridColumn:"1"}}/>
+
+                        <FileList
+                            style={{gridRow:"1 / 4", gridColumn:"2"}}/>
+                    </div>
+                </div>
+
+            </AppShell>
+        );
+
     }
 }
 

@@ -29,8 +29,7 @@ const styleSheet = (theme) => ({
     },
 
     main:{
-        background:'#eee',
-        padding:'24px'
+        background:'#eee'
     },
 
 });
