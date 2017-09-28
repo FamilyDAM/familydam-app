@@ -30,7 +30,13 @@ public class FamilyDAMCoreConstants
 
     //mixins
     public static final String DAM_EXTENSIBLE = "dam:extensible";
+    public static final String DAM_FILE = "dam:file";
+    public static final String DAM_FOLDER = "dam:folder";
     public static final String DAM_IMAGE = "dam:image";
+    public static final String DAM_VIDEO = "dam:video";
+    public static final String DAM_MOVIE = "dam:movie";
+    public static final String DAM_MUSIC = "dam:music";
+    public static final String DAM_TAGGABLE = "dam:taggable";
 
     //properties
     public static final String DAM_DATECREATED = "dam:datecreated";

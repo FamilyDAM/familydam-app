@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -19,6 +20,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static com.familydam.core.FamilyDAMCoreConstants.HATEAOS_LINKS;
 
@@ -86,33 +89,45 @@ public class TreeWalker
         List<Map> nodes = new ArrayList();
 
         for (Resource _resource : resource_.getChildren()) {
+            boolean bExists = false;
+            try {
+                String type = _resource.adaptTo(Node.class).getPrimaryNodeType().getName();
+                List<String> mixinNodeTypes = Arrays.asList(_resource.adaptTo(Node.class).getMixinNodeTypes()).stream().map(n->n.getName()).collect(Collectors.toList());
 
-            if( includeTypes != null ){
-                boolean bExists = false;
-                for (String includeType : includeTypes) {
-                    try {
-                        bExists = _resource.adaptTo(Node.class).isNodeType(includeType);
-                    }catch(RepositoryException re){
-                        bExists = false;
+                if( includeTypes != null ){
+                    for (String includeType : includeTypes) {
+                        if( type.equalsIgnoreCase(includeType) ) {
+                            bExists = true;
+                            break;
+                        }else if( mixinNodeTypes.indexOf(includeType) > -1){
+                            bExists = true;
+                            break;
+                        }
+
+                    }
+                    if( !bExists ) continue;
+
+
+                    Map _node = convertResourceNode(_resource);
+
+                    if( depth_ > 0) {
+                        List<Map> children = walkTree(_resource, depth_);
+                        if (children != null) {
+                            _node.put(CHILDREN_NODE_NAME, sortChildren(children));
+                        }
+                    }
+
+                    if(_node != null) {
+                        nodes.add(_node);
+                    }else{
+                        log.warn("Unable to convert node: " +_resource.getPath());
                     }
                 }
-                if( !bExists ) continue;
+
+            }catch(RepositoryException re){
+                bExists = false;
             }
 
-            Map _node = convertResourceNode(_resource);
-
-            if( depth_ > 0) {
-                List<Map> children = walkTree(_resource, depth_);
-                if (children != null) {
-                    _node.put(CHILDREN_NODE_NAME, sortChildren(children));
-                }
-            }
-
-            if(_node != null) {
-                nodes.add(_node);
-            }else{
-                log.warn("Unable to convert node: " +_resource.getPath());
-            }
         }
 
         return nodes;

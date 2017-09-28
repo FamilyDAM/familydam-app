@@ -4,6 +4,7 @@
 
 package com.familydam.apps.dashboard.decorators;
 
+import com.familydam.core.observers.ValueMapWrapper;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceDecorator;
 

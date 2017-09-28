@@ -92,7 +92,6 @@ module.exports = React.createClass({
         var randomBackground = this.state.backgrounds[0];
 
 
-        debugger;
         if (this.state.users !== undefined)
         {
             if (this.state.users !== undefined && this.state.users.length == 0)

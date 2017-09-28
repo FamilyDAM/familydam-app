@@ -1,34 +1,45 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-'use strict';
-var Rx = require('rx');
+import {Subject} from '@reactivex/rxjs';
+
+import GetFilesAndFoldersService from './processors/GetFileAndFoldersService';
+import GetFilesByPathService from "./processors/GetFilesByPathService";
 
 class FileActions {
 
 
-    /**
-     * Tell views to reload the files they are watching
-     */
-    refreshFiles = new Rx.Subject();
-
-
-
-    /**
-     * Tell views to reload the files they are watching
-     */
-    selectFile = new Rx.Subject();
-
+    constructor() {
+        this.getFilesAndFoldersService = new GetFilesAndFoldersService(this.getFileAndFolders.source, this.getFileAndFolders.sink);
+        this.getFilesByPathService = new GetFilesByPathService(this.getFilesByPath.source, this.getFilesByPath.sink);
+    }
 
     /**
      * Call the server to load the file list
      */
-    getFiles = {'source':new Rx.Subject(),'sink':new Rx.Subject()};
+    getFileAndFolders = {source:new Subject(), sink:new Subject()};
 
+    /**
+     * Get the file nodes for all files, using an array of paths
+     */
+    getFilesByPath = {source:new Subject(), sink:new Subject()};
+
+
+    /**
+     * Tell views to reload the files they are watching
+     */
+    //refreshFiles = new Subject();
+
+
+
+    /**
+     * Tell views to reload the files they are watching
+     */
+    //selectFile = new Subject();
 
 };
 
 
 
-export default withStyles(styleSheet)(FileList);
+export default new FileActions();
 

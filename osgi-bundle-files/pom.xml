@@ -120,6 +120,12 @@
             <artifactId>org.apache.sling.commons.contentdetection</artifactId>
             <version>1.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.pipes</artifactId>
+            <version>0.0.10</version>
+            <scope>provided</scope>
+        </dependency>
 
 
         <dependency>
@@ -245,6 +251,9 @@
                         <Embed-Dependency>commons-lang3,commons-io,commons-fileupload,portlet-api,org.apache.sling.commons.contentdetection</Embed-Dependency>
                         <!-- Stop bnd complaining about unused Private-Package instructions -->
                         <Private-Package></Private-Package>
+                        <Sling-Nodetypes>
+                            SLING-INF/nodetypes/nodetypes.cnd
+                        </Sling-Nodetypes>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
                             SLING-INF/content/app-files/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-files/build,

@@ -47,7 +47,6 @@ class DashboardPage extends Component {
             if (path.substring(0, 3) === "://") {
                 window.location.href = path.substring(2);
             }else{
-                debugger;
                 this.props.history.push(path);
             }
         }.bind(this));

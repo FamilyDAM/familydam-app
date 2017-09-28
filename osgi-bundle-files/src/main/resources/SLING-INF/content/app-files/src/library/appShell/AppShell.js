@@ -27,9 +27,15 @@ const styleSheet = (theme) => ({
         position: "inherit",
         height: '64px'
     },
-
+    sidebar:{
+        background:'#eee',
+        gridColumn: "2",
+        gridRow: "1",
+    },
     main:{
-        background:'#eee'
+        background:'#eee',
+        gridColumn: "2",
+        gridRow: "2",
     },
 
 });
@@ -74,7 +80,6 @@ class AppShell extends Component {
     handleOpenCloseToggle(){
         var val = !this.state.isOpen;
         this.setState({'isOpen':val});
-        debugger;
         window.localStorage.setItem("AppShell.isOpen", val);
     }
 
@@ -93,6 +98,7 @@ class AppShell extends Component {
 
 
                 <Sidebar
+                    className={classes.sidebar}
                     apps={this.state.primaryApps}
                     secondaryApps={this.state.secondaryApps}
                     open={this.state.isOpen}

@@ -5,6 +5,8 @@
   "homepage": "/app-files/",
   "dependencies": {
     "@reactivex/rxjs": "^5.4.3",
+    "classnames": "^2.2.5",
+    "keycode": "^2.1.9",
     "material-ui": "^1.0.0-beta.12",
     "material-ui-icons": "^1.0.0-beta.10",
     "react": "^15.6.1",

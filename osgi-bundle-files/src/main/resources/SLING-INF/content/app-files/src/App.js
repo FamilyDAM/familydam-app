@@ -6,7 +6,7 @@ import {withStyles} from 'material-ui/styles';
 import {CircularProgress} from 'material-ui/Progress';
 
 //views
-import HomePage from './pages/home/HomePage';
+import FilesPage from './pages/files/FilesPage';
 
 import UserActions from './actions/UserActions';
 
@@ -75,7 +75,7 @@ class App extends Component {
             <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
                 <Router>
                     <Switch>
-                        <Route path="/" component={() => <HomePage user={this.state.user}/>}/>
+                        <Route path="/" component={() => <FilesPage user={this.state.user}/>}/>
                     </Switch>
                 </Router>
             </IntlProvider>

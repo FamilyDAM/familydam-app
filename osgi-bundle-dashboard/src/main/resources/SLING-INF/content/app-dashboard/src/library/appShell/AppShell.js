@@ -74,7 +74,6 @@ class AppShell extends Component {
     handleOpenCloseToggle(){
         var val = !this.state.isOpen;
         this.setState({'isOpen':val});
-        debugger;
         window.localStorage.setItem("AppShell.isOpen", val);
     }
 

@@ -197,11 +197,7 @@ public class GraphServlet extends SlingAllMethodsServlet
         HashMap _selfLink = new HashMap();
         _selfLink.put("href", request.getRequestPathInfo().getResourcePath());
         rootLinks.put("self", _selfLink);
-
-        HashMap results = new HashMap();
-        results.put(HATEAOS_LINKS, rootLinks);
-        results.put(HATEAOS_EMBEDDED, _modifiedNode);
-
+        _modifiedNode.put(HATEAOS_LINKS, rootLinks);
 
 
         // Serialize the response
@@ -211,7 +207,7 @@ public class GraphServlet extends SlingAllMethodsServlet
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder = gsonBuilder.setPrettyPrinting();
         Gson gson = gsonBuilder.create();
-        String jsonOutput = gson.toJson(results);
+        String jsonOutput = gson.toJson(_modifiedNode);
         response.getOutputStream().write(jsonOutput.getBytes());
 
     }

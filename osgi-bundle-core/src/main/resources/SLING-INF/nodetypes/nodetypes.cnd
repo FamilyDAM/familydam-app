@@ -31,50 +31,12 @@
 [dam:systemfolder] mixin
 [dam:contentfolder] mixin
 [dam:userfolder] mixin
-[dam:folder] mixin
-
 
 
 [dam:extensible] mixin
 - * (UNDEFINED) multiple
 - * (UNDEFINED)
 
-[dam:taggable] mixin
-- dam:tags (STRING) multiple
-- dam:people (STRING) multiple
-
-
 [dam:user] mixin
 + dam:security (nt:unstructured)
 + dam:friends (nt:unstructured)
-
-
-[dam:facebook_post] mixin
-[dam:facebook_location] mixin
-
-[dam:twitter_tweet] mixin
-
-
-[dam:file] mixin
-- dam:datecreated (STRING)
-
-[dam:image] mixin
-- dam:datecreated (STRING)
-- dam:dateexifparsed (DATE)
-- dam:datephashparsed (DATE)
-+ dam:metadata (nt:unstructured)
-+ dam:renditions (nt:unstructured)
-
-[dam:music] mixin
-- dam:datecreated (STRING)
-- dam:dateid3parsed (DATE)
-+ dam:metadata (nt:unstructured)
-
-[dam:video] mixin
-- dam:datecreated (STRING)
-+ dam:metadata (nt:unstructured)
-
-[dam:movie] mixin
-- dam:datecreated (STRING)
-+ dam:metadata (nt:unstructured)
-
