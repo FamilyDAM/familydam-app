@@ -1,12 +1,11 @@
 package com.familydam.apps.files.decorators;
 
-import com.familydam.core.observers.ValueMapWrapper;
+import com.familydam.core.utilities.ValueMapWrapper;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceDecorator;
-import org.apache.sling.api.resource.ValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 

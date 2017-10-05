@@ -51,8 +51,8 @@ import java.util.*;
 /**
  * Created by mnimer on 3/4/16.
  */
-@Component(immediate = true)
-@Service(value = EventHandler.class)
+//@Component(immediate = true)
+//@Service(value = EventHandler.class)
 @Properties({
         @Property(name = org.osgi.service.event.EventConstants.EVENT_TOPIC, value = SlingConstants.TOPIC_RESOURCE_ADDED),
         @Property(name="register.user.url", propertyPrivate=false, value = "http://localhost:8080/api/v1/user")
@@ -71,7 +71,7 @@ public class UserNodeEventListener implements EventHandler
     protected void activate(ComponentContext ctx) {
         Dictionary<?, ?> props = ctx.getProperties();
 
-        this.registerUserUrl = PropertiesUtil.toString(props.get("register.user.url"), "http://localhost:8080/api/v1/user");
+        this.registerUserUrl = PropertiesUtil.toString(props.get("register.user.url"), "http://localhost:9000/api/v1/user");
 
     }
 

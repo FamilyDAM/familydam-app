@@ -1,6 +1,6 @@
 package com.familydam.apps.photos.registry;
 
-import com.familydam.core.registry.IClientApp;
+import com.familydam.core.apps.IClientApp;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 

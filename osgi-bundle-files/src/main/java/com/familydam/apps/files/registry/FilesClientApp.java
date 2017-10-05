@@ -1,14 +1,9 @@
 package com.familydam.apps.files.registry;
 
-import com.familydam.core.FamilyDAMCoreConstants;
-import com.familydam.core.registry.IClientApp;
-import org.apache.felix.scr.annotations.Activate;
+import com.familydam.core.apps.IClientApp;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
-import org.osgi.service.component.ComponentContext;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,32 +20,27 @@ public class FilesClientApp implements IClientApp
     String path = "://app-files/index.html";
     List<String> roles = Collections.EMPTY_LIST;
 
-    @Override
+    
     public Boolean getPrimary() {
         return primary;
     }
 
-    @Override
     public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
 
-    @Override
     public Boolean getSecondary() {
         return secondary;
     }
 
-    @Override
     public void setSecondary(Boolean secondary) {
         this.secondary = secondary;
     }
 
-    @Override
     public Boolean getEmbedded() {
         return embedded;
     }
 
-    @Override
     public void setEmbedded(Boolean embedded) {
         this.embedded = embedded;
     }
@@ -63,42 +53,42 @@ public class FilesClientApp implements IClientApp
         this.order = order;
     }
 
-    @Override
+    
     public String getSlug() {
         return slug;
     }
 
-    @Override
+    
     public void setSlug(String slug) {
         this.slug = slug;
     }
 
-    @Override
+    
     public String getLabel() {
         return label;
     }
 
-    @Override
+    
     public void setLabel(String label) {
         this.label = label;
     }
 
-    @Override
+    
     public String getPath() {
         return path;
     }
 
-    @Override
+    
     public void setPath(String path) {
         this.path = path;
     }
 
-    @Override
+    
     public List<String> getRoles() {
         return roles;
     }
 
-    @Override
+    
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }

@@ -238,7 +238,7 @@
                 <version>3.0.0</version>
                 <configuration>
                     <instructions>
-                        <Bundle-Name>FamilyDAM Files App</Bundle-Name>
+                        <Bundle-Name>FamilyDAM User Manager</Bundle-Name>
                         <!-- Stop bnd complaining about unused Private-Package instructions -->
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Embed-Dependency>commons-lang3,commons-io,commons-fileupload,portlet-api,org.apache.sling.commons.contentdetection</Embed-Dependency>

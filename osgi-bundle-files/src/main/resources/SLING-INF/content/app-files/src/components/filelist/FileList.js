@@ -10,6 +10,7 @@ import Table, {
     TableCell,
     TableRow
 } from 'material-ui/Table';
+import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import Checkbox from 'material-ui/Checkbox';
 import Typography from 'material-ui/Typography';
@@ -17,6 +18,7 @@ import FolderIcon from 'material-ui-icons/Folder';
 import PhotoIcon from 'material-ui-icons/Photo';
 import DownloadIcon from 'material-ui-icons/FileDownload';
 import DeleteIcon from 'material-ui-icons/Delete';
+import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
 
 import FileListTableHead from './FileListTableHead';
 import AppActions from '../../actions/AppActions';
@@ -48,13 +50,18 @@ class FileList extends Component{
             isMounted:true,
             order: 'asc',
             orderBy: 'name',
-            selected: []
+            selected: [],
+            showDeleteFileDialog:false
         };
 
         this.handleFileDelete = this.handleFileDelete.bind(this);
         this.handleFolderDelete = this.handleFolderDelete.bind(this);
         this.handleFileDownload = this.handleFileDownload.bind(this);
         this.handleFolderDownload = this.handleFolderDownload.bind(this);
+        this.handleCancelDialog = this.handleCancelDialog.bind(this);
+        this.handleFileDeleteOk = this.handleFileDeleteOk.bind(this);
+        this.handleFolderDeleteOk = this.handleFolderDeleteOk.bind(this);
+
     }
 
 
@@ -82,12 +89,8 @@ class FileList extends Component{
             this.setState({'files': sortedFiles});
         });
 
-        let _path = this.props.path;
-        if( this.props.location.pathname && this.props.location.pathname.toString().startsWith(this.state.rootPath) ){
-            _path = this.props.location.pathname;
-        }
 
-        fileActions.getFileAndFolders.source.next(_path);
+        fileActions.getFileAndFolders.source.next(this.props.path);
     }
 
     componentWillUnmount(){
@@ -96,14 +99,7 @@ class FileList extends Component{
 
     componentWillReceiveProps(newProps){
         this.props = newProps;
-
-        let _path = this.props.path;
-        if( this.props.location.pathname ){
-            _path = this.props.location.pathname;
-        }
-
-        //this.setState({"selected":[]});
-        fileActions.getFileAndFolders.source.next(_path);
+        fileActions.getFileAndFolders.source.next(this.props.path);
     }
 
     handleRequestSort = (event, property) => {
@@ -123,7 +119,6 @@ class FileList extends Component{
     };
 
     handleSelectAllClick = (event, checked) => {
-        debugger;
         if (checked) {
             var _files = this.state.files
                 .filter(n=> n['jcr:primaryType'] !== "dam:folder" && n['jcr:primaryType']!=='sling:Folder' && n['jcr:primaryType']!=='nt:folder')
@@ -174,14 +169,22 @@ class FileList extends Component{
     };
 
     handleFileDelete(path_){
+        this.setState({showDeleteFileDialog:true});
         return false;
     }
 
     handleFolderDelete(path_){
+        this.setState({showDeleteFolderDialog:true});
         return false;
     }
 
     handleFileDownload(path_){
+        var link=document.createElement('a');
+        document.body.appendChild(link);
+        link.href="http://localhost:9000" +path_ ;
+        link.download=true;
+        link.click();
+
         return false;
     }
 
@@ -189,6 +192,18 @@ class FileList extends Component{
         return false;
     }
 
+    handleFileDeleteOk(path_){
+        this.setState({showDeleteFileDialog:false});
+    }
+
+
+    handleFolderDeleteOk(path_){
+        this.setState({showDeleteFolderDialog:false});
+    }
+
+    handleCancelDialog(path_){
+        this.setState({showDeleteFileDialog:false, showDeleteFolderDialog:false});
+    }
 
 
 
@@ -248,6 +263,47 @@ class FileList extends Component{
 
                     </Table>
                 </div>
+
+
+                <Dialog
+                    ignoreBackdropClick
+                    ignoreEscapeKeyUp
+                    maxWidth="xs"
+                    open={this.state.showDeleteFileDialog}>
+                    <DialogTitle>Delete Confirmation</DialogTitle>
+                    <DialogContent>
+                        <Typography>Are you sure you want to delete this file?</Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleCancelDialog} color="primary">
+                            Cancel
+                        </Button>
+                        <Button raised color="primary" onClick={this.handleFileDeleteOk} >
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                <Dialog
+                    ignoreBackdropClick
+                    ignoreEscapeKeyUp
+                    maxWidth="xs"
+                    open={this.state.showDeleteFolderDialog}>
+                    <DialogTitle>Delete Confirmation</DialogTitle>
+                    <DialogContent>
+                        <Typography>Are you sure you want to delete this folder and all of the files in it?</Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleCancelDialog} color="primary">
+                            Cancel
+                        </Button>
+                        <Button raised color="primary" onClick={this.handleFolderDeleteOk} >
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+
             </Paper>
         );
     }
@@ -261,24 +317,25 @@ const FolderRow = (props, context) => (
         role="checkbox"
         tabIndex={-1}
         selected={props.isSelected}
-        aria-checked={props.isSelected}
-        onClick={()=>props.onNavigate(props.folder.path)}
-    >
+        aria-checked={props.isSelected}>
         <TableCell checkbox
                    style={{width:'50px'}}>
         </TableCell>
         <TableCell
             style={{width:'50px', margin:'auto'}}
+            onClick={()=>props.onNavigate(props.folder.path)}
             disablePadding>
-            <FolderIcon/>
+            <FolderIcon />
         </TableCell>
-        <TableCell disablePadding onClick={()=>props.onNavigate(props.folder.path)}>
+        <TableCell
+            disablePadding
+            onClick={()=>props.onNavigate(props.folder.path)}>
             <Typography component="span">{props.folder.name}</Typography>
         </TableCell>
         <TableCell numeric></TableCell>
         <TableCell>
-            <DeleteIcon onClick={()=>props.onDelete(props.folder.path)}/>
-            <DownloadIcon onClick={()=>props.onDownload(props.folder.path)}/>
+            <Button onClick={()=>props.onDelete(props.folder.path)} style={{padding:'4px', minWidth:'24px'}}><DeleteIcon /></Button>
+            <Button onClick={()=>props.onDownload(props.folder.path)} style={{padding:'4px', minWidth:'24px'}}><DownloadIcon /></Button>
         </TableCell>
     </TableRow>
 );
@@ -295,7 +352,6 @@ const FileRow = (props, context) => (
         aria-checked={props.isSelected}
         tabIndex={-1}
         selected={props.isSelected}
-        onClick={event => props.onClick(event, props.file.path)}
     >
         <TableCell checkbox
                    style={{width:'50px'}}
@@ -304,16 +360,23 @@ const FileRow = (props, context) => (
         </TableCell>
         <TableCell
             style={{width:'50px', margin:'auto'}}
+            onClick={event => props.onClick(event, props.file.path)}
             disablePadding>
-            <PhotoIcon/>
+            { (props.file['path'].toString().endsWith(".jpg") || props.file['path'].toString().endsWith(".png") ) ?
+                <img src={"http://localhost:9000" +props.file.path} alt="" style={{maxWidth:'64px', padding:'8px'}}/> : <PhotoIcon/>
+            }
+
         </TableCell>
-        <TableCell disablePadding>
+        <TableCell disablePadding onClick={event => props.onClick(event, props.file.path)}>
             <Typography component="span">{props.file.name}</Typography>
+            <Typography component="span">{props.file.path}</Typography>
         </TableCell>
         <TableCell numeric>{props.file['jcr:created']}</TableCell>
         <TableCell>
-            <DeleteIcon onClick={()=>props.onDelete(props.file.path)}/>
-            <DownloadIcon onClick={()=>props.onDownload(props.file.path)}/>
+            <Button onClick={()=>props.onDelete(props.file.path)} style={{padding:'4px', minWidth:'24px'}}><DeleteIcon /></Button>
+            {props.file._links.download &&
+               <Button onClick={()=>props.onDownload(props.file._links.download)} style={{padding:'4px', minWidth:'24px'}}><DownloadIcon/></Button>
+            }
         </TableCell>
     </TableRow>
 );

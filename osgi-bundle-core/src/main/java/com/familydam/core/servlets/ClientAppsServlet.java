@@ -1,7 +1,7 @@
 package com.familydam.core.servlets;
 
 
-import com.familydam.core.registry.IClientApp;
+import com.familydam.core.apps.IClientApp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.felix.scr.annotations.*;
 import org.apache.felix.scr.annotations.Properties;

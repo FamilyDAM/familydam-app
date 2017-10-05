@@ -35,7 +35,7 @@ class GetFilesByPathService {
             }
 
             Promise.all(pathPromises).then((results)=>{
-               debugger;
+
                var nodes = [];
                 for (var i = 0; i < results.length; i++) {
                     var response = results[i];

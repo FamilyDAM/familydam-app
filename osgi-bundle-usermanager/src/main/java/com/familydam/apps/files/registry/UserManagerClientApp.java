@@ -1,12 +1,9 @@
 package com.familydam.apps.files.registry;
 
-import com.familydam.core.registry.IClientApp;
-import org.apache.felix.scr.annotations.Activate;
+import com.familydam.core.apps.IClientApp;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
-import org.osgi.service.component.ComponentContext;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

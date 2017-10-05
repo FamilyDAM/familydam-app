@@ -13,3 +13,4 @@ npm-debug.log
 *.iws
 .build-app
 .build-binary
+*-lock.json

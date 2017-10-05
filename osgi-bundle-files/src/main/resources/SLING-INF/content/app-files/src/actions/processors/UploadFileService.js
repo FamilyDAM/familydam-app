@@ -1,105 +1,176 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
+import {Subject, Observable} from '@reactivex/rxjs';
 
-'use strict';
+import request from 'superagent';
+import AppActions from './../AppActions';
+import FileActions from './../FileActions';
 
-var Rx = require('rx');
-var UserActions = require("./../../actions/UserActions");
-var UploadActions = require("./../../actions/UploadActions");
-var PreferenceStore = require("./../../stores/PreferenceStore");
-var UserStore = require("./../../stores/UserStore");
 
-module.exports = {
+class UploadFileService {
 
-    sink: undefined,
-    fileQueue: [],
-
+    host = "http://localhost:9000";
+    sink = undefined;
+    fileQueue = new Subject();
     /**
      * Setup action Listeners
      */
-    subscribe: function () {
+    constructor(source_, sink_) {
 
-        this.sink = UploadActions.uploadFileAction.sink;
+        this.sink = sink_;
 
-        var source = UploadActions.uploadFileAction.source
-            .subscribe((d)=>{
+        source_.subscribe((file_) => {
+            //debugger;
+            this.fileQueue.next(file_);
+            //this.uploadNextFile();
 
-                for (var i = 0; i < d.length; i++)
-                {
-                    var file = d[i];
-                    this.fileQueue.push(file);
+            //console.log("done");
+        });
+
+
+        this.fileQueue
+            //.take(3)
+            .flatMap(file_ => {
+                if( Array.isArray(file_) ){
+                    for (var i = 0; i < file_.length; i++) {
+                        var file = file_[i];
+                        return this.uploadNextFile(file);
+                    }
+                }else {
+                    return this.uploadNextFile(file_);
                 }
+            }, null, 3)
+            .subscribe(val_ => {
+                //debugger;
+            });
+    }
 
-                for (var i = 0; i < Math.min(this.fileQueue.length, 3); i++)
-                {
-                    this.uploadNextFile();
-                }
 
-                //console.log("done");
-            }, (e)=>{
-                debugger;
-                //console.log("error");
+    uploadNextFile(file) {
+
+        console.log("file: " + file);
+        if (file)//!file.path)
+        {
+            //console.log("else clause, upload");
+            //debugger;
+            return Observable.of(file).flatMap(req => new Promise((resolve, reject) => {
+                return this.uploadFile(file)
+                    .then(result=>resolve(result))
+                    .catch(err => {
+                        //debugger;
+                        let retry = 1;
+                        if( file.retry ){
+                            retry=file.retry+1;
+                        }
+                        file.progress = 0;
+                        file.retry = retry;
+                        file.error = "Retrying request (" +retry +"/3)";
+                        return reject(err);
+                    });
+            })).retry(2).catch(err => {
+                //debugger;
+                //var _error = {'code': err.status, 'message': err.message};
+                file.error = err.status +": " +err.message;
+                file.progress = 0;
+                return Observable.of(err);
             });
 
-    },
-
-
-
-
-
-    uploadNextFile:function () {
-        if( this.fileQueue.length > 0 )
-        {
-            var file = this.fileQueue.pop();
-            if(file)
-            {
-                console.dir(file);
-                if( file.path ){
-                    //console.log("check access");
-                    this.checkAccess(file).then(
-                        function (v0) {
-                                                                                                                                                                                                                               console.log(v0);
-                            if( v0.visible )
-                            {
-                                //console.log("visible, copy");
-                                this.copyLocalFile(file).then(
-                                    function (v1) {
-                                        this.uploadNextFile();
-                                    }.bind(this),
-                                    function (e1) {
-                                        this.uploadNextFile();
-                                    }.bind(this));
-                            }else{
-                                //console.log("not visible, upload");
-                                this.uploadFile(file).then(
-                                    function (v2) {
-                                        this.uploadNextFile();
-                                    }.bind(this),
-                                    function (e2) {
-                                        this.uploadNextFile();
-                                    }.bind(this));
-                            }
-                        }.bind(this),
-                        function (e0) {
-                            //console.log("error");
-                            this.uploadNextFile();
-                        }.bind(this));
-                }else
-                {
-                    //console.log("else clause, upload");
-                    this.uploadFile(file).then(
-                        function (v) {
-                            this.uploadNextFile();
-                        }.bind(this),
-                        function (e) {
-                            this.uploadNextFile();
-                        }.bind(this));
-                }
-            }
         }
-    },
 
+        return null;
+        /**
+        else
+        {
+            //console.log("check access");
+            this.checkAccess(file).then(
+                function (v0) {
+                    //debugger;
+                    console.log(v0);
+                    if (v0.visible) {
+                        //console.log("visible, copy");
+                        this.copyLocalFile(file).then(
+                            function (v1) {
+                                this.uploadNextFile();
+                            }.bind(this),
+                            function (e1) {
+                                this.uploadNextFile();
+                            }.bind(this));
+                    } else {
+                        //console.log("not visible, upload");
+                        this.uploadFile(file).then(
+                            function (v2) {
+                                this.uploadNextFile();
+                            }.bind(this),
+                            function (e2) {
+                                this.uploadNextFile();
+                            }.bind(this));
+                    }
+                }.bind(this),
+                function (e0) {
+                    //console.log("error");
+                    this.uploadNextFile();
+                }.bind(this));
+        }
+         **/
+    }
+
+
+
+
+    /**
+     * Check to see if the file is accessible to the embedded server, so we can do a quick copy. Instead of upload.
+     * @param dir - passthrough for the next step in the sequence
+     * @param path
+     * @returns {HttpPromise}
+     */
+    checkAccess(file_){
+
+        return request
+            .get(this.host +'/api/familydam/v1/files/upload/info')
+            .withCredentials()
+            .send({path: encodeURI(file_.path).replace("&", "%26")})
+            .then(data => {
+                //debugger;
+                return JSON.parse(data);
+            }, error => {
+                if (error.status === 401) {
+                    AppActions.navigateTo.next('://login');
+                } else {
+                    var _error = {'code': error.status, 'message': error.message};
+                    //file_.error = _error;
+                    FileActions.uploadError.next(_error);
+                }
+            });
+    }
+
+
+    /**
+     * Tell the embedded server to copy a local file, by path.
+     * @param dir
+     * @param path
+     */
+    copyLocalFile(file_) {
+
+        if (!file_.recursive) {
+            file_.recursive = true;
+        }
+
+        return request
+            .post(this.host +'/api/familydam/v1/files/upload/copy')
+            .withCredentials()
+            .field("dir", file_.uploadPath)
+            .field("path", file_.path)
+            .field("recursive", file_.recursive)
+            .then(data_ => {
+                //debugger;
+                file_.status = "COMPLETE";
+                file_.percentComplete = "100";
+                FileActions.uploadCompleted.next(data_);
+                return JSON.parse(data_);
+            });
+
+    }
 
 
     /**
@@ -108,76 +179,65 @@ module.exports = {
      * @param dir
      * @param path
      */
-    uploadFile: function (file_) {
+    uploadFile(file_) {
 
-        var _this = this;
-        var _dataFile = file_;
-        var data = new FormData();
-        data.append("file", file_);
-        data.append("id", file_.id);
-        data.append("name", file_.name);
-        data.append("path", file_.path);
-        data.append("destination", file_.uploadPath);
-        //data.append("lastModified", file_.lastModified);
-        //data.append("lastModifiedDate", file_.lastModifiedDate);
+        return request
+            .post(this.host +'/api/familydam/v1/files/upload')
+            .withCredentials()
+            .field("id", file_.id)
+            .field("name", file_.name)
+            .field("destination", file_.uploadPath)
+            .attach("file", file_)
+            .on('progress', event => {
+                file_.progress = event.percent;
+                FileActions.uploadProgress.next(file_);
+                /* the event is:
+                {
+                  direction: "upload" or "download"
+                  percent: 0 to 100 // may be missing if file size is unknown
+                  total: // total file size, may be missing
+                  loaded: // bytes downloaded or uploaded so far
+                } */
+            });
 
 
-        return $.ajax({
-            url: '/bin/familydam/api/v1/upload/',
-            type: 'POST',
-            data: data,
-            cache: false,
-            processData: false, // Don't process the files
-            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-            headers: {
-                Accept: "application/json; charset=utf-8"
-            },
-            xhrFields: {
-                withCredentials: true,
-                onprogress: function (e) {
-                    if (e.lengthComputable)
+        /**
+         .set("Content-Type", "application/octet-stream")
+         .end(function(err, res){
+                if( !err ){
+                    UploadActions.uploadCompleted.onNext(data_);
+                }else {
+                    if (err.timeout) {
+                        // timed out!
+                    }
+
+                    // handle the error
+                    UploadActions.uploadError.onNext(file_);
+                    //send the error to the store (through the sink observer
+                    if (xhr_.status == 401)
                     {
-                        console.log(e.loaded / e.total * 100 + '%');
+                        AuthActions.loginRedirect.onNext(true);
+                    }
+                    if (xhr_.status == 403)
+                    {
+                        UserActions.alert.onNext("You do not have permission to upload to this folder");
+                    } else
+                    {
+                        var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
+                        _this.sink.onError(_error);
                     }
                 }
-            }
-        }).then(function (data_, status_, xhr_) {
-
-            //this.uploadNextFile();
-            UploadActions.uploadCompleted.onNext(data_);
-            //UploadActions.removeFileAction.onNext(data_);
-
-            return this;
-        }.bind(this), function (xhr_, status_, errorThrown_) {
-
-            //this.uploadNextFile();
-
-            // handle the error
-            UploadActions.uploadError.onNext(file_);
-            //send the error to the store (through the sink observer
-            if (xhr_.status == 401)
-            {
-                AuthActions.loginRedirect.onNext(true);
-            }
-            if (xhr_.status == 403)
-            {
-                UserActions.alert.onNext("You do not have permission to upload to this folder");
-            } else
-            {
-                var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
-                _this.sink.onError(_error);
-            }
-            return this;
-        }.bind(this)).promise();
-    },
+            });
+         **/
 
 
+    }
 
 
     /**
      * Invoke service
 
-    execute: function (file_) {
+     execute: function (file_) {
         //console.log("{upload single file} " +file_.path);
         //console.dir(file_);
 
@@ -220,83 +280,7 @@ module.exports = {
     },
      */
 
-
-    /**
-     * Check to see if the file is accessible to the embedded server, so we can do a quick copy. Instead of upload.
-     * @param dir - passthrough for the next step in the sequence
-     * @param path
-     * @returns {HttpPromise}
-     */
-    checkAccess: function (file_) {
-        var _this = this;
-        return $.ajax({
-            method: "get",
-            url: "/bin/familydam/api/v1/upload/info?path=" +encodeURI(file_.path).replace("&", "%26"),
-            headers: {
-                "X-Auth-Token": UserStore.token.value
-            }
-        }).then(function (data_, status_, xhr_) {
-            return JSON.parse(data_);
-        }, function (result_, status_, xhr_) {
-            if (xhr_.status == 401)
-            {
-                AuthActions.loginRedirect.onNext(true);
-            } else
-            {
-                var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
-                _this.sink.onError(_error);
-            }
-        });
-    },
+}
 
 
-    /**
-     * Tell the embedded server to copy a local file, by path.
-     * @param dir
-     * @param path
-     */
-    copyLocalFile: function (file_) {
-        var _this = this;
-
-        if ( !file_.recursive )
-        {
-            file_.recursive = true;
-        }
-        return $.ajax({
-            method: "post",
-            url: "/bin/familydam/api/v1/upload/copy",
-            data: {'dir': file_.uploadPath, 'path': file_.path, 'recursive': true},
-            'xhrFields': {
-                withCredentials: true,
-                onprogress: function (e) {
-                    var indx = e.target.responseText.substr(0, e.target.responseText.length-1).lastIndexOf("\n");
-                    var lastLine = e.target.responseText.substr(indx);
-
-                    UploadActions.uploadMessage.onNext(lastLine);
-                }
-            }
-        }).then(function (data_, status_, xhr_) {
-            file_.status = "COMPLETE";
-            file_.percentComplete = "100";
-            //UploadActions.fileStatusAction.onNext(file_);
-            //UploadActions.removeFileAction.onNext(file_);
-            UploadActions.uploadCompleted.onNext(data_);
-
-            return JSON.parse(data_);
-
-        }, function (err_) {
-            if (xhr_.status == 401)
-            {
-                AuthActions.loginRedirect.onNext(true);
-            } else
-            {
-                var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
-                _this.sink.onError(_error);
-            }
-        }).promise();
-
-    }
-
-
-
-};
+export default UploadFileService;

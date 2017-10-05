@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "name": "FamilyDAM",
+  "productName": "FamilyDAM",
+  "author": "Mike Nimer",
+  "description": "Digital Asset Manager for families",
+  "dependencies": {
+    "auto-updater": "^1.0.2",
+    "dialog": "^0.1.8",
+    "electron-log": "^1.2.2",
+    "fb": "^1.1.1",
+    "fs": "0.0.2",
+    "http": "0.0.0",
+    "matchdep": "^1.0.1",
+    "os": "^0.1.1",
+    "path": "^0.12.7",
+    "request": "^2.83.0",
+    "winston": "^2.4.0"
+  },
+  "devDependencies": {
+  }
+}

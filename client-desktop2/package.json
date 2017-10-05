@@ -1,0 +1,44 @@
+{
+  "name": "FamilyDAM",
+  "version": "0.2.0",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "electron-log": "^2.2.9",
+    "source-map-support": "^0.4.18"
+  },
+  "devDependencies": {
+    "electron": "^1.7.8",
+    "electron-builder": "^19.33.0",
+    "electron-webpack": "^1.6.1",
+    "webpack": "^3.6.0"
+  },
+  "build": {
+    "appId": "com.FamilyDAM.desktop",
+    "asar": false,
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
+  },
+  "electronWebpack": {
+    "title": true,
+    "main": {
+      "sourceDirectory": "src/main"
+    },
+    "renderer": {
+      "sourceDirectory": null
+    }
+  },
+  "scripts": {
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist -- --dir -c.compression=store -c.mac.identity=null"
+  }
+}

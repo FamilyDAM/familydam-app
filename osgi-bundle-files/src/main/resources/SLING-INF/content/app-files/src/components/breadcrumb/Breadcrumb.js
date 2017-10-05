@@ -3,6 +3,7 @@
  */
 import React, {Component} from 'react';
 import {withStyles} from "material-ui/styles";
+import AppActions from "../../actions/AppActions";
 
 const styleSheet = (theme) => ({
 
@@ -10,27 +11,21 @@ const styleSheet = (theme) => ({
     {
         backgroundColor:'transparent',
         listStyle: 'none',
-        marginLeft: '-30px'
-    },
-
-    ol:{
-        listStyle: 'none',
         padding: '0px'
     },
 
+
     li:{
         float:'left',
-        margin: '0 0 10px 5px'
+        margin: '0 0 10px 5px',
+
+        '&:before':{
+            content: '"/ "'
+        },
+        '&:after':{
+            content: '" "'
+        }
     },
-
-    liBefore:{
-        content: "/ "
-    },
-
-    liAfter:{
-        content: " "
-    }
-
 
 });
 
@@ -45,51 +40,7 @@ class Breadcrumb extends Component {
     }
 
     componentDidMount() {
-
         this.parsePath(this.props.path);
-
-
-        /**
-        this.currentPathSubscription = NavigationActions.currentPath.subscribe(
-            function (path_) {
-                //console.log("new path");
-                //console.dir(path_);
-                if( !path_.params || !path_.params.path ) return;
-
-                var _level = path_.level;
-                var _pathParts = path_.params.path.split("/");
-
-
-                var _paths = [];
-                var _pathQueryString = [];
-                for (var i = 0; i < _pathParts.length; i++)
-                {
-                    var part = _pathParts[i];
-                    if( part.trim().length>0){
-                        _pathQueryString[i] = part;
-
-                        if( part === "content"){
-                            _paths[i] = {
-                                "label":part,
-                                "level":i,
-                            };
-                        }else{
-                            _paths[i] = {
-                                "label":part,
-                                "level":i,
-                                "navigateTo":"/files?path="+_pathQueryString.join("/")
-                            }
-                        }
-                    }
-
-                }
-
-
-                //console.dir(_paths);
-                this.setState({"paths": _paths});
-            }.bind(this)
-        );
-         **/
     }
 
 
@@ -108,33 +59,31 @@ class Breadcrumb extends Component {
 
 
     parsePath(path_) {
-        var parts = path_.split("/");
+
+        var _pathParts = path_.split("/");
         var currentPath = "";
 
-        for (var i = 0; i < parts.length; i++)
-        {
-            var _part = parts[i];
-            currentPath += _part + "/";
 
-            // update the breadcrumb
-            var _pathData = {
-                'label': _part,
-                'navigateTo': '/files?path=' + currentPath,
-                'params': {path: currentPath},
-                'level': i
-            };
+        var _paths = [];
+        var _pathQueryString = [];
+        for (var i = 0; i < _pathParts.length; i++) {
+            var part = _pathParts[i];
+            if (part.trim().length > 0) {
+                currentPath = currentPath + "/" +part;
+                _pathQueryString[i] = part;
 
-            if (i <= 1)
-            {
-                _pathData = {
-                    'label': _part,
-                    'level': i
-                };
+                _paths.push({
+                    "label": part,
+                    "level": i,
+                    "path": currentPath
+                });
+
             }
 
-            _pathData.toString();
-            //NavigationActions.currentPath.onNext(_pathData);
         }
+
+
+        this.setState({"paths": _paths});
     }
 
 
@@ -146,14 +95,17 @@ class Breadcrumb extends Component {
             <div >
                 <ol className={classes.breadcrumb}>
                     {this.state.paths.map(function (path_) {
-                        if (path_.navigateTo)
+                        if (path_.path)
                         {
-                            return ( <li key={path_.level +'-' +path_.label}>
-                                        {path_.label}
-                                    </li> );
+                            return (
+                                <li className={classes.li} key={path_.path} onClick={()=>AppActions.navigateTo.next(path_.path)}>
+                                    {path_.label}
+                                </li>
+                            );
+
                         } else
                         {
-                            return ( <li key={path_.label}>{path_.label}</li> );
+                            return ( <li className={classes.li} key={path_.label}>{path_.label}</li> );
                         }
                     })}
                 </ol>

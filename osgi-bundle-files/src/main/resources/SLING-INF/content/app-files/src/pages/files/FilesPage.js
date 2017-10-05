@@ -20,6 +20,7 @@ import AppActions from '../../actions/AppActions';
 import Breadcrumb from '../../components/breadcrumb/Breadcrumb';
 import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
+import UploadDialog from '../../components/uploaddialog/UploadDialog';
 
 const styleSheet = (theme) => ({
     progress: {
@@ -84,14 +85,18 @@ class FilesPage extends Component {
             canAddFile:true,
             canAddFolder:true,
             showAddFolderDialog:false,
-            selectedPath: "/content/dam-files",
-            selectedFiles:[]
+            showUploadDialog:false,
+            selectedFiles:[],
+            visibleRoot:"/content",
+            path:"/content"
         };
 
         this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
     }
 
     componentWillMount(){
+
+        this.validatePath();
         this.setState({"isMounted":true});
 
 
@@ -104,9 +109,32 @@ class FilesPage extends Component {
         }.bind(this));
     }
 
+    componentWillUnmount(){
+        this.setState({isMounted:false});
+    }
 
-    componentWillUnmount() {
-        this.setState({"isMounted":false});
+    componentWillReceiveProps(newProps){
+        this.props = newProps;
+
+        this.validatePath();
+
+    }
+
+
+    validatePath() {
+        let _path = this.props.path;
+        if( this.props.location.pathname && this.props.location.pathname.toString().startsWith(this.state.visibleRoot) ){
+            _path = this.props.location.pathname;
+        }
+        if( !_path ){
+            _path = this.state.visibleRoot;
+        }
+
+        if( _path.toString().startsWith(this.state.visibleRoot)) {
+            this.setState({"path": _path, "isMounted":true});
+        }else{
+            //todo show invalid path
+        }
     }
 
 
@@ -128,6 +156,7 @@ class FilesPage extends Component {
         }
 
 
+
         return (
             <AppShell>
                 <div className={classes.fileGrid}>
@@ -140,13 +169,13 @@ class FilesPage extends Component {
                                 <FolderIcon style={{width:'36px', height:'36px'}}/>
                             </div>
                             <div style={{gridRow:'1', gridColumn:'2'}}>
-                                <Breadcrumb path={this.state.selectedPath}/>
+                                <Breadcrumb path={this.state.path}/>
                             </div>
                             <div style={{gridRow:'1', gridColumn:'3', textAlign:'right'}}>
                                 <Button
                                     color="primary"
                                     disabled={!this.state.canAddFile}
-                                    onClick={()=>{ AppActions.navigateTo.next('/upload')}}>
+                                    onClick={()=>{this.setState({'showUploadDialog':true})}}>
                                     <FileUpload/> Add Files
                                 </Button>
 
@@ -165,7 +194,7 @@ class FilesPage extends Component {
                     <div className={classes.fileGridFileList} style={{gridColumn:this.state.selectedFiles.length>0?'1/2':'1/3'}}>
                         <div className={classes.mainGrid}>
                             <FileList
-                                path={"/content"}
+                                path={this.state.path}
                                 onSelectionChange={this.handleFileSelectionChange}
                                 style={{gridRow:"1 / 4", gridColumn:"1 / 3"}}/>
 
@@ -177,6 +206,11 @@ class FilesPage extends Component {
                         className={classes.fileGridSidebar}
                         style={{display:this.state.selectedFiles.length>0?'block':'none'}}
                     />
+
+                    <UploadDialog
+                        onClose={()=>{this.setState({'showUploadDialog':false})}}
+                        open={this.state.showUploadDialog}
+                        path={this.state.path}/>
                 </div>
 
             </AppShell>

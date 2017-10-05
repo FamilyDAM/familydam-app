@@ -5,6 +5,8 @@
 
 var app = require('electron').app;  // Module to control application life.
 var logger = require('electron-log');
+import FamilyDamRepository from './familydam-repository.js';
+
 
 // Report crashes to our server.
 const {crashReporter} = require('electron');
@@ -52,7 +54,11 @@ if (option.version) {
     console.log(helpMessage);
     process.exit(0);
 } else {
-    require('./familydam-app.js');
+    console.log("Starting Application");
+    app.on('ready', function() {
+        console.log("App Is Ready, launching repository");
+        this.familyDamRepository = new FamilyDamRepository();
+    });
 }
 
 

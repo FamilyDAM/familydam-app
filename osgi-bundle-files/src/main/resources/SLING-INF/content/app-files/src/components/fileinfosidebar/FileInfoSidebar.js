@@ -2,11 +2,10 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from "material-ui/styles";
 import PropTypes from 'prop-types';
-//import keycode from 'keycode';
-
 
 import Paper from "material-ui/Paper";
-import { GridList, GridListTile, GridListTileBar } from 'material-ui/GridList';
+import Typography from "material-ui/Typography";
+import {GridList, GridListTile, GridListTileBar} from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import StarBorderIcon from 'material-ui-icons/StarBorder';
 
@@ -32,6 +31,12 @@ const styleSheet = (theme) => ({
         // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
         transform: 'translateZ(0)',
     },
+    gridSingleItemInfo: {
+        width: '100%',
+        height: '100%',
+        padding: '24px',
+        marginTop: '24px'
+    },
     title: {
         color: theme.palette.primary[200],
     },
@@ -42,53 +47,52 @@ const styleSheet = (theme) => ({
 
 });
 
-class FileInfoSidebar extends Component{
+class FileInfoSidebar extends Component {
 
 
     constructor(props, context) {
         super(props);
 
         this.state = {
-            fileNodes:[],
-            isMounted:true
+            fileNodes: [],
+            isMounted: true
         };
     }
 
-    componentWillMount(){
-        this.setState({isMounted:true});
+    componentWillMount() {
+        this.setState({isMounted: true});
 
-        FileActions.getFilesByPath.sink.takeWhile(() => this.state.isMounted).subscribe((files)=>{
-            debugger;
-           this.setState({"fileNodes": files});
+        FileActions.getFilesByPath.sink.takeWhile(() => this.state.isMounted).subscribe((files) => {
+            this.setState({"fileNodes": files});
         });
 
         FileActions.getFilesByPath.source.next(this.props.files);
     }
 
-    componentWillUnmount(){
-        this.setState({isMounted:false});
+    componentWillUnmount() {
+        this.setState({isMounted: false});
     }
 
-    componentWillReceiveProps(newProps){
+    componentWillReceiveProps(newProps) {
         this.props = newProps;
 
         FileActions.getFilesByPath.source.next(this.props.files);
     }
 
-    render(){
+    render() {
         var classes = this.props.classes;
 
-        return(
+        return (
             <Paper style={this.props.style}>
                 <FileListTableToolbar
-                    files={this.props.files} />
+                    files={this.props.files}/>
 
-                
+
                 <div className={classes.gridListRoot}>
                     <GridList className={classes.gridList} cols={2.5}>
                         {this.state.fileNodes.map(file => (
                             <GridListTile key={file['jcr:path']}>
-                                <img src={"http://localhost:9000" +file['jcr:path']}
+                                <img src={"http://localhost:9000" + file['jcr:path']}
                                      alt={file['jcr:path']}/>
                                 <GridListTileBar
                                     title={file['jcr:path']}
@@ -98,14 +102,36 @@ class FileInfoSidebar extends Component{
                                     }}
                                     actionIcon={
                                         <IconButton>
-                                            <StarBorderIcon className={classes.title} />
+                                            <StarBorderIcon className={classes.title}/>
                                         </IconButton>
                                     }
                                 />
                             </GridListTile>
                         ))}
                     </GridList>
+
+
+
+                    {this.state.fileNodes.length === 1 &&
+                        <div className={classes.gridItemInfo}>
+                            <Typography>Path</Typography>
+                            <div>{this.state.fileNodes[0]['jcr:path']}</div>
+                        </div>
+                    }
+
+
+
+                    {this.state.fileNodes.length > 1 &&
+                    <div className={classes.gridItemInfo}>
+                        <Typography>Paths</Typography>
+                        {this.state.fileNodes.map(file => (
+                            <div>{file['jcr:path']}</div>
+                        ))}
+
+                    </div>
+                    }
                 </div>
+
             </Paper>
         )
     }

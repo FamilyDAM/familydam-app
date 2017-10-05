@@ -47,8 +47,7 @@ import java.util.*;
         @Property(name = "service.description", value = "FileUploadServlet  Description", propertyPrivate = false),
         @Property(name = "service.vendor", value = "FamilyDAM", propertyPrivate = false)
 })
-public class FileUploadServlet extends SlingAllMethodsServlet
-{
+public class FileUploadServlet extends SlingAllMethodsServlet {
     private final Logger log = LoggerFactory.getLogger(FileUploadServlet.class);
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
@@ -70,17 +69,14 @@ public class FileUploadServlet extends SlingAllMethodsServlet
      * @param fileName_
      * @return
      */
-    private String cleanFileName(String fileName_)
-    {
+    private String cleanFileName(String fileName_) {
         return Text.escapeIllegalJcrChars(fileName_.replace("\u00A0", " "));
     }
 
 
     @Override
-    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException
-    {
-       String resourcePath = request.getRequestPathInfo().getResourcePath();
-
+    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
+        //String resourcePath = request.getRequestPathInfo().getResourcePath();
 
         if (!ServletFileUpload.isMultipartContent(request)) {
             response.getOutputStream().write("Request is not multipart".getBytes()); //Bad Request
@@ -116,9 +112,9 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                     if (param.isFormField()) {
                         if (k.equalsIgnoreCase("destination")) {
                             _uploadPath = new String(param.get());
-                        }else if (k.equalsIgnoreCase("path")) {
+                        } else if (k.equalsIgnoreCase("path")) {
                             _path = cleanFileName(new String(param.get()));
-                        }else if (k.equalsIgnoreCase("name")) {
+                        } else if (k.equalsIgnoreCase("name")) {
                             _fileName = cleanFileName(new String(param.get()));
                         } else {
                             _props.put(k, new String(param.get()));
@@ -134,14 +130,12 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                 }
 
 
-
                 session.save();
                 List<String> locations = new ArrayList<>();
                 Node _pathNode = null;
                 try {
                     _pathNode = JcrUtils.getOrCreateByPath(_uploadPath, "sling:Folder", session);
-                }
-                catch (InvalidItemStateException ex) {
+                } catch (InvalidItemStateException ex) {
                     _pathNode = JcrUtils.getOrCreateByPath(_uploadPath, "sling:Folder", session);
                 }
 
@@ -169,7 +163,8 @@ public class FileUploadServlet extends SlingAllMethodsServlet
 //                            }
 
                             Node _newFile = JcrUtils.putFile(_pathNode, _fileName, param.getContentType(), stream);
-                            _newFile.addMixin("dam:extensible");
+                            _newFile.addMixin(FamilyDAMCoreConstants.DAM_EXTENSIBLE);
+                            _newFile.addMixin(FamilyDAMCoreConstants.DAM_FILE);
                             _newFile.addMixin(JcrConstants.MIX_REFERENCEABLE);
                             _newFile.addMixin(JcrConstants.MIX_VERSIONABLE);
 
@@ -195,28 +190,25 @@ public class FileUploadServlet extends SlingAllMethodsServlet
                 }
 
 
-
                 response.setStatus(201);
                 //response.getOutputStream().write(request.getParameter("id").getBytes());
-                response.getWriter().print( request.getParameter("id") );
+                response.getWriter().print(request.getParameter("id"));
                 // return a path to the new file, in the location header
                 response.setHeader("location", StringUtils.join(locations.toArray(), ","));
             }
 
 
-        }
-        catch (AccessDeniedException ex) {
+        } catch (AccessDeniedException ex) {
             ex.printStackTrace();
             response.setStatus(403); //Bad Request
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             response.setStatus(500); //Bad Request
             try {
                 response.getOutputStream().write(ex.getMessage().getBytes());
-            }catch(Throwable t){}
+            } catch (Throwable t) {
+            }
             //ex.printStackTrace();
-        }
-        finally {
+        } finally {
             if (session != null) {
                 session.logout();
             }

@@ -59,6 +59,7 @@ import java.util.Dictionary;
  * <p>
  * Annotations below are short version of:
  */
+//todo add decorator to add thumbnail hateoas link
 @SlingServlet(
         metatype = true,
         resourceTypes = "sling/servlet/default",
