@@ -1,0 +1,14 @@
+{
+  "app.label.language": "Sprache",
+  "app.language.chinese": "Chinesisch",
+  "app.language.english": "Englisch",
+  "app.language.german": "Deutsche",
+  "app.menu.storage": "Lagerung",
+  "app.title": "Konfigurationsassistent",
+  "browse": "blättern",
+  "note": "Hinweis",
+  "saveBtn": "sparen",
+  "storage.intro": "Bevor wir die Anwendung starten können, müssen wir den Speicherort eines Ordners auf Ihrer größten Festplatte, Ihrem USB-Laufwerk oder Ihrem zugeordneten Netzwerklaufwerk kennen. Dies ist, wenn wir alle Dateien, Miniaturansichten, Rendern, Metadaten und andere Daten speichern.",
+  "storage.intro1b": "Alles ist in diesem Ordner gespeichert, so dass Sie komplette Backups der FamilyD.A.M erstellen können. Daten, indem Sie diesen Ordner sichern. Oder wenn Sie alles in einen neuen Ordner / Laufwerk verschieben müssen, können Sie dies tun, indem Sie diesen Ordner und alles darin verschieben.",
+  "storage.location": "Lagerraum"
+}

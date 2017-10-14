@@ -4,6 +4,10 @@ import {spawn, exec} from 'child_process';
 import { join } from 'path';
 import http from 'http';
 
+if (process.env.NODE_ENV !== 'development') {
+    global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+}
+
 class RepositoryManager {
 
 
@@ -74,7 +78,8 @@ class RepositoryManager {
         var outLogErrFile = _storageLocation +'/familydam-err.log';
         var repoPath = _storageLocation;
         var jarPath = _storageLocation +"/FamilyDAM-" +_version +".jar";
-        var javaPath = join(__static, "/resources/java/jre/Contents/Home/bin/java");
+        var javaPath = join(__static, "../../resources/java/jre1.8.0_144.jre/Contents/Home/bin/java");
+        //var javaPath = "java";
         var javaArgs = ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005', '-jar',  jarPath, '-p',  _port, '-c', _storageLocation, '-Dspring.profiles.active='+_profile ];
 
         console.log("{RepositoryManager} Java: " +jarPath);
@@ -142,7 +147,7 @@ class RepositoryManager {
             'web-preferences': {'web-security': false},
             title:'FamilyDAM - The Digital Asset Manager for Families'});
 
-        //window.openDevTools();
+        window.openDevTools();
         window.loadURL(_url);
         window.show();
 

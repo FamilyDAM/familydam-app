@@ -1,49 +1,45 @@
+<!doctype html>
 <!--
   ~ Copyright (c) 2015  Mike Nimer & 11:58 Labs
   -->
 
-<!--
-  ~ This file is part of FamilyDAM Project.
-  ~
-  ~     The FamilyDAM Project is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     (at your option) any later version.
-  ~
-  ~     The FamilyDAM Project is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with the FamilyDAM Project.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-<html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name='-webkit-overflow-scrolling' content='touch'>
 
-    <style>
-        @font-face
-        {
-            font-family: 'Roboto';
-            font-style:  normal;
-            src:         url('../assets/RobotoTTF/Roboto-Regular.ttf');
-        }
+    <title>FamilyD.A.M. (A Digital Asset Manager for the whole family)</title>
 
-        @font-face
-        {
-            font-family: 'Roboto Light';
-            font-style:  normal;
-            src:         url('../assets/RobotoTTF/Roboto-Light.ttf');
-        }
-    </style>
-    
+
+    <link href='http://fonts.googleapis.com/css?family=Roboto:500,300,400' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css">
+    <!--link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/material.css"-->
+    <link rel="stylesheet" href="bower_components/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap-tokenfield/dist/css/tokenfield-typeahead.min.css">
+
+    <!-- CSS overrides - remove if you don't need it -->
+    <link rel="stylesheet" href="app.css">
 </head>
-
 <body>
-<div >
-    <div >
-        <p>Config Wizard</p>
-    </div>
-</div>
+<div id="appBody"></div>
+
+
+<!-- react friendly js components -->
+<script src="bower_components/jquery/jquery.min.js"></script>
+<script src="bower_components/bootstrap-material-design/dist/js/ripples.js"></script>
+<script src="bower_components/bootstrap-material-design/dist/js/material.js"></script>
+<script src="./app.js"></script>
+
+<script>
+    $( document ).ready( function(){
+        //jQuery.getScript('bower_components/bootstrap-material-design/dist/js/ripples.js');
+        //jQuery.getScript('bower_components/bootstrap-material-design/dist/js/material.js');
+        //jQuery.getScript('bower_components/react-bootstrap/react-bootstrap.js');
+        //jQuery.getScript('app.js');
+
+    } );
+</script>
 </body>
 </html>

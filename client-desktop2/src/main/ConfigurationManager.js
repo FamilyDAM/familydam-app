@@ -1,6 +1,14 @@
 import {BrowserWindow} from 'electron';  // Module to control application life.
 import { join } from 'path';
 import fs from 'fs';
+import os from 'os';
+import path from 'path';
+//import targz from 'tar.gz';
+import tar from 'tar';
+
+if (process.env.NODE_ENV !== 'development') {
+    global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
+}
 
 class ConfigurationManager{
 
@@ -9,7 +17,7 @@ class ConfigurationManager{
         console.log("{ConfigurationManager} constructor");
 
         this.isValid = false;
-        this.settingsFile = "/resources/settings.json";
+        this.settingsFile = "../../resources/settings.json";
         this.settings = {};
     }
 
@@ -46,6 +54,8 @@ class ConfigurationManager{
                 try {
                     console.warn("{ConfigurationManager} Initialize Storage Locations. ");
                     this.initializeStorageLocation(this.settings);
+                    console.warn("{ConfigurationManager} Initialize JRE. ");
+                    this.initializeJre();
                     return true;
                 }catch(err){
                     console.error(err);
@@ -65,8 +75,44 @@ class ConfigurationManager{
             fs.mkdirSync(settings_.storageLocation);
         }
 
-        var _root = join(__static, "/resources");
+        var _root = join(__static, "../../resources");
         this.copyResourceDir(settings_.storageLocation, _root, "/");
+    }
+
+
+
+    initializeJre(){
+        console.log("Unzip JRE | os=" +os.platform());
+
+        var _jreDir = join(__static, "../../resources/java/");
+        var _jreUnzipDir = join(__static, "../../resources/java/jre1.8.0_144.jre");
+
+        console.log("jre=" +_jreDir);
+
+        if (!fs.existsSync(_jreUnzipDir)){
+
+
+            var _files = fs.readdirSync(_jreDir);
+            for (var i = 0; i < _files.length; i++) {
+                var file = _files[i];
+
+                var _file = path.resolve(_jreDir, file);
+                //console.log(_file);
+                var _stat = fs.statSync(_file);
+                //console.log(_stat);
+                if( !_stat.isDirectory() && _file.endsWith(".gz") ) {
+                    console.log("extracting: " +_file);
+                    //fs.createReadStream(_file).pipe(unzip.Extract({path: _jreUnzipDir}));
+                    tar.x(
+                        {
+                            file: _file,
+                            cwd: _jreDir,
+                            sync: true
+                        });
+                }
+            }
+        }
+
     }
 
     /**
@@ -104,7 +150,7 @@ class ConfigurationManager{
         console.log("{ConfigurationManager} this.openConfigWindow() - " +_url);
 
         var window = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false, title:"FamilyDAM - Configuration Wizard"});
-        //window.openDevTools();
+        window.openDevTools();
         window.loadURL('file://' +_url);
         window.show();
 

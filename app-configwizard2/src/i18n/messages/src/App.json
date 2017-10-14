@@ -1,0 +1,30 @@
+[
+  {
+    "id": "app.title",
+    "defaultMessage": "Configuration Wizard"
+  },
+  {
+    "id": "app.label.language",
+    "defaultMessage": "Language"
+  },
+  {
+    "id": "app.language.chinese",
+    "defaultMessage": "Chinese"
+  },
+  {
+    "id": "app.language.english",
+    "defaultMessage": "English"
+  },
+  {
+    "id": "app.language.german",
+    "defaultMessage": "German"
+  },
+  {
+    "id": "app.menu.storage",
+    "defaultMessage": "Storage"
+  },
+  {
+    "id": "saveBtn",
+    "defaultMessage": "Save"
+  }
+]

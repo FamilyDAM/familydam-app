@@ -1,0 +1,14 @@
+{
+  "app.label.language": "Language",
+  "app.language.chinese": "Chinese",
+  "app.language.english": "English",
+  "app.language.german": "German",
+  "app.menu.storage": "Storage",
+  "app.title": "Configuration Wizard",
+  "browse": "browse",
+  "note": "Note",
+  "saveBtn": "Save",
+  "storage.intro": "Before we can start the application we need to know the location of a folder on your largest Hard Drive, USB Drive, or Mapped Network Drive. This is were we will store all of the files, thumbnails, renditions, metadata, and other data.",
+  "storage.intro1b": "Everything is stored in this folder, so you can make complete backups of the FamilyD.A.M. data by backing up this folder. Or if you need to move everything to a new folder/drive, you can do this by moving this folder and everything in it.",
+  "storage.location": "Storage Location"
+}

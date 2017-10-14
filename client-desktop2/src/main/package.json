@@ -4,6 +4,7 @@
   "productName": "FamilyDAM",
   "author": "Mike Nimer",
   "description": "Digital Asset Manager for families",
+  "main": "main.js",
   "dependencies": {
     "auto-updater": "^1.0.2",
     "dialog": "^0.1.8",
@@ -17,6 +18,5 @@
     "request": "^2.83.0",
     "winston": "^2.4.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

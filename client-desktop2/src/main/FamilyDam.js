@@ -8,6 +8,9 @@ import logger from 'electron-log';
 import ConfigurationManager from './ConfigurationManager.js';
 import RepositoryManager from './RepositoryManager.js';
 
+if (process.env.NODE_ENV !== 'development') {
+    global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+}
 
 class FamilyDAM {
 
@@ -47,19 +50,21 @@ class FamilyDAM {
             this.checkTimer = setInterval(()=>{
 
                 try {
-                    var isRunning = this.repositoryManager.checkStatus((isRunning) => {
-                        console.log("isRunning=" + isRunning);
-                        if (isRunning) {
-                            clearInterval(this.checkTimer);
-                            if (this.splashWindow) this.splashWindow.hide();
-                            if (this.configWindow) this.configWindow.hide();
-                            this.repositoryWindow = this.repositoryManager.openRepoWindow(this.configurationManager.getSettings());
+                    setTimeout(
+                        this.repositoryManager.checkStatus((isRunning) => {
+                            console.log("isRunning=" + isRunning);
+                            if (isRunning) {
+                                clearInterval(this.checkTimer);
+                                if (this.splashWindow) this.splashWindow.hide();
+                                if (this.configWindow) this.configWindow.hide();
+                                this.repositoryWindow = this.repositoryManager.openRepoWindow(this.configurationManager.getSettings());
 
-                            this.repositoryWindow.on('closed', function () {
-                                app.quit();
-                            });
-                        }
-                    });
+                                this.repositoryWindow.on('closed', function () {
+                                    app.quit();
+                                });
+                            }
+                        }), 5000);
+
                 }catch(err){}
 
             }, 1000);

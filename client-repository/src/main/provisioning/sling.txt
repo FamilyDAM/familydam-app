@@ -155,7 +155,7 @@
   # For these bundles, admin login is considered "ok":
   # org.apache.sling.jcr.contentloader
   org.apache.sling.jcr.base.internal.LoginAdminWhitelist
- #   whitelist.bypass=B"false"
+    whitelist.bypass=B"true"
     whitelist.bundles.regexp="com.familydam.*"
 
   org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment-sling

@@ -2,17 +2,23 @@
   "name": "FamilyDAM",
   "version": "0.2.0",
   "license": "GPL-3.0",
+  "main": "src/main",
+  "description": "Digital Asset Manager for the whole family.",
   "dependencies": {
     "electron-log": "^2.2.9",
-    "source-map-support": "^0.4.18"
+    "source-map-support": "^0.4.18",
+    "tar": "^4.0.1"
   },
   "devDependencies": {
     "electron": "^1.7.8",
     "electron-builder": "^19.33.0",
+    "electron-builder-squirrel-windows": "^19.36.0",
+    "electron-packager": "^9.1.0",
     "electron-webpack": "^1.6.1",
     "webpack": "^3.6.0"
   },
   "build": {
+    "productName": "FamilyDAM",
     "appId": "com.FamilyDAM.desktop",
     "asar": false,
     "dmg": {
@@ -24,6 +30,27 @@
           "path": "/Applications"
         }
       ]
+    },
+    "mac": {
+      "target": "dmg",
+      "extraResources": [
+        "resources/java/jre-8u144-macosx-x64.tar.gz",
+        "resources/*.jar",
+        "resources/*.json"
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "extraResources": [
+        "resources/java/jre-8u144-windows-x64.tar.gz",
+        "resources/*.jar",
+        "resources/*.json"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": true,
+      "runAfterFinish": true
     }
   },
   "electronWebpack": {
@@ -35,10 +62,23 @@
       "sourceDirectory": null
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:FamilyDAM/familydam-app.git"
+  },
   "scripts": {
+    "clean": "rm -fr ./dist/*",
+    "copy": "npm run copy:config && npm run copy:repo",
+    "copy:config": "rm -fr static/config/* && cp -r ../app-configwizard2/build/* static/config/",
+    "copy:repo": "rm -f resources/FamilyDAM-*.jar && cp -rv ../client-repository/target/FamilyDAM-*.jar resources/",
     "dev": "electron-webpack dev",
-    "compile": "electron-webpack",
-    "dist": "yarn compile && electron-builder",
-    "dist:dir": "yarn dist -- --dir -c.compression=store -c.mac.identity=null"
+    "compile": "rm -fr ./dist/main/* && electron-webpack",
+    "dist": "yarn compile && yarn dist:mac && yarn dist:win && yarn dist:dir",
+    "dist:mac": "rm -fr ./dist/mac/* && yarn compile && electron-builder -m",
+    "dist:win": "rm -fr ./dist/win/* && yarn compile && electron-builder -w",
+    "dist:dir": "yarn dist -- --dir -c.compression=store -c.mac.identity=null",
+    "release": "electron-builder --win --mac --publish always",
+    "release:draft": "electron-builder --draft --prerelease",
+    "release:draftOLD": "build --draft --prerelease"
   }
 }
