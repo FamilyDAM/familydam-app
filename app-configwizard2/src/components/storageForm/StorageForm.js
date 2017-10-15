@@ -4,6 +4,7 @@ import {FormattedMessage} from 'react-intl'; //, FormattedPlural, FormattedDate
 import {withStyles} from 'material-ui/styles';
 import Button from 'material-ui/Button';
 
+
 const styleSheet = (theme) => ({
     intro:{
         padding: '8px'
@@ -25,7 +26,7 @@ class StorageForm extends Component {
         this.state = {
             "context": context,
             "isMounted": true,
-            "storagePath":""
+            "storagePath": this.props.storagePath
         };
 
         this.handleBrowseBtnClick = this.handleBrowseBtnClick.bind(this);
@@ -68,21 +69,21 @@ class StorageForm extends Component {
         //call back to electron
         //debugger;
         var _path = event.target.value;
-        this.setState({storagePath: _path});
+        this.setState({storagePath:_path});
 
-        if( this.props.handleLocationChange){
-            this.props.handleLocationChange(this.state.storagePath);
+        if( this.props.onLocationChange){
+            this.props.onLocationChange(_path);
         }
     }
 
     handleFolderChange(event){
         //debugger;
         var _files = event.currentTarget.files;
-        var _path = _files[0].path?_files[0].path:"";
-        this.setState({"storagePath":_path});
+        var _path = _files[0].path?_files[0].path:"/";
+        this.setState({storagePath:_path});
 
-        if( this.props.handleLocationChange){
-            this.props.handleLocationChange(this.state.storagePath);
+        if( this.props.onLocationChange ){
+            this.props.onLocationChange(_path);
         }
     }
 

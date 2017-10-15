@@ -4,7 +4,7 @@ const electron = require("electron");
 const ipcRenderer = electron.ipcRenderer;
 const remote = electron.remote;
 
-ipcRenderer.on('start-status', function(event, status)
+ipcRenderer.on('splashMessage', function(event, status)
     {
         console.log(status.message);
         document.getElementById("message").innerHTML = status.message;

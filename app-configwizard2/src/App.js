@@ -1,3 +1,4 @@
+
 import React, {Component} from 'react';
 import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 import {IntlProvider, FormattedMessage} from 'react-intl';
@@ -14,6 +15,7 @@ import {MenuItem} from 'material-ui/Menu';
 
 //views
 import StorageLocationPage from './pages/StorageLocationPage';
+
 
 const styleSheet = (theme) => ({
     appGrid:{
@@ -65,8 +67,7 @@ class App extends Component {
             "context": context,
             "locale": "en-EN",
             "isValid": false,
-            "isMounted": true,
-            "storagePath": ""
+            "isMounted": true
         };
 
         this.handleStorageChange = this.handleStorageChange.bind(this);
@@ -95,8 +96,8 @@ class App extends Component {
     }
 
     handleStorageChange(path_){
-        this.setState({storagePath: path_});
-        this.validateConfig();
+        console.log("handleStorageChange=" +path_);
+        this.storagePath = path_;
     }
 
     handleLanguageChange(e){
@@ -104,20 +105,35 @@ class App extends Component {
     }
 
     handleSave(){
-        this.validateConfig();
+        var isValid = this.validateConfig();
 
-        if( this.state.isValid ){
-            alert("save");
+        if( !isValid ) {
+            alert("We still need a storage path");
+        }else{
+            var settings = {};
+            settings.version = "0.2.0";
+            settings.license = "";
+            settings.state = "READY";
+            settings.host = "localhost";
+            settings.port = "9000";
+            settings.defaultLocale = this.state.locale;
+            settings.storageLocation = this.storagePath;
+
+            var _json = JSON.stringify(settings);
+            var result = window.require("electron").ipcRenderer.sendSync('saveConfig', _json );
+            console.log("{Save} RESULT=" +result);
         }
     }
 
 
 
     validateConfig(){
-        if(this.state.storagePath !== "" ){
-            this.setState({isValid:true});
+        if(this.storagePath && this.storagePath !== "" ){
+            //console.log("isValid");
+            return true;
         }else{
-            this.setState({isValid:false});
+            //console.log("is NOT Valid");
+           return false;
         }
     }
 
@@ -181,16 +197,18 @@ class App extends Component {
                         <div className={classes.mainColumn}>
                             <Router>
                                 <Switch>
-                                    <Route path="/" component={() => <StorageLocationPage onChange={this.handleStorageChange}/>}/>
+                                    <Route path="/" component={() =>
+                                        <StorageLocationPage
+                                            onLocationChange={this.handleStorageChange}/>}/>
                                 </Switch>
                             </Router>
                         </div>
 
                         <div className={classes.footer}>
-                            <Button raised color="primary" onClick={this.handleSave}>
+
+                            <Button raised color="primary" onClick={this.handleSave} >
                                 <FormattedMessage
                                     id="saveBtn"
-                                    disabled={!this.state.isValid}
                                     defaultMessage="Save"
                                     onClick={this.handleSave}
                                 /></Button>

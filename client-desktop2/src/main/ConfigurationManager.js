@@ -1,4 +1,4 @@
-import {BrowserWindow} from 'electron';  // Module to control application life.
+import {BrowserWindow, ipcMain} from 'electron';  // Module to control application life.
 import { join } from 'path';
 import fs from 'fs';
 import os from 'os';
@@ -13,21 +13,51 @@ if (process.env.NODE_ENV !== 'development') {
 class ConfigurationManager{
 
 
-    constructor() {
+    constructor(splashWindow) {
         console.log("{ConfigurationManager} constructor");
 
         this.isValid = false;
         this.settingsFile = "../../resources/settings.json";
         this.settings = {};
+        this.splashWindow = splashWindow;
+
+        this.subscribeToConfigWizard();
     }
 
     getSettings(){
         return this.settings;
     }
 
+    subscribeToConfigWizard(){
+
+        /**
+         * Call back handler which invoked from the webpage when all of the fields have been filled out.
+         */
+        ipcMain.on('saveConfig', (event, _settings)=>
+        {
+            console.log("save settings from config wizard: " +_settings );
+            console.log("settings file" +this.settingsFile );
+            console.log("static" +__static );
+
+            // write back to file in package
+            var _filePath = join( __static, this.settingsFile);
+            console.log("settings file: " +_filePath);
+
+            fs.writeFile( _filePath,  _settings, {'encoding':'utf8'},  (err, data)=>
+            {
+                console.log("settings saved");
+                this.validateSettings();
+            });
+
+            event.returnValue = "save complete";
+            //event.sender.send('saveConfigComplete', 'save complete');
+        });
+
+    }
+
     validateConfig(){
         this.isValid = this.validateSettings();
-        console.log("{ConfigurationManager} isValid=" +this.isValid);
+        //console.log("{ConfigurationManager} isValid=" +this.isValid);
         return this.isValid;
     }
 
@@ -39,8 +69,7 @@ class ConfigurationManager{
 
         if( !fs.existsSync(_filePath) )
         {
-            //todo: create default file
-            console.warn("{ConfigurationManager} Settings file does not exists, loading App Config wizard. " +_filePath);
+            //console.warn("{ConfigurationManager} Settings file does not exists, loading App Config wizard. " +_filePath);
             return false;
         }else{
 
@@ -49,12 +78,20 @@ class ConfigurationManager{
 
             console.log(this.settings);
             if (this.settings.state != "READY"){
+                if (this.window){
+                    this.window.close()
+                }
                 return true;
             } else {
                 try {
-                    console.warn("{ConfigurationManager} Initialize Storage Locations. ");
+                    if (this.window){
+                        this.window.close()
+                    }
+                    this.splashWindow.webContents.send("splashMessage", {"code":"initialize-storage", "message":"Initialize Storage", "progress":"0%"});
+
+                    //console.warn("{ConfigurationManager} Initialize Storage Locations. ");
                     this.initializeStorageLocation(this.settings);
-                    console.warn("{ConfigurationManager} Initialize JRE. ");
+                    //console.warn("{ConfigurationManager} Initialize JRE. ");
                     this.initializeJre();
                     return true;
                 }catch(err){
@@ -147,15 +184,14 @@ class ConfigurationManager{
 
     openConfigWindow() {
         var _url = join(__static, '/config/index.html');
-        console.log("{ConfigurationManager} this.openConfigWindow() - " +_url);
+        //console.log("{ConfigurationManager} this.openConfigWindow() - " +_url);
 
-        var window = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false, title:"FamilyDAM - Configuration Wizard"});
-        window.openDevTools();
-        window.loadURL('file://' +_url);
-        window.show();
+        this.window = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false, title:"FamilyDAM - Configuration Wizard"});
+        this.window.openDevTools();
+        this.window.loadURL('file://' +_url);
+        this.window.show();
 
-        return window;
-
+        return this.window;
     }
 }
 

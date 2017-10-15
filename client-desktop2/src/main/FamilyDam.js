@@ -1,4 +1,4 @@
-import {app, BrowserWindow, autoUpdater} from 'electron';  // Module to control application life.
+import {app, BrowserWindow, autoUpdater, ipcMain} from 'electron';  // Module to control application life.
 import {version} from './package.json';
 import { join } from 'path';
 import { format } from 'url';
@@ -22,13 +22,14 @@ class FamilyDAM {
 
 
         this.splashWindow = this.openSplashWindow();
+        this.splashWindow.webContents.send("splashMessage", {"code":"checking-config", "message":"Checking Configuration", "progress":"0%"});
 
 
-        this.configurationManager = new ConfigurationManager();
+        this.configurationManager = new ConfigurationManager(this);
         var isValidConfig = this.configurationManager.validateConfig();
 
         // configuration is invalid, open the config wizard
-        console.log("{FamilyDAMRepository} Constructor, is Valid config = " +isValidConfig);
+        //console.log("{FamilyDAMRepository} Constructor, is Valid config = " +isValidConfig);
         if( !isValidConfig ){
             // use a timer to let the splash screen stay open long enough to see it
             setTimeout(()=>{
@@ -68,8 +69,6 @@ class FamilyDAM {
                 }catch(err){}
 
             }, 1000);
-
-
 
         }
 

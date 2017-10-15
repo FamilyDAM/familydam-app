@@ -14,9 +14,11 @@ class StorageLocationPage extends Component {
 
         this.state = {
             "context": context,
-            "isMounted": true
+            "isMounted": true,
+            "storagePath": this.props.storagePath
         };
 
+        this.handleLocationChange = this.handleLocationChange.bind(this);
     }
 
 
@@ -40,8 +42,11 @@ class StorageLocationPage extends Component {
 
     handleLocationChange(path_){
         //call back to electron
-        debugger;
-        this.setState({storagePath:path_});
+        //this.setState({storagePath:path_});
+
+        if( this.props.onLocationChange ){
+            this.props.onLocationChange(path_);
+        }
     }
 
 
