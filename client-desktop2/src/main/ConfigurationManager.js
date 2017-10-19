@@ -13,13 +13,13 @@ if (process.env.NODE_ENV !== 'development') {
 class ConfigurationManager{
 
 
-    constructor(splashWindow) {
+    constructor(logger_) {
         console.log("{ConfigurationManager} constructor");
 
+        this.logger = logger_;
         this.isValid = false;
         this.settingsFile = "../../resources/settings.json";
         this.settings = {};
-        this.splashWindow = splashWindow;
 
         this.subscribeToConfigWizard();
     }
@@ -35,6 +35,7 @@ class ConfigurationManager{
          */
         ipcMain.on('saveConfig', (event, _settings)=>
         {
+            this.settings = JSON.parse(_settings);
             console.log("save settings from config wizard: " +_settings );
             console.log("settings file" +this.settingsFile );
             console.log("static" +__static );
@@ -45,8 +46,17 @@ class ConfigurationManager{
 
             fs.writeFile( _filePath,  _settings, {'encoding':'utf8'},  (err, data)=>
             {
-                console.log("settings saved");
-                this.validateSettings();
+                console.log("Settings saved, copy resources");
+
+                console.warn("{ConfigurationManager} Initialize JRE. ");
+                this.initializeJre(this.settings);
+                console.warn("{ConfigurationManager} Initialize Storage Locations. ");
+                this.initializeStorageLocation(this.settings);
+
+                if (this.window){
+                    this.window.close();
+                }
+
             });
 
             event.returnValue = "save complete";
@@ -67,9 +77,10 @@ class ConfigurationManager{
         console.log("{ConfigurationManager} validateSettings");
         var _filePath = join( __static, this.settingsFile);
 
+        this.logger.debug("ValidateSettings: Settings File=" +_filePath);
         if( !fs.existsSync(_filePath) )
         {
-            //console.warn("{ConfigurationManager} Settings file does not exists, loading App Config wizard. " +_filePath);
+            this.logger.info("{ConfigurationManager} Settings file does not exists, loading App Config wizard. " +_filePath);
             return false;
         }else{
 
@@ -79,55 +90,28 @@ class ConfigurationManager{
             console.log(this.settings);
             if (this.settings.state != "READY"){
                 if (this.window){
-                    this.window.close()
+                    this.window.close();
                 }
-                return true;
-            } else {
-                try {
-                    if (this.window){
-                        this.window.close()
-                    }
-                    this.splashWindow.webContents.send("splashMessage", {"code":"initialize-storage", "message":"Initialize Storage", "progress":"0%"});
-
-                    //console.warn("{ConfigurationManager} Initialize Storage Locations. ");
-                    this.initializeStorageLocation(this.settings);
-                    //console.warn("{ConfigurationManager} Initialize JRE. ");
-                    this.initializeJre();
-                    return true;
-                }catch(err){
-                    console.error(err);
-                    return false;
-                }
+                return false;
             }
+
+            return true;
         }
     }
 
 
-    initializeStorageLocation(settings_){
-        console.log("{ConfigurationManager} Initialize Storage");
+
+
+    initializeJre(settings_){
+        console.log("Unzip JRE | os=" +os.platform());
         console.log(settings_);
 
-        if( !fs.existsSync(settings_.storageLocation) )
-        {
-            fs.mkdirSync(settings_.storageLocation);
-        }
-
-        var _root = join(__static, "../../resources");
-        this.copyResourceDir(settings_.storageLocation, _root, "/");
-    }
-
-
-
-    initializeJre(){
-        console.log("Unzip JRE | os=" +os.platform());
-
         var _jreDir = join(__static, "../../resources/java/");
-        var _jreUnzipDir = join(__static, "../../resources/java/jre1.8.0_144.jre");
+        var _jreUnzipDir = settings_.storageLocation +"/jre";
 
-        console.log("jre=" +_jreDir);
 
         if (!fs.existsSync(_jreUnzipDir)){
-
+            fs.mkdirSync(_jreUnzipDir);
 
             var _files = fs.readdirSync(_jreDir);
             for (var i = 0; i < _files.length; i++) {
@@ -138,12 +122,12 @@ class ConfigurationManager{
                 var _stat = fs.statSync(_file);
                 //console.log(_stat);
                 if( !_stat.isDirectory() && _file.endsWith(".gz") ) {
-                    console.log("extracting: " +_file);
+                    console.log("extracting: " +_file  +" to=" +_jreUnzipDir);
                     //fs.createReadStream(_file).pipe(unzip.Extract({path: _jreUnzipDir}));
                     tar.x(
                         {
                             file: _file,
-                            cwd: _jreDir,
+                            cwd: _jreUnzipDir,
                             sync: true
                         });
                 }
@@ -152,13 +136,31 @@ class ConfigurationManager{
 
     }
 
+
+    initializeStorageLocation(settings_){
+        console.log("{ConfigurationManager} Initialize Storage");
+
+
+        console.log("Checking Directory: " +settings_.storageLocation);
+        if( !fs.existsSync(settings_.storageLocation) )
+        {
+            console.log("Creating Directory: " +settings_.storageLocation);
+            fs.mkdirSync(settings_.storageLocation);
+        }
+
+        var _root = join(__static, "../../resources");
+        this.copyResourceDir(settings_.storageLocation, _root, path.sep);
+    }
+
+
+
     /**
      * Copy all of the files in a directory
      * @param path_
      */
     copyResourceDir(storageDir_, root_, path_)
     {
-        console.log("{ConfigurationManager} copy resource dir - source=" +root_ +"  |  dest=" +path_);
+        console.log("{ConfigurationManager} copy resource dir - storage dir=" +storageDir_ +" | source=" +root_ +"  |  dest=" +path_);
         var path = root_ +path_;
         var _dirList = fs.readdirSync(path);
 
@@ -166,7 +168,7 @@ class ConfigurationManager{
         {
             var _file = _dirList[i];
             var source = path +_file;
-            var target = storageDir_ +"/" +_file;
+            var target = storageDir_ +path.sep +_file;
 
             console.log("{ConfigurationManager} checking file - source=" +source +"  |  target=" +target);
 
@@ -187,7 +189,7 @@ class ConfigurationManager{
         //console.log("{ConfigurationManager} this.openConfigWindow() - " +_url);
 
         this.window = new BrowserWindow({width:750, height:440, center:false, frame:true, show:false, title:"FamilyDAM - Configuration Wizard"});
-        this.window.openDevTools();
+        //this.window.openDevTools();
         this.window.loadURL('file://' +_url);
         this.window.show();
 

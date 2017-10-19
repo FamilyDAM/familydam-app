@@ -112,6 +112,7 @@ class App extends Component {
         }else{
             var settings = {};
             settings.version = "0.2.0";
+            settings.jreVersion = "jre1.8.0_144.jre";
             settings.license = "";
             settings.state = "READY";
             settings.host = "localhost";

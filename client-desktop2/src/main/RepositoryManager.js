@@ -12,10 +12,9 @@ class RepositoryManager {
 
 
     constructor(settings_, logger_) {
-        console.log("{RepositoryManager} constructor");
-
         this.settings = settings_;
         this.logger = logger_;
+        this.logger.debug("{RepositoryManager} constructor");
     }
 
     getMaxMemArg()
@@ -44,9 +43,8 @@ class RepositoryManager {
         var _url = "http://" +this.settings.host +":" +this.settings.port +"/index.html";// +"/bin/familydam/api/v1/health";
 
         try {
-            http.get(_url, function (res, data) {
-                console.log("checking server | " +_url);
-                console.log(res.statusCode);
+            http.get(_url,  (res, data) => {
+                this.logger.debug("checking server | [" +res.statusCode +"] " +_url);
                 if (res.statusCode == 200) {
                     callback(true);
                 } else {
@@ -60,9 +58,9 @@ class RepositoryManager {
 
     startServer() //, app_, configWindow_, splashWindow_, mainWindow_)
     {
-        console.log(platform);
-        console.log(this.settings);
-        console.log("{RepositoryManager} Start Server: TotalMem: " +totalmem() +" - FreeMem:" +freemem());
+        this.logger.debug(platform);
+        this.logger.debug(this.settings);
+        this.logger.debug("{RepositoryManager} Start Server: TotalMem: " +totalmem() +" - FreeMem:" +freemem());
 
 
         var _storageLocation = this.settings.storageLocation;
@@ -74,49 +72,48 @@ class RepositoryManager {
         //app_.sendClientMessage('info', "Starting FamilyDAM Repository", false);
 
         // setup logs
-        var outLogFile = _storageLocation +'/familydam-out.log';
-        var outLogErrFile = _storageLocation +'/familydam-err.log';
         var repoPath = _storageLocation;
-        var jarPath = _storageLocation +"/FamilyDAM-" +_version +".jar";
-        var javaPath = join(__static, "../../resources/java/jre1.8.0_144.jre/Contents/Home/bin/java");
-        //var javaPath = "java";
-        var javaArgs = ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005', '-jar',  jarPath, '-p',  _port, '-c', _storageLocation, '-Dspring.profiles.active='+_profile ];
+        var outLogFile = join(_storageLocation, '/familydam-out.log');
+        var outLogErrFile = join(_storageLocation, '/familydam-err.log');
+        var jarPath = join(_storageLocation, "/FamilyDAM-" +_version +".jar");
 
-        console.log("{RepositoryManager} Java: " +jarPath);
-        console.log("{RepositoryManager} Repository: " +repoPath);
-        console.log("{RepositoryManager} Repository Log File: " +outLogFile);
-        console.log("{RepositoryManager} Repository Log Error File: " +outLogErrFile);
-        console.log("{RepositoryManager} Starting Server: " +jarPath +" | host=" +_host +" | port=" +_port +" | location=" +_storageLocation, true);
-        //console.logger(`stdout: ${stdout}`);
-        //console.logger(`stderr: ${stderr}`);
+        var javaPath = join(_storageLocation, "/jre/jre1.8.0_144/bin/java");
+        if( platform() === "darwin" ) {
+            javaPath = join(_storageLocation, "/jre/jre1.8.0_144.jre/Contents/Home/bin/java");
+        }
+        //var javaPath = "java";
+        //var javaArgs = ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005', '-jar',  jarPath, '-p',  _port, '-c', _storageLocation, '-Dspring.profiles.active='+_profile ];
+        var javaArgs = [this.getMaxMemArg(), '-jar',  jarPath, '-p',  _port, '-c', _storageLocation, '-Dspring.profiles.active='+_profile ];
+
+        this.logger.info("{RepositoryManager} Java: " +javaPath);
+        this.logger.info("{RepositoryManager} Repository: " +repoPath);
+        this.logger.info("{RepositoryManager} Repository Log File: " +outLogFile);
+        this.logger.info("{RepositoryManager} Repository Log Error File: " +outLogErrFile);
+        this.logger.info("{RepositoryManager} Starting Server: " +jarPath +" | host=" +_host +" | port=" +_port +" | location=" +_storageLocation);
 
 
         var isStartupComplete = false;
         this.prc = spawn(javaPath, javaArgs);
         this.prc.unref();
         this.prc.stdout.setEncoding("utf8");
-        this.prc.stdout.on('data', function (data_) {
+        this.prc.stdout.on('data',  (data_) => {
             //logger.debug("[data] " + data);
             //processStdOut(data, outLogFile);
-            console.log("[stdout] " +data_);
+            this.logger.debug("[stdout] " +data_);
 
             if( data_.indexOf("Startup completed") > -1 ){
-                console.log("{RepositoryManager} startupComplete");
+                this.logger.debug("{RepositoryManager} startupComplete");
                 isStartupComplete = true;
             }
         });
-        this.prc.stderr.on('data', function (data_) {
+        this.prc.stderr.on('data', (data_) => {
             //logger.debug("[ERR] " + data);
-            console.log("[stderr] " +data_);
+            this.logger.debug("[stderr] " +data_);
         });
-        this.prc.on('exit', function (data_) {
+        this.prc.on('exit',  (data_) => {
             //logger.debug("[exit] " + data + ":" + a2 + ":" + a3);
-            console.log("[exit] " + data_ );
+            this.logger.debug("[exit] " + data_ );
         });
-
-
-
-
 
 
         //Start checks
@@ -136,7 +133,7 @@ class RepositoryManager {
 
         const {width, height} = screen.getPrimaryDisplay().workAreaSize
         var _url = 'http://' +settings_.host +":" +settings_.port;
-        console.log("{RepositoryManager} this.openConfigWindow() - " +_url);
+        this.logger.debug("{RepositoryManager} this.openConfigWindow() - " +_url);
 
         var window = new BrowserWindow({
             width:width,

@@ -18,14 +18,11 @@ class FamilyDAM {
     {
         console.log("{FamilyDAMRepository} Constructor");
         this.splashWindow = null;
-        this.configurationWindow = null;
-
-
+        this.configWindow = null;
         this.splashWindow = this.openSplashWindow();
-        this.splashWindow.webContents.send("splashMessage", {"code":"checking-config", "message":"Checking Configuration", "progress":"0%"});
 
 
-        this.configurationManager = new ConfigurationManager(this);
+        this.configurationManager = new ConfigurationManager(logger, this.splashWindow);
         var isValidConfig = this.configurationManager.validateConfig();
 
         // configuration is invalid, open the config wizard
@@ -36,47 +33,69 @@ class FamilyDAM {
                 this.splashWindow.hide();
                 this.configWindow = this.configurationManager.openConfigWindow();
 
-                this.configWindow.on('closed', function() {
-                    console.log("{FamilyDAMRepository} configurationWindow closed");
+                this.configWindow.on('closed', () => {
+                    //console.log("{FamilyDAM} configWindow closed");
+                    logger.info("{FamilyDAM} ConfigWindow closed, starting repository");
                     this.configWindow = null;
+                    this.splashWindow.show();
+
+                    logger.debug("Initialization is complete, starting server");
+                    logger.debug(this.configurationManager.getSettings());
+                    this.startRepository(this.configurationManager.getSettings());
                 });
             }, 2000);
 
         }else{
+            logger.debug("Config is OK, starting server");
+            logger.debug(this.configurationManager.getSettings());
+            this.startRepository(this.configurationManager.getSettings());
+        }
 
-            var settings = this.configurationManager.getSettings();
-            this.repositoryManager = new RepositoryManager(settings, this.getLogger());
-            this.repositoryManager.startServer();
+    }
 
-            this.checkTimer = setInterval(()=>{
+
+    startRepository(settings_){
+
+        //update splash window message
+        this.splashWindow.show();
+        this.splashWindow.webContents.send("splashMessage", {"code":"start-repository", "message":"Starting Repository", "progress":"20%"});
+
+
+        this.repositoryManager = new RepositoryManager(settings_, this.getLogger());
+        this.repositoryManager.startServer();
+
+        //wait 5 seconds then start checking the status
+        setTimeout(()=> {
+
+            this.checkTimer = setInterval(() => {
 
                 try {
-                    setTimeout(
-                        this.repositoryManager.checkStatus((isRunning) => {
-                            console.log("isRunning=" + isRunning);
-                            if (isRunning) {
-                                clearInterval(this.checkTimer);
-                                if (this.splashWindow) this.splashWindow.hide();
-                                if (this.configWindow) this.configWindow.hide();
-                                this.repositoryWindow = this.repositoryManager.openRepoWindow(this.configurationManager.getSettings());
+                    this.repositoryManager.checkStatus((isRunning) => {
+                        if (isRunning) {
+                            clearInterval(this.checkTimer);
+                            if (this.splashWindow) this.splashWindow.hide();
+                            if (this.configWindow) this.configWindow.hide();
+                            this.repositoryWindow = this.repositoryManager.openRepoWindow(this.configurationManager.getSettings());
 
-                                this.repositoryWindow.on('closed', function () {
-                                    app.quit();
-                                });
-                            }
-                        }), 5000);
-
-                }catch(err){}
+                            this.repositoryWindow.on('closed', function () {
+                                app.quit();
+                            });
+                        }
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
 
             }, 1000);
 
-        }
+        }, 5000);
+
 
     }
 
     getLogger(){
         // Log level
-        logger.transports.console.level = 'info';
+        logger.transports.console.level = 'debug';
         logger.transports.file.level = 'info';
         /**
          * Set output format template. Available variables:
@@ -92,8 +111,7 @@ class FamilyDAM {
             var text = util.format.apply(util, msg.data);
             console.log(`[${msg.date.toLocaleTimeString()} ${msg.level}] ${text}`);
         };**/
-
-
+        return logger;
     }
 
 
@@ -112,9 +130,13 @@ class FamilyDAM {
         //window.openDevTools();
 
 
+        window.on('ready', ()=>{
+            this.splashWindow.webContents.send("splashMessage", {"code":"checking-config", "message":"Checking Configuration", "progress":"20%"});
+        });
+
         // Emitted when the window is closed.
         window.on('closed', function() {
-            console.log("{FamilyDAMRepository} window closed");
+            logger.debug("{FamilyDAMRepository} window closed");
             // Dereference the window object, usually you would store windows
             // in an array if your app supports multi windows, this is the time
             // when you should delete the corresponding element.
