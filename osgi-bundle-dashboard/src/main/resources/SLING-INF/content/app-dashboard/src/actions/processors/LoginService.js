@@ -4,6 +4,7 @@
  */
 import AppActions from '../AppActions';
 import request from 'superagent';
+import UserActions from "../UserActions";
 
 
 /**
@@ -46,8 +47,9 @@ class LoginService {
 
                 if( !err ){
 
+                    console.log("LoginService j_security_check: SUCCESS");
                     window.localStorage.setItem("user", JSON.stringify(data_));
-                    this.getUserSource.next(data_.username);
+                    UserActions.getUser.source.next(data_.username);
                     //send results to the store
                     //_this.sink.onNext(data_);
 
@@ -58,8 +60,13 @@ class LoginService {
                     //send the error to the store (through the sink observer
                     if( err.status === 401){
                         AppActions.navigateTo.next("/");
-                    }else
+                    } else if( err.status === 403) {
+                        var _error403 = {'code': err.status,'message': "Invalid Login (todo: show toast)"};
+                        this.sink.error(_error403);
+                    }
+                    else
                     {
+                        console.dir(err);
                         var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
                         this.sink.error(_error);
                     }

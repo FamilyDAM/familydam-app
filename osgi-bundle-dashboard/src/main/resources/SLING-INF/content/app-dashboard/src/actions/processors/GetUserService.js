@@ -37,29 +37,25 @@ class GetAllUsersService {
 
                 if( !err ){
 
+                    console.log("getUserService: SUCCESS");
+                    console.dir(results);
 
-                    var list = [];
 
-                    for (var i = 0; i < results.body.length; i++) {
-                        var item = results.body[i];
+                    var item = results.body;
 
-                        if (item.firstName === undefined) {
-                            item.firstName = item.username;
-                        }
-                        list.push(item);
-                        window.localStorage.setItem("user", item);
+                    if (item.firstName === undefined) {
+                        item.firstName = item.username;
                     }
 
-
-                    var _sortedUsers = list.sort(function (a, b) {
-                        if (a.username > b.username) return 1;
-                        if (a.username < b.username) return -1;
-                        return 0;
-                    });
-
-                    this.sink.next(_sortedUsers);
+                    window.localStorage.setItem("user", JSON.stringify(item));
+                    this.sink.next(item);
 
                 }else{
+
+                    console.log("getUserService: ERROR");
+                    console.dir(err);
+
+
                     //send the error to the store (through the sink observer
                     if( err.status === 401){
                         AppActions.navigateTo.next("/");

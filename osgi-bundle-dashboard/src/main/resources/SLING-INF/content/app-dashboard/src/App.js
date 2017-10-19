@@ -9,6 +9,7 @@ import {CircularProgress} from 'material-ui/Progress';
 import LoginPage from './pages/login/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 
+import AppActions from './actions/AppActions';
 import UserActions from './actions/UserActions';
 
 
@@ -46,10 +47,13 @@ class App extends Component {
 
         UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
             // redirect to dashboard
+            console.log("UserActions.getUser.sink");
+            console.dir(user_);
             if( user_ )
             {
                 this.setState({"isAuthenticated":true, "user": user_});
             }
+            AppActions.navigateTo.next("/");
         });
     }
 
@@ -72,11 +76,12 @@ class App extends Component {
             );
         }
 
+        console.log("render()");
+        console.dir(this.state);
         return (
             <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
                 <Router>
                     <Switch>
-                        <Route path="/login" component={()=><LoginPage mode="login"/>}/>
                         <Route path="/" component={() => this.state.isAuthenticated ? <DashboardPage user={this.state.user}/> : <LoginPage mode="login"/>}/>
                     </Switch>
                 </Router>

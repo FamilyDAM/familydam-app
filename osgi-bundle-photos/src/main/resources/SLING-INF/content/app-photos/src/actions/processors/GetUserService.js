@@ -47,7 +47,7 @@ class GetAllUsersService {
                             item.firstName = item.username;
                         }
                         list.push(item);
-                        window.localStorage.setItem("user", item);
+                        window.localStorage.setItem("user", JSON.stringify(item));
                     }
 
 

@@ -13,6 +13,7 @@ import FolderIcon from 'material-ui-icons/Folder';
 //import PhotoIcon from 'material-ui-icons/Photo';
 
 import AppActions from '../../actions/AppActions';
+import UserActions from "../../actions/UserActions";
 
 
 const styleSheet = (theme) => ({
@@ -93,7 +94,6 @@ class Sidebar extends Component {
     constructor(props, context) {
         super(props);
 
-
         this.handleNavClick = this.handleNavClick.bind(this);
     }
 
@@ -103,6 +103,12 @@ class Sidebar extends Component {
         if( this.props.onNavClick){
             this.props.onNavClick(path);
         }
+    }
+
+    handleLogout(){
+        window.localStorage.clear();
+        UserActions.logout.source.next(true);
+        AppActions.navigateTo.next("://");
     }
 
 
@@ -140,7 +146,7 @@ class Sidebar extends Component {
                     </div>
                     <div className={classes.sidebarButtons}>
 
-                        <Button onClick={ ()=>AppActions.navigateTo.next("://dashboard/#/login") }>Logout</Button>
+                        <Button onClick={this.handleLogout}>Logout</Button>
 
                         {profileApp &&
                         <Button onClick={()=>AppActions.navigateTo.next(profileApp.path)}>Profile</Button>

@@ -1,4 +1,4 @@
-import {BrowserWindow, ipcMain} from 'electron';  // Module to control application life.
+import {app, BrowserWindow, ipcMain} from 'electron';  // Module to control application life.
 import { join } from 'path';
 import fs from 'fs';
 import os from 'os';
@@ -18,8 +18,10 @@ class ConfigurationManager{
 
         this.logger = logger_;
         this.isValid = false;
-        this.settingsFile = "../../resources/settings.json";
+        this.settingsFile = "settings.json";
         this.settings = {};
+        this.appUserDir = app.getPath('userData') ;
+
 
         this.subscribeToConfigWizard();
     }
@@ -36,12 +38,12 @@ class ConfigurationManager{
         ipcMain.on('saveConfig', (event, _settings)=>
         {
             this.settings = JSON.parse(_settings);
-            console.log("save settings from config wizard: " +_settings );
-            console.log("settings file" +this.settingsFile );
-            console.log("static" +__static );
+            this.logger.info("save settings from config wizard: " +_settings );
+            this.logger.info("settings file" +this.settingsFile );
+            this.logger.info("static" +__static );
 
             // write back to file in package
-            var _filePath = join( __static, this.settingsFile);
+            var _filePath = join( this.appUserDir, this.settingsFile);
             console.log("settings file: " +_filePath);
 
             fs.writeFile( _filePath,  _settings, {'encoding':'utf8'},  (err, data)=>
@@ -75,7 +77,7 @@ class ConfigurationManager{
     validateSettings() {
 
         console.log("{ConfigurationManager} validateSettings");
-        var _filePath = join( __static, this.settingsFile);
+        var _filePath = join( this.appUserDir, this.settingsFile);
 
         this.logger.debug("ValidateSettings: Settings File=" +_filePath);
         if( !fs.existsSync(_filePath) )

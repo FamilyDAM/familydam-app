@@ -90,10 +90,6 @@ class SignupCard extends Component {
             isValid = false;
             this.setState({firstNameError: "First name is required"});
         }
-        if(!this.state.lastName){
-            isValid = false;
-            this.setState({lastNameError: "Last name is required"});
-        }
         if(!this.state.email){
             isValid = false;
             this.setState({emailError: "Email is required"});
@@ -111,6 +107,8 @@ class SignupCard extends Component {
      */
     handleSubmit(event)
     {
+        if( this.state.isLoading ) return;
+
         let isValid = this.isValidForm();
         if( this.state.password !== this.state.confirmPassword){
             isValid = false;
@@ -136,8 +134,10 @@ class SignupCard extends Component {
 
             this.createUserSubscription = UserActions.createUser.sink.subscribe( (data_) => {
                 //load all the users (with our new user)
+                console.log("UserActions.createUser.sink: ");
+                console.dir(data_);
                 this.setState({isLoading: false});
-                UserActions.getUsers.source.onNext(true);
+                UserActions.getAllUsers.source.next(true);
             }, (error_) => {
                 alert(error_);
             });
@@ -173,7 +173,6 @@ class SignupCard extends Component {
                     <GridItem rows="2" columns="2/3">
                         <TextField
                             label="Last Name"
-                            required={true}
                             className={classes.textField}
                             value={this.state.lastName}
                             onChange={(e)=>{this.setState({lastName:e.target.value});this.clearValidationErrors()}}
@@ -230,7 +229,9 @@ class SignupCard extends Component {
                             raised
                             color="accent"
                             onClick={this.handleSubmit}>
-                            <CircularProgress className={classes.progress} color="#fff" size={25} />
+                            {this.state.isLoading &&
+                                <CircularProgress className={classes.progress} color="#fff" size={25}/>
+                            }
                             <Typography style={{"paddingLeft":"8px", color:"#fff"}}>Create User</Typography>
                         </Button>
                     </GridItem>
