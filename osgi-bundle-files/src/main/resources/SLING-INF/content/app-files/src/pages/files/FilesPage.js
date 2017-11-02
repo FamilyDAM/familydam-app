@@ -21,6 +21,7 @@ import Breadcrumb from '../../components/breadcrumb/Breadcrumb';
 import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
 import UploadDialog from '../../components/uploaddialog/UploadDialog';
+import fileActions from "../../actions/FileActions";
 
 const styleSheet = (theme) => ({
     progress: {
@@ -87,11 +88,13 @@ class FilesPage extends Component {
             showAddFolderDialog:false,
             showUploadDialog:false,
             selectedFiles:[],
-            visibleRoot:"/content",
-            path:"/content"
+            root:"/content/family",
+            visibleRoot:"/content/family/files",
+            path:"/content/family/files"
         };
 
         this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
+        this.handleUploadClosed = this.handleUploadClosed.bind(this);
     }
 
     componentWillMount(){
@@ -115,9 +118,7 @@ class FilesPage extends Component {
 
     componentWillReceiveProps(newProps){
         this.props = newProps;
-
         this.validatePath();
-
     }
 
 
@@ -140,6 +141,11 @@ class FilesPage extends Component {
 
     handleFileSelectionChange(files){
         this.setState({selectedFiles:files});
+    }
+
+    handleUploadClosed(){
+        this.setState({'showUploadDialog':false});
+        fileActions.getFileAndFolders.source.next(this.state.path);
     }
 
 
@@ -169,7 +175,7 @@ class FilesPage extends Component {
                                 <FolderIcon style={{width:'36px', height:'36px'}}/>
                             </div>
                             <div style={{gridRow:'1', gridColumn:'2'}}>
-                                <Breadcrumb path={this.state.path}/>
+                                <Breadcrumb root={this.state.root} path={this.state.path}/>
                             </div>
                             <div style={{gridRow:'1', gridColumn:'3', textAlign:'right'}}>
                                 <Button
@@ -208,7 +214,7 @@ class FilesPage extends Component {
                     />
 
                     <UploadDialog
-                        onClose={()=>{this.setState({'showUploadDialog':false})}}
+                        onClose={this.handleUploadClosed}
                         open={this.state.showUploadDialog}
                         path={this.state.path}/>
                 </div>

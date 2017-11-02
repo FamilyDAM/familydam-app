@@ -256,6 +256,7 @@
                         </Sling-Nodetypes>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
+                            SLING-INF/content/family;overwrite:=false;uninstall:=false;path:=/content,
                             SLING-INF/content/app-files/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-files/build,
                             SLING-INF/content/app-files/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/public,
                             SLING-INF/content/app-files/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/src,

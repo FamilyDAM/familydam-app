@@ -5,16 +5,17 @@
 [:repoinit]
     create service user familydam-admin
 
-    create path (sling:Folder) /content
-    create path (sling:Folder) /content/apps
+    create path /content(sling:Folder)
+    create path /content/apps(sling:Folder)
+    create path /content/family(sling:Folder)
 
     set ACL for familydam-admin
         allow   jcr:read,rep:write    on /
+        allow   jcr:read,rep:write    on /content/family
     end
 
     set ACL for everyone
         allow   jcr:read	on /content
-        allow   jcr:read	on /content/apps
     end
 
     set ACL for anonymous
@@ -36,3 +37,7 @@
 #   com.familydam.apps/osgi-bundle-sync/${sync.version}
 #   com.familydam.apps/osgi-bundle-photos/${photos.version}
    com.familydam.apps/osgi-bundle-files/${files.version}
+
+
+[variables]
+    test.version=0.2.0-SNAPSHOT

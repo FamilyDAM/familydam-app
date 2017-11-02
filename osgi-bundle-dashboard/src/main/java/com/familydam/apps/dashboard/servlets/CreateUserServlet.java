@@ -327,19 +327,13 @@ public class CreateUserServlet extends SlingAllMethodsServlet {
 
             if (!node.getPath().equals("/")) {
 
-                Node _node = JcrUtils.getOrAddNode(node, user_.getID(), JcrConstants.NT_UNSTRUCTURED);
+                Node _node = JcrUtils.getOrAddNode(node, user_.getID(), "sling:Folder");
                 _node.addMixin("mix:created");
                 _node.addMixin("dam:extensible");
                 _node.addMixin("dam:userfolder");
-                _node.addMixin("dam:folder");
+                _node.addMixin("mix:versionable");
 
-                if (node.getName().equals("dam-files") || node.getName().equals("dam-cloud")) {
-                    _node.addMixin("mix:versionable");
-                }
-
-                if (node.getName().equals("dam-files")) {
-                    createDefaultFileFolders(_node);
-                }
+                createDefaultFileFolders(_node);
 
                 _node.setProperty(JcrConstants.JCR_NAME, user_.getID());
                 session_.save();
@@ -365,7 +359,7 @@ public class CreateUserServlet extends SlingAllMethodsServlet {
         String[] folders = new String[]{"Documents", "Movies", "Music", "Photos"};
 
         for (String folder : folders) {
-            Node _node = JcrUtils.getOrAddNode(node, folder, JcrConstants.NT_UNSTRUCTURED);
+            Node _node = JcrUtils.getOrAddNode(node, folder, "sling:Folder");
             _node.addMixin("mix:created");
             _node.addMixin("dam:extensible");
             _node.addMixin("dam:folder");

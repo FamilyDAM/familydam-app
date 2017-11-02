@@ -264,7 +264,7 @@
                             SLING-INF/nodetypes/nodetypes.cnd
                         </Sling-Nodetypes>
                         <Sling-Initial-Content>
-                            SLING-INF/content;overwrite:=false;uninstall:=false;path:=/,
+                            SLING-INF/content/family;overwrite:=false;uninstall:=false;path:=/content,
                             SLING-INF/caches;overwrite:=false;uninstall:=true;path:=/,
                             SLING-INF/oak:index;overwrite:=false;overwriteProperties:=true;uninstall:=true;path:=/
                         </Sling-Initial-Content>

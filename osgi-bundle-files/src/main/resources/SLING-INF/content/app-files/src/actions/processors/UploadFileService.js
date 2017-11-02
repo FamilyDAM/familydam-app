@@ -49,6 +49,7 @@ class UploadFileService {
 
     uploadNextFile(file) {
 
+        debugger;
         console.log("file: " + file);
         if (file)//!file.path)
         {
@@ -181,14 +182,27 @@ class UploadFileService {
      */
     uploadFile(file_) {
 
+        var filePathName = file_.uploadPath;
+        if( file_.webkitRelativePath ){
+            filePathName += "/" +file_.webkitRelativePath.substr(0, file_.webkitRelativePath.lastIndexOf("/"));
+        }
+
+
+        var formData = new FormData();
+        formData.append("name", file_.name);
+        formData.append("path", filePathName);
+        formData.append("destination", filePathName);
+        formData.append(file_.name, file_);
+
+
+        console.log("Upload to:" +this.host +filePathName );
+        console.dir(file_);
         return request
-            .post(this.host +'/api/familydam/v1/files/upload')
+            .post('http://localhost:9000/api/familydam/v1/files/upload')
             .withCredentials()
-            .field("id", file_.id)
-            .field("name", file_.name)
-            .field("destination", file_.uploadPath)
-            .attach("file", file_)
+            .send(formData)
             .on('progress', event => {
+                console.log(event);
                 file_.progress = event.percent;
                 FileActions.uploadProgress.next(file_);
                 /* the event is:
