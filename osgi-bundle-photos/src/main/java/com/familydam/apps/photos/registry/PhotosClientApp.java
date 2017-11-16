@@ -16,7 +16,7 @@ public class PhotosClientApp implements IClientApp
     Boolean embedded = false;
     Integer order = 2;
     String slug = "photos";
-    String label = "Photos";
+    String label = "Photo Gallery";
     String path = "://app-photos/index.html";
     List<String> roles = Collections.EMPTY_LIST;
 
