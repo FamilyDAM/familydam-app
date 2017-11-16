@@ -1,4 +1,4 @@
-import {app, BrowserWindow, autoUpdater, ipcMain} from 'electron';  // Module to control application life.
+import {app, Menu, BrowserWindow, autoUpdater, ipcMain} from 'electron';  // Module to control application life.
 import {version} from './package.json';
 import { join } from 'path';
 import { format } from 'url';
@@ -12,6 +12,59 @@ if (process.env.NODE_ENV !== 'development') {
     global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
+const template = [
+    {
+        label: process.platform === 'darwin'?app.getName():"File",
+        submenu: [
+            {
+                role: 'about'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                role: 'quit'
+            }
+        ]
+    },
+    {
+        label: 'View',
+        submenu: [
+            {role: 'reload', label: 'Reload', accelerator: 'CmdOrCtrl+R',
+                click (item, focusedWindow) {
+                    if (focusedWindow) focusedWindow.reload();
+                }
+            },
+            {role: 'toggledevtools', label: 'Developer Tools', accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+                click (item, focusedWindow) {
+                    if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+                }
+            },
+            {type: 'separator'},
+            {role: 'togglefullscreen'}
+        ]
+    },
+    {
+        role: 'window',
+        submenu: [
+            {role: 'minimize', label: 'Minimize',
+                click (item, focusedWindow) {
+                    if (focusedWindow) focusedWindow.minimize();
+                }
+            }
+        ]
+    },
+    {
+        role: 'help',
+        submenu: [
+            {
+                label: 'Learn More',
+                click () { require('electron').shell.openExternal('http://www.familydam.com') }
+            }
+        ]
+    }
+]
+
 class FamilyDAM {
 
     constructor()
@@ -21,6 +74,8 @@ class FamilyDAM {
         this.configWindow = null;
         this.splashWindow = this.openSplashWindow();
 
+        const menu = Menu.buildFromTemplate(template);
+        Menu.setApplicationMenu(menu);
 
         this.configurationManager = new ConfigurationManager(logger, this.splashWindow);
         var isValidConfig = this.configurationManager.validateConfig();

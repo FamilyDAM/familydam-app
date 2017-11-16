@@ -144,7 +144,7 @@ class RepositoryManager {
             'web-preferences': {'web-security': false},
             title:'FamilyDAM - The Digital Asset Manager for Families'});
 
-        window.openDevTools();
+        //window.openDevTools();
         window.loadURL(_url);
         window.show();
 
