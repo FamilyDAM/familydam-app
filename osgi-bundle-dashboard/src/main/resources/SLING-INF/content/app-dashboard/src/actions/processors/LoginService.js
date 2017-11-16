@@ -50,9 +50,11 @@ class LoginService {
                     console.log("LoginService j_security_check: SUCCESS");
                     window.localStorage.setItem("user", JSON.stringify(data_));
                     UserActions.getUser.source.next(data_.username);
-                    //send results to the store
-                    //_this.sink.onNext(data_);
 
+                    window.localStorage.setItem("u", data_.username);
+                    window.localStorage.setItem("p", data_.password);
+
+                    //send results to the store
                     //this.sink.next(_sortedUsers);
 
                 }else{

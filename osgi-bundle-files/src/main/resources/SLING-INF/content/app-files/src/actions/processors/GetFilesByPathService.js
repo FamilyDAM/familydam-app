@@ -20,6 +20,10 @@ class GetFilesByPathService {
      */
     getFiles(paths_)
     {
+        var u = window.localStorage.getItem("u");
+        var p = window.localStorage.getItem("p");
+        //.set('Authorization', 'user ' +u +":" +p)
+
         if( paths_ !== undefined && paths_.length > 0 )
         {
             var pathPromises = [];
@@ -29,6 +33,7 @@ class GetFilesByPathService {
 
                 var promise = request.get( "http://localhost:9000" +path +".1.json" )
                     .withCredentials()
+                    .set('Authorization', 'user ' +u +":" +p)
                     .set('Accept', 'application/json');
 
                 pathPromises.push(promise);

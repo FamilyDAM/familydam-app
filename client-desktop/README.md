@@ -1,3 +1,0 @@
-client-desktop
-==============
-REACT version

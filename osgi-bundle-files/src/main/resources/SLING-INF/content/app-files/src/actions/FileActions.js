@@ -6,6 +6,8 @@ import {Subject} from '@reactivex/rxjs';
 import GetFilesAndFoldersService from './processors/GetFileAndFoldersService';
 import GetFilesByPathService from "./processors/GetFilesByPathService";
 import UploadFileService from "./processors/UploadFileService";
+import DeleteFileOrFolderService from "./processors/DeleteFileOrFolderService";
+import CreateFolderService from "./processors/CreateFolderService";
 
 class FileActions {
 
@@ -14,6 +16,8 @@ class FileActions {
         this.getFilesAndFoldersService = new GetFilesAndFoldersService(this.getFileAndFolders.source, this.getFileAndFolders.sink);
         this.getFilesByPathService = new GetFilesByPathService(this.getFilesByPath.source, this.getFilesByPath.sink);
         this.uploadFileService = new UploadFileService(this.uploadFile.source, this.uploadFile.sink);
+        this.deleteFileOrFolderService = new DeleteFileOrFolderService(this.deleteFileOrFolder.source, this.deleteFileOrFolder.sink);
+        this.createFolderService = new CreateFolderService(this.createFolder.source, this.createFolder.sink);
     }
 
     /**
@@ -32,29 +36,23 @@ class FileActions {
     uploadFile = {source:new Subject(), sink:new Subject()};
 
     /**
+     * Delete a File
+     */
+    deleteFileOrFolder = {source:new Subject(), sink:new Subject()};
+
+
+    /**
+     * Create a Folder
+     */
+    createFolder = {source:new Subject(), sink:new Subject()};
+
+
+    /**
      * local event called when upload is complete
      */
     uploadProgress = new Subject();
     uploadCompleted = new Subject();
     uploadError = new Subject();
-
-
-
-
-
-
-
-    /**
-     * Tell views to reload the files they are watching
-     */
-    //refreshFiles = new Subject();
-
-
-
-    /**
-     * Tell views to reload the files they are watching
-     */
-    //selectFile = new Subject();
 
 };
 

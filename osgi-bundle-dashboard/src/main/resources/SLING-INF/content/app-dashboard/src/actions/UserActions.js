@@ -9,7 +9,7 @@ class UserActions {
 
     constructor() {
         this.loginService = new LoginService(this.login.source, this.login.sink, this.getUser.source);
-        //todo: all processor for logout
+        //todo: call processor for logout
         // [GET] /system/sling/logout
         this.createUserService = new CreateUserService(this.createUser.source, this.createUser.sink);
         this.getUserService = new GetUserService(this.getUser.source, this.getUser.sink);

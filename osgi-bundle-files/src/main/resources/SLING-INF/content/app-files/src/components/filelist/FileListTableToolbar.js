@@ -58,7 +58,7 @@ class FileListTableToolbar extends Component {
                 </div>
                 <div className={classes.spacer}/>
                 <div className={classes.actions} style={{marginRight:'8px'}}>
-                    {numSelected > 0 && (
+                    {false && ( //numSelected > 0
                         <IconButton aria-label="Delete">
                             <DeleteIcon/>
                             <FileDownloadIcon/>

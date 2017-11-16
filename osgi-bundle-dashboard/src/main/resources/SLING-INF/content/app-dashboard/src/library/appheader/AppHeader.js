@@ -102,7 +102,7 @@ class AppHeader extends Component {
                     </IconButton>
 
                     <Typography type="title" color="inherit" className={classes.flex} onClick={()=>this.handleNavClick('://dashboard/index.html')}>
-                        Family|<i>D.A.M</i>
+                        Family <i>D.A.M</i>
                     </Typography>
 
                     <IconButton
@@ -118,7 +118,7 @@ class AppHeader extends Component {
                         id="long-menu"
                         anchorEl={this.state.openMoreMenuAnchorEl}
                         open={this.state.openMoreMenu}>
-                        <MenuItem color="contrast" onClick={()=>{AppActions.navigateTo.next('://dashboard/#/login');this.handleMenuClose()}}>Logout</MenuItem>
+                        <MenuItem color="contrast" onClick={()=>{AppActions.navigateTo.next('://dashboard/login');this.handleMenuClose()}}>Logout</MenuItem>
                         <Divider/>
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (

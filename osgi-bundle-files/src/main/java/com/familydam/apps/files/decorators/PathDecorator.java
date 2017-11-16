@@ -4,8 +4,10 @@ import com.familydam.core.utilities.ValueMapWrapper;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceDecorator;
+import org.apache.sling.api.resource.SyntheticResource;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +17,8 @@ public class PathDecorator implements ResourceDecorator
 {
     @Override
     public Resource decorate(Resource resource) {
+
+        if( resource instanceof SyntheticResource) return resource;
 
         if( resource.getPath().startsWith("/content") ) {
             ValueMapWrapper wrapper = new ValueMapWrapper(resource);

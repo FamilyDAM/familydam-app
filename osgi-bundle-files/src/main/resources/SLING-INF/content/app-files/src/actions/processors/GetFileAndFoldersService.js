@@ -9,7 +9,7 @@ class GetFilesAndFoldersService {
         //console.log("{createUser Service} subscribe");
         this.sink = sink_;
 
-        source_.distinctUntilChanged().subscribe(function (path_) {
+        source_.subscribe(function (path_) {
             this.getFilesAndFolders(path_);
         }.bind(this));
     }
@@ -21,16 +21,21 @@ class GetFilesAndFoldersService {
      */
     getFilesAndFolders(path_)
     {
+        console.log("loading files & folders: " +path_);
+
         if( path_ !== undefined && path_.length > 0 )
         {
             //console.log("{GetFiles Service} getFiles()");
             var _url =  "http://localhost:9000/" +path_ +".graph.1.json/nt:file,sling:file,nt:folder,sling:folder,dam:file,dam:folder/name,index,parent,links,path,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
+            var u = window.localStorage.getItem("u");
+            var p = window.localStorage.getItem("p");
+            //.set('Authorization', 'user ' +u +":" +p)
+
             request.get(_url)
-
-
                 .withCredentials()
                 .set('Accept', 'application/json')
+                .set('Authorization', 'user ' +u +":" +p)
                 .end((err, res)=>{
 
                     if( !err ){

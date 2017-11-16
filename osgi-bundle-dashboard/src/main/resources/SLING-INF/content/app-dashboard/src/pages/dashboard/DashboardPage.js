@@ -8,6 +8,9 @@ import {withStyles} from "material-ui/styles";
 
 import {CircularProgress} from 'material-ui/Progress';
 import Typography from 'material-ui/Typography';
+import FileIcon from 'material-ui-icons/InsertDriveFile';
+//import PhotoIcon from 'material-ui-icons/PhotoLibrary';
+import Paper from 'material-ui/Paper';
 
 
 import AppShell from '../../library/appShell/AppShell';
@@ -25,6 +28,49 @@ const styleSheet = (theme) => ({
         transform: 'translate(-50%, -50%)'
     },
 
+    contentContainer:{
+        height:'100%',
+        margin:'auto',
+        display:"grid",
+        gridGap:'24px',
+        gridTemplateRows: "auto 125px 150px 150px auto",
+        gridTemplateColumns: "auto 300px 300px auto",
+        gridAutoFlow: 'column'
+    },
+    contentHeader:{
+        gridColumn: "2/4",
+        gridRow: 2
+    },
+    contentHeaderLabel:{
+        fontSize:'96px',
+        color: theme.accentColor,
+        lineHeight: '104px',
+        textTransform: 'capitalize'
+    },
+    contentAppCard0:{
+        gridColumn: "2/3",
+        gridRow: 3,
+        textAlign: 'center',
+        padding:'32px'
+    },
+    contentAppCard1:{
+        gridColumn: "3/4",
+        gridRow: 3,
+        textAlign: 'center',
+        padding:'32px'
+    },
+    contentAppCard2:{
+        gridColumn: "2/3",
+        gridRow: 4,
+        textAlign: 'center',
+        padding:'32px'
+    },
+    contentAppCard3:{
+        gridColumn: "3/4",
+        gridRow: 4,
+        textAlign: 'center',
+        padding:'32px'
+    }
 });
 
 
@@ -42,7 +88,6 @@ class DashboardPage extends Component {
     componentWillMount(){
         this.setState({"isMounted":true});
 
-
         AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
             if (path.substring(0, 3) === "://") {
                 window.location.href = path.substring(2);
@@ -50,11 +95,25 @@ class DashboardPage extends Component {
                 this.props.history.push(path);
             }
         }.bind(this));
+
+
+        AppActions.loadClientApps.sink.subscribe( (data)=> {
+            if( data ) {
+               this.setState({
+                    "primaryApps": data.primaryApps,
+                    "secondaryApps": data.secondaryApps
+                });
+            }
+        });
     }
 
 
     componentWillUnmount() {
         this.setState({"isMounted":false});
+    }
+
+    componentWillReceiveProps(oldProps, newProps){
+        debugger;
     }
 
 
@@ -71,7 +130,23 @@ class DashboardPage extends Component {
         }else {
             return (
                 <AppShell>
-                    <Typography type="title">Hello,</Typography>
+                    <div className={classes.contentContainer}>
+                        <div className={classes.contentHeader}>
+                            <Typography className={classes.contentHeaderLabel}>Hello {this.props.user.firstName},</Typography>
+                            <Typography style={{fontSize:'24px', lineHeight:'24px'}}>Where would you like to start?</Typography>
+                        </div>
+
+                        {this.state.primaryApps && this.state.primaryApps.filter(app=>app.slug !== "home").map((app, indx)=> {
+                            return (
+                                <Paper key={app.path} data-indx={indx} className={classes['contentAppCard' +indx]} onClick={() => AppActions.navigateTo.next(app.path)}>
+                                    <FileIcon style={{width: '48px', height: '48px'}}/>
+                                    <Typography style={{fontSize: '24px'}}>{app.label}</Typography>
+                                </Paper>
+                            )
+                        })}
+
+                    </div>
+
                 </AppShell>
             );
         }

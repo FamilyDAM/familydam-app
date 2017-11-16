@@ -33,14 +33,14 @@ class FileListTableHead extends Component {
         return (
             <TableHead className={classes.tableHead}>
                 <TableRow>
-                    <TableCell checkbox style={{width:'50px'}}>
+                    <TableCell checkbox style={{width:'20px'}}>
                         <Checkbox
                             indeterminate={numSelected > 0 && numSelected < rowCount}
                             checked={numSelected === rowCount}
                             onChange={onSelectAllClick}
                         />
                     </TableCell>
-                    <TableCell disablePadding style={{width:'50px', margin:'auto'}}>
+                    <TableCell disablePadding style={{width:'20px', margin:'auto'}}>
                     </TableCell>
                     {this.props.columns.map(column => {
                         return (
@@ -48,7 +48,7 @@ class FileListTableHead extends Component {
                                 key={column.id}
                                 numeric={column.numeric}
                                 disablePadding={column.disablePadding}
-                                style={{width:column.width}}
+                                style={column.stylesheet}
 
                             >
                                 <TableSortLabel
@@ -61,7 +61,7 @@ class FileListTableHead extends Component {
                             </TableCell>
                         );
                     }, this)}
-                    <TableCell checkbox style={{width:'50px'}}>
+                    <TableCell checkbox style={{width:'150px'}}>
                         Actions
                     </TableCell>
                 </TableRow>

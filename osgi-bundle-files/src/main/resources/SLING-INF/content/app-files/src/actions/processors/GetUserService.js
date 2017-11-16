@@ -27,12 +27,16 @@ class GetAllUsersService {
      */
     getUsers(username_)
     {
+        var u = window.localStorage.getItem("u");
+        var p = window.localStorage.getItem("p");
+        //.set('Authorization', 'user ' +u +":" +p)
 
         request
             .get('http://localhost:9000/api/familydam/v1/dashboard/user')
             .query({'username':username_})
             .withCredentials()
             .set('Accept', 'application/json')
+            .set('Authorization', 'user ' +u +":" +p)
             .end((err, results) => {
 
                 if( !err ){

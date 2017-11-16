@@ -45,11 +45,15 @@ class CreateUserService {
         };
 
 
+        var u = window.localStorage.getItem("u");
+        var p = window.localStorage.getItem("p");
+
         request
             .post('http://localhost:9000/api/familydam/v1/dashboard/user/create')
             .send(_props)
             .withCredentials()
             .set('Accept', 'application/json')
+            .set('Authorization', 'user ' +u +":" +p)
             .end((err, res)=>{
 
                 if( !err ){

@@ -151,7 +151,7 @@ class ConfigurationManager{
         }
 
         var _root = join(__static, "../../resources");
-        this.copyResourceDir(settings_.storageLocation, _root, path.sep);
+        this.copyResourceDir(settings_.storageLocation, _root, "/");
     }
 
 
@@ -170,7 +170,7 @@ class ConfigurationManager{
         {
             var _file = _dirList[i];
             var source = path +_file;
-            var target = storageDir_ +path.sep +_file;
+            var target = storageDir_ +"/" +_file;
 
             console.log("{ConfigurationManager} checking file - source=" +source +"  |  target=" +target);
 

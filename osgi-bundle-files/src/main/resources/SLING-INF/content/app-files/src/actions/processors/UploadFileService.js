@@ -49,7 +49,6 @@ class UploadFileService {
 
     uploadNextFile(file) {
 
-        debugger;
         console.log("file: " + file);
         if (file)//!file.path)
         {
@@ -194,12 +193,17 @@ class UploadFileService {
         formData.append("destination", filePathName);
         formData.append(file_.name, file_);
 
+        var u = window.localStorage.getItem("u");
+        var p = window.localStorage.getItem("p");
+        //.set('Authorization', 'user ' +u +":" +p)
+
 
         console.log("Upload to:" +this.host +filePathName );
         console.dir(file_);
         return request
             .post('http://localhost:9000/api/familydam/v1/files/upload')
             .withCredentials()
+            .set('Authorization', 'user ' +u +":" +p)
             .send(formData)
             .on('progress', event => {
                 console.log(event);

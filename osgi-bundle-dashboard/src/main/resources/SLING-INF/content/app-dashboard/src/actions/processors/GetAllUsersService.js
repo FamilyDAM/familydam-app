@@ -30,11 +30,14 @@ class GetAllUsersService {
      */
     getUsers()
     {
+        var u = window.localStorage.getItem("u");
+        var p = window.localStorage.getItem("p");
 
         request
             .get('http://localhost:9000/api/familydam/v1/dashboard/users')
             .withCredentials()
             .set('Accept', 'application/json')
+            .set('Authorization', 'user ' +u +":" +p)
             .end((err, results) => {
 
                 if( !err ){

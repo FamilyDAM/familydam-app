@@ -21,6 +21,7 @@ import Breadcrumb from '../../components/breadcrumb/Breadcrumb';
 import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
 import UploadDialog from '../../components/uploaddialog/UploadDialog';
+import NewFolderDialog from '../../components/newfolderdialog/NewFolderDialog';
 import fileActions from "../../actions/FileActions";
 
 const styleSheet = (theme) => ({
@@ -87,6 +88,7 @@ class FilesPage extends Component {
             canAddFolder:true,
             showAddFolderDialog:false,
             showUploadDialog:false,
+            showNewFolderDialog:false,
             selectedFiles:[],
             root:"/content/family",
             visibleRoot:"/content/family/files",
@@ -95,6 +97,7 @@ class FilesPage extends Component {
 
         this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
         this.handleUploadClosed = this.handleUploadClosed.bind(this);
+        this.handleAfterOnDelete = this.handleAfterOnDelete.bind(this);
     }
 
     componentWillMount(){
@@ -109,6 +112,8 @@ class FilesPage extends Component {
             }else{
                 this.props.history.push(path);
             }
+
+            this.setState({"selectedFiles":[]});
         }.bind(this));
     }
 
@@ -119,6 +124,7 @@ class FilesPage extends Component {
     componentWillReceiveProps(newProps){
         this.props = newProps;
         this.validatePath();
+
     }
 
 
@@ -145,6 +151,23 @@ class FilesPage extends Component {
 
     handleUploadClosed(){
         this.setState({'showUploadDialog':false});
+        fileActions.getFileAndFolders.source.next(this.state.path);
+    }
+
+    handleAfterOnDelete(path_){
+
+        //console.log("handleAfterOnDelete: " +this.state.path);
+
+        //remove deleted item from list of selectedfiles
+        var selectedFiles = [];
+        for (var i = 0; i < this.state.selectedFiles.length; i++) {
+            var obj = this.state.selectedFiles[i];
+            if( obj !== path_){
+                selectedFiles.push(obj);
+            }
+        }
+        this.setState({selectedFiles:selectedFiles});
+
         fileActions.getFileAndFolders.source.next(this.state.path);
     }
 
@@ -182,15 +205,15 @@ class FilesPage extends Component {
                                     color="primary"
                                     disabled={!this.state.canAddFile}
                                     onClick={()=>{this.setState({'showUploadDialog':true})}}>
-                                    <FileUpload/> Add Files
+                                    <FileUpload/>&nbsp;&nbsp;Add Files
                                 </Button>
 
                                 <Button
                                     label="New Folder"
                                     color="primary"
                                     disabled={!this.state.canAddFolder}
-                                    onClick={()=>{this.setState({'showAddFolderDialog':true})}}>
-                                    <NewFolderIcon/> New Folder
+                                    onClick={()=>{this.setState({'showNewFolderDialog':true})}}>
+                                    <NewFolderIcon/>&nbsp;&nbsp;New Folder
                                 </Button>
                             </div>
                         </Toolbar>
@@ -202,6 +225,7 @@ class FilesPage extends Component {
                             <FileList
                                 path={this.state.path}
                                 onSelectionChange={this.handleFileSelectionChange}
+                                onDelete={this.handleAfterOnDelete}
                                 style={{gridRow:"1 / 4", gridColumn:"1 / 3"}}/>
 
                         </div>
@@ -216,6 +240,11 @@ class FilesPage extends Component {
                     <UploadDialog
                         onClose={this.handleUploadClosed}
                         open={this.state.showUploadDialog}
+                        path={this.state.path}/>
+
+                    <NewFolderDialog
+                        onClose={()=>{this.setState({'showNewFolderDialog':false})}}
+                        open={this.state.showNewFolderDialog}
                         path={this.state.path}/>
                 </div>
 

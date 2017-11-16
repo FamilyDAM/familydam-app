@@ -169,20 +169,20 @@ class FileList extends Component{
     };
 
     handleFileDelete(path_){
-        this.setState({showDeleteFileDialog:true});
+        this.setState({showDeleteFileDialog:true, pendingFileToDelete: path_});
         return false;
     }
 
     handleFolderDelete(path_){
-        this.setState({showDeleteFolderDialog:true});
+        this.setState({showDeleteFolderDialog:true, pendingFolderToDelete: path_});
         return false;
     }
 
-    handleFileDownload(path_){
+    handleFileDownload(name_, path_){
         var link=document.createElement('a');
         document.body.appendChild(link);
         link.href="http://localhost:9000" +path_ ;
-        link.download=true;
+        link.download=name_;
         link.click();
 
         return false;
@@ -192,17 +192,33 @@ class FileList extends Component{
         return false;
     }
 
-    handleFileDeleteOk(path_){
-        this.setState({showDeleteFileDialog:false});
+    handleFileDeleteOk(){
+        fileActions.deleteFileOrFolder.source.next(this.state.pendingFileToDelete);
+
+        var _fileToDelete = this.state.pendingFileToDelete;
+        fileActions.deleteFileOrFolder.sink.subscribe(()=>{
+            if( this.props.onDelete){
+                this.props.onDelete(_fileToDelete);
+            }
+        });
+
+        this.setState({showDeleteFileDialog:false, pendingFileToDelete:null});
     }
 
-
     handleFolderDeleteOk(path_){
-        this.setState({showDeleteFolderDialog:false});
+        fileActions.deleteFileOrFolder.source.next(this.state.pendingFolderToDelete);
+
+        fileActions.deleteFileOrFolder.sink.subscribe(()=>{
+            if( this.props.onDelete){
+                this.props.onDelete(this.state.pendingFolderToDelete);
+            }
+        });
+
+        this.setState({showDeleteFolderDialog:false, pendingFolderToDelete:null});
     }
 
     handleCancelDialog(path_){
-        this.setState({showDeleteFileDialog:false, showDeleteFolderDialog:false});
+        this.setState({showDeleteFileDialog:false, showDeleteFolderDialog:false, pendingFileToDelete:null});
     }
 
 
@@ -224,8 +240,8 @@ class FileList extends Component{
                             onRequestSort={this.handleRequestSort}
                             rowCount={files.length}
                             columns={[
-                                { id: 'name', numeric: false, disablePadding: true, label: 'Name', width:'100%' },
-                                { id: 'created', numeric: true, disablePadding: false, label: 'Created', width:'100px' },
+                                { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+                                { id: 'created', numeric: true, disablePadding: false, label: 'Created', stylesheet:{width:'150px'} }
                             ]}
                         />
                         <TableBody>
@@ -251,7 +267,7 @@ class FileList extends Component{
                                         <FileRow key={node.path}
                                                  file={node}
                                                  isSelected={isSelected}
-                                                 onDelete={this.handleFileDelete}
+                                                 onDelete={()=>this.handleFileDelete(node.path)}
                                                  onDownload={this.handleFileDownload}
                                                  onClick={(event, path_) => this.handleClick(event, path_)}
                                                  onKeyDown={(event, path_) => this.handleKeyDown(event, path_)}
@@ -318,11 +334,8 @@ const FolderRow = (props, context) => (
         tabIndex={-1}
         selected={props.isSelected}
         aria-checked={props.isSelected}>
-        <TableCell checkbox
-                   style={{width:'50px'}}>
-        </TableCell>
+        <TableCell checkbox></TableCell>
         <TableCell
-            style={{width:'50px', margin:'auto'}}
             onClick={()=>props.onNavigate(props.folder.path)}
             disablePadding>
             <FolderIcon />
@@ -353,13 +366,10 @@ const FileRow = (props, context) => (
         tabIndex={-1}
         selected={props.isSelected}
     >
-        <TableCell checkbox
-                   style={{width:'50px'}}
-        >
-            <Checkbox checked={props.isSelected} />
+        <TableCell checkbox>
+            <Checkbox checked={props.isSelected} onClick={event => {console.log('checkbox clicked'); props.onClick(event, props.file.path)}} />
         </TableCell>
         <TableCell
-            style={{width:'50px', margin:'auto'}}
             onClick={event => props.onClick(event, props.file.path)}
             disablePadding>
             { (props.file['path'].toString().endsWith(".jpg") || props.file['path'].toString().endsWith(".png") ) ?
@@ -367,15 +377,16 @@ const FileRow = (props, context) => (
             }
 
         </TableCell>
-        <TableCell disablePadding onClick={event => props.onClick(event, props.file.path)}>
+        <TableCell disablePadding
+                   onClick={event => props.onClick(event, props.file.path)}>
             <Typography component="span">{props.file.name}</Typography>
             <Typography component="span">{props.file.path}</Typography>
         </TableCell>
         <TableCell numeric>{props.file['jcr:created']}</TableCell>
-        <TableCell>
+        <TableCell >
             <Button onClick={()=>props.onDelete(props.file.path)} style={{padding:'4px', minWidth:'24px'}}><DeleteIcon /></Button>
             {props.file._links.download &&
-               <Button onClick={()=>props.onDownload(props.file._links.download)} style={{padding:'4px', minWidth:'24px'}}><DownloadIcon/></Button>
+               <Button onClick={()=>props.onDownload(props.file.name, props.file._links.download)} style={{padding:'4px', minWidth:'24px'}}><DownloadIcon/></Button>
             }
         </TableCell>
     </TableRow>

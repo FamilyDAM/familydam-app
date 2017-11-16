@@ -7,12 +7,10 @@ import {withStyles} from "material-ui/styles";
 
 import Paper from "material-ui/Paper";
 import TextField from "material-ui/TextField";
-import Typography from "material-ui/Typography";
-import Button from "material-ui/Button";
-import { CircularProgress } from "material-ui/Progress";
 
 import { GridContainer, GridItem } from "../../library/CssGrid";
 
+import LoadingButton from '../../library/loadingButton/LoadingButton';
 //import AppActions from "../../actions/AppActions";
 import UserActions from "../../actions/UserActions";
 
@@ -107,6 +105,7 @@ class SignupCard extends Component {
      */
     handleSubmit(event)
     {
+        console.log("handleSubmit - create user");
         if( this.state.isLoading ) return;
 
         let isValid = this.isValidForm();
@@ -225,15 +224,9 @@ class SignupCard extends Component {
                     </GridItem>
 
                     <GridItem rows="8" columns="1/3" style={{"textAlign":"right"}}>
-                        <Button
-                            raised
-                            color="accent"
-                            onClick={this.handleSubmit}>
-                            {this.state.isLoading &&
-                                <CircularProgress className={classes.progress} color="#fff" size={25}/>
-                            }
-                            <Typography style={{"paddingLeft":"8px", color:"#fff"}}>Create User</Typography>
-                        </Button>
+                        <LoadingButton isLoading={this.state.isLoading}
+                                       label={"Create User"}
+                                       onClick={this.handleSubmit}/>
                     </GridItem>
 
                 </GridContainer>

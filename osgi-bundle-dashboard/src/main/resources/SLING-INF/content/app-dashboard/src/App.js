@@ -43,7 +43,7 @@ class App extends Component {
 
 
     componentWillMount(){
-        this.setState({"isMounted":true});
+        this.setState({"isMounted":true, user:{firstName:"mike"}});
 
         UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
             // redirect to dashboard
@@ -52,6 +52,8 @@ class App extends Component {
             if( user_ )
             {
                 this.setState({"isAuthenticated":true, "user": user_});
+            }else{
+                this.setState({"isAuthenticated":false, "user": undefined});
             }
             AppActions.navigateTo.next("/");
         });
@@ -82,6 +84,7 @@ class App extends Component {
             <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
                 <Router>
                     <Switch>
+                        <Route path="/login" component={<LoginPage mode="login"/>}/>
                         <Route path="/" component={() => this.state.isAuthenticated ? <DashboardPage user={this.state.user}/> : <LoginPage mode="login"/>}/>
                     </Switch>
                 </Router>

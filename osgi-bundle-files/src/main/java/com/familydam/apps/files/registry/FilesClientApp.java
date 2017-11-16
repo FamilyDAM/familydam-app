@@ -16,7 +16,7 @@ public class FilesClientApp implements IClientApp
     Boolean embedded = false;
     Integer order = 1;
     String slug = "files";
-    String label = "Files";
+    String label = "File Browser";
     String path = "://app-files/index.html";
     List<String> roles = Collections.EMPTY_LIST;
 
