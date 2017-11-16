@@ -1,0 +1,81 @@
+@font-face
+{
+  font-family: 'Glyphicons Halflings';
+  src:         url('assets/fonts/bootstrap/glyphicons-halflings-regular.eot');
+  src:         url('assets/fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('assets/fonts/bootstrap/glyphicons-halflings-regular.woff') format('woff'), url('assets/fonts/bootstrap/glyphicons-halflings-regular.ttf') format('truetype'), url('assets/fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+}
+
+
+@import "assets/flexboxgrid/flexboxgrid.min.css";
+@import "assets/bower_components/bootstrap-tokenfield/dist/css/bootstrap-tokenfield"; //set for defaults
+@import "assets/bower_components/bootstrap-tokenfield/dist/css/tokenfield-typeahead"; //set for defaults
+
+//@import "./assets/node_modules/ladda-bootstrap/dist/ladda-themeless.scss";
+@import "./assets/js/imgly-sdk-html5-v2.0.3-13/css/imglykit-night-ui.css";
+//@import "./../node_modules/darkroom/lib/css/darkroom";
+//@import "./_colors"; //override bootstrap themes
+//@import "./_theme"; //override bootstrap themes
+
+/***************************************
+ * Defaults
+ ***************************************/
+$text-color: #757575;
+
+
+html
+{
+  height:    100%;
+  font-size: 62.5%;
+  margin:    0px;
+}
+
+body
+{
+  font-family:       "Roboto", "sans-serif";
+  -webkit-transform: translateZ(0);
+  transform:         translateZ(0);
+  font-size:         16px;
+  font-size:         1.6rem;
+  font-weight:       300;
+  color:             #757575;
+  margin:            0;
+  background-color:  rgb(232, 232, 232);
+}
+
+a{
+  text-decoration: none;
+}
+
+
+@import "modules/login/login";
+@import "modules/home/home";
+@import "modules/dashboard/dashboard";
+@import "modules/files/files";
+@import "modules/photos/photos";
+@import "modules/photoDetails/photoDetails";
+@import "modules/photoEdit/photoEdit";
+@import "modules/uploads/uploads";
+@import "modules/userManager/userManager";
+@import "components/appSidebar/appSidebar";
+@import "components/breadcrumb/breadcrumb";
+@import "components/clock/clock";
+@import "components/folderTree/folderTree";
+@import "components/tags/tags";
+@import "components/exifData/exifData";
+@import "components/exifMap/exifMap";
+@import "components/sidebarSection/sidebarSection";
+@import "components/isotopeGallery/isotopeGallery";
+
+/**
+// features
+@import "directives/dirTree/dirTree";
+@import "directives/fileCard/fileCard";
+@import "modules/login/login";
+@import "modules/home/home";
+@import "modules/files/files";
+@import "modules/photos/photos";
+@import "modules/photos-details/photodetails";
+@import "modules/uploader/uploader";
+**/
+
+

@@ -1,0 +1,77 @@
+
+
+.sidebarSection
+{
+  .header{
+    border-bottom: 1px solid #eee;
+  }
+
+  .folderItem, .addFolderField{
+    padding-top:5px;
+    padding-bottom:5px;
+
+    &.active{
+      background-color: #eee;
+    }
+
+    input{
+      width: 100px;
+    }
+  }
+
+  .has-children{
+
+  }
+  .open{
+    display:block;
+  }
+  .closed{
+    display:none;
+  }
+  .selected{
+
+  }
+
+  &.disabled
+  {
+    color: #eeeeee;
+  }
+
+  a{
+    color:black
+  }
+
+  &.h3
+  {
+    color:black;
+
+    &:hover{
+      text-decoration: none;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    h3
+    {
+      font-size: 19px;
+      font-size: 1.9rem;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    h3
+    {
+      font-size: 18px;
+      font-size: 1.8rem;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    h3
+    {
+      font-size: 14px;
+      font-size: 1.4rem;
+    }
+  }
+
+}

@@ -11,6 +11,8 @@ import TextField from "material-ui/TextField";
 import Typography from "material-ui/Typography";
 import AccountCircle from 'material-ui-icons/AccountCircle';
 
+import LoadingButton from '../../library/loadingButton/LoadingButton';
+
 const styleSheet = (theme) => ({
     personalCard: {
         border: '1px solid'
@@ -35,7 +37,8 @@ class LoginCard extends Component {
                 "email": ""
             },
             password:'',
-            mode: "minimal"
+            mode: "minimal",
+            isLoading:false
         };
 
         this.handleSelect = this.handleSelect.bind(this);
@@ -43,6 +46,10 @@ class LoginCard extends Component {
         this.handleLogin = this.handleLogin.bind(this);
     }
 
+
+    componentWillMount() {
+        this.setState({"isLoading":false});
+    }
 
     componentDidMount() {
         if (this.refs.pwdField) this.refs.pwdField.focus();
@@ -67,6 +74,8 @@ class LoginCard extends Component {
     }
 
     handleLogin(){
+        this.setState({"isLoading":true});
+
         if (this.props.onLogin) {
             this.props.onLogin(this.props.user.username, this.state.password);
         }
@@ -126,63 +135,16 @@ class LoginCard extends Component {
                         </div>
                         <div style={{gridRow: '4', gridColumn: '2'}}>
                             <Button color="primary" onClick={this.handleCancel}>Cancel</Button>
-                            <Button raised color="primary" onClick={this.handleLogin}>Login</Button>
+                            <LoadingButton
+                                isLoading={this.state.isLoading}
+                                label="Login"
+                                style={{'minWidth':'120px'}}
+                                onClick={this.handleLogin}></LoadingButton>
                         </div>
                     </div>
                 </Paper>
             );
         }
-    }
-
-
-    renderOld() {
-
-        var overrideStyle = {};
-
-        var activeView;
-        if (this.props.mode !== "active") {
-            activeView = <div
-                className="personCard panel center-block"
-                style={{'padding': '5px'}}
-                onTouchEnd={this.handleSelect}
-                onClick={this.handleSelect}>
-                <div className="box">&nbsp;</div>
-                <h2 style={{'fontFamily': 'Roboto', 'fontWeight': '400'}}>{this.props.user.firstName}</h2>
-            </div>;
-        } else {
-            overrideStyle = {width: "100%"};
-
-            activeView = <div className="loginCard container" style={{'backgroundColor': '#fff', 'width': '500px', 'height': '250px'}}>
-                <div className="row">
-                    <div className="col-xs-12 col-sm-4" style={{'padding': '5px'}}>
-                        <div className="box">&nbsp;</div>
-                        <h2 style={{'fontFamily': 'Roboto', 'fontWeight': '400'}}>{this.props.user.firstName}</h2>
-                    </div>
-                    <div className="col-xs-12 col-sm-8" style={{'textAlign': 'center'}}>
-                        <br/>
-                        <div>
-                            <TextField
-                                ref="pwdField"
-                                type="password"
-                                floatingLabelText={this.getIntlMessage('password')}
-                                onChange={(e) => {
-                                    this.setState({'password': e.target.value})
-                                }}
-                            />
-
-                        </div>
-                        <div>
-                            <Button onClick={this.handleCancel} label={this.getIntlMessage('cancel')}/>
-                            <Button onClick={this.handleLogin} label={this.getIntlMessage('login')}/>
-                        </div>
-                    </div>
-                </div>
-            </div>;
-        }
-
-        return (
-            <div style={overrideStyle}>{activeView}</div>
-        )
     }
 
 }

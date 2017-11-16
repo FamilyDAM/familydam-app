@@ -13,6 +13,7 @@ import MenuIcon from 'material-ui-icons/Menu';
 import Typography from 'material-ui/Typography';
 
 import AppActions from '../../actions/AppActions';
+import UserActions from "../../actions/UserActions";
 
 
 const styleSheet = (theme) => ({
@@ -64,6 +65,7 @@ class AppHeader extends Component {
 
         this.handleToggle = this.handleToggle.bind(this);
         this.handleOpenMoreMenu = this.handleOpenMoreMenu.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
     }
 
     handleOpenMoreMenu(event){
@@ -87,6 +89,14 @@ class AppHeader extends Component {
         this.setState({"openMoreMenu": false});
     }
 
+    handleLogout(){
+        debugger;
+        window.localStorage.clear();
+        //UserActions.getUser.sink.next(next);
+        UserActions.logout.source.next(true);
+        AppActions.navigateTo.next("://");
+    }
+
 
     render() {
         var classes = this.props.classes;
@@ -102,7 +112,7 @@ class AppHeader extends Component {
                     </IconButton>
 
                     <Typography type="title" color="inherit" className={classes.flex} onClick={()=>this.handleNavClick('://dashboard/index.html')}>
-                        Family|<i>D.A.M</i>
+                        Family <i>D.A.M</i>
                     </Typography>
 
                     <IconButton
@@ -118,7 +128,7 @@ class AppHeader extends Component {
                         id="long-menu"
                         anchorEl={this.state.openMoreMenuAnchorEl}
                         open={this.state.openMoreMenu}>
-                        <MenuItem color="contrast" onClick={()=>{AppActions.navigateTo.next('://dashboard/#/login');this.handleMenuClose()}}>Logout</MenuItem>
+                        <MenuItem color="contrast" onClick={()=>{this.handleLogout();this.handleMenuClose()}}>Logout</MenuItem>
                         <Divider/>
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
@@ -133,6 +143,8 @@ class AppHeader extends Component {
 
             </AppBar>
         );
+
+        var classes = this.props.classes;
     }
 }
 
