@@ -13,6 +13,7 @@ import FolderIcon from 'material-ui-icons/Folder';
 //import PhotoIcon from 'material-ui-icons/Photo';
 
 import AppActions from '../../actions/AppActions';
+import UserActions from "../../actions/UserActions";
 
 
 const styleSheet = (theme) => ({
@@ -93,7 +94,6 @@ class Sidebar extends Component {
     constructor(props, context) {
         super(props);
 
-
         this.handleNavClick = this.handleNavClick.bind(this);
     }
 
@@ -103,6 +103,14 @@ class Sidebar extends Component {
         if( this.props.onNavClick){
             this.props.onNavClick(path);
         }
+    }
+
+    handleLogout(){
+        debugger;
+        window.localStorage.clear();
+        //UserActions.getUser.sink.next(next);
+        UserActions.logout.source.next(true);
+        AppActions.navigateTo.next("://");
     }
 
 
@@ -127,7 +135,7 @@ class Sidebar extends Component {
         var profileApp = this.findApp('user_manager', this.props.secondaryApps);
 
         return (
-            <Paper className={this.props.open?classes.sidebarOpen:classes.sidebarClosed}>
+            <Paper className={this.props.open?classes.sidebarOpen:classes.sidebarClosed} >
 
                 <Paper className={this.props.open?classes.sidebarUserInfo:classes.sidebarUserInfoClosed}>
                     <div className={classes.sidebarProfileIcon}>
@@ -140,10 +148,10 @@ class Sidebar extends Component {
                     </div>
                     <div className={classes.sidebarButtons}>
 
-                        <Button onClick={ ()=>AppActions.navigateTo.next("://dashboard/#/login") }>Logout</Button>
+                        <Button onClick={this.handleLogout}>Logout</Button>
 
                         {profileApp &&
-                            <Button onClick={()=>AppActions.navigateTo.next(profileApp.path)}>Profile</Button>
+                        <Button onClick={()=>AppActions.navigateTo.next(profileApp.path)}>Profile</Button>
                         }
                     </div>
                 </Paper>
@@ -153,15 +161,15 @@ class Sidebar extends Component {
 
                     <div style={{gridColumn: "1",gridRow: "1"}}>
                         <Typography type="title"
-                            className={this.props.open?classes.openLabel:classes.closedLabel}
-                            style={{'paddingLeft':'16px', paddingTop:'16px', gridColumn: "1", gridRow: "1"}}>Apps</Typography>
+                                    className={this.props.open?classes.openLabel:classes.closedLabel}
+                                    style={{'paddingLeft':'16px', paddingTop:'16px', gridColumn: "1", gridRow: "1"}}>Apps</Typography>
                     </div>
 
                     <List style={{gridColumn: "1",gridRow: "2"}}>
 
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
-                                <ListItem button onClick={()=>this.handleNavClick(item.path)} key={item.path}>
+                                <ListItem button onClick={()=>this.handleNavClick(item.path)}>
                                     <Avatar>
                                         <FolderIcon />
                                     </Avatar>

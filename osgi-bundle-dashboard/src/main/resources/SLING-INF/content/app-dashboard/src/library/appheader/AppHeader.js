@@ -99,6 +99,8 @@ class AppHeader extends Component {
 
 
     render() {
+        var classes = this.props.classes;
+
         return (
             <AppBar className={classes.root} position="static">
                 <Toolbar>

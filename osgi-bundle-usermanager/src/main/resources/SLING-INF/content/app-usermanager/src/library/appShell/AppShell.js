@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
 import {withStyles} from "material-ui/styles";
-import request from 'superagent';
 
 
 import Sidebar from '../sidebar/Sidebar';
@@ -43,7 +42,7 @@ class AppShell extends Component {
         var isOpenCachedValue = window.localStorage.getItem("AppShell.isOpen");
 
         this.state = {
-            isOpen:isOpenCachedValue && isOpenCachedValue === "true"?true:false
+            isOpen:isOpenCachedValue ?isOpenCachedValue:true
         };
 
         this.handleOpenCloseToggle = this.handleOpenCloseToggle.bind(this);
@@ -53,18 +52,15 @@ class AppShell extends Component {
 
     componentWillMount(){
 
-        //call server get list of apps
-        request.get('http://localhost:9000/api/familydam/v1/core/clientapps')
-            .withCredentials()
-            .set('Accept', 'application/json')
-            .end((err, res)=>{
-                if( !err ){
-                    this.setState({
-                        "primaryApps": res.body.apps.primary,
-                        "secondaryApps": res.body.apps.secondary
-                    });
-                }
-            });
+        AppActions.loadClientApps.sink.subscribe( (data)=> {
+            if( data ) {
+                this.setState({
+                    "primaryApps": data.primaryApps,
+                    "secondaryApps": data.secondaryApps
+                });
+            }
+        });
+        AppActions.loadClientApps.source.next(true);
     }
 
     handleOpenMoreMenu(event){
