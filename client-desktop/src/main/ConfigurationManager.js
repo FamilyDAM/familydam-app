@@ -26,9 +26,11 @@ class ConfigurationManager{
         this.subscribeToConfigWizard();
     }
 
+
     getSettings(){
         return this.settings;
     }
+
 
     subscribeToConfigWizard(){
 
@@ -76,10 +78,10 @@ class ConfigurationManager{
 
     validateSettings() {
 
-        console.log("{ConfigurationManager} validateSettings");
+        //console.log("{ConfigurationManager} validateSettings");
         var _filePath = join( this.appUserDir, this.settingsFile);
 
-        this.logger.debug("ValidateSettings: Settings File=" +_filePath);
+        this.logger.debug("{ConfigurationManager} ValidateSettings: Settings File=" +_filePath);
         if( !fs.existsSync(_filePath) )
         {
             this.logger.info("{ConfigurationManager} Settings file does not exists, loading App Config wizard. " +_filePath);
@@ -88,6 +90,12 @@ class ConfigurationManager{
 
             var _settings = fs.readFileSync(_filePath, {'encoding': 'utf8'});
             this.settings = JSON.parse(_settings);
+
+            //Make sure we can still access the folder in settings.json
+            console.log("{ConfigurationManager} +" +this.settings.storageLocation +" | exists=" +fs.existsSync(_settings.storageLocation));
+            if( !fs.existsSync(this.settings.storageLocation) ){
+                return false;
+            }
 
             console.log(this.settings);
             if (this.settings.state != "READY"){

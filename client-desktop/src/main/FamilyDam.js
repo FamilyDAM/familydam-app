@@ -117,13 +117,14 @@ class FamilyDAM {
 
 
         this.repositoryManager = new RepositoryManager(settings_, this.getLogger());
-        this.repositoryManager.startServer();
+        this.repositoryManager.startServer((isRunning) => {
+            logger.trace("Server Startup Conplete");
+        });
+
 
         //wait 5 seconds then start checking the status
         setTimeout(()=> {
-
             this.checkTimer = setInterval(() => {
-
                 try {
                     this.repositoryManager.checkStatus((isRunning) => {
                         if (isRunning) {
@@ -140,9 +141,7 @@ class FamilyDAM {
                 } catch (err) {
                     console.log(err);
                 }
-
             }, 1000);
-
         }, 5000);
 
 

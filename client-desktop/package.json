@@ -6,6 +6,7 @@
   "description": "Digital Asset Manager for the whole family.",
   "dependencies": {
     "electron-log": "^2.2.9",
+    "http-request": "^0.7.0",
     "source-map-support": "^0.4.18",
     "tar": "^4.0.1"
   },

@@ -8,6 +8,11 @@ if (process.env.NODE_ENV !== 'development') {
     global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
+process.on('uncaughtException', function (err) {
+    console.error((new Date).toUTCString() + ' uncaughtException:', err.message);
+    console.error(err.stack);
+});
+
 class RepositoryManager {
 
 
@@ -44,6 +49,7 @@ class RepositoryManager {
 
         try {
             http.get(_url,  (res, data) => {
+                if( !res.statusCode ) res.statusCode = -1;
                 this.logger.debug("checking server | [" +res.statusCode +"] " +_url);
                 if (res.statusCode == 200) {
                     callback(true);
@@ -54,9 +60,10 @@ class RepositoryManager {
         }catch(err){
             callback(false);
         }
+
     }
 
-    startServer() //, app_, configWindow_, splashWindow_, mainWindow_)
+    startServer(callback_) //, app_, configWindow_, splashWindow_, mainWindow_)
     {
         this.logger.debug(platform);
         this.logger.debug(this.settings);
@@ -86,6 +93,7 @@ class RepositoryManager {
         var javaArgs = [this.getMaxMemArg(), '-jar',  jarPath, '-p',  _port, '-c', _storageLocation, '-Dspring.profiles.active='+_profile ];
 
         this.logger.info("{RepositoryManager} Java: " +javaPath);
+        this.logger.info("{RepositoryManager} JavaOpts: " +javaArgs);
         this.logger.info("{RepositoryManager} Repository: " +repoPath);
         this.logger.info("{RepositoryManager} Repository Log File: " +outLogFile);
         this.logger.info("{RepositoryManager} Repository Log Error File: " +outLogErrFile);
@@ -104,6 +112,7 @@ class RepositoryManager {
             if( data_.indexOf("Startup completed") > -1 ){
                 this.logger.debug("{RepositoryManager} startupComplete");
                 isStartupComplete = true;
+                callback_(true);
             }
         });
         this.prc.stderr.on('data', (data_) => {
