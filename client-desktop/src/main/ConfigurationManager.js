@@ -5,6 +5,7 @@ import os from 'os';
 import path from 'path';
 //import targz from 'tar.gz';
 import tar from 'tar';
+import {version} from './package.json';
 
 if (process.env.NODE_ENV !== 'development') {
     global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
@@ -96,6 +97,19 @@ class ConfigurationManager{
             if( !fs.existsSync(this.settings.storageLocation) ){
                 return false;
             }
+
+
+            // Make sure the jar file exists
+            var jarPath = join(this.settings.storageLocation, "/FamilyDAM-" +version +".jar");
+            console.log("check jar existence: " +jarPath);
+            if( !fs.existsSync(jarPath) ){
+                console.warn("{ConfigurationManager} Initialize JRE. ");
+                this.initializeJre(this.settings);
+                console.warn("{ConfigurationManager} Initialize Storage Locations. ");
+                this.initializeStorageLocation(this.settings);
+                return true;
+            }
+
 
             console.log(this.settings);
             if (this.settings.state != "READY"){

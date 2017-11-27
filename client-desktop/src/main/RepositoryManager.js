@@ -3,6 +3,7 @@ import {totalmem, freemem, platform} from 'os';
 import {spawn, exec} from 'child_process';
 import { join } from 'path';
 import http from 'http';
+import {version} from './package.json';
 
 if (process.env.NODE_ENV !== 'development') {
     global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
@@ -29,7 +30,7 @@ class RepositoryManager {
 
         if( partialMB > 1 )
         {
-            return "-Xmx" +(partialMB*1024) +"M";
+            return "-Xmx" +(Math.floor(partialMB*1024)) +"M";
         }else{
             return "-Xmx512M";
         }
