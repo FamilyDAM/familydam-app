@@ -12,7 +12,7 @@ import LoginCards from '../../components/logincards/LoginCards';
 import SignupCard from '../../components/signupcard/SignupCard';
 
 import UserActions from '../../actions/UserActions';
-//import AppActions from '../../actions/AppActions';
+import AppActions from '../../library/actions/AppActions';
 
 const styleSheet = (theme) => ({
     loginView: {
@@ -81,7 +81,7 @@ class Login extends Component {
             }
         });
 
-        UserActions.logout.source.next(true);
+        AppActions.logout.source.next(true);
         UserActions.getAllUsers.source.next(true);
     }
 

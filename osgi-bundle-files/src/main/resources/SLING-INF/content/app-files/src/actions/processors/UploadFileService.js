@@ -4,7 +4,7 @@
 import {Subject, Observable} from '@reactivex/rxjs';
 
 import request from 'superagent';
-import AppActions from './../AppActions';
+import AppActions from '../../library/actions/AppActions';
 import FileActions from './../FileActions';
 
 

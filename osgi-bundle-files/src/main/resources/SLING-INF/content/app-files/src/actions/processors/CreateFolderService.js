@@ -3,7 +3,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import request from 'superagent';
-import AppActions from "../AppActions";
+import AppActions from "../../library/actions/AppActions";
 
 /**
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors

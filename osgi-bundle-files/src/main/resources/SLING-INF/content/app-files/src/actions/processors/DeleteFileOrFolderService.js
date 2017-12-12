@@ -1,4 +1,4 @@
-import AppActions from '../AppActions';
+import AppActions from '../../library/actions/AppActions';
 import request from 'superagent';
 
 class DeleteFileOrFolderService {

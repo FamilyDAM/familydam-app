@@ -2,7 +2,7 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppActions from '../AppActions';
+import AppActions from '../../library/actions/AppActions';
 import request from 'superagent';
 
 

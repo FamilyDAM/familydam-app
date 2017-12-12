@@ -109,7 +109,7 @@ class Sidebar extends Component {
         debugger;
         window.localStorage.clear();
         //UserActions.getUser.sink.next(next);
-        UserActions.logout.source.next(true);
+        AppActions.logout.source.next(true);
         AppActions.navigateTo.next("://");
     }
 

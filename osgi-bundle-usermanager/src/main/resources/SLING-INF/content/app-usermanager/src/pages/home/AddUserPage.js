@@ -65,13 +65,13 @@ class HomePage extends Component {
 
         if( this.state.isLoading ){
             return (
-                <AppShell>
+                <AppShell user={this.props.user}>
                     <CircularProgress className={classes.progress} size={50} />
                 </AppShell>
             );
         }else {
             return (
-                <AppShell>
+                <AppShell user={this.props.user}>
                     <Typography type="title">User Details Page</Typography>
                 </AppShell>
             );

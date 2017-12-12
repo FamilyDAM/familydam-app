@@ -40,7 +40,7 @@ class FileListTableHead extends Component {
                             onChange={onSelectAllClick}
                         />
                     </TableCell>
-                    <TableCell disablePadding style={{width:'20px', margin:'auto'}}>
+                    <TableCell disablePadding style={{width:'20px'}}>
                     </TableCell>
                     {this.props.columns.map(column => {
                         return (

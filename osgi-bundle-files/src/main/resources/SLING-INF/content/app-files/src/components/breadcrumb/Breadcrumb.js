@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 import {withStyles} from "material-ui/styles";
-import AppActions from "../../actions/AppActions";
+import AppActions from "../../library/actions/AppActions";
 
 const styleSheet = (theme) => ({
 

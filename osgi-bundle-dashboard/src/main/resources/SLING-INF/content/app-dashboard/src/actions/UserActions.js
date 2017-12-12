@@ -17,7 +17,6 @@ class UserActions {
     }
 
     login = {'source':new Subject(), 'sink':new Subject()};
-    logout = {'source':new Subject(), 'sink':new Subject()};
     createUser = {'source':new Subject(), 'sink':new Subject()};
     getUser = {'source':new Subject(), 'sink':new BehaviorSubject( JSON.parse(window.localStorage.getItem("user")) )};
     getAllUsers = {'source':new Subject(), 'sink':new BehaviorSubject()};

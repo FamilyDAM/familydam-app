@@ -16,7 +16,7 @@ import NewFolderIcon from 'material-ui-icons/CreateNewFolder';
 
 
 import AppShell from '../../library/appShell/AppShell';
-import AppActions from '../../actions/AppActions';
+import AppActions from '../../library/actions/AppActions';
 import Breadcrumb from '../../components/breadcrumb/Breadcrumb';
 import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
@@ -146,6 +146,7 @@ class FilesPage extends Component {
 
 
     handleFileSelectionChange(files){
+        debugger;
         this.setState({selectedFiles:files});
     }
 
@@ -178,7 +179,7 @@ class FilesPage extends Component {
 
         if( this.state.isLoading ){
             return (
-                <AppShell>
+                <AppShell user={this.props.user}>
                     <CircularProgress className={classes.progress} size={50} />
                 </AppShell>
             );
@@ -187,7 +188,7 @@ class FilesPage extends Component {
 
 
         return (
-            <AppShell>
+            <AppShell user={this.props.user}>
                 <div className={classes.fileGrid}>
                     <AppBar color="default" position="static" elevation={0}
                             className={classes.fileGridAppBar}

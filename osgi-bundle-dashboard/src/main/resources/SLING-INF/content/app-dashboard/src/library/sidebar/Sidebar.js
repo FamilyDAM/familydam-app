@@ -12,7 +12,7 @@ import List, {ListItem, ListItemText} from 'material-ui/List';
 import FolderIcon from 'material-ui-icons/Folder';
 //import PhotoIcon from 'material-ui-icons/Photo';
 
-import AppActions from '../../actions/AppActions';
+import AppActions from '../actions/AppActions';
 import UserActions from "../../actions/UserActions";
 
 
@@ -106,10 +106,9 @@ class Sidebar extends Component {
     }
 
     handleLogout(){
-        debugger;
         window.localStorage.clear();
         //UserActions.getUser.sink.next(next);
-        UserActions.logout.source.next(true);
+        AppActions.logout.source.next(true);
         AppActions.navigateTo.next("://");
     }
 
@@ -144,7 +143,7 @@ class Sidebar extends Component {
                         />
                     </div>
                     <div className={classes.sidebarProfileName}>
-                        <Typography component="div" type={"title"}>Mike Nimer</Typography>
+                        <Typography component="div" type={"title"}>{this.props.user.firstName} {this.props.user.lastName}</Typography>
                     </div>
                     <div className={classes.sidebarButtons}>
 

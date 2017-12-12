@@ -5,7 +5,7 @@ import {withStyles} from "material-ui/styles";
 
 import Sidebar from '../sidebar/Sidebar';
 import AppHeader from '../appheader/AppHeader';
-import AppActions from '../../actions/AppActions';
+import AppActions from '../actions/AppActions';
 
 
 const styleSheet = (theme) => ({
@@ -42,6 +42,7 @@ class AppShell extends Component {
         var isOpenCachedValue = window.localStorage.getItem("AppShell.isOpen");
 
         this.state = {
+            isMounted:true,
             isOpen:isOpenCachedValue ?isOpenCachedValue:true
         };
 
@@ -51,6 +52,16 @@ class AppShell extends Component {
 
 
     componentWillMount(){
+        this.setState({"isMounted":true});
+
+        AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
+            debugger;
+            if (path.substring(0, 3) === "://") {
+                window.location.href = path.substring(2);
+            }else{
+                this.props.history.push(path);
+            }
+        }.bind(this));
 
         AppActions.loadClientApps.sink.subscribe( (data)=> {
             if( data ) {
@@ -61,6 +72,10 @@ class AppShell extends Component {
             }
         });
         AppActions.loadClientApps.source.next(true);
+    }
+
+    componentWillUnmount() {
+        this.setState({"isMounted":false});
     }
 
     handleOpenMoreMenu(event){
@@ -88,6 +103,7 @@ class AppShell extends Component {
 
 
                 <Sidebar
+                    user={this.props.user}
                     apps={this.state.primaryApps}
                     secondaryApps={this.state.secondaryApps}
                     open={this.state.isOpen}

@@ -21,7 +21,7 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
 
 import FileListTableHead from './FileListTableHead';
-import AppActions from '../../actions/AppActions';
+import AppActions from '../../library/actions/AppActions';
 import fileActions from '../../actions/FileActions';
 
 const styleSheet = (theme) => ({
@@ -119,6 +119,7 @@ class FileList extends Component{
     };
 
     handleSelectAllClick = (event, checked) => {
+        debugger;
         if (checked) {
             var _files = this.state.files
                 .filter(n=> n['jcr:primaryType'] !== "dam:folder" && n['jcr:primaryType']!=='sling:Folder' && n['jcr:primaryType']!=='nt:folder')
@@ -130,10 +131,13 @@ class FileList extends Component{
                 this.props.onSelectionChange(_files);
             }
             return;
-        }
-        this.setState({ selected: [] });
-        if( this.props.onSelectionChange ){
-            this.props.onSelectionChange([]);
+
+        }else {
+
+            this.setState({selected: []});
+            if (this.props.onSelectionChange) {
+                this.props.onSelectionChange([]);
+            }
         }
     };
 

@@ -14,7 +14,7 @@ import Paper from 'material-ui/Paper';
 
 
 import AppShell from '../../library/appShell/AppShell';
-import AppActions from '../../actions/AppActions';
+import AppActions from '../../library/actions/AppActions';
 
 
 const styleSheet = (theme) => ({
@@ -88,14 +88,6 @@ class DashboardPage extends Component {
     componentWillMount(){
         this.setState({"isMounted":true});
 
-        AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
-            if (path.substring(0, 3) === "://") {
-                window.location.href = path.substring(2);
-            }else{
-                this.props.history.push(path);
-            }
-        }.bind(this));
-
 
         AppActions.loadClientApps.sink.subscribe( (data)=> {
             if( data ) {
@@ -129,7 +121,7 @@ class DashboardPage extends Component {
             );
         }else {
             return (
-                <AppShell>
+                <AppShell user={this.props.user} history={this.props.history}>
                     <div className={classes.contentContainer}>
                         <div className={classes.contentHeader}>
                             <Typography className={classes.contentHeaderLabel}>Hello {this.props.user.firstName},</Typography>

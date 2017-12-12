@@ -12,7 +12,7 @@ import MoreVertIcon from 'material-ui-icons/MoreVert';
 import MenuIcon from 'material-ui-icons/Menu';
 import Typography from 'material-ui/Typography';
 
-import AppActions from '../../actions/AppActions';
+import AppActions from '../actions/AppActions';
 import UserActions from "../../actions/UserActions";
 
 
@@ -90,17 +90,15 @@ class AppHeader extends Component {
     }
 
     handleLogout(){
-        debugger;
         window.localStorage.clear();
         //UserActions.getUser.sink.next(next);
-        UserActions.logout.source.next(true);
+        AppActions.logout.source.next(true);
         AppActions.navigateTo.next("://");
     }
 
 
     render() {
         var classes = this.props.classes;
-
 
         return (
             <AppBar className={classes.root} position="static">
