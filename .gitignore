@@ -1,6 +1,7 @@
 sling
 tools
 dist
+build
 target
 .sass-cache
 .build-app

@@ -32,7 +32,7 @@
     <groupId>com.familydam.apps</groupId>
     <artifactId>osgi-bundle-usermanager</artifactId>
     <packaging>bundle</packaging>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
 
     <name>OSGI User Manager Bundle</name>
     <description>com.familydam.bundles - osgi-bundle-cloudfiles</description>
