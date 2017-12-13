@@ -7,4 +7,4 @@ os:
 env:
   global:
     - JAVA_OPTS=""
-script: mvn clean verify
+script: mvn clean install -p build-clients
