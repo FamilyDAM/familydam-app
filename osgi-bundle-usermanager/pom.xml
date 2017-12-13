@@ -286,6 +286,21 @@
                         <version>1.4.0</version>
                         <executions>
                             <execution>
+                                <id>npm install</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <executable>npm</executable>
+                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-dashboard</workingDirectory>
+                                    <arguments>
+                                        <argument>install</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+
+                            <execution>
                                 <id>exec-npm-install-dashboard</id>
                                 <phase>generate-sources</phase>
                                 <configuration>
