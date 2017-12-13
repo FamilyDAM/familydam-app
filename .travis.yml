@@ -7,4 +7,11 @@ os:
 env:
   global:
     - JAVA_OPTS=""
-script: mvn clean install -p build-clients
+deploy:
+  provider: releases
+  api_key: ""
+  file: "./client-desktop/dist/FamilyDAM-0.2.1.dmg"
+  skip_cleanup: true
+  on:
+    tags: true
+script: mvn -P build-clients clean install
