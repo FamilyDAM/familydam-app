@@ -14,7 +14,7 @@ const styleSheet = (theme) => ({
         height: '100px',
         position: 'absolute',
         top: '50%',
-        left: '50%',
+        left: '3px',
         transform: 'translate(-50%, -50%)'
     }
 });
@@ -22,6 +22,11 @@ const styleSheet = (theme) => ({
 class LoadingButton extends Component {
 
     constructor(props, context) {
+
+        if( !props.style ){
+            props.style = {};
+        }
+
         super(props);
         this.handleClick = this.handleClick.bind(this);
     }
@@ -42,6 +47,7 @@ class LoadingButton extends Component {
             <Button
                 raised
                 color="accent"
+                style={this.props.style}
                 onClick={this.handleClick}>
                 {this.props.isLoading &&
                 <CircularProgress className={classes.progress} color="#fff" size={25}/>

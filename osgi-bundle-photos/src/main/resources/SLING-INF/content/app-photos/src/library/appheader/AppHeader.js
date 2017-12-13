@@ -12,8 +12,7 @@ import MoreVertIcon from 'material-ui-icons/MoreVert';
 import MenuIcon from 'material-ui-icons/Menu';
 import Typography from 'material-ui/Typography';
 
-import AppActions from '../../actions/AppActions';
-import UserActions from "../../actions/UserActions";
+import AppActions from '../actions/AppActions';
 
 
 const styleSheet = (theme) => ({
@@ -100,7 +99,6 @@ class AppHeader extends Component {
     render() {
         var classes = this.props.classes;
 
-
         return (
             <AppBar className={classes.root} position="static">
                 <Toolbar>
@@ -144,7 +142,7 @@ class AppHeader extends Component {
             </AppBar>
         );
 
-        var classes = this.props.classes;
+
     }
 }
 

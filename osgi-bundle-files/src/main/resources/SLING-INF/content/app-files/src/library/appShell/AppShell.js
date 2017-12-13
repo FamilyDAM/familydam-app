@@ -88,9 +88,21 @@ class AppShell extends Component {
         window.localStorage.setItem("AppShell.isOpen", val);
     }
 
+    handleLogout(){
+        window.localStorage.clear();
+        //UserActions.getUser.sink.next(next);
+        AppActions.logout.source.next(true);
+        AppActions.navigateTo.next("://");
+    }
+
 
     render() {
         var classes = this.props.classes;
+
+        if( !this.props.user ){
+            this.handleLogout();
+            return;
+        }
 
         return (
             <div className={this.state.isOpen?classes.dashboardShellContainerOpen:classes.dashboardShellContainerClosed}>

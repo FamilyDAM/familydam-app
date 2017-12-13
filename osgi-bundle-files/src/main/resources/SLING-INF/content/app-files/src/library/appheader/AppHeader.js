@@ -13,7 +13,6 @@ import MenuIcon from 'material-ui-icons/Menu';
 import Typography from 'material-ui/Typography';
 
 import AppActions from '../actions/AppActions';
-import UserActions from "../../actions/UserActions";
 
 
 const styleSheet = (theme) => ({
@@ -143,7 +142,7 @@ class AppHeader extends Component {
             </AppBar>
         );
 
-        var classes = this.props.classes;
+
     }
 }
 
