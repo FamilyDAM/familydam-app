@@ -293,7 +293,7 @@
                                 <phase>initialize</phase>
                                 <configuration>
                                     <executable>npm</executable>
-                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-dashboard</workingDirectory>
+                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-files</workingDirectory>
                                     <arguments>
                                         <argument>install</argument>
                                     </arguments>
@@ -304,7 +304,7 @@
                                 <phase>generate-sources</phase>
                                 <configuration>
                                     <executable>npm</executable>
-                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-dashboard</workingDirectory>
+                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-files</workingDirectory>
                                     <arguments>
                                         <argument>run</argument>
                                         <argument>build</argument>

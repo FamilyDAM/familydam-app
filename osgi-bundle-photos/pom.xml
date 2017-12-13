@@ -352,7 +352,7 @@
                                 <phase>initialize</phase>
                                 <configuration>
                                     <executable>npm</executable>
-                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-dashboard</workingDirectory>
+                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-photos</workingDirectory>
                                     <arguments>
                                         <argument>install</argument>
                                     </arguments>
