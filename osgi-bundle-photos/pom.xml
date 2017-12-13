@@ -364,7 +364,7 @@
                                 <phase>generate-sources</phase>
                                 <configuration>
                                     <executable>npm</executable>
-                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-photos/</workingDirectory>
+                                    <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-photos</workingDirectory>
                                     <arguments>
                                         <argument>run</argument>
                                         <argument>build</argument>
