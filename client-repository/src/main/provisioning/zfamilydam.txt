@@ -23,12 +23,12 @@
     end
 
 [variables]
-    core.version=0.2.0-SNAPSHOT
-    dashboard.version=0.2.0-SNAPSHOT
-    photos.version=0.2.0-SNAPSHOT
-    files.version=0.2.0-SNAPSHOT
-    usermanager.version=0.2.0-SNAPSHOT
-    sync.version=0.2.0-SNAPSHOT
+    core.version=0.2.1-SNAPSHOT
+    dashboard.version=0.2.1-SNAPSHOT
+    photos.version=0.2.1-SNAPSHOT
+    files.version=0.2.1-SNAPSHOT
+    usermanager.version=0.2.1-SNAPSHOT
+    sync.version=0.2.1-SNAPSHOT
 
 [artifacts]
    com.familydam.osgi/osgi-bundle-core/${core.version}
@@ -40,4 +40,4 @@
 
 
 [variables]
-    test.version=0.2.0-SNAPSHOT
+    test.version=0.2.1-SNAPSHOT

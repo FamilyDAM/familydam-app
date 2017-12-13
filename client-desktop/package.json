@@ -16,7 +16,8 @@
     "electron-builder-squirrel-windows": "^19.36.0",
     "electron-packager": "^9.1.0",
     "electron-webpack": "^1.6.1",
-    "webpack": "^3.6.0"
+    "webpack": "^3.6.0",
+    "webpack-sources": "1.0.1"
   },
   "build": {
     "productName": "FamilyDAM",
