@@ -13,7 +13,6 @@ import FolderIcon from 'material-ui-icons/Folder';
 //import PhotoIcon from 'material-ui-icons/Photo';
 
 import AppActions from '../actions/AppActions';
-import UserActions from "../../actions/UserActions";
 
 
 const styleSheet = (theme) => ({

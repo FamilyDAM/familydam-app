@@ -104,7 +104,7 @@
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>run</argument>
-                                        <argument>dist</argument>
+                                        <argument>dist:mac</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
