@@ -27,7 +27,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "install": "yarn install",
     "translate": "NODE_ENV=production babel ./src >/dev/null",
     "manage:translations": "node ./scripts/translationRunner.js",
     "storybook": "start-storybook -p 9009 -s public",
