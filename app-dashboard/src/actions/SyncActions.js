@@ -11,6 +11,7 @@ module.exports = {
 
     authFacebook: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
     authTwitter: {'source':new Rx.Subject(), 'sink':new Rx.Subject()},
+    authDropbox: {'source':new Rx.Subject(), 'sink':new Rx.Subject()}
 
 };
 

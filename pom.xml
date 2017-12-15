@@ -23,7 +23,7 @@
     <artifactId>familydam-all</artifactId>
     <packaging>pom</packaging>
     <version>0.1.4-SNAPSHOT</version>
-    <name>FamilyDAM App</name>
+    <name>Client Repository Parent</name>
     <description>Parent POM for FamilyDAM Applications</description>
 
     <properties>

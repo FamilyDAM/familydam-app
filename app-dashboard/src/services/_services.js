@@ -18,8 +18,9 @@ var PhotoTagsListService = require('./photos/PhotoTagsListService');
 var PhotoPeopleListService = require('./photos/PhotoPeopleListService');
 var PhotoDateTreeService = require('./photos/PhotoDateTreeService');
 var PhotoSearchService = require('./photos/PhotoSearchService');
-var FBAuthService = require('./social/FBAuthService');
-var TwitterAuthService = require('./social/TwitterAuthService');
+var FBAuthService = require('./sync/FBAuthService');
+var TwitterAuthService = require('./sync/TwitterAuthService');
+var DropboxAuthService = require('./sync/DropboxAuthService');
 
 
 module.exports = {
@@ -44,5 +45,6 @@ module.exports = {
         PhotoSearchService.subscribe();
         FBAuthService.subscribe();
         TwitterAuthService.subscribe();
+        DropboxAuthService.subscribe();
     }
 };

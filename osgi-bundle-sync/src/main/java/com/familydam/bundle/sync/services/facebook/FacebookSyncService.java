@@ -1,6 +1,5 @@
 package com.familydam.bundle.sync.services.facebook;
 
-import com.familydam.apps.dashboard.servlets.HealthServlet;
 import com.familydam.bundle.sync.FamilyDAMSyncConstants;
 import com.familydam.bundle.sync.services.SyncService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,17 +12,15 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.fluent.Request;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;
-import org.apache.jackrabbit.api.security.user.QueryBuilder;
-import org.apache.jackrabbit.api.security.user.User;
-import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.value.StringValue;
-import org.apache.sling.api.resource.*;
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.nio.ch.IOUtil;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -31,7 +28,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

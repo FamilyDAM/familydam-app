@@ -31,7 +31,7 @@ var LinkContainer = require('react-router-bootstrap').LinkContainer;
 
 var NavigationActions = require('../../actions/NavigationActions');
 var UserActions = require('../../actions/UserActions');
-var SocialActions = require('../../actions/SocialActions');
+var SyncActions = require('../../actions/SyncActions');
 var UserStore = require('../../stores/UserStore');
 
 //var LoadingIcon = require('./../../components/loadingIcon/LoadingIcon.jsx');
@@ -232,11 +232,15 @@ module.exports = React.createClass({
 
     handleFacebookAuth: function (event_) {
         //Start the FB auth chain
-        SocialActions.authFacebook.source.onNext(true);
+        SyncActions.authFacebook.source.onNext(true);
     },
     handleTwitterAuth: function (event_) {
         //Start the FB auth chain
-        SocialActions.authTwitter.source.onNext(true);
+        SyncActions.authTwitter.source.onNext(true);
+    },
+    handleDropboxAuth: function (event_) {
+        //Start the FB auth chain
+        SyncActions.authDropbox.source.onNext(true);
     },
 
 
@@ -368,9 +372,10 @@ module.exports = React.createClass({
                                                 <RaisedButton label="Authorize" onClick={()=>this.handleFacebookAuth()}/>
                                             </TableRowColumn>
                                         </TableRow>
+
                                         <TableRow>
                                             <TableRowColumn colSpan={3}>
-                                                Twitter (coming soon)
+                                                Twitter
                                             </TableRowColumn>
                                             <TableRowColumn>
                                                 <Toggle
@@ -399,6 +404,19 @@ module.exports = React.createClass({
                                     <TableBody displayRowCheckbox={false}>
                                         <TableRow>
                                             <TableRowColumn colSpan={3}>
+                                                Dropbox
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <Toggle
+                                                    label="Enabled"
+                                                />
+                                            </TableRowColumn>
+                                            <TableRowColumn>
+                                                <RaisedButton label="Authorize" onClick={()=>this.handleDropboxAuth()}/>
+                                            </TableRowColumn>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableRowColumn colSpan={3}>
                                                 Google Drive (coming soon)
                                             </TableRowColumn>
                                             <TableRowColumn>
@@ -411,20 +429,7 @@ module.exports = React.createClass({
                                                 <RaisedButton disabled={true} label="Authorize"/>
                                             </TableRowColumn>
                                         </TableRow>
-                                        <tr>
-                                            <TableRowColumn colSpan={3}>
-                                                Dropbox (coming soon)
-                                            </TableRowColumn>
-                                            <TableRowColumn>
-                                                <Toggle
-                                                    label="Enabled"
-                                                    disabled={true}
-                                                />
-                                            </TableRowColumn>
-                                            <TableRowColumn>
-                                                <RaisedButton disabled={true} label="Authorize"/>
-                                            </TableRowColumn>
-                                        </tr>
+
                                     </TableBody>
                                 </Table>
                             </Tab>

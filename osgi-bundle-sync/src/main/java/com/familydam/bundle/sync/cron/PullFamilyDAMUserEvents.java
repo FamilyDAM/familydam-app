@@ -138,6 +138,19 @@ public class PullFamilyDAMUserEvents implements Runnable {
                                     twitterNode.setProperty("tokenSecret", (String)((Map)event.get("message")).get("tokenSecret")  );
                                     adminSession.save();
                                 }
+                                else if( ((String)event.get("type")).equalsIgnoreCase("dropbox_login_token") )
+                                {
+                                    if( !secNode.hasNode("dropbox") ){
+                                        secNode.addNode("dropbox", JcrConstants.NT_UNSTRUCTURED);
+                                    }
+
+                                    Node dropboxNode = secNode.getNode("dropbox");
+                                    dropboxNode.setProperty("access_token", (String)((Map)event.get("message")).get("access_token")  );
+                                    dropboxNode.setProperty("token_type", (String)((Map)event.get("message")).get("token_type")  );
+                                    dropboxNode.setProperty("account_id", (String)((Map)event.get("message")).get("account_id")  );
+                                    dropboxNode.setProperty("uid", (String)((Map)event.get("message")).get("uid")  );
+                                    adminSession.save();
+                                }
                             }
                         }
 

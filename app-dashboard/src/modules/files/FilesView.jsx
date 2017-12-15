@@ -131,8 +131,8 @@ module.exports = React.createClass({
 
 
         // listen for trigger to reload for files in directory
-        this.refreshFilesSubscription = FileActions.refreshFiles.subscribe(function (data_) {
-            var _path = this.state.selectedPath;
+        this.refreshFilesSubscription = FileActions.refhis.statereshFiles.subscribe(function (data_) {
+                var _path = t.selectedPath;
             FileActions.getFiles.source.onNext("");
             FileActions.getFiles.source.onNext(_path);
         }.bind(this));
