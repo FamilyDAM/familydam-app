@@ -71,7 +71,7 @@
   "scripts": {
     "clean": "rm -fr ./dist/*",
     "copy": "npm run copy:config && npm run copy:repo",
-    "copy:config": "rm -fr static/config/* && cp -r ../app-configwizard/build/* static/config/ ",
+    "copy:config": "rm -fr static/config/* && cp -r ../app-configwizard/dist/* static/config/ ",
     "copy:repo": "rm -fr resources/FamilyDAM-*.jar && cp -rv ../client-repository/target/FamilyDAM-*.jar resources/",
     "dev": "electron-webpack dev",
     "compile": "rm -fr ./dist/main/* && electron-webpack",

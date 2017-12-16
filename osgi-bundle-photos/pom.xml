@@ -32,18 +32,22 @@
     </properties>
 
 
+    <parent>
+        <groupId>com.familydam.repository</groupId>
+        <artifactId>familydam</artifactId>
+        <version>0.2.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+
     <dependencies>
-
-
         <dependency>
             <groupId>com.familydam.osgi</groupId>
             <artifactId>osgi-bundle-core</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-dashboard</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
         </dependency>
 
 
@@ -51,18 +55,15 @@
         <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
-            <version>2.7.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.xmp</groupId>
             <artifactId>xmpcore</artifactId>
-            <version>5.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.imgscalr</groupId>
             <artifactId>imgscalr-lib</artifactId>
-            <version>4.2</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -78,7 +79,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -86,13 +86,11 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <version>4.2.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>4.2.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -103,7 +101,6 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>1.9.8</version>
             <scope>provided</scope>
         </dependency>
 
@@ -112,69 +109,59 @@
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
-            <version>2.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
-            <version>2.14.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.event</artifactId>
-            <version>4.1.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.api</artifactId>
-            <version>2.4.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.resource</artifactId>
-            <version>2.8.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.commons.osgi</artifactId>
-            <version>2.4.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.commons.json</artifactId>
-            <version>2.0.18</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>oak-core</artifactId>
-            <version>1.5.7</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>oak-segment</artifactId>
-            <version>1.5.5</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-commons</artifactId>
-            <version>2.13.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -182,20 +169,17 @@
         <dependency>
             <groupId>org.im4java</groupId>
             <artifactId>im4java</artifactId>
-            <version>1.4.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-imaging</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
-            <version>0.4.8</version>
         </dependency>
 
 
@@ -204,17 +188,14 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.7.3</version>
         </dependency>
 
 
@@ -223,14 +204,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
