@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from '@material-ui/core/styles';
 
 
 import Sidebar from '../sidebar/Sidebar';

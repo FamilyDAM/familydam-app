@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 import {IntlProvider} from 'react-intl';
 
-import {withStyles} from 'material-ui/styles';
-import {CircularProgress} from 'material-ui/Progress';
+import {withStyles} from '@material-ui/core/styles';
+import {CircularProgress} from '@material-ui/core/CircularProgress';
 
 //views
 import FilesPage from './pages/files/FilesPage';

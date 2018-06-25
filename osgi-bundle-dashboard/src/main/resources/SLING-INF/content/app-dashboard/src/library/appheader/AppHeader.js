@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 
-import AppBar from 'material-ui/AppBar';
+import AppBar from '@material-ui/core/AppBar';
 //import Button from 'material-ui/Button';
-import Toolbar from 'material-ui/Toolbar';
-import IconButton from 'material-ui/IconButton';
-import Divider from 'material-ui/Divider';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import MoreVertIcon from 'material-ui-icons/MoreVert';
-import MenuIcon from 'material-ui-icons/Menu';
-import Typography from 'material-ui/Typography';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Divider from '@material-ui/core/Divider';
+import Menu, { MenuItem } from '@material-ui/core/Menu';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MenuIcon from '@material-ui/icons/Menu';
+import Typography from '@material-ui/core/Typography';
 
 import AppActions from '../actions/AppActions';
 
