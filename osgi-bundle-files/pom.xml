@@ -273,6 +273,10 @@
                                 </goals>
                                 <phase>initialize</phase>
                                 <configuration>
+                                    <environmentVariables>
+                                        <key>NODE_ENV</key>
+                                        <value>development</value>
+                                    </environmentVariables>
                                     <executable>npm</executable>
                                     <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-files</workingDirectory>
                                     <arguments>

@@ -9,7 +9,7 @@
     "filesize": "^3.5.11",
     "jsDump": "^1.1.0",
     "keycode": "^2.1.9",
-    "material-ui": "^1.0.0-beta.22",
+    "material-ui": "^1.0.0-beta.37",
     "material-ui-community-icons": "^0.15.0",
     "material-ui-icons": "^1.0.0-beta.17",
     "nodedump": "0.0.8",
@@ -25,11 +25,18 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "set NODE_ENV=development && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "translate": "NODE_ENV=production babel ./src >/dev/null",
     "manage:translations": "node ./scripts/translationRunner.js",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
+  },
+  "devDependencies": {
+    "aemsync": "^3.0.0"
+  },
+  "todo": {
+    "sling": "https://blog.jayway.com/2014/03/28/running-scripts-with-npm/",
+    "curl": "https://stackoverflow.com/questions/45382383/doing-curl-post-request-as-an-npm-script"
   }
 }

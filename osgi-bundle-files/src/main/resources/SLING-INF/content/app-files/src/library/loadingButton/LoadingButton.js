@@ -45,7 +45,6 @@ class LoadingButton extends Component {
 
         return (
             <Button
-                raised
                 color="accent"
                 style={this.props.style}
                 onClick={this.handleClick}>

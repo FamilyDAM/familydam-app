@@ -9,7 +9,7 @@ import {CircularProgress} from 'material-ui/Progress';
 import FilesPage from './pages/files/FilesPage';
 
 import UserActions from './actions/UserActions';
-
+//import AppSettings from './library/actions/AppSettings';
 
 const styleSheet = (theme) => ({
     progress: {
@@ -33,21 +33,24 @@ class App extends Component {
             "context": context,
             "locale": "en-EN",
             "isAuthenticated": false,
-            "isLoading": false,
-            "isMounted": true
+            "isLoading": true,
+            "isMounted": false
         };
-
+        // set it running locally with npm start, so you can still call running server
+        //AppSettings.baseHost.next("http://localhost:9000");
     }
 
 
-    componentWillMount(){
-        this.setState({"isMounted":true});
+    componentWillMount() {
+        this.setState({"isMounted": true});
+    }
 
+    componentDidMount(){
         UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
             // redirect to dashboard
             if( user_ )
             {
-                this.setState({"isAuthenticated":true, "user": user_});
+                this.setState({"isAuthenticated":true, "isLoading":false, "user": user_});
             }
         });
     }

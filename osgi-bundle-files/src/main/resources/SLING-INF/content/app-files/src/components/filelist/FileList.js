@@ -65,7 +65,7 @@ class FileList extends Component{
     }
 
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({isMounted:true});
 
         fileActions.getFileAndFolders.sink.takeWhile(() => this.state.isMounted).subscribe((data_)=>{

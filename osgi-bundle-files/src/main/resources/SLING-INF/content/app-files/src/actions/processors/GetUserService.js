@@ -10,7 +10,7 @@ import request from 'superagent';
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors
  * @type {{subscribe: Function, onNext: Function}}
  */
-class GetAllUsersService {
+class GetUsersService {
 
     sink=undefined;
 
@@ -79,4 +79,4 @@ class GetAllUsersService {
 }
 
 
-export default GetAllUsersService;
+export default GetUsersService;

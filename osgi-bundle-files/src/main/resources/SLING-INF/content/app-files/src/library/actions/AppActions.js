@@ -14,7 +14,7 @@ class AppActions {
     navigateTo = new Subject();
 
     //used to call reposity to get list of installed apps
-    loadClientApps = {source:new BehaviorSubject(), sink: new BehaviorSubject()};
+    loadClientApps = {source:new Subject(), sink: new BehaviorSubject()};
 
 }
 

@@ -82,7 +82,7 @@ class FilesPage extends Component {
         super(props);
 
         this.state = {
-            isMounted:true,
+            isMounted:false,
             isLoading:false,
             canAddFile:true,
             canAddFolder:true,
@@ -101,20 +101,21 @@ class FilesPage extends Component {
     }
 
     componentWillMount(){
-
+        this.setState({isMounted:true});
         this.validatePath();
-        this.setState({"isMounted":true});
+    }
 
-
-        AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
+    componentDidMount(){
+        AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe((path)=>{
+            console.log("{FilesPage} navigateTo=" +path);
             if (path.substring(0, 3) === "://") {
-                window.location.href = path.substring(2);
+                //window.location.href = path.substring(2);
             }else{
-                this.props.history.push(path);
+                //this.props.history.push(path);
             }
 
             this.setState({"selectedFiles":[]});
-        }.bind(this));
+        });
     }
 
     componentWillUnmount(){
@@ -138,15 +139,15 @@ class FilesPage extends Component {
         }
 
         if( _path.toString().startsWith(this.state.visibleRoot)) {
-            this.setState({"path": _path, "isMounted":true});
+            this.setState({"path": _path});
         }else{
             //todo show invalid path
+            console.log("Invalid Path: " +_path);
         }
     }
 
 
     handleFileSelectionChange(files){
-        debugger;
         this.setState({selectedFiles:files});
     }
 
