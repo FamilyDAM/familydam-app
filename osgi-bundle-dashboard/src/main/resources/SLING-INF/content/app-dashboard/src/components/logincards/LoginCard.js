@@ -2,14 +2,14 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import React, {Component} from 'react';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 
-import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
-import ButtonBase from 'material-ui/ButtonBase';
-import TextField from "material-ui/TextField";
-import Typography from "material-ui/Typography";
-import AccountCircle from 'material-ui-icons/AccountCircle';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 import LoadingButton from '../../library/loadingButton/LoadingButton';
 

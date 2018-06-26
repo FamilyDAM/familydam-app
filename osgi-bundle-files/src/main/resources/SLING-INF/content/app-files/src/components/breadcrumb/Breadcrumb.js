@@ -2,7 +2,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import React, {Component} from 'react';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from '@material-ui/core/styles';
 import AppActions from "../../library/actions/AppActions";
 
 const styleSheet = (theme) => ({
@@ -94,14 +94,23 @@ class Breadcrumb extends Component {
         return (
             <div >
                 <ol className={classes.breadcrumb}>
-                    {this.state.paths.map(function (path_) {
+                    {this.state.paths.map( (path_) => {
+                    debugger;
                         if (path_.path)
                         {
-                            return (
-                                <li className={classes.li} key={path_.path} onClick={()=>AppActions.navigateTo.next(path_.path)}>
-                                    {path_.label}
-                                </li>
-                            );
+                            if( path_.path.length > this.props.root){
+                                return (
+                                    <li className={classes.li} key={path_.path} onClick={()=>AppActions.navigateTo.next(path_.path)}>
+                                        <u style="color:blue">{path_.label}</u>
+                                    </li>
+                                );
+                            }else{
+                                return (
+                                    <li className={classes.li} key={path_.path}>
+                                        {path_.label}
+                                    </li>
+                                );
+                            }
 
                         } else
                         {

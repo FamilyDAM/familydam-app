@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 import {
@@ -7,8 +7,8 @@ import {
     TableHead,
     TableRow,
     TableSortLabel,
-} from 'material-ui/Table';
-import Checkbox from 'material-ui/Checkbox';
+} from '@material-ui/core/Table';
+import Checkbox from '@material-ui/core/Checkbox';
 
 
 

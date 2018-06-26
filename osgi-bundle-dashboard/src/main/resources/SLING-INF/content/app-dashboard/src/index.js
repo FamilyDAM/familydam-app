@@ -4,11 +4,11 @@ import {addLocaleData} from 'react-intl';
 import registerServiceWorker from './registerServiceWorker';
 
 
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 //@see https://www.materialpalette.com
-import deepPurple from 'material-ui/colors/deepPurple';
-import indigo from 'material-ui/colors/indigo';
-import red from 'material-ui/colors/red';
+import deepPurple from '@material-ui/core/colors/deepPurple';
+import indigo from '@material-ui/core/colors/indigo';
+import red from '@material-ui/core/colors/red';
 import './index.css';
 
 import App from './App';

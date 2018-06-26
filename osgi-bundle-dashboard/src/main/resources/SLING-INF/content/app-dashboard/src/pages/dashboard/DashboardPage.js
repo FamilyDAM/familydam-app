@@ -4,13 +4,13 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {injectIntl} from 'react-intl';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from '@material-ui/core/styles';
 
-import {CircularProgress} from 'material-ui/Progress';
-import Typography from 'material-ui/Typography';
-import FileIcon from 'material-ui-icons/InsertDriveFile';
+import {CircularProgress} from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import FileIcon from '@material-ui/icons/InsertDriveFile';
 //import PhotoIcon from 'material-ui-icons/PhotoLibrary';
-import Paper from 'material-ui/Paper';
+import Paper from '@material-ui/core/Paper';
 
 
 import AppShell from '../../library/appShell/AppShell';

@@ -2,27 +2,28 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import React, {Component} from 'react';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from '@material-ui/core/styles';
 //import AppActions from "../../actions/AppActions";
 import {FormattedMessage} from 'react-intl'; //, FormattedPlural, FormattedDate
 import filesize from 'filesize';
 import uuid from 'uuid';
 
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Button from 'material-ui/Button';
-import Typography from 'material-ui/Typography';
-import Input from 'material-ui/Input';
-import Select from 'material-ui/Select';
-import {MenuItem} from 'material-ui/Menu';
-//import Typography from 'material-ui/Typography';
-import Slide from 'material-ui/transitions/Slide';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import Input from '@material-ui/core/Input';
+import Select from '@material-ui/core/Select';
+import {MenuItem} from '@material-ui/core/Menu';
+//import Typography from '@material-ui/core/Typography';
+import Slide from '@material-ui/core/Slide';
 
-import Table, {TableBody, TableCell, TableHead, TableRow} from 'material-ui/Table';
-import Dialog from 'material-ui/Dialog';
-import {CircularProgress, LinearProgress} from 'material-ui/Progress';
-import CheckIcon from 'material-ui-icons/Check';
-import FileUploadIcon from 'material-ui-icons/FileUpload';
+import Table, {TableBody, TableCell, TableHead, TableRow} from '@material-ui/core/Table';
+import Dialog from '@material-ui/core/Dialog';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import CheckIcon from '@material-ui/icons/Check';
+import FileUploadIcon from '@material-ui/icons/FileUpload';
 
 import {Receiver} from 'react-file-uploader';
 import FileActions from '../../actions/FileActions';

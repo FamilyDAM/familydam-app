@@ -277,7 +277,10 @@
     <profiles>
         <profile>
             <id>build-clients</id>
-
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+ 
             <build>
                 <plugins>
                     <plugin>

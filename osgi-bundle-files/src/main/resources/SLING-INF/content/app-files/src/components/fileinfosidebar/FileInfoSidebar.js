@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import Paper from "material-ui/Paper";
-import Typography from "material-ui/Typography";
-import {GridList, GridListTile, GridListTileBar} from 'material-ui/GridList';
-import IconButton from 'material-ui/IconButton';
-import StarBorderIcon from 'material-ui-icons/StarBorder';
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import {GridList, GridListTile, GridListTileBar} from '@material-ui/core/GridList';
+import IconButton from '@material-ui/core/IconButton';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 
 import FileListTableToolbar from '../filelist/FileListTableToolbar';
