@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
 import keycode from 'keycode';
 
@@ -9,16 +9,16 @@ import Table, {
     TableBody,
     TableCell,
     TableRow
-} from 'material-ui/Table';
-import Button from 'material-ui/Button';
-import Paper from 'material-ui/Paper';
-import Checkbox from 'material-ui/Checkbox';
-import Typography from 'material-ui/Typography';
-import FolderIcon from 'material-ui-icons/Folder';
-import PhotoIcon from 'material-ui-icons/Photo';
-import DownloadIcon from 'material-ui-icons/FileDownload';
-import DeleteIcon from 'material-ui-icons/Delete';
-import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
+} from '@material-ui/core/Table';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@material-ui/core/Typography';
+import FolderIcon from '@material-ui/icons/Folder';
+import PhotoIcon from '@material-ui/icons/Photo';
+import DownloadIcon from '@material-ui/icons/FileDownload';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Dialog, { DialogActions, DialogContent, DialogTitle } from '@material-ui/core/Dialog';
 
 import FileListTableHead from './FileListTableHead';
 import AppActions from '../../library/actions/AppActions';

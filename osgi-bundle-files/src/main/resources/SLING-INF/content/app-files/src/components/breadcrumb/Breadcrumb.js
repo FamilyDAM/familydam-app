@@ -2,7 +2,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import React, {Component} from 'react';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 import AppActions from "../../library/actions/AppActions";
 
 const styleSheet = (theme) => ({

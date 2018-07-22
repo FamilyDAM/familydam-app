@@ -2,14 +2,14 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import React, {Component} from 'react';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 //import AppActions from "../../actions/AppActions";
 
-import Button from 'material-ui/Button';
-//import Typography from 'material-ui/Typography';
-import Slide from 'material-ui/transitions/Slide';
-import TextField from 'material-ui/TextField';
-import Dialog, {DialogActions, DialogContent, DialogTitle} from 'material-ui/Dialog';
+import Button from '@material-ui/core/Button';
+//import Typography from '@material-ui/core/Typography';
+import Slide from '@material-ui/core/Slide';
+import TextField from '@material-ui/core/TextField';
+import Dialog, {DialogActions, DialogContent, DialogTitle} from '@material-ui/core/Dialog';
 
 import FileActions from '../../actions/FileActions';
 

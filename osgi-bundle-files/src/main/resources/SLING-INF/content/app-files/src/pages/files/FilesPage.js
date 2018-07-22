@@ -4,15 +4,15 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {injectIntl} from 'react-intl';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 
-import {CircularProgress} from 'material-ui/Progress';
-import AppBar from 'material-ui/AppBar';
-import Button from 'material-ui/Button';
-import Toolbar from 'material-ui/Toolbar';
-import FileUpload from 'material-ui-icons/FileUpload';
-import FolderIcon from 'material-ui-icons/Folder';
-import NewFolderIcon from 'material-ui-icons/CreateNewFolder';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
+import Toolbar from '@material-ui/core/Toolbar';
+import FileUpload from '@material-ui/icons/FileUpload';
+import FolderIcon from '@material-ui/icons/Folder';
+import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 
 
 import AppShell from '../../library/appShell/AppShell';

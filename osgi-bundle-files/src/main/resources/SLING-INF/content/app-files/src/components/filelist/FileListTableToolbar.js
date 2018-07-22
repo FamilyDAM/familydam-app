@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-import IconButton from 'material-ui/IconButton';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import DeleteIcon from 'material-ui-icons/Delete';
-import FileDownloadIcon from 'material-ui-icons/FileDownload';
+import IconButton from '@material-ui/core/IconButton';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
+import FileDownloadIcon from '@material-ui/icons/FileDownload';
 
 
 
