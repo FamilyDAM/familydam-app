@@ -3,16 +3,17 @@
  */
 import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
-import {withStyles} from '@material-ui/core/styles';
+import {withStyles} from "@material-ui/core/styles";
 
 import Clock from '../../components/clock/Clock';
-import {CircularProgress} from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import LoginCards from '../../components/logincards/LoginCards';
 import SignupCard from '../../components/signupcard/SignupCard';
 
 import UserActions from '../../actions/UserActions';
 import AppActions from '../../library/actions/AppActions';
+
 
 const styleSheet = (theme) => ({
     loginView: {

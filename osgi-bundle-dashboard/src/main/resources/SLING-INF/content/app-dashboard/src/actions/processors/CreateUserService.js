@@ -2,6 +2,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import AppActions from '../../library/actions/AppActions';
+import AppSettings from '../../library/actions/AppSettings';
 import request from 'superagent';
 
 /**
@@ -45,15 +46,17 @@ class CreateUserService {
         };
 
 
-        var u = window.localStorage.getItem("u");
-        var p = window.localStorage.getItem("p");
+        const baseUrl = AppSettings.baseHost.getValue();
+        const user = AppSettings.basicUser.getValue();
+        const pwd = AppSettings.basicPwd.getValue();
+
 
         request
-            .post('http://localhost:9000/api/familydam/v1/dashboard/user/create')
+            .post( baseUrl +'/api/familydam/v1/dashboard/user/create')
             .send(_props)
             .withCredentials()
             .set('Accept', 'application/json')
-            .set('Authorization', 'user ' +u +":" +p)
+            .set('Authorization', 'user ' +user +":" +pwd)
             .end((err, res)=>{
 
                 if( !err ){

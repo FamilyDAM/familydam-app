@@ -3,7 +3,6 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import AppActions from '../AppActions';
-import AppSettings from '../AppSettings';
 import request from 'superagent';
 
 
@@ -11,7 +10,7 @@ import request from 'superagent';
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors
  * @type {{subscribe: Function, onNext: Function}}
  */
-class LoadClientAppsService {
+class LoginService {
 
     sink=undefined;
 
@@ -28,18 +27,16 @@ class LoadClientAppsService {
      */
     loadApps(data_)
     {
-        //var u = window.localStorage.getItem("u");
-        //var p = window.localStorage.getItem("p");
+        var u = window.localStorage.getItem("u");
+        var p = window.localStorage.getItem("p");
         //.set('Authorization', 'user ' +u +":" +p)
 
-        AppSettings.baseHost.subscribe( (baseUrl)=>{
-
-            //call server get list of apps
-            request.get(baseUrl +'/api/familydam/v1/core/clientapps')
-                .withCredentials()
-                .set('Accept', 'application/json')
-                //.set('Authorization', 'Basic ' +btoa(u +":" +p))
-                .end((err, res)=>{
+        //call server get list of apps
+        request.get('http://localhost:9000/api/familydam/v1/core/clientapps')
+            .withCredentials()
+            .set('Accept', 'application/json')
+            .set('Authorization', 'user ' +u +":" +p)
+            .end((err, res)=>{
 
                 if( !err ){
 
@@ -69,10 +66,9 @@ class LoadClientAppsService {
 
             });
 
-        });
     }
 
 }
 
 
-export default LoadClientAppsService;
+export default LoginService;

@@ -87,17 +87,17 @@ public class SimpleCORSFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
 
-
         final SlingHttpServletRequest slingRequest = (SlingHttpServletRequest) request;
         final SlingHttpServletResponse slingResponse = (SlingHttpServletResponse) response;
 
-        slingResponse.addHeader("Access-Control-Allow-Origin", slingRequest.getHeader("Origin"));
+        String _origin = slingRequest.getHeader("Origin");
+        slingResponse.addHeader("Access-Control-Allow-Origin", _origin);
         slingResponse.addHeader("Access-Control-Allow-Credentials", "true");
-        slingResponse.addHeader("Access-Control-Expose-Headers", "origin,x-requested-with,content-type,accept,Authorization");
+        slingResponse.addHeader("Access-Control-Expose-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
         if (slingRequest.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(slingRequest.getMethod()))
         {
             slingResponse.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
-            slingResponse.addHeader("Access-Control-Allow-Headers", "origin,x-requested-with,content-type,accept,Authorization");
+            slingResponse.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
             slingResponse.addHeader("Access-Control-Max-Age", "3600");
 
         } else {

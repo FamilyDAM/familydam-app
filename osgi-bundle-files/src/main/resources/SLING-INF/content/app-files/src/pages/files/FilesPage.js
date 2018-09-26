@@ -4,13 +4,13 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {injectIntl} from 'react-intl';
-import {withStyles} from '@material-ui/core/styles';
+import {withStyles} from "@material-ui/core/styles";
 
-import {CircularProgress} from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
-import FileUpload from '@material-ui/icons/FileUpload';
+import FileUpload from '@material-ui/icons/Folder';//todo change back to upload icon
 import FolderIcon from '@material-ui/icons/Folder';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 
@@ -108,15 +108,15 @@ class FilesPage extends Component {
     componentDidMount(){
         AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe((path)=>{
             console.log("{FilesPage} navigateTo=" +path);
-            debugger;
-
             if (path.substring(0, 3) === "://") {
-                window.location.href = path.substring(2);
+                if( window.location.href.substring( window.location.href.indexOf("#")+1) !== path.substring(2) ){
+                    window.location.href = path.substring(2);
+                }
             }else{
                 this.props.history.push(path);
             }
 
-            this.setState({"selectedFiles":[]});
+            //this.setState({"selectedFiles":[]});
         });
     }
 

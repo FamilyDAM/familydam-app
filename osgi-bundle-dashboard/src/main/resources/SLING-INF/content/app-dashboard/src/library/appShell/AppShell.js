@@ -55,7 +55,6 @@ class AppShell extends Component {
         this.setState({"isMounted":true});
 
         AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
-            debugger;
             if (path.substring(0, 3) === "://") {
                 window.location.href = path.substring(2);
             }else{

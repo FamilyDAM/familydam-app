@@ -2,7 +2,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import {withStyles} from "@material-ui/core/styles";
 import AppActions from "../../library/actions/AppActions";
 
 const styleSheet = (theme) => ({
@@ -18,12 +18,16 @@ const styleSheet = (theme) => ({
     li:{
         float:'left',
         margin: '0 0 10px 5px',
+        color: 'blue',
+        cursor: 'pointer',
 
         '&:before':{
-            content: '"/ "'
+            content: '"/ "',
+            color: 'black'
         },
         '&:after':{
-            content: '" "'
+            content: '" "',
+            color: 'black'
         }
     },
 
@@ -75,7 +79,8 @@ class Breadcrumb extends Component {
                 _paths.push({
                     "label": part,
                     "level": i,
-                    "path": currentPath
+                    "path": currentPath,
+                    "style": {'color': i>2?'blue':'black', 'cursor': i>2?'pointer':'default'}
                 });
 
             }
@@ -94,23 +99,14 @@ class Breadcrumb extends Component {
         return (
             <div >
                 <ol className={classes.breadcrumb}>
-                    {this.state.paths.map( (path_) => {
-                    debugger;
+                    {this.state.paths.map(function (path_) {
                         if (path_.path)
                         {
-                            if( path_.path.length > this.props.root){
-                                return (
-                                    <li className={classes.li} key={path_.path} onClick={()=>AppActions.navigateTo.next(path_.path)}>
-                                        <u style="color:blue">{path_.label}</u>
-                                    </li>
-                                );
-                            }else{
-                                return (
-                                    <li className={classes.li} key={path_.path}>
-                                        {path_.label}
-                                    </li>
-                                );
-                            }
+                            return (
+                                <li className={classes.li} key={path_.path} style={path_.style} onClick={()=>AppActions.navigateTo.next(path_.path)}>
+                                    {path_.label}
+                                </li>
+                            );
 
                         } else
                         {

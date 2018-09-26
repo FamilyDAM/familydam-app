@@ -3,13 +3,13 @@ import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 import {IntlProvider} from 'react-intl';
 
 import {withStyles} from '@material-ui/core/styles';
-import {CircularProgress} from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 //views
 import FilesPage from './pages/files/FilesPage';
 
 import UserActions from './actions/UserActions';
-//import AppSettings from './library/actions/AppSettings';
+import AppSettings from './library/actions/AppSettings';
 
 const styleSheet = (theme) => ({
     progress: {
@@ -36,8 +36,14 @@ class App extends Component {
             "isLoading": true,
             "isMounted": false
         };
+
         // set it running locally with npm start, so you can still call running server
-        //AppSettings.baseHost.next("http://localhost:9000");
+        if( window.location.href.indexOf(":3000") > -1){
+            //AppSettings.baseHost.next("http://localhost:9000");
+            //AppSettings.basicUser.next("Mike");
+            //AppSettings.basicPwd.next("admin");
+            //UserActions.getUser.sink.next( {"user":{"firstName":"","lastName":""}} );
+        }
     }
 
 

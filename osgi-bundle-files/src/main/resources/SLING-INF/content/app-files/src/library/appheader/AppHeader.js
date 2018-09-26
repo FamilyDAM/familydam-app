@@ -1,15 +1,16 @@
 import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
-import {withStyles} from '@material-ui/core/styles';
+import {withStyles} from "@material-ui/core/styles";
 
 import AppBar from '@material-ui/core/AppBar';
 //import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
-import Menu, { MenuItem } from '@material-ui/core/Menu';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import MenuIcon from '@material-ui/icons/Menu';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MoreVertIcon from '@material-ui/icons//MoreVert';
+import MenuIcon from '@material-ui/icons//Menu';
 import Typography from '@material-ui/core/Typography';
 
 import AppActions from '../actions/AppActions';
@@ -105,8 +106,8 @@ class AppHeader extends Component {
                     <IconButton
                         onClick={this.handleToggle}
                         className={classes.menuButton}
-                        color="contrast" aria-label="Menu">
-                        <MenuIcon />
+                        aria-label="Menu">
+                        <MenuIcon style={{color:'white'}} />
                     </IconButton>
 
                     <Typography type="title" color="inherit" className={classes.flex} onClick={()=>this.handleNavClick('://dashboard/index.html')}>

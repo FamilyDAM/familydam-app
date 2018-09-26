@@ -2,31 +2,20 @@ import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
 
-import { CircularProgress } from "@material-ui/core/CircularProgress";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 
 
 const styleSheet = (theme) => ({
     progress: {
-        margin: `0 ${theme.spacing.unit * 2}px`,
-        width: '100px',
-        height: '100px',
-        position: 'absolute',
-        top: '50%',
-        left: '3px',
-        transform: 'translate(-50%, -50%)'
+
     }
 });
 
 class LoadingButton extends Component {
 
     constructor(props, context) {
-
-        if( !props.style ){
-            props.style = {};
-        }
-
         super(props);
         this.handleClick = this.handleClick.bind(this);
     }
@@ -42,18 +31,21 @@ class LoadingButton extends Component {
 
     render() {
         var classes = this.props.classes;
+        var styles = {minWidth:'40px', color:"#fff"};
+        if( this.props.isLoading ){
+            styles['paddingLeft'] = '16px'
+        }
 
         return (
-            <Button
-                raised
-                color="accent"
-                style={this.props.style}
-                onClick={this.handleClick}>
+            <Button variant="contained"
+                color="primary"
+                style={{"height": '25px', "padding": '0px 16px'}} onClick={this.handleClick}>
                 {this.props.isLoading &&
-                <CircularProgress className={classes.progress} color="#fff" size={25}/>
+                    <CircularProgress className={classes.progress} color="#fff" size={25}/>
                 }
-                <Typography style={{"paddingLeft":"8px", color:"#fff"}}>{this.props.label} *</Typography>
+                <Typography style={styles}>{this.props.label}</Typography>
             </Button>
+
         );
     }
 }

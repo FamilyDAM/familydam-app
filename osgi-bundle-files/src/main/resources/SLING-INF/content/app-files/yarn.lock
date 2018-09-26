@@ -4266,7 +4266,7 @@ material-ui-icons@^1.0.0-beta.17:
 
 material-ui@^0.15.0:
   version "0.15.4"
-  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-0.15.4.tgz#c66b210884f1584108526c498b2c462aee4c3dbb"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/material-ui-0.15.4.tgz#c66b210884f1584108526c498b2c462aee4c3dbb"
   dependencies:
     inline-style-prefixer "^2.0.1"
     keycode "^2.1.1"
@@ -4280,7 +4280,7 @@ material-ui@^0.15.0:
 
 material-ui@^1.0.0-beta.22:
   version "1.0.0-beta.23"
-  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-1.0.0-beta.23.tgz#f3d49359c13b57f893e768de62b81f5e8ad7faa5"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/material-ui-1.0.0-beta.23.tgz#f3d49359c13b57f893e768de62b81f5e8ad7faa5"
   dependencies:
     babel-runtime "^6.26.0"
     brcast "^3.0.1"

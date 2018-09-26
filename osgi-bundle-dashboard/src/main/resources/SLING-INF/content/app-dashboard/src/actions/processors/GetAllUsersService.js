@@ -3,6 +3,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import AppActions from '../../library/actions/AppActions';
+import AppSettings from '../../library/actions/AppSettings';
 import request from 'superagent';
 
 
@@ -30,14 +31,15 @@ class GetAllUsersService {
      */
     getUsers()
     {
-        var u = window.localStorage.getItem("u");
-        var p = window.localStorage.getItem("p");
+        const baseUrl = AppSettings.baseHost.getValue();
+        const user = AppSettings.basicUser.getValue();
+        const pwd = AppSettings.basicPwd.getValue();
 
         request
-            .get('http://localhost:9000/api/familydam/v1/dashboard/users')
+            .get(baseUrl +'/api/familydam/v1/dashboard/users')
             .withCredentials()
             .set('Accept', 'application/json')
-            .set('Authorization', 'user ' +u +":" +p)
+            .set('Authorization', 'user ' +user +":" +pwd)
             .end((err, results) => {
 
                 if( !err ){

@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import AccountCircle from '@material-ui/icons//AccountCircle';
 
 import LoadingButton from '../../library/loadingButton/LoadingButton';
 
@@ -66,7 +66,7 @@ class LoginCard extends Component {
 
 
     handleCancel() {
-        this.setState({mode: 'minimal'});
+        this.setState({mode: 'minimal', 'isLoading':false});
 
         if (this.props.onCancel) {
             this.props.onCancel();
@@ -135,10 +135,10 @@ class LoginCard extends Component {
                         </div>
                         <div style={{gridRow: '4', gridColumn: '2'}}>
                             <Button color="primary" onClick={this.handleCancel}>Cancel</Button>
+
                             <LoadingButton
                                 isLoading={this.state.isLoading}
                                 label="Login"
-                                style={{'minWidth':'120px'}}
                                 onClick={this.handleLogin}></LoadingButton>
                         </div>
                     </div>

@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
-import {withStyles} from '@material-ui/core/styles';
+import {withStyles} from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
 
-import {
-    TableCell,
-    TableHead,
-    TableRow,
-    TableSortLabel,
-} from '@material-ui/core/Table';
+
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 
@@ -33,35 +32,35 @@ class FileListTableHead extends Component {
         return (
             <TableHead className={classes.tableHead}>
                 <TableRow>
-                    <TableCell checkbox style={{width:'20px'}}>
+                    <TableCell padding="checkbox" style={{width:'20px'}}>
                         <Checkbox
                             indeterminate={numSelected > 0 && numSelected < rowCount}
                             checked={numSelected === rowCount}
                             onChange={onSelectAllClick}
                         />
                     </TableCell>
-                    <TableCell disablePadding style={{width:'20px'}}>
-                    </TableCell>
+
+                    <TableCell padding="none" style={{minWidth:'49px'}}></TableCell>
+
                     {this.props.columns.map(column => {
                         return (
                             <TableCell
+                                padding="default"
                                 key={column.id}
                                 numeric={column.numeric}
-                                disablePadding={column.disablePadding}
-                                style={column.stylesheet}
+                                style={column.stylesheet}>
 
-                            >
                                 <TableSortLabel
                                     active={orderBy === column.id}
                                     direction={order}
-                                    onClick={this.createSortHandler(column.id)}
-                                >
+                                    onClick={this.createSortHandler(column.id)}>
                                     {column.label}
                                 </TableSortLabel>
                             </TableCell>
                         );
                     }, this)}
-                    <TableCell checkbox style={{width:'150px'}}>
+
+                    <TableCell padding="default" style={{minWidth:'100px'}}>
                         Actions
                     </TableCell>
                 </TableRow>

@@ -3,6 +3,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import AppActions from '../../library/actions/AppActions';
+import AppSettings from '../../library/actions/AppSettings';
 import request from 'superagent';
 import UserActions from "../UserActions";
 
@@ -30,9 +31,13 @@ class LoginService {
     login(data_)
     {
         //console.log("{Login Service} login(" +data_.username +"," +data_.password +")");
-        //var _salt = new Date().getTime();
-        var _url = 'http://localhost:9000/j_security_check?';
-        //var _data = {'j_username':data_.username, 'j_password':data_.password, 'j_validate':'true', 'form.auth.timeout':120, 'form.onexpire.login':true};
+
+        const baseUrl = AppSettings.baseHost.getValue();
+        //const user = AppSettings.basicUser.getValue();
+        //const pwd = AppSettings.basicPwd.getValue();
+
+        var _salt = new Date().getTime();
+        var _url = baseUrl +'/j_security_check?';
 
 
         request
@@ -44,13 +49,13 @@ class LoginService {
             .send('form.auth.timeout:120')
             .send('form.onexpire.login:true')
             .end((err, results) => {
-
                 if( !err ){
-
-                    console.log("LoginService j_security_check: SUCCESS");
+                    console.log("LoginService Security Check: SUCCESS");
                     window.localStorage.setItem("user", JSON.stringify(data_));
                     UserActions.getUser.source.next(data_.username);
 
+                    AppSettings.basicUser.next(data_.username);
+                    AppSettings.basicPwd.next(data_.password);
                     window.localStorage.setItem("u", data_.username);
                     window.localStorage.setItem("p", data_.password);
 

@@ -1,4 +1,5 @@
 import AppActions from '../../library/actions/AppActions';
+import AppSettings from '../../library/actions/AppSettings';
 import request from 'superagent';
 
 class DeleteFileOrFolderService {
@@ -21,19 +22,19 @@ class DeleteFileOrFolderService {
      */
     deleteFileOrFolder(path_)
     {
+        const baseUrl = AppSettings.baseHost.getValue();
+        const user = AppSettings.basicUser.getValue();
+        const pwd = AppSettings.basicPwd.getValue();
+
 
         if( path_ !== undefined && path_.length > 0 )
         {
-            var _url =  "http://localhost:9000" +path_ ;
-
-            var u = window.localStorage.getItem("u");
-            var p = window.localStorage.getItem("p");
-            //.set('Authorization', 'user ' +u +":" +p)
+            var _url =  baseUrl +path_ ;
 
             request.delete(_url)
                 .withCredentials()
                 .set('Accept', 'application/json')
-                .set('Authorization', 'user ' +u +":" +p)
+                .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
                 .end((err, res)=>{
 
                     if( !err ){
