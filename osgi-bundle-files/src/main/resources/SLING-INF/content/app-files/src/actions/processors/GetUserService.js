@@ -3,8 +3,8 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import AppActions from '../../library/actions/AppActions';
+import AppSettings from '../../library/actions/AppSettings';
 import request from 'superagent';
-
 
 /**
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors
@@ -27,16 +27,17 @@ class GetUsersService {
      */
     getUsers(username_)
     {
-        var u = window.localStorage.getItem("u");
-        var p = window.localStorage.getItem("p");
-        //.set('Authorization', 'user ' +u +":" +p)
+        const baseUrl = AppSettings.baseHost.getValue();
+        const user = AppSettings.basicUser.getValue();
+        const pwd = AppSettings.basicPwd.getValue();
+
 
         request
-            .get('http://localhost:9000/api/familydam/v1/dashboard/user')
+            .get( baseUrl +'/api/familydam/v1/dashboard/user')
             .query({'username':username_})
             .withCredentials()
             .set('Accept', 'application/json')
-            .set('Authorization', 'user ' +u +":" +p)
+            .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
             .end((err, results) => {
 
                 if( !err ){

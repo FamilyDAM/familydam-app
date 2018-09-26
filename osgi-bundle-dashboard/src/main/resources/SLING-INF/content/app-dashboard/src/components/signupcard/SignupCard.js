@@ -8,11 +8,12 @@ import {withStyles} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 
+import LoadingButton from '../../library/loadingButton/LoadingButton';
+import UserActions from "../../actions/UserActions";
+//import AppActions from "../../actions/AppActions";
+
 import { GridContainer, GridItem } from "../../library/CssGrid";
 
-import LoadingButton from '../../library/loadingButton/LoadingButton';
-//import AppActions from "../../actions/AppActions";
-import UserActions from "../../actions/UserActions";
 
 const styleSheet = (theme) => ({
     loginCardForm:{

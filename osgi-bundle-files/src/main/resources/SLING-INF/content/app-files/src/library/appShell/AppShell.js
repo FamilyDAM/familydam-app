@@ -42,7 +42,7 @@ class AppShell extends Component {
         var isOpenCachedValue = window.localStorage.getItem("AppShell.isOpen");
 
         this.state = {
-            isMounted:false,
+            isMounted:true,
             isOpen:isOpenCachedValue ?isOpenCachedValue:true
         };
 
@@ -51,18 +51,20 @@ class AppShell extends Component {
     }
 
 
-    componentDidMount(){
+    componentWillMount(){
         this.setState({"isMounted":true});
 
         AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe((path)=>{
-            if (path.substring(0, 3) === "://") {
-                //window.location.href = path.substring(2);
+            if ( path.substring(0, 3) === "://") {
+                if( window.location.href !== path.substring(2)){
+                    window.location.href = path.substring(2);
+                }
             }else{
-                this.props.history.push(path);
+                //this.props.history.push(path);
             }
         });
 
-        AppActions.loadClientApps.sink.takeWhile(() => this.state.isMounted).subscribe( (data)=> {
+        AppActions.loadClientApps.sink.subscribe( (data)=> {
             if( data ) {
                 this.setState({
                     "primaryApps": data.primaryApps,
@@ -98,9 +100,9 @@ class AppShell extends Component {
     render() {
         var classes = this.props.classes;
 
-        if( !this.props.user ){
+        if( false && !this.props.user ){
             this.handleLogout();
-            return (<div>User Not Authorized</div>);
+            return;
         }
 
         return (

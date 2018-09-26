@@ -18,12 +18,16 @@ const styleSheet = (theme) => ({
     li:{
         float:'left',
         margin: '0 0 10px 5px',
+        color: 'blue',
+        cursor: 'pointer',
 
         '&:before':{
-            content: '"/ "'
+            content: '"/ "',
+            color: 'black'
         },
         '&:after':{
-            content: '" "'
+            content: '" "',
+            color: 'black'
         }
     },
 
@@ -75,7 +79,8 @@ class Breadcrumb extends Component {
                 _paths.push({
                     "label": part,
                     "level": i,
-                    "path": currentPath
+                    "path": currentPath,
+                    "style": {'color': i>2?'blue':'black', 'cursor': i>2?'pointer':'default'}
                 });
 
             }
@@ -98,7 +103,7 @@ class Breadcrumb extends Component {
                         if (path_.path)
                         {
                             return (
-                                <li className={classes.li} key={path_.path} onClick={()=>AppActions.navigateTo.next(path_.path)}>
+                                <li className={classes.li} key={path_.path} style={path_.style} onClick={()=>AppActions.navigateTo.next(path_.path)}>
                                     {path_.label}
                                 </li>
                             );

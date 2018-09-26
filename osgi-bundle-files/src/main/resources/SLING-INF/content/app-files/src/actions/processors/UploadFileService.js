@@ -5,8 +5,8 @@ import {Subject, Observable} from '@reactivex/rxjs';
 
 import request from 'superagent';
 import AppActions from '../../library/actions/AppActions';
+import AppSettings from '../../library/actions/AppSettings';
 import FileActions from './../FileActions';
-
 
 class UploadFileService {
 
@@ -126,8 +126,13 @@ class UploadFileService {
      */
     checkAccess(file_){
 
+        const baseUrl = AppSettings.baseHost.getValue();
+        const user = AppSettings.basicUser.getValue();
+        const pwd = AppSettings.basicPwd.getValue();
+
         return request
-            .get(this.host +'/api/familydam/v1/files/upload/info')
+            .get(baseUrl +'/api/familydam/v1/files/upload/info')
+            .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
             .withCredentials()
             .send({path: encodeURI(file_.path).replace("&", "%26")})
             .then(data => {

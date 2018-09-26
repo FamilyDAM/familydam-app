@@ -2,13 +2,13 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
+import AppSettings from '../../library/actions/AppSettings';
 
 var Rx = require('rx');
 var PreferenceStore = require('../../stores/PreferenceStore');
 var UserStore = require('../../stores/UserStore');
 var AuthActions = require('../../actions/AuthActions');
 var DirectoryActions = require('../../actions/DirectoryActions');
-
 
 
 /**
@@ -34,62 +34,67 @@ module.exports = {
      */
     getDirectories: function(path_)
     {
+        const baseUrl = AppSettings.baseHost.getValue();
+        const user = AppSettings.basicUser.getValue();
+        const pwd = AppSettings.basicPwd.getValue();
+
         //console.log("{GetDirectoryService} getDirectories()" );
 
         if( path_ !== undefined && path_.length > 0 )
         {
 
-            var _url = path_ + ".graph.4.json/dam:folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
+            var _url = baseUrl +path_ + ".graph.4.json/dam:folder/name,path,index,parent,links,jcr:primaryType,jcr:created,jcr:mixinTypes";
 
             //console.dir(UserStore.token.value);
 
-            return $.ajax({
-                method: "get",
-                url: _url,
-                data: {'path': path_},
-                'xhrFields': {
-                    withCredentials: true
-                }
-            }).then(function (data_, status_, xhr_) {
+            request
+                .get(_url)
+                .withCredentials()
+                .field('jcr:primaryType', 'sling:Folder')
+                .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
+                .end((err, results) => {
+                    if( !err ){
 
-                //console.log("{GetDirectoriesService} getDirectories() success" );
-                //Special filter to remove the dashboard app folder
-                var filteredChildren = [];
-                var children = data_._embedded.children;
-                if( children )
-                {
-                    for (var i = 0; i < children.length; i++)
-                    {
-                        var child = children[i];
-                        if (child.path != "/content/dashboard")
+                        //console.log("{GetDirectoriesService} getDirectories() success" );
+                        //Special filter to remove the dashboard app folder
+                        var filteredChildren = [];
+                        var children = data_._embedded.children;
+                        if( children )
                         {
-                            filteredChildren.push(child);
+                            for (var i = 0; i < children.length; i++)
+                            {
+                                var child = children[i];
+                                if (child.path != "/content/dashboard")
+                                {
+                                    filteredChildren.push(child);
+                                }
+                            }
                         }
-                    }
-                }
-                data_._embedded.children = filteredChildren;
+                        data_._embedded.children = filteredChildren;
 
-                this.sink.onNext(data_);
+                        this.sink.onNext(data_);
 
-                // update token
-                var _token = xhr_.getResponseHeader("X-Auth-Token");
-                if (_token != null && _token !== undefined)
-                {
-                    UserActions.saveToken.onNext(_token);
-                }
+                        // update token
+                        var _token = xhr_.getResponseHeader("X-Auth-Token");
+                        if (_token != null && _token !== undefined)
+                        {
+                            UserActions.saveToken.onNext(_token);
+                        }
 
-            }.bind(this), function (xhr_, status_, errorThrown_) {
 
-                //send the error to the store (through the sink observer
-                if (xhr_.status == 401)
-                {
-                    AuthActions.loginRedirect.onNext(true);
-                } else
-                {
-                    var _error = {'code': xhr_.status, 'status': xhr_.statusText, 'message': xhr_.responseText};
-                    this.sink.onError(_error);
-                }
-            }.bind(this));
+                    } else {
+                         //send the error to the store (through the sink observer
+                         if (err.status === 401) {
+                             AppActions.navigateTo.next("/");
+                         } else if (err.status === 403) {
+                             AppActions.alert.next("You do not have permission to access these files");
+                         } else {
+                             var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
+                             this.sink.error(_error);
+                         }
+                     }
+                });
+
 
         }
     }

@@ -66,7 +66,7 @@ class LoginCard extends Component {
 
 
     handleCancel() {
-        this.setState({mode: 'minimal'});
+        this.setState({mode: 'minimal', 'isLoading':false});
 
         if (this.props.onCancel) {
             this.props.onCancel();
@@ -135,10 +135,10 @@ class LoginCard extends Component {
                         </div>
                         <div style={{gridRow: '4', gridColumn: '2'}}>
                             <Button color="primary" onClick={this.handleCancel}>Cancel</Button>
+
                             <LoadingButton
                                 isLoading={this.state.isLoading}
                                 label="Login"
-                                style={{'minWidth':'120px'}}
                                 onClick={this.handleLogin}></LoadingButton>
                         </div>
                     </div>

@@ -12,7 +12,6 @@ import FileIcon from '@material-ui/icons//InsertDriveFile';
 //import PhotoIcon from '@material-ui/icons//PhotoLibrary';
 import Paper from '@material-ui/core/Paper';
 
-
 import AppShell from '../../library/appShell/AppShell';
 import AppActions from '../../library/actions/AppActions';
 
@@ -39,7 +38,8 @@ const styleSheet = (theme) => ({
     },
     contentHeader:{
         gridColumn: "2/4",
-        gridRow: 2
+        gridRow: 2,
+        marginTop: "auto"
     },
     contentHeaderLabel:{
         fontSize:'96px',
@@ -89,7 +89,7 @@ class DashboardPage extends Component {
         this.setState({"isMounted":true});
 
 
-        AppActions.loadClientApps.sink.subscribe( (data)=> {
+        AppActions.loadClientApps.sink.takeWhile(() => this.state.isMounted).subscribe( (data)=> {
             if( data ) {
                this.setState({
                     "primaryApps": data.primaryApps,
@@ -124,7 +124,6 @@ class DashboardPage extends Component {
                 <AppShell user={this.props.user} history={this.props.history}>
                     <div className={classes.contentContainer}>
                         <div className={classes.contentHeader}>
-                            <Typography className={classes.contentHeaderLabel}>Hello {this.props.user.firstName},</Typography>
                             <Typography style={{fontSize:'24px', lineHeight:'24px'}}>Where would you like to start?</Typography>
                         </div>
 

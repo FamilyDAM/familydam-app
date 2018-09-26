@@ -14,16 +14,20 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
-import {MenuItem} from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 //import Typography from '@material-ui/core/Typography';
 import Slide from '@material-ui/core/Slide';
 
-import Table, {TableBody, TableCell, TableHead, TableRow} from '@material-ui/core/Table';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import Dialog from '@material-ui/core/Dialog';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CheckIcon from '@material-ui/icons/Check';
-import FileUploadIcon from '@material-ui/icons/FileUpload';
+import FileUploadIcon from '@material-ui/icons/CloudUpload';
 
 import {Receiver} from 'react-file-uploader';
 import FileActions from '../../actions/FileActions';
@@ -221,7 +225,7 @@ class UploadDialog extends Component {
                         <Typography type="title" color="inherit" className={classes.flex}>
                             Import Files
                         </Typography>
-                        <Button onClick={this.handleClose} color="contrast" disabled={completedFiles !== this.state.files.length}>
+                        <Button onClick={this.handleClose} disabled={completedFiles !== this.state.files.length} style={{'color':'white'}}>
                             close
                         </Button>
                     </Toolbar>
@@ -272,7 +276,7 @@ class UploadDialog extends Component {
                         <Table style={{minHeight: '150px', maxHeight: '70%', minWidth: '50%', margin:'24px'}}>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell style={{padding: '0 8px 0 8px'}}>
+                                    <TableCell style={{padding: '0 8px 0 8px', border: '0px'}}>
                                         <div onClick={this.handleSelectFileBtnClick} style={{margin: '40px', textAlign: 'center'}}>
                                             Click or drag files to this area to upload
                                             <div style={{margin: '16px'}}>
