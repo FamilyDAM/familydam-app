@@ -36,7 +36,7 @@ class LoginService {
         //const user = AppSettings.basicUser.getValue();
         //const pwd = AppSettings.basicPwd.getValue();
 
-        var _salt = new Date().getTime();
+        //var _salt = new Date().getTime();
         var _url = baseUrl +'/j_security_check?';
 
 
