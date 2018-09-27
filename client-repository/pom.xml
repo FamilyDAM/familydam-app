@@ -37,24 +37,6 @@
             <version>0.2.1-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.familydam.apps</groupId>
-            <artifactId>osgi-bundle-photos</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.familydam.apps</groupId>
-            <artifactId>osgi-bundle-sync</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.familydam.apps</groupId>
-            <artifactId>osgi-bundle-files</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
-        </dependency>
-
         <!--
         <dependency>
             <groupId>com.familydam.apps</groupId>
@@ -121,7 +103,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <configuration>
-                            <descriptor>_nas-bundles/drobo/assembly.xml</descriptor>
+                            <descriptorRefs>
+                                <descriptor>_nas-bundles/drobo/assembly.xml</descriptor>
+                            </descriptorRefs>
                             <outputDirectory>target/nas-bundles/drobo</outputDirectory>
                             <finalName>FamilyDAM</finalName>
                         </configuration>
