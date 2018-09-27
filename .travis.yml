@@ -6,7 +6,29 @@ os:
 - linux
 env:
   global:
-  - JAVA_OPTS="-Xmx2G"
+  - JAVA_OPTS="-Xmx4G"
+branches:
+  only:
+  - master
+  - develop
+deploy:
+  - provider: script
+    script: "mvn -X install -P build-clients"
+    skip_cleanup: true
+    on:
+      tags: true
+  - provider: releases
+    skip_cleanup: true
+    api_key:
+      secure: rFVvC2VtHBad/HMl7/324d6WH0OKqXW7/yEg+MkEmB2nvHmT8Xq31Y7zqTgg2vgm8LIv+WKV4WzzVqWxhFqj8iuM/iPLWF3SPPDZxojIHVr9I3VspAOP5oNmI5tliVG8uceDMW1BVo8K56p7Mo3gb1RigWrHx1USoClM+stYaghhhzZJ/Tk5GlTqbURnB7XtrIw0mvpS4ELoC0t6yWWxuQlruvdFJuk6WgwQGpQxMUa4kRC+OlOIPbrf0EE629gRXjIZMr301fUZeEcADHLCHP51Src/AsisNv6vfLKIPH4xM9Bn+yRwvn9XKfRxEaK3MfogJt1du8WY9qUIM7EejeoZb/qZNvF7JvQTsANIT0II4mQoJVBRhaRHYkq8CSkp3yYlvlK+4XzJ0xEFt4bLyu+RR05Ef55o5WADJOi4+VODc44M5N29gKNgn1KG4nMfg03kZ72qu81HCXL0XKgDlaZgcDDU5PKV0bMcZBuaOcE9kASOKqCQoyHi2BmtHahCRxkaFBFplbcvNskluTgcODq/Xn3ybJ8C1p5ha8rQLA3Zez2OQ4+VaXF7ZVwaHBzYWGf5hvvDJxx/9klqqFlBDx1cjFKBwt0f9obMJ4TDwDH0JVoVPohLVxjUoOLejBhGk8p+1Dlcr3j709ElGGPeTxqUQjO5Vgd4Uau/aRxW7lk=
+    file:
+      - "./client-repository/target/FamilyDAM-0.2.1.jar"
+    name: "FamilyDAM 0.2.1 - travis"
+    body: "Digital Asset Manager for Families."
+    prerelease: true
+    overwrite: true
+    on:
+      branch: master
 #deploy:
 #  provider: releases
 #  api_key:
@@ -15,10 +37,4 @@ env:
 #    - "./client-desktop/dist/FamilyDAM-0.2.2.dmg"
 #  on:
 #    repo: FamilyDAM/familydam-app
-deploy:
-  provider: script
-  script: "mvn -X install -P build-clients"
-  skip_cleanup: true
-  on:
-    tags: true
 #script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn -X install"
