@@ -35,6 +35,13 @@
     </properties>
 
 
+    <parent>
+        <groupId>com.familydam.repository</groupId>
+        <artifactId>familydam</artifactId>
+        <version>0.2.1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
 
     <profiles>
         <profile>
