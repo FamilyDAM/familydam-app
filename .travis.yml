@@ -1,5 +1,5 @@
-language: java
 sudo: false
+language: java
 jdk:
 - openjdk8
 os:
@@ -15,5 +15,10 @@ env:
 #    - "./client-desktop/dist/FamilyDAM-0.2.2.dmg"
 #  on:
 #    repo: FamilyDAM/familydam-app
-#script: mvn clean install -P build-clients
-script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn -X install"
+deploy:
+  provider: script
+  script: "mvn -X install -P build-clients"
+  skip_cleanup: true
+  on:
+    tags: true
+#script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn -X install"
