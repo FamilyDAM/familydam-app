@@ -35,23 +35,30 @@
         <dependency>
             <groupId>com.familydam.osgi</groupId>
             <artifactId>osgi-bundle-core</artifactId>
+            <version>0.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-dashboard</artifactId>
+            <version>0.3.0</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-usermanager</artifactId>
+            <version>0.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-files</artifactId>
+            <version>0.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-photos</artifactId>
+            <version>0.3.0</version>
         </dependency>
+        -->
 
         <!--
         <dependency>
