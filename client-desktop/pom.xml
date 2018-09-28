@@ -23,7 +23,7 @@
     <artifactId>desktop</artifactId>
     <packaging>jar</packaging>
     <version>0.3.0</version>
-    <name>FamilyDAM Desktop App</name>
+    <name>Client Desktop</name>
     <description>Maven module to build Electron Based Desktop</description>
 
     <properties>

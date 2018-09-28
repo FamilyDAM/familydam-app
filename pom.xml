@@ -39,7 +39,7 @@
         <module>osgi-bundle-photos</module>
         <module>osgi-bundle-sync</module>
         <module>client-repository</module>
-        <!--module>client-desktop</module-->
+        <module>client-desktop</module>
     </modules>
 
 
