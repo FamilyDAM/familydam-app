@@ -9,7 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FilesPage from './pages/files/FilesPage';
 
 import UserActions from './actions/UserActions';
-import AppSettings from './library/actions/AppSettings';
+//import AppSettings from './library/actions/AppSettings';
 
 const styleSheet = (theme) => ({
     progress: {
