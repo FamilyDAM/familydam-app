@@ -16,14 +16,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.familydam.server</groupId>
     <artifactId>repository</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <packaging>slingstart</packaging>
     <name>Client Repository</name>
 
     <parent>
         <groupId>com.familydam.repository</groupId>
         <artifactId>familydam</artifactId>
-        <version>0.3.0</version>
+        <version>0.3.1</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -35,36 +35,36 @@
         <dependency>
             <groupId>com.familydam.osgi</groupId>
             <artifactId>osgi-bundle-core</artifactId>
-            <version>0.3.0</version>
-        </dependency>
+            <version>0.3.1</version>
+        <gi/dependency>
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-dashboard</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
         </dependency>
-        <!--
+
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-usermanager</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-files</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
         </dependency>
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-photos</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
         </dependency>
-        -->
+
 
         <!--
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-cloudfiles</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
         </dependency>
         -->
     </dependencies>

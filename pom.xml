@@ -22,7 +22,7 @@
     <groupId>com.familydam.repository</groupId>
     <artifactId>familydam</artifactId>
     <packaging>pom</packaging>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <name>FamilyDAM App</name>
     <description>Parent POM for FamilyDAM Applications</description>
 
@@ -48,32 +48,32 @@
             <dependency>
                 <groupId>com.familydam.osgi</groupId>
                 <artifactId>osgi-bundle-core</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1</version>
             </dependency>
             <dependency>
                 <groupId>com.familydam.apps</groupId>
                 <artifactId>osgi-bundle-dashboard</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1</version>
             </dependency>
             <dependency>
                 <groupId>com.familydam.apps</groupId>
                 <artifactId>osgi-bundle-files</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1</version>
             </dependency>
             <dependency>
                 <groupId>com.familydam.apps</groupId>
                 <artifactId>osgi-bundle-usermanager</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1</version>
             </dependency>
             <dependency>
                 <groupId>com.familydam.apps</groupId>
                 <artifactId>osgi-bundle-photos</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1</version>
             </dependency>
             <dependency>
                 <groupId>com.familydam.apps</groupId>
                 <artifactId>osgi-bundle-sync</artifactId>
-                <version>0.3.0</version>
+                <version>0.3.1</version>
             </dependency>
 
 

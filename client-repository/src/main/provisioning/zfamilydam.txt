@@ -23,12 +23,12 @@
     end
 
 [variables]
-    core.version=0.3.0
-    dashboard.version=0.3.0
-    photos.version=0.3.0
-    files.version=0.3.0
-    usermanager.version=0.3.0
-    sync.version=0.3.0
+    core.version=0.3.1
+    dashboard.version=0.3.1
+    photos.version=0.3.1
+    files.version=0.3.1
+    usermanager.version=0.3.1
+    sync.version=0.3.1
 
 [artifacts]
    com.familydam.osgi/osgi-bundle-core/${core.version}
@@ -40,4 +40,4 @@
 
 
 [variables]
-    test.version=0.3.0-SNAPSHOT
+    test.version=0.3.1-SNAPSHOT
