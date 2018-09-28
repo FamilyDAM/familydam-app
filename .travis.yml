@@ -11,6 +11,11 @@ branches:
   only:
   - master
   - develop
+cache:
+  directories:
+  - .autoconf
+  - $HOME/.m2
+  - node_modules # NPM packages
 install: true
 script: "mvn clean install -P build-clients"
 deploy:
