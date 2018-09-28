@@ -36,7 +36,7 @@
             <groupId>com.familydam.osgi</groupId>
             <artifactId>osgi-bundle-core</artifactId>
             <version>0.3.1</version>
-        <gi/dependency>
+        </dependency>
         <dependency>
             <groupId>com.familydam.apps</groupId>
             <artifactId>osgi-bundle-dashboard</artifactId>
