@@ -15,18 +15,21 @@ cache:
   directories:
   - .autoconf
   - $HOME/.m2
-  - node_modules # NPM packages
+  - osgi-bundle-dashboard/src/main/resources/SLING-INF/content/app-dashboard/node_modules
+  - osgi-bundle-files/src/main/resources/SLING-INF/content/app-files/node_modules
+  - osgi-bundle-photos/src/main/resources/SLING-INF/content/app-photos/node_modules
+  - osgi-bundle-sync/src/main/resources/SLING-INF/content/app-sync/node_modules
+  - osgi-bundle-usermanager/src/main/resources/SLING-INF/content/app-usermanager/node_modules
 install: true
-#script: "mvn clean install -P build-clients"
-script: "mvn clean install"
+script: "mvn clean install -P build-clients"
 deploy:
   - provider: releases
     skip_cleanup: true
     api_key:
       secure: rFVvC2VtHBad/HMl7/324d6WH0OKqXW7/yEg+MkEmB2nvHmT8Xq31Y7zqTgg2vgm8LIv+WKV4WzzVqWxhFqj8iuM/iPLWF3SPPDZxojIHVr9I3VspAOP5oNmI5tliVG8uceDMW1BVo8K56p7Mo3gb1RigWrHx1USoClM+stYaghhhzZJ/Tk5GlTqbURnB7XtrIw0mvpS4ELoC0t6yWWxuQlruvdFJuk6WgwQGpQxMUa4kRC+OlOIPbrf0EE629gRXjIZMr301fUZeEcADHLCHP51Src/AsisNv6vfLKIPH4xM9Bn+yRwvn9XKfRxEaK3MfogJt1du8WY9qUIM7EejeoZb/qZNvF7JvQTsANIT0II4mQoJVBRhaRHYkq8CSkp3yYlvlK+4XzJ0xEFt4bLyu+RR05Ef55o5WADJOi4+VODc44M5N29gKNgn1KG4nMfg03kZ72qu81HCXL0XKgDlaZgcDDU5PKV0bMcZBuaOcE9kASOKqCQoyHi2BmtHahCRxkaFBFplbcvNskluTgcODq/Xn3ybJ8C1p5ha8rQLA3Zez2OQ4+VaXF7ZVwaHBzYWGf5hvvDJxx/9klqqFlBDx1cjFKBwt0f9obMJ4TDwDH0JVoVPohLVxjUoOLejBhGk8p+1Dlcr3j709ElGGPeTxqUQjO5Vgd4Uau/aRxW7lk=
     file:
-      - "./client-repository/target/FamilyDAM-0.2.1.jar"
-    name: "FamilyDAM 0.2.1 - travis"
+      - "./client-repository/target/FamilyDAM-0.3.0.jar"
+    name: "FamilyDAM 0.3.0"
     body: "Digital Asset Manager for Families."
     prerelease: true
     overwrite: true

@@ -23,7 +23,7 @@
     <groupId>com.familydam.apps</groupId>
     <artifactId>osgi-bundle-dashboard</artifactId>
     <packaging>bundle</packaging>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.0</version>
     <name>OSGI Dashboard Bundle</name>
     <description></description>
 
@@ -35,7 +35,7 @@
     <parent>
         <groupId>com.familydam.repository</groupId>
         <artifactId>familydam</artifactId>
-        <version>0.2.1-SNAPSHOT</version>
+        <version>0.3.0</version>
         <relativePath>..</relativePath>
     </parent>
 

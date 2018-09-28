@@ -7,7 +7,7 @@
 prog_dir=`dirname \`realpath $0\``
 
 name="FamilyDAM"
-version="0.1.0"
+version="0.3.0"
 description="A Digital Asset Manager for Families"
 framework_version="2.1"
 depends="java8"

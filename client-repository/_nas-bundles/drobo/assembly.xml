@@ -33,7 +33,7 @@
             <directory>target</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>FamilyDAM.jar</include>
+                <include>FamilyDAM-0.3.0.drobo.jar</include>
             </includes>
         </fileSet>
     </fileSets>
