@@ -111,9 +111,6 @@
     <profiles>
         <profile>
             <id>nas-drobo</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
 
             <build>
                 <pluginManagement>
