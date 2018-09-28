@@ -36,7 +36,7 @@
         <module>osgi-bundle-core</module>
         <module>osgi-bundle-dashboard</module>
         <module>osgi-bundle-files</module>
-        <!--module>osgi-bundle-usermanager</module-->
+        <module>osgi-bundle-usermanager</module>
         <module>osgi-bundle-photos</module>
         <module>osgi-bundle-sync</module>
         <module>client-repository</module>

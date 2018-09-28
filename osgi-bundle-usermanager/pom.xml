@@ -23,7 +23,6 @@
     <artifactId>osgi-bundle-usermanager</artifactId>
     <packaging>bundle</packaging>
     <version>0.2.1-SNAPSHOT</version>
-
     <name>OSGI User Manager Bundle</name>
     <description>com.familydam.bundles - osgi-bundle-cloudfiles</description>
 
@@ -220,7 +219,6 @@
                         <Private-Package></Private-Package>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
-                            SLING-INF/content/app-usermanager/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/apps/app-usermanager/,
                             SLING-INF/content/app-usermanager/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-usermanager/build,
                             SLING-INF/content/app-usermanager/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-usermanager/public,
                             SLING-INF/content/app-usermanager/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-usermanager/src,
