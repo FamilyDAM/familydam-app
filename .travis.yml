@@ -12,7 +12,7 @@ branches:
   - master
   - develop
 install: true
-script: "mvn -X --settings .travis.settings.xml install -P build-clients"
+script: "mvn clean install -P build-clients"
 deploy:
   - provider: releases
     skip_cleanup: true
