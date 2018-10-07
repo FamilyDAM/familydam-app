@@ -12,7 +12,7 @@ import LoginCards from '../../components/logincards/LoginCards';
 import SignupCard from '../../components/signupcard/SignupCard';
 
 import UserActions from '../../actions/UserActions';
-import AppActions from '../../library/actions/AppActions';
+import {AppActions} from '@FamilyDAM/lib-client';
 
 
 const styleSheet = (theme) => ({

@@ -12,8 +12,7 @@ import FileIcon from '@material-ui/icons//InsertDriveFile';
 //import PhotoIcon from '@material-ui/icons//PhotoLibrary';
 import Paper from '@material-ui/core/Paper';
 
-import AppShell from '../../library/appShell/AppShell';
-import AppActions from '../../library/actions/AppActions';
+import {AppActions, AppShell} from '@FamilyDAM/lib-client';
 
 
 const styleSheet = (theme) => ({

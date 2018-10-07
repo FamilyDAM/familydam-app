@@ -1,4 +1,4 @@
-import {BehaviorSubject} from '@reactivex/rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 class AppSettings {
 

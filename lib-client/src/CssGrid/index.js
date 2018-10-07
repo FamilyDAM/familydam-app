@@ -1,6 +1,6 @@
 import GridContainer from './GridContainer';
 import GridItem from './GridItem';
 
-export  {
+export default {
     GridContainer, GridItem
 }

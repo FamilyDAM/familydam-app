@@ -1,21 +1,8 @@
-import React, {Component} from "react";
+import React from 'react';
+import {Component} from 'react';
 import PropTypes from 'prop-types';
 
-
 class GridContainer extends Component {
-
-    constructor(props, context) {
-        var _props = props;
-
-        //set defaults
-        if (!props.gap) {
-            _props.gap = "0px";
-        }
-
-        //put context in props for easy access;
-        super(props);
-    }
-
 
     render() {
         var _style = {};
@@ -23,11 +10,12 @@ class GridContainer extends Component {
             _style = this.props.style;
         }
 
+        _style.display = "grid";
         if( !_style.width ) {
-            _style.width = "100%";
+            //_style.width = "100%";
         }
         if( !_style.height ) {
-            _style.height = "100%";
+            //_style.height = "100%";
         }
         if( !_style.gridGap ) {
             _style.gridGap = this.props.gap;
@@ -40,7 +28,7 @@ class GridContainer extends Component {
         }
 
         return (
-            <div style={_style}>{this.props.children}</div>
+            <div style={_style} {...this.props}>{this.props.children}</div>
         );
     }
 }

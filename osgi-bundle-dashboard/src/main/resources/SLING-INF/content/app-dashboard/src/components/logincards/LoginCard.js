@@ -11,7 +11,7 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import AccountCircle from '@material-ui/icons//AccountCircle';
 
-import LoadingButton from '../../library/loadingButton/LoadingButton';
+import {LoadingButton} from '@FamilyDAM/lib-client';
 
 const styleSheet = (theme) => ({
     personalCard: {

@@ -1,4 +1,4 @@
-import {Subject, BehaviorSubject} from '@reactivex/rxjs';
+import {Subject, BehaviorSubject} from 'rxjs';
 
 import LoadClientAppsService from './processors/LoadClientAppsService';
 
@@ -19,3 +19,5 @@ class AppActions {
 }
 
 export default new AppActions();
+
+

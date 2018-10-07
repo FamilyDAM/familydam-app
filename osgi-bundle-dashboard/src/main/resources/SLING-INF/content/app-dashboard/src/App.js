@@ -9,9 +9,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import LoginPage from './pages/login/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 
-import AppActions from './library/actions/AppActions';
-//import AppSettings from './library/actions/AppSettings';
 import UserActions from './actions/UserActions';
+import {AppActions} from '@FamilyDAM/lib-client';
 
 
 const styleSheet = (theme) => ({

@@ -2,31 +2,37 @@ const path = require('path');
 const config = require('./package.json');
 
 const webpack = require('webpack');
+const nodeExternals = require('webpack-node-externals');
 require('dotenv').config();
 
 const PROD = process.env.NODE_ENV === 'production';
 
-let plugins = [];
 
 PROD ? [
     plugins.push(new webpack.optimize.UglifyJsPlugin({
-        compress: { warnings: false }
+        compress: {warnings: false}
     }))
 ] : '';
 
 module.exports = {
-    entry: path.resolve(__dirname, config.main),
-    devtool: 'source-map',
+    entry: path.resolve(__dirname, 'src/index.js'),
     output: {
-        library: process.env.NAME,
-        libraryTarget: process.env.TARGET,
-        path: __dirname,
-        filename: (PROD) ? 'build/familydam-client.min.js' : 'build/familydam-client.js'
+        path: path.resolve(__dirname),
+        filename: 'index.js',
+        library: '',
+        libraryTarget: 'commonjs'
     },
+    externals: [nodeExternals()],
     module: {
-        loaders: [
-            {test: /\.es6?$/, exclude: /node_modules/, loader: 'babel-loader'}
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: "babel-loader"
+                }
+            }
         ]
-    },
-    plugins: plugins
+    }
 };
+

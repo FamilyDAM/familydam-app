@@ -1,8 +1,7 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppActions from '../../library/actions/AppActions';
-import AppSettings from '../../library/actions/AppSettings';
+import {AppActions, AppSettings} from '@FamilyDAM/lib-client';
 import request from 'superagent';
 
 /**

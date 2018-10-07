@@ -1,9 +1,11 @@
-import React, {Component} from "react";
+import React from 'react';
+import {Component} from 'react';
 import PropTypes from 'prop-types';
 
 class GridItem extends Component {
 
     render() {
+
         var _style = {}
         if( this.props.style ) {
             _style = this.props.style;
@@ -13,10 +15,10 @@ class GridItem extends Component {
             _style.gridGap = this.props.gap;
         }
         if( !_style.gridTemplateRows ) {
-            _style.gridTemplateRows = this.props.rows;
+            _style.gridRow = this.props.rows;
         }
         if( !_style.gridTemplateColumns ) {
-            _style.gridTemplateColumns = this.props.columns;
+            _style.gridColumn = this.props.columns;
         }
 
         return (
