@@ -16,7 +16,7 @@
     "react-intl": "^2.4.0",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^1.1.4",
+    "react-scripts": "^2.0.4",
     "rxjs": "^6.3.2",
     "rxjs-compat": "^6.3.2",
     "superagent": "^3.8.3",
@@ -44,5 +44,11 @@
     "manage:translations": "node ./scripts/translationRunner.js",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
