@@ -3,12 +3,11 @@ import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 import {IntlProvider} from 'react-intl';
 
 import {withStyles} from 'material-ui/styles';
-import {CircularProgress} from 'material-ui/Progress';
 
 //views
 import HomePage from './pages/home/HomePage';
 
-import UserActions from './actions/UserActions';
+import UserActions from './library/actions/UserActions';
 
 
 const styleSheet = (theme) => ({
@@ -59,17 +58,9 @@ class App extends Component {
 
 
     render() {
-        const classes = this.props.classes;
+        //const classes = this.props.classes;
         const locale = "en-EN";
 
-
-        if (this.state.isLoading) {
-            return (
-                <div>
-                    <CircularProgress className={classes.progress} size={50}/>
-                </div>
-            );
-        }
 
         return (
             <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>

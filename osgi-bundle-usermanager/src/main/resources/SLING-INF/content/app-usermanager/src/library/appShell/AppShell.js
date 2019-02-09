@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
-import {withStyles} from "material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 
 
 import Sidebar from '../sidebar/Sidebar';
@@ -55,10 +55,17 @@ class AppShell extends Component {
         this.setState({"isMounted":true});
 
         AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
-            debugger;
             if (path.substring(0, 3) === "://") {
-                window.location.href = path.substring(2);
+                var hashPos = window.location.href.indexOf("#");
+                if( hashPos === -1 && window.location.href !== path.substring(2)){
+                debugger;
+                    window.location.href = path.substring(2);
+                } else if( window.location.href.substr(hashPos+1) !== path.substring(2)){
+                debugger;
+                    window.location.href = path.substring(2);
+                }
             }else{
+                debugger;
                 this.props.history.push(path);
             }
         }.bind(this));
@@ -101,7 +108,7 @@ class AppShell extends Component {
 
         if( !this.props.user ){
             this.handleLogout();
-            return;
+            return <div></div>;
         }
 
         return (

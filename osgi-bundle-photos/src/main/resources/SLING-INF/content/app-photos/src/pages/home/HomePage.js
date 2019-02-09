@@ -7,11 +7,13 @@ import {injectIntl} from 'react-intl';
 import {withStyles} from "material-ui/styles";
 
 import {CircularProgress} from 'material-ui/Progress';
-import Typography from 'material-ui/Typography';
+//import Typography from 'material-ui/Typography';
 
 
 import AppShell from '../../library/appShell/AppShell';
-import AppActions from '../../actions/AppActions';
+//import AppActions from '../../library/actions/AppActions';
+import PhotoActions from "../../actions/PhotoActions";
+import PhotoGroup from "../../components/PhotoGroup/PhotoGroup";
 
 
 const styleSheet = (theme) => ({
@@ -23,6 +25,7 @@ const styleSheet = (theme) => ({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)'
+
     },
 
 });
@@ -36,21 +39,20 @@ class HomePage extends Component {
 
         this.state = {
             isMounted:true,
-            isLoading:false
+            isLoading:true,
+            path:"/content/family/files",
+            photos:[]
         };
     }
 
     componentWillMount(){
-        this.setState({"isMounted":true});
+        this.setState({'isLoading':true, "isMounted":true});
 
+        PhotoActions.listPhotos.sink.subscribe( results => {
+           this.setState({'isLoading':false, 'photos': results.body} );
+        });
 
-        AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
-            if (path.substring(0, 3) === "://") {
-                window.location.href = path.substring(2);
-            }else{
-                this.props.history.push(path);
-            }
-        }.bind(this));
+        PhotoActions.listPhotos.source.next({path:this.state.path});
     }
 
 
@@ -65,14 +67,18 @@ class HomePage extends Component {
 
         if( this.state.isLoading ){
             return (
-                <AppShell user={this.props.user}>
+                <AppShell user={this.props.user||{}}>
                     <CircularProgress className={classes.progress} size={50} />
                 </AppShell>
             );
         }else {
             return (
-                <AppShell user={this.props.user}>
-                    <Typography type="title">Welcome, to the Photo Gallery</Typography>
+                <AppShell user={this.props.user||{}}>
+                    {this.state.photos.map( (p)=>{
+                        return (
+                            <PhotoGroup key={p.value} photos={p}></PhotoGroup>
+                        )
+                    })}
                 </AppShell>
             );
         }

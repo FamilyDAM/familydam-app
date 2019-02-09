@@ -4,6 +4,7 @@
 
 package com.familydam.apps.photos.servlets.photos;
 
+import com.familydam.apps.dashboard.exceptions.UnknownINodeException;
 import com.familydam.apps.dashboard.helpers.NodeMapper;
 import com.familydam.apps.dashboard.models.DamImage;
 import com.familydam.apps.dashboard.models.Group;
@@ -25,13 +26,29 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.security.AccessControlException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Search for content by jcr node type or mixin
- * <p>
+ *
+ * Sample Form Post Body
+ * <code>
+ * {
+ *     "paths": [
+ *         "/content/family/files"
+ *     ],
+ *     "group": "date:day",
+ *     "order": {
+ *         "field": "dam:datecreated",
+ *         "direction": "desc"
+ *     }
+ * }
+ * </code>
  * Created by mnimer on 12/13/14.
  */
 @SlingServlet(
@@ -55,28 +72,18 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
 
 
         String _order = "DESC";
-        String type = request.getParameter("type");
-        String groupBy = request.getParameter("groupBy");
-        if( groupBy == null ){
-            groupBy = "date:day";
-        }
-        Integer limit = new Integer(request.getParameter("limit"));
-        if( limit == null ){
-            limit = 100;
-        }
-
-        Integer offset = new Integer(request.getParameter("offset"));
-        if( offset == null ){
-            offset = 0;
-        }
+        String type = "dam:image";
+        String groupBy = "date:day";
+        Integer limit = 0;
+        Integer offset = 0;
 
         try {
-            String requestBody = IOUtils.toString(request.getInputStream());
+            String requestBody = IOUtils.toString(request.getInputStream(), Charset.forName("UTF-8"));
 
             Map _filters = objectMapper.readValue(requestBody, Map.class);
 
-            String _orderBy = "jcr:lastModified";
-            String _orderByDirection = "asc";
+            String _orderBy = "dam:datecreated";//"jcr:lastModified";
+            String _orderByDirection = "desc";
 
             if (_filters.containsKey("order")) {
                 _orderBy = (String) ((Map) _filters.get("order")).get("field");
@@ -146,13 +153,12 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
                 }
             }
             if (_filters.containsKey("paths")) {
-                List<Map> _paths = (List) _filters.get("paths");
+                List<String> _paths = (List) _filters.get("paths");
                 if (_paths.size() > 0) {
                     hasPath = true;
                     for (int i = 0; i < _paths.size(); i++) {
-                        Map _path = _paths.get(i);
-                        //pathClause.append(" ISDESCENDANTNODE([" +_path.get("path") +"]) ");
-                        pathClause.append(" [jcr:path] like '").append(_path.get("path")).append("/%'");
+                        //pathClause.append(" ISDESCENDANTNODE([" +_paths.get(i) +"]) ");
+                        pathClause.append(" [jcr:path] like '").append(_paths.get(i)).append("/%'");
                         if( i >= 0 && i < (_paths.size()-1) ){
                             pathClause.append(" OR ");
                         }
@@ -190,7 +196,7 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
                 sql.append(" ) ");
             }
 
-            sql.append(" ORDER BY [dam:").append(_orderBy).append("] ").append(_order).append(", [name] ASC");
+            sql.append(" ORDER BY [").append(_orderBy).append("] ").append(_order).append(", [name] ASC");
 
             QueryManager queryManager = session.getWorkspace().getQueryManager();
             Query query = queryManager.createQuery(sql.toString(), "JCR-SQL2");
@@ -203,62 +209,14 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
             // Execute the query and get the results ...
             QueryResult result = query.execute();
 
+            //Group the results
 
-            // Iterate over the nodes in the results ...
-            Collection<INode> _nodes = new ArrayList<>();
-            javax.jcr.NodeIterator nodeItr = result.getNodes();
-            while (nodeItr.hasNext()) {
-                javax.jcr.Node node = nodeItr.nextNode();
-                log.debug(node.getPath());
-                _nodes.add(NodeMapper.map(node));
-            }
-
-
-
-            Map<String, Group> _groupedNodes;
-            if( _order.equalsIgnoreCase("DESC")) {
-                _groupedNodes = new TreeMap<>(Collections.reverseOrder());
-            }else{
-                _groupedNodes = new TreeMap<>();
-            }
-
-
-            for (INode _node : _nodes)
-            {
-                String _key = getGroupKey(groupBy, _node);
-                String _label = getGroupLabel(groupBy, _node);
-
-                if( !_groupedNodes.containsKey(_key) )
-                {
-                    Group group = new Group();
-                    group.setValue(_key);
-                    group.setLabel(_label);
-                    _groupedNodes.put(_key, group);
-                }
-
-                _groupedNodes.get(_key).getChildren().add(_node);
-            }
-
-
-            for (String key : _groupedNodes.keySet()) {
-                Collections.sort( (List)_groupedNodes.get(key).getChildren(), new Comparator<Object>() {
-                    @Override
-                    public int compare(Object o1, Object o2) {
-
-                        int dataOrder = ((DamImage)o1).getDateCreated().compareTo(((DamImage)o2).getDateCreated());
-                        if (dataOrder != 0) return dataOrder * -1;
-
-                        return ((DamImage)o1).getName().compareTo( ((DamImage)o2).getName() );
-                    }
-                });
-            }
-
+            Map<String, Group> _groupedNodes = groupResults(response, _order, groupBy, result);
+            List<Group> _sortedGroups = sortGroups(_groupedNodes, _orderByDirection);
 
             response.setStatus(200);
             response.setContentType("application/json");
-            response.getOutputStream().write(objectMapper.writeValueAsString(_groupedNodes).getBytes());
-
-
+            response.getOutputStream().write(objectMapper.writeValueAsString(_sortedGroups).getBytes());
         }
         catch (AccessControlException ex){
             response.setStatus(403);
@@ -279,193 +237,80 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
         }
     }
 
-/**
-    public ResponseEntity<Object> searchByTypeOrig(HttpServletRequest request,
-                                                          HttpServletResponse response,
-                                                          @AuthenticationPrincipal Authentication currentUser_,
-                                                          @RequestBody() String jsonBody,
-                                                          @PathVariable(value = "type") String type,
-                                                          @RequestParam(value = "groupBy", defaultValue = "date:day", required = false) String groupBy_,
-                                                          @RequestParam(value = "limit", required = false, defaultValue = "100") Integer limit,
-                                                          @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset)
-    {
-
-        Session session = null;
-        try {
-            session = authenticatedHelper.getSession(currentUser_);
-
-            String _orderBy = "jcr:lastModified";
-            String _orderByDirection = "asc";
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map _filters = objectMapper.readValue(jsonBody, Map.class);
-
-            if (_filters.containsKey("order")) {
-                _orderBy = (String) ((Map) _filters.get("order")).get("field");
-                _orderByDirection = (String) ((Map) _filters.get("order")).get("direction");
-            }
-
-            if (_filters.containsKey("group")) {
-                groupBy_ = _filters.get("group").toString();
-            }
 
 
-            StringBuffer sql = new StringBuffer("SELECT * FROM [").append(type).append("] ");
-
-            sql.append(" WHERE [jcr:primaryType] = 'nt:file'");
-
-            boolean hasTags = false;
-            boolean hasPeople = false;
-            boolean hasDate = false;
-            boolean hasPath = false;
-            StringBuilder tagClause = new StringBuilder();
-            StringBuilder peopleClause = new StringBuilder();
-            StringBuilder dateClause = new StringBuilder();
-            StringBuilder pathClause = new StringBuilder();
+    private Map<String, Group> groupResults(SlingHttpServletResponse response, String _order, String groupBy, QueryResult result) throws RepositoryException, UnknownINodeException, IOException {
+        // Iterate over the nodes in the results ...
+        Collection<INode> _nodes = new ArrayList<>();
+        javax.jcr.NodeIterator nodeItr = result.getNodes();
+        while (nodeItr.hasNext()) {
+            javax.jcr.Node node = nodeItr.nextNode();
+            log.debug(node.getPath());
+            _nodes.add(NodeMapper.map(node));
+        }
 
 
-            if (_filters.containsKey("tags")) {
-                List<Map> _tags = (List) _filters.get("tags");
-                if (_tags.size() > 0) {
-                    hasTags = true;
-                    for (int i = 0; i < _tags.size(); i++) {
-                        Map tag = _tags.get(i);
-                        tagClause.append(" lower([dam:tags]) = '" + tag.get("name").toString().toLowerCase() +"'");
-                        if( i >= 0 && i < (_tags.size()-1) ){
-                            tagClause.append(" OR ");
-                        }
-                    }
-                }
-            }
-            if (_filters.containsKey("people")) {
-                List<Map> _people = (List) _filters.get("people");
-                if (_people.size() > 0) {
-                    hasPeople = true;
-                    for (int i = 0; i < _people.size(); i++) {
-                        Map people = _people.get(i);
-                        peopleClause.append(" lower([dam:people]) = '" + people.get("name").toString().toLowerCase() +"'");
-                        if( i >= 0 && i < (_people.size()-1) ){
-                            peopleClause.append(" OR ");
-                        }
-                    }
-                }
-            }
-            if (_filters.containsKey("date")) {
-                List<Map> _dates = (List) _filters.get("date");
-                if (_dates.size() > 0) {
-                    hasDate = true;
-                    for (int i = 0; i < _dates.size(); i++) {
-                        Map date = _dates.get(i);
-                        dateClause.append(" ( [dam:datecreated] >= cast('" +parseStartDate(date) +"' as date) AND [dam:datecreated] <= cast('" +parseEndDate(date) +"' as date) )");
-                        if( i >= 0 && i < (_dates.size()-1) ){
-                            dateClause.append(" OR ");
-                        }
-                    }
-                }
-            }
-            if (_filters.containsKey("paths")) {
-                List<Map> _paths = (List) _filters.get("paths");
-                if (_paths.size() > 0) {
-                    hasPath = true;
-                    for (int i = 0; i < _paths.size(); i++) {
-                        Map _path = _paths.get(i);
-                        pathClause.append(" ISDESCENDANTNODE([" +_path.get("path") +"]) ");
-                        if( i >= 0 && i < (_paths.size()-1) ){
-                            pathClause.append(" OR ");
-                        }
-                    }
-                }
-            }
+        Map<String, Group> _groupedNodes;
+        if( _order.equalsIgnoreCase("DESC")) {
+            _groupedNodes = new TreeMap<>(Collections.reverseOrder());
+        }else{
+            _groupedNodes = new TreeMap<>();
+        }
 
 
-            if( hasTags || hasPeople ){
-                sql.append(" AND (");
-                if( hasTags ){
-                    sql.append(tagClause.toString());
-                }
-                if( hasTags && hasPeople ){
-                    sql.append(" OR ");
-                }
-                if( hasPeople ){
-                    sql.append(peopleClause.toString());
-                }
+        for (INode _node : _nodes)
+        {
+            String _key = getGroupKey(groupBy, _node);
+            String _label = getGroupLabel(groupBy, _node);
 
-                sql.append(" ) ");
-            }
-
-            if( hasDate ){
-                sql.append(" AND (");
-                sql.append(dateClause.toString());
-                sql.append(" ) ");
-            }
-
-
-            if( hasPath ){
-                sql.append(" AND (");
-                sql.append(pathClause.toString());
-                sql.append(" ) ");
-            }
-
-
-            sql.append(" ORDER BY [").append(_orderBy).append("] DESC");
-            if (limit > 0) { // 0 == return all
-                //sql.append(" LIMIT ").append(limit);
-                //sql.append(" OFFSET ").append(offset);
-            }
-
-
-            QueryManager queryManager = session.getWorkspace().getQueryManager();
-            Query query = queryManager.createQuery(sql.toString(), "JCR-SQL2");
-            //Query query = queryManager.createQuery(sql.toString(), "sql");
-
-            // Execute the query and get the results ...
-            QueryResult result = query.execute();
-
-
-            // Iterate over the nodes in the results ...
-            Collection<INode> _nodes = new ArrayList<>();
-            javax.jcr.NodeIterator nodeItr = result.getNodes();
-            while (nodeItr.hasNext()) {
-                javax.jcr.Node node = nodeItr.nextNode();
-                _nodes.add(NodeMapper.map(node));
-            }
-
-
-
-            Map<String, Group> _groupedNodes = new TreeMap<>();
-
-
-            for (INode _node : _nodes)
+            if( !_groupedNodes.containsKey(_key) )
             {
-                String _key = getGroupKey(groupBy_, _node);
-                String _label = getGroupLabel(groupBy_, _node);
+                Group group = new Group();
+                group.setValue(_key);
+                group.setLabel(_label);
+                _groupedNodes.put(_key, group);
+            }
 
-                if( !_groupedNodes.containsKey(_key) )
-                {
-                    Group group = new Group();
-                    group.setValue(_key);
-                    group.setLabel(_label);
-                    _groupedNodes.put(_key, group);
+            _groupedNodes.get(_key).getChildren().add(_node);
+        }
+
+
+        for (String key : _groupedNodes.keySet()) {
+            Collections.sort( (List)_groupedNodes.get(key).getChildren(), new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+
+                    int dataOrder = ((DamImage)o1).getDateCreated().compareTo(((DamImage)o2).getDateCreated());
+                    if (dataOrder != 0) return dataOrder * -1;
+
+                    return ((DamImage)o1).getName().compareTo( ((DamImage)o2).getName() );
                 }
-
-                _groupedNodes.get(_key).getChildren().add(_node);
-            }
-
-
-            return new ResponseEntity<>(_groupedNodes, HttpStatus.OK);
-
-
+            });
         }
-        catch (Exception ae) {
-            ae.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        finally {
-            if (session != null) {
-                session.logout();
-            }
-        }
+
+        return _groupedNodes;
     }
-  **/
+
+
+    /**
+     * Sort the groups into a list
+     * @param groupedNodes
+     * @return
+     */
+    private List<Group> sortGroups(Map<String, Group> groupedNodes, String direction) {
+        Set<String> keys = groupedNodes.keySet();
+
+        Stream<String> stream = keys.stream();
+        if( direction.equalsIgnoreCase("asc") ){
+            stream = stream.sorted();
+        }else{
+            stream = stream.sorted(Comparator.reverseOrder());
+        }
+
+        return stream.map( k -> {
+            return groupedNodes.get(k);
+        }).collect(Collectors.toList());
+    }
 
 
     /**
@@ -500,7 +345,7 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
         {
             Calendar dateCreated = node_.getDateCreated();
             if( dateCreated != null ) {
-                SimpleDateFormat df =new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                 return df.format(dateCreated.getTime());
             }
         }

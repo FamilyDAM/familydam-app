@@ -90,7 +90,20 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.core</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
+            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -277,12 +290,18 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Private-Package>
-                            com.familydam.apps.photos.*,com.familydam.apps.photos.servlets.*,com.familydam.apps.photos.cron.*,com.familydam.apps.photos.daos.*
+                            com.familydam.apps.photos.*,
+                            com.familydam.apps.photos.cron.*,
+                            com.familydam.apps.photos.daos.*,
+                            com.familydam.apps.photos.servlets.*,
+                            com.familydam.apps.photos.processors.RotateJobProcessor,
+                            com.familydam.apps.photos.processors.ExifJobProcessor,
+                            com.familydam.apps.photos.processors.PHashJobProcessor
                         </Private-Package>
                         <Export-Package />
                         <Embed-Dependency>metadata-extractor,xmpcore,imgscalr-lib,im4java,commons-imaging,thumbnailator,jackson-databind,jackson-annotations,jackson-core</Embed-Dependency>
                         <Import-Package>
-                            *;resolution:=optional
+                            *;resolution:=required
                         </Import-Package>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,

@@ -2,6 +2,7 @@ sling
 tools
 build
 target
+_test-assets
 .sass-cache
 .build-app
 build-binary

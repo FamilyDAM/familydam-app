@@ -27,7 +27,6 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.oak.commons.IOUtils;
-import org.apache.jackrabbit.oak.plugins.segment.SegmentStream;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -188,7 +187,7 @@ public class ImageThumbnailServlet extends SlingSafeMethodsServlet
     /**
      * Save the tmp file (after resize) to our system cache folder
      * @param resource
-     * @param bufImage
+     * @param uri
      * @param mimeType
      * @param session
      * @return
@@ -217,11 +216,11 @@ public class ImageThumbnailServlet extends SlingSafeMethodsServlet
         try {
             response.setContentType(contentType);
 
-            int _len = new Long(newImageIS.available()).intValue();
-            if( newImageIS instanceof SegmentStream ){
-                _len = new Long(((SegmentStream) newImageIS).getLength()).intValue();
-            }
-            response.setContentLength(_len);
+            //int _len = new Long(newImageIS.available()).intValue();
+            //if( newImageIS instanceof SegmentStream ){
+//                _len = new Long(((SegmentStream) newImageIS).getLength()).intValue();
+            //}
+            response.setContentLength(0);
 
             IOUtils.copy(newImageIS, response.getOutputStream());
 

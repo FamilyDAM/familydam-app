@@ -8,7 +8,9 @@ import {CircularProgress} from 'material-ui/Progress';
 //views
 import HomePage from './pages/home/HomePage';
 
+import AppSettings from './library/actions/AppSettings';
 import UserActions from './actions/UserActions';
+
 
 
 const styleSheet = (theme) => ({
@@ -36,6 +38,17 @@ class App extends Component {
             "isLoading": false,
             "isMounted": true
         };
+
+
+
+        // set it running locally with npm start, so you can still call running server
+
+        if( window.location.href.indexOf(":3000") > -1){
+            AppSettings.baseHost.next("http://localhost:9000");
+            AppSettings.basicUser.next("Mike");
+            AppSettings.basicPwd.next("admin");
+            UserActions.getUser.sink.next( {"user":{"firstName":"","lastName":""}} );
+        }
 
     }
 

@@ -10,13 +10,14 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
-import org.apache.jackrabbit.oak.plugins.segment.SegmentStream;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.event.impl.jobs.JobImpl;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.consumer.JobConsumer;
+import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +26,12 @@ import javax.jcr.Session;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Dictionary;
 
 /**
  * Created by mnimer on 3/5/16.
  */
-@Component
+@Component(immediate = true, metatype = true)
 @Service(value = JobConsumer.class)
 @Property(name = "job.topics", value = FamilyDAMConstants.PHASH_JOB_TOPIC)
 public class PHashJobProcessor implements JobConsumer
@@ -39,6 +41,10 @@ public class PHashJobProcessor implements JobConsumer
     @Reference
     private ResourceResolverFactory resolverFactory;
 
+
+    protected void activate(ComponentContext ctx) {
+        Dictionary<?, ?> props = ctx.getProperties();
+    }
 
     @Override public JobResult process(Job job)
     {
@@ -60,24 +66,16 @@ public class PHashJobProcessor implements JobConsumer
             final Session session = adminResolver.adaptTo(Session.class);
 
 
-
-            //InputStream is = res.adaptTo(InputStream.class);
             Node _node = session.getNode(resourcePath);
-            InputStream is = _node.getNode("jcr:content").getProperty("jcr:data").getBinary().getStream();
-            int count = 0;
-            while( ((SegmentStream) is).getLength() == 0 && count++ < 10 ){
-                is.close();
-                Thread.sleep(250);
-                is = res.adaptTo(InputStream.class);
-            }
-
-
             try {
+                //InputStream is = res.adaptTo(InputStream.class);
+                InputStream is = JcrUtils.readFile(_node);
+
                 ImagePHash pHash = new ImagePHash();
                 String hash = pHash.getHash(new BufferedInputStream(is));
                 _node.setProperty("phash", hash);
             }finally {
-                _node.setProperty("dam:datephashparsed", Calendar.getInstance());
+                _node.setProperty("dam:phash.date", Calendar.getInstance());
             }
 
             session.save();

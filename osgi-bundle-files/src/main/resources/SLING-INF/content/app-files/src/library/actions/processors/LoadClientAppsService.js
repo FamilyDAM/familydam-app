@@ -3,6 +3,7 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import AppActions from '../AppActions';
+import AppSettings from '../AppSettings';
 import request from 'superagent';
 
 
@@ -27,15 +28,15 @@ class LoginService {
      */
     loadApps(data_)
     {
-        var u = window.localStorage.getItem("u");
-        var p = window.localStorage.getItem("p");
-        //.set('Authorization', 'user ' +u +":" +p)
+        //const baseUrl = AppSettings.baseHost.getValue();
+        const user = AppSettings.basicUser.getValue();
+        const pwd = AppSettings.basicPwd.getValue();
 
         //call server get list of apps
         request.get('http://localhost:9000/api/familydam/v1/core/clientapps')
             .withCredentials()
             .set('Accept', 'application/json')
-            .set('Authorization', 'user ' +u +":" +p)
+            .set('Authorization', 'user ' +user +":" +pwd)
             .end((err, res)=>{
 
                 if( !err ){

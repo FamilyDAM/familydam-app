@@ -157,9 +157,14 @@ public class NodeMapper
 
         try {
             if (node.hasProperty(FamilyDAMDashboardConstants.DAM_DATECREATED)) {
-                file.setDateCreated(node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getDate());
-            } else {
-                file.setDateCreated(Calendar.getInstance());
+                if( node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getType() == 5 ) {
+                    file.setDateCreated(node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getDate());
+                }else{
+                    String dtStr = node.getProperty(FamilyDAMDashboardConstants.DAM_DATECREATED).getString();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(dtStr));
+                    file.setDateCreated(cal);
+                }
             }
         }
         catch (Exception pe) {

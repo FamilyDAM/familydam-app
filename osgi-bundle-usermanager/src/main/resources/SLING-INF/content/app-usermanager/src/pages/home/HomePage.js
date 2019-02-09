@@ -7,11 +7,11 @@ import {injectIntl} from 'react-intl';
 import {withStyles} from "material-ui/styles";
 
 import {CircularProgress} from 'material-ui/Progress';
-import Typography from 'material-ui/Typography';
 
 
 import AppShell from '../../library/appShell/AppShell';
-import AppActions from '../../actions/AppActions';
+import UserList from '../../components/userlist';
+import UserEditForm from "../../components/userEditForm";
 
 
 const styleSheet = (theme) => ({
@@ -25,6 +25,23 @@ const styleSheet = (theme) => ({
         transform: 'translate(-50%, -50%)'
     },
 
+    container:{
+        height:'100%',
+        display:'grid',
+        gridGap: '0px',
+        gridTemplateRows: "auto",
+        gridTemplateColumns: "minmax(200px, 250px) 5fr"
+    },
+    userListSidebar:{
+        gridColumn: "1",
+        gridRow: "1",
+        border: "1px solid"
+    },
+    detailContainer:{
+        gridColumn: "2",
+        gridRow: "1"
+    }
+
 });
 
 
@@ -33,6 +50,8 @@ class HomePage extends Component {
 
     constructor(props, context) {
         super(props);
+
+        this.handleAddUserClick = this.handleAddUserClick.bind(this);
 
         this.state = {
             isMounted:true,
@@ -43,19 +62,15 @@ class HomePage extends Component {
     componentWillMount(){
         this.setState({"isMounted":true});
 
-
-        AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
-            if (path.substring(0, 3) === "://") {
-                window.location.href = path.substring(2);
-            }else{
-                this.props.history.push(path);
-            }
-        }.bind(this));
     }
 
 
     componentWillUnmount() {
         this.setState({"isMounted":false});
+    }
+
+    handleAddUserClick() {
+        //todo
     }
 
 
@@ -72,7 +87,14 @@ class HomePage extends Component {
         }else {
             return (
                 <AppShell user={this.props.user}>
-                    <Typography type="title">Welcome, to the User Manager</Typography>
+                    <div className={classes.container}>
+                        <div className={classes.userListSidebar}>
+                            <UserList></UserList>
+                        </div>
+                        <div className={classes.detailContainer}>
+                            <UserEditForm/>
+                        </div>
+                    </div>
                 </AppShell>
             );
         }

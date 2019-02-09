@@ -16,7 +16,6 @@ import java.io.InputStream;
 public interface IImageResizeService
 {
     File resizeImage(Resource resource, String uri, String mimeTypeExt, InputStream is, int longSize) throws Exception;
-
     BufferedImage scaleWithScalr(Resource resource, InputStream is, int longSize) throws Exception;
     File scaleWithImageMagik(Resource resource, InputStream is, int longSize) throws Exception;
 }

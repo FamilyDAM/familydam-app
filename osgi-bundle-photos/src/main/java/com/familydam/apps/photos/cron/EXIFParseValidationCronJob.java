@@ -97,7 +97,7 @@ public class EXIFParseValidationCronJob implements Runnable {
                     }
 
                     if( !exifJobExists ) {
-                        Job phashJob = this.jobManager.addJob(FamilyDAMConstants.EXIF_JOB_TOPIC, payload);
+                        Job job = this.jobManager.addJob(FamilyDAMConstants.EXIF_JOB_TOPIC, payload);
                     }else if(jobInfo != null){
                         jobInfo.reschedule();
                     }
@@ -117,7 +117,7 @@ public class EXIFParseValidationCronJob implements Runnable {
                     }
 
                     if( !phashJobExists ) {
-                        Job exifJob = this.jobManager.addJob(FamilyDAMConstants.PHASH_JOB_TOPIC, payload);
+                        Job job = this.jobManager.addJob(FamilyDAMConstants.PHASH_JOB_TOPIC, payload);
                     }else if(jobInfo != null){
                         jobInfo.reschedule();
                     }

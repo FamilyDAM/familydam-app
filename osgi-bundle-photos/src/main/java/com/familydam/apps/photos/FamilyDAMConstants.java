@@ -14,8 +14,10 @@ public class FamilyDAMConstants
     public static final String DAM_EXTENSIBLE = "dam:extensible";
 
     //The job topics
-    public static final String EXIF_JOB_TOPIC = "familydam/image/exif/job";
     public static final String PHASH_JOB_TOPIC = "familydam/image/phash/job";
+    public static final String EXIF_JOB_TOPIC = "familydam/image/exif/job";
+    public static final String ROTATE_JOB_TOPIC = "familydam/image/rotate/job";
+    public static final String THUMBNAIL_JOB_TOPIC = "familydam/image/thumbnail/job";
 
 
     //paths

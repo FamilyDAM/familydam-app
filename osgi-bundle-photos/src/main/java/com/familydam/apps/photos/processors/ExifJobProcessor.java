@@ -9,12 +9,13 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
-import org.apache.jackrabbit.oak.plugins.segment.SegmentStream;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.consumer.JobConsumer;
+import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,21 +24,24 @@ import javax.jcr.Session;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Dictionary;
 
 /**
  * Created by mnimer on 3/5/16.
  */
-@Component
+@Component(immediate = true, metatype = true)
 @Service(value=JobConsumer.class)
 @Property(name="job.topics", value="familydam/image/exif/job")
 public class ExifJobProcessor implements JobConsumer
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-
     @Reference
     private ResourceResolverFactory resolverFactory;
 
+    protected void activate(ComponentContext ctx) {
+        Dictionary<?, ?> props = ctx.getProperties();
+    }
 
     @Override public JobResult process(Job job)
     {
@@ -62,21 +66,11 @@ public class ExifJobProcessor implements JobConsumer
             //Thread.sleep(1000);
 
             Node _node = session.getNode(resourcePath);
-
-            InputStream is = _node.getNode("jcr:content").getProperty("jcr:data").getBinary().getStream();//res.adaptTo(InputStream.class);
-            //InputStream is = res.adaptTo(InputStream.class);
-            int count = 0;
-            while( ((SegmentStream) is).getLength() == 0 && count++ < 10 ){
-                is.close();
-                Thread.sleep(250);
-                is = res.adaptTo(InputStream.class);
-            }
-
-
             try {
+                InputStream is = JcrUtils.readFile(_node);
                 new ImageExifParser(resolverFactory).parseExif(new BufferedInputStream(is), _node);
             }finally {
-                _node.setProperty("dam:dateexifparsed", Calendar.getInstance());
+                _node.setProperty("dam:exif.date", Calendar.getInstance());
             }
             session.save();
 

@@ -47,7 +47,7 @@ const renderApp = function(){
         </MuiThemeProvider>
         , document.getElementById('root'));
 
-}
+};
 
 renderApp();
 registerServiceWorker();
