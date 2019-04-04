@@ -233,12 +233,12 @@
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
                             SLING-INF/content/index.html;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/,
-                            SLING-INF/content/app-dashboard/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/build,
-                            SLING-INF/content/app-dashboard/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/public,
-                            SLING-INF/content/app-dashboard/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/src,
-                            SLING-INF/content/app-dashboard/.gitignore;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/.gitignore,
-                            SLING-INF/content/app-dashboard/package.json;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/package.json,
-                            SLING-INF/content/app-dashboard/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-dashboard/README.md
+                            SLING-INF/content/app-dashboard/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-dashboard/build,
+                            SLING-INF/content/app-dashboard/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-dashboard/public,
+                            SLING-INF/content/app-dashboard/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-dashboard/src,
+                            SLING-INF/content/app-dashboard/.gitignore;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-dashboard/.gitignore,
+                            SLING-INF/content/app-dashboard/package.json;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-dashboard/package.json,
+                            SLING-INF/content/app-dashboard/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-dashboard/README.md
                         </Sling-Initial-Content>
                         <Import-Package>
                             org.slf4j;version="[1.7,2)",

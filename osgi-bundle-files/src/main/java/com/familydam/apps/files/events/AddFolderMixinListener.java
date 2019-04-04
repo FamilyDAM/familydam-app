@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.nodetype.NodeType;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -117,6 +116,7 @@ public class AddFolderMixinListener implements EventListener {
                     //log.trace(propPath + " | mimetype=" + mimeType);
 
                     session.save();
+                    adminResolver.close();
                 }
 
             } catch (Exception ex) {

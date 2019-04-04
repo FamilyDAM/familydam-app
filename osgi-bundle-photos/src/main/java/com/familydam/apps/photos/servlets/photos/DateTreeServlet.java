@@ -17,11 +17,7 @@ import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
-import org.apache.sling.commons.json.sling.ResourceTraversor;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +27,8 @@ import javax.jcr.Session;
 import javax.jcr.security.AccessControlException;
 import javax.servlet.ServletException;
 import java.io.IOException;
+
+//import org.apache.sling.commons.json.sling.ResourceTraversor;
 
 /**
  * Created by mnimer on 3/25/16.
@@ -99,6 +97,7 @@ public class DateTreeServlet extends SlingSafeMethodsServlet
             }
 
 
+            /**
             ResourceTraversor traversor = null;
             try {
 
@@ -117,6 +116,7 @@ public class DateTreeServlet extends SlingSafeMethodsServlet
                 response.setContentType("text/plain");
                 response.getOutputStream().write(e.getMessage().getBytes());
             }
+             **/
 
 
         }

@@ -5,8 +5,8 @@
 [:repoinit]
     create service user familydam-admin
 
+    create path /libs/familydam(sling:Folder)
     create path /content(sling:Folder)
-    create path /content/apps(sling:Folder)
     create path /content/family(sling:Folder)
 
     set ACL for familydam-admin
@@ -19,7 +19,7 @@
     end
 
     set ACL for anonymous
-        allow   jcr:read	on /content/apps
+        allow   jcr:read	on /libs/familydam
     end
 
 [variables]

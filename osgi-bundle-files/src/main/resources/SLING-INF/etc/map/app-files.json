@@ -1,5 +1,5 @@
 {
   "jcr:primaryType": "sling:Folder",
   "sling:match": "^[^/]+/[^/]+/app-files",
-  "sling:internalRedirect": "/content/apps/app-files/build"
+  "sling:internalRedirect": "/libs/familydam/app-files/build"
 }

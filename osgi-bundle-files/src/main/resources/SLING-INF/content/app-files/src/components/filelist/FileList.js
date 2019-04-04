@@ -25,6 +25,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FileListTableHead from './FileListTableHead';
 import AppActions from '../../library/actions/AppActions';
 import fileActions from '../../actions/FileActions';
+import LoadingButton from '../../library/loadingButton/LoadingButton';
 
 const styleSheet = (theme) => ({
     main:{
@@ -300,9 +301,10 @@ class FileList extends Component{
                         <Button onClick={this.handleCancelDialog} color="primary">
                             Cancel
                         </Button>
-                        <Button raised color="primary" onClick={this.handleFileDeleteOk} >
-                            Delete
-                        </Button>
+                        <LoadingButton
+                            isLoading={this.state.isLoading}
+                            label="Delete"
+                            onClick={this.handleFileDeleteOk}></LoadingButton>
                     </DialogActions>
                 </Dialog>
 
@@ -319,9 +321,10 @@ class FileList extends Component{
                         <Button onClick={this.handleCancelDialog} color="primary">
                             Cancel
                         </Button>
-                        <Button raised color="primary" onClick={this.handleFolderDeleteOk} >
-                            Delete
-                        </Button>
+                        <LoadingButton
+                            isLoading={this.state.isLoading}
+                            label="Delete"
+                            onClick={this.handleFolderDeleteOk}></LoadingButton>
                     </DialogActions>
                 </Dialog>
 

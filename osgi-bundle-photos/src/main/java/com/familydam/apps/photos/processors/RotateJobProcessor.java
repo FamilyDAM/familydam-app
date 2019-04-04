@@ -35,7 +35,7 @@ import java.util.Dictionary;
  */
 @Component(immediate = true, metatype = true)
 @Service(value=JobConsumer.class)
-@Property(name="job.topics", value="familydam/image/rotate/job")
+@Property(name="job.topics", value="familydam.image.rotate.job")
 public class RotateJobProcessor implements JobConsumer
 {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -47,6 +47,7 @@ public class RotateJobProcessor implements JobConsumer
     private ImageRotationService rotationService;
 
     public RotateJobProcessor() {
+        System.out.println("here");
     }
 
     protected void activate(ComponentContext ctx) {

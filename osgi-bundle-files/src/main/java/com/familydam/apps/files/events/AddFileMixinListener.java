@@ -79,7 +79,7 @@ public class AddFileMixinListener implements EventListener {
 
     boolean isSupported(Event event) throws RepositoryException {
         if (Event.NODE_ADDED == event.getType()) {
-            if( event.getPath().startsWith("/content") && !event.getPath().startsWith("/content/apps") ){
+            if( event.getPath().startsWith("/content") && !event.getPath().startsWith("/libs/familydam") ){
                 if( !event.getPath().endsWith(JcrConstants.JCR_CONTENT)) {
                     return true;
                 }
@@ -102,46 +102,37 @@ public class AddFileMixinListener implements EventListener {
                         Session session = repository.loginAdministrative(null);
                         ResourceResolver adminResolver = resolverFactory.getAdministrativeResourceResolver(null);
 
-                        // save the session, before changing props
-                        if (session.hasPendingChanges()) {
-                            session.save();
-                        }
-
                         Node node = session.getNodeByIdentifier(event.getIdentifier());//JcrUtils.getNodeIfExists(event.getPath(), session);
+                        Resource res = adminResolver.getResource(event.getPath());
+                        String mimeType = res.getResourceMetadata().getContentType();
+                        //log.trace(propPath + " | mimetype=" + mimeType);
+
+
                         node.addMixin(NodeType.MIX_LOCKABLE);
                         node.addMixin(NodeType.MIX_REFERENCEABLE);
                         node.addMixin(NodeType.MIX_LAST_MODIFIED);
+                        node.addMixin(NodeType.MIX_VERSIONABLE);
                         node.addMixin(FamilyDAMCoreConstants.DAM_FILE);
                         node.addMixin(FamilyDAMCoreConstants.DAM_EXTENSIBLE);
+                        node.addMixin(FamilyDAMCoreConstants.DAM_TAGGABLE);
 
-
-                        final Resource res = adminResolver.getResource(event.getPath());
-                        final String mimeType = res.getResourceMetadata().getContentType();
-                        //log.trace(propPath + " | mimetype=" + mimeType);
 
                         if (mimeType.startsWith("image")) {
                             node.addMixin(FamilyDAMCoreConstants.DAM_IMAGE);
-                            node.addMixin(FamilyDAMCoreConstants.DAM_TAGGABLE);
-                            node.addMixin(NodeType.MIX_VERSIONABLE);
-                            //save mixin changes
                         }
                         else if (mimeType.startsWith("video")) {
                             node.addMixin(FamilyDAMCoreConstants.DAM_VIDEO);
-                            node.addMixin(FamilyDAMCoreConstants.DAM_TAGGABLE);
-                            node.addMixin(NodeType.MIX_VERSIONABLE);
-                            //save mixin changes
                         }
                         else if (mimeType.startsWith("audio")) {
                             node.addMixin(FamilyDAMCoreConstants.DAM_MUSIC);
-                            node.addMixin(FamilyDAMCoreConstants.DAM_TAGGABLE);
-                            node.addMixin(NodeType.MIX_VERSIONABLE);
-                            //save mixin changes
                         }
 
                         session.save();
+                        adminResolver.close();
                     }
 
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     log.error(ex.getMessage(), ex);
                 }
 

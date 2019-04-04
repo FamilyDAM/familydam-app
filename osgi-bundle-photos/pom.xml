@@ -117,11 +117,15 @@
             <scope>provided</scope>
         </dependency>
 
-
-
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.json</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -155,10 +159,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.commons.json</artifactId>
-        </dependency>
+
 
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
@@ -291,26 +292,36 @@
                         <Bundle-Category>FamilyDAM</Bundle-Category>
                         <Private-Package>
                             com.familydam.apps.photos.*,
-                            com.familydam.apps.photos.cron.*,
-                            com.familydam.apps.photos.daos.*,
-                            com.familydam.apps.photos.servlets.*,
+                            com.familydam.apps.photos.observers.*,
+                            com.familydam.apps.photos.servlets.ImageThumbnailServlet,
+                            com.familydam.apps.photos.servlets.photos.PhotoSearchServlet,
                             com.familydam.apps.photos.processors.RotateJobProcessor,
                             com.familydam.apps.photos.processors.ExifJobProcessor,
                             com.familydam.apps.photos.processors.PHashJobProcessor
                         </Private-Package>
                         <Export-Package />
-                        <Embed-Dependency>metadata-extractor,xmpcore,imgscalr-lib,im4java,commons-imaging,thumbnailator,jackson-databind,jackson-annotations,jackson-core</Embed-Dependency>
+                        <Embed-Dependency>
+                            metadata-extractor,
+                            xmpcore,
+                            imgscalr-lib,
+                            im4java,
+                            commons-imaging,
+                            thumbnailator,
+                            jackson-databind,
+                            jackson-annotations,
+                            jackson-core
+                        </Embed-Dependency>
                         <Import-Package>
-                            *;resolution:=required
+                            *;resolution:=optional
                         </Import-Package>
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
-                            SLING-INF/content/app-photos/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-photos/build,
-                            SLING-INF/content/app-photos/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-photos/public,
-                            SLING-INF/content/app-photos/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-photos/src,
-                            SLING-INF/content/app-photos/.gitignore;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-photos/.gitignore,
-                            SLING-INF/content/app-photos/package.json;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-photos/package.json,
-                            SLING-INF/content/app-photos/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-photos/README.md
+                            SLING-INF/content/app-photos/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/libs/familydam/app-photos/build,
+                            SLING-INF/content/app-photos/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-photos/public,
+                            SLING-INF/content/app-photos/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-photos/src,
+                            SLING-INF/content/app-photos/.gitignore;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-photos/.gitignore,
+                            SLING-INF/content/app-photos/package.json;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-photos/package.json,
+                            SLING-INF/content/app-photos/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-photos/README.md
                         </Sling-Initial-Content>
                     </instructions>
                 </configuration>

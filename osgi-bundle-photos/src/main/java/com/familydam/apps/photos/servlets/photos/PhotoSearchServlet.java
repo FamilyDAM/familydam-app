@@ -223,7 +223,7 @@ public class PhotoSearchServlet  extends SlingAllMethodsServlet
             return;
         }
         catch (Exception ex){
-                ex.printStackTrace();
+            ex.printStackTrace();
             response.setStatus(500);
             response.setContentType("application/json");
             try {

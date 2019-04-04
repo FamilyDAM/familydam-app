@@ -225,12 +225,12 @@
                         <Sling-Initial-Content>
                             SLING-INF/etc/map;overwrite:=true;uninstall:=true;path:=/etc/map,
                             SLING-INF/content/family;overwrite:=false;uninstall:=false;path:=/content,
-                            SLING-INF/content/app-files/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/content/apps/app-files/build,
-                            SLING-INF/content/app-files/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/public,
-                            SLING-INF/content/app-files/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/src,
-                            SLING-INF/content/app-files/.gitignore;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/.gitignore,
-                            SLING-INF/content/app-files/package.json;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/package.json,
-                            SLING-INF/content/app-files/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/content/apps/app-files/README.md
+                            SLING-INF/content/app-files/build;overwrite:=true;uninstall:=true;ignoreImportProviders:="html,js,map,json,svg";path:=/libs/familydam/app-files/build,
+                            SLING-INF/content/app-files/public;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-files/public,
+                            SLING-INF/content/app-files/src;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-files/src,
+                            SLING-INF/content/app-files/.gitignore;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-files/.gitignore,
+                            SLING-INF/content/app-files/package.json;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-files/package.json,
+                            SLING-INF/content/app-files/README.md;overwrite:=true;uninstall:=true;ignoreImportProviders:="js,json,xml,jpg,png,svg";path:=/libs/familydam/app-files/README.md
                         </Sling-Initial-Content>
                     </instructions>
                 </configuration>
