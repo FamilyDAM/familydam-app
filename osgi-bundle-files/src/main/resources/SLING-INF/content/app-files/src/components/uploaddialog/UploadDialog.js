@@ -134,11 +134,15 @@ class UploadDialog extends Component {
     }
 
     handleOnDragEnter(e) {
+        //console.log("onDragEnter");
         this.setState({isReceiverOpen: true});
     }
 
     handleOnDragOver(e) {
         // your codes here
+        if( this.state.isReceiverOpen ) {
+            this.setState({isReceiverOpen: true});
+        }
     }
 
     handleOnDragLeave(e) {
@@ -179,13 +183,16 @@ class UploadDialog extends Component {
         var _items = e.dataTransfer.items;
         // close the Receiver after file dropped
 
-        var processFile = function(file_, path_){
+        var processFile = function(file_, path_, relPath_){
             _fileList.push(file_);
             if (!file_.id) {
                 file_.id = uuid();
             }
             file_.progress = 0;
             file_.uploadPath = path_;
+            if( relPath_ ){
+                file_.relativePath = relPath_;
+            }
             FileActions.uploadFile.source.next(file_);
         };
 
@@ -198,12 +205,12 @@ class UploadDialog extends Component {
                 for (let j = 0; j < entries.length; j++) {
                     var entry = entries[j];
                     console.dir(entry);
-                    console.dir(entry.file());
+                    console.dir(entry.file);
                     console.dir(entry.fullPath);
+                    const relPath = entry.fullPath;
                     if(entry.isFile) {
                         entry.file( (f)=>{
-                            console.log("f=" +f); //todo <---------
-                            processFile(f, path);
+                            processFile(f, path, relPath);
                         });
                     }else if (entry.isDirectory) {
                         readDir(entry, file, path);
@@ -251,10 +258,17 @@ class UploadDialog extends Component {
             });
 
 
+
+        console.log("render")
+        let uploadDragBorderStyles = {marginLeft: '24px', marginRight: '24px', marginBottom: '24px', height: '100%', 'border': '3px #ccc dashed'};
+        if( this.state.isReceiverOpen ){
+            uploadDragBorderStyles.border = '5px #ccc dashed';
+        }
+
+
+
         return (
             <Dialog
-                ignoreBackdropClick
-                ignoreEscapeKeyUp
                 maxWidth="md"
                 fullScreen={true}
                 open={this.props.open}
@@ -300,10 +314,9 @@ class UploadDialog extends Component {
                 </div>
 
 
-
                 {this.state.files.length === 0 &&
                     <Receiver
-                        style={{marginLeft: '24px', marginRight: '24px', marginBottom: '24px', height: '100%', 'border': this.state.isReceiverOpen?'5px #ccc dashed':'3px #ccc dashed'}}
+                        style={uploadDragBorderStyles}
                         isOpen={true}
                         onDragEnter={this.handleOnDragEnter}
                         onDragOver={this.handleOnDragOver}
@@ -315,10 +328,10 @@ class UploadDialog extends Component {
                             <TableBody>
                                 <TableRow>
                                     <TableCell style={{padding: '0 8px 0 8px', border: '0px'}}>
-                                        <div onClick={this.handleSelectFileBtnClick} style={{margin: '40px', textAlign: 'center'}}>
+                                        <div onClick={this.handleSelectFileBtnClick} style={{margin: '40px', textAlign: 'center', fontSize:'1.4rem'}}>
                                             Click or drag files to this area to upload
                                             <div style={{margin: '16px'}}>
-                                                <FileUploadIcon/>
+                                                <FileUploadIcon style={{fontSize:'2rem'}}/>
                                             </div>
                                         </div>
                                     </TableCell>
@@ -356,8 +369,7 @@ class UploadDialog extends Component {
                                         <TableCell style={{padding: '0 8px 0 8px'}}>
                                             {file_.progress < 100 ?
                                                 <CircularProgress size={24}/>
-                                                :
-                                                <CheckIcon color="green"/>
+                                                :<CheckIcon color="primary"/>
                                             }
                                         </TableCell>
                                         <TableCell style={{padding: '0 8px 0 8px'}}>

@@ -189,6 +189,8 @@ class UploadFileService {
         var filePathName = file_.uploadPath;
         if( file_.webkitRelativePath ){
             filePathName += "/" +file_.webkitRelativePath.substr(0, file_.webkitRelativePath.lastIndexOf("/"));
+        }else if( file_.relativePath ){
+            filePathName += file_.relativePath.substr(0, file_.relativePath.lastIndexOf("/"));
         }
 
 

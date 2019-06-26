@@ -24,7 +24,7 @@ function SlideTransition(props) {
 }
 
 
-class UploadDialog extends Component {
+class NewFolderDialog extends Component {
 
     constructor(props, context) {
         super(props);
@@ -104,4 +104,4 @@ class UploadDialog extends Component {
 }
 
 
-export default withStyles(styleSheet)(UploadDialog);
+export default withStyles(styleSheet)(NewFolderDialog);
