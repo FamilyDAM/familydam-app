@@ -263,7 +263,7 @@
                         <version>1.4.0</version>
                         <executions>
                             <execution>
-                                <id>npm install</id>
+                                <id>exec-yarn-install</id>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
@@ -273,7 +273,7 @@
                                         <key>NODE_ENV</key>
                                         <value>development</value>
                                     </environmentVariables>
-                                    <executable>npm</executable>
+                                    <executable>yarn</executable>
                                     <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-files</workingDirectory>
                                     <arguments>
                                         <argument>install</argument>
@@ -281,10 +281,10 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>exec-npm-install-dashboard</id>
+                                <id>exec-yarn-build</id>
                                 <phase>generate-sources</phase>
                                 <configuration>
-                                    <executable>npm</executable>
+                                    <executable>yarn</executable>
                                     <workingDirectory>${project.basedir}/src/main/resources/SLING-INF/content/app-files</workingDirectory>
                                     <arguments>
                                         <argument>run</argument>

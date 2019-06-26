@@ -67,6 +67,7 @@ const styleSheet = (theme) => ({
 
     mainGrid:{
         height: '100%',
+        overflow: 'scroll',
         display:'grid',
         gridGap:'16px',
         gridTemplateRows:'1fr 1fr 1fr',
@@ -225,14 +226,11 @@ class FilesPage extends Component {
 
 
                     <div className={classes.fileGridFileList} style={{gridColumn:this.state.selectedFiles.length>0?'1/2':'1/3'}}>
-                        <div className={classes.mainGrid}>
-                            <FileList
-                                path={this.state.path}
-                                onSelectionChange={this.handleFileSelectionChange}
-                                onDelete={this.handleAfterOnDelete}
-                                style={{gridRow:"1 / 4", gridColumn:"1 / 3"}}/>
-
-                        </div>
+                        <FileList
+                            path={this.state.path}
+                            onSelectionChange={this.handleFileSelectionChange}
+                            onDelete={this.handleAfterOnDelete}
+                            style={{gridRow:"1 / 4", gridColumn:"1 / 3"}}/>
                     </div>
 
                     <FileInfoSidebar

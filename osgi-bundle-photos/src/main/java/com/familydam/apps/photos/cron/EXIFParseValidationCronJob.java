@@ -27,13 +27,14 @@ import java.util.Map;
  *
  * Created by mike on 12/18/16.
  */
-@Component(metatype = true, immediate = true)
-@Service(value = Runnable.class)
-@org.apache.felix.scr.annotations.Properties({
-        @Property(name = "scheduler.expression", value = "0 0 1 1/1 * ? *",
-                label="Quartz Cron Expression", description="Quartz Scheduler specific cron expression. Do not put unix cron expression"), //1:00am // 0 0/1 * 1/1 * ? * == 1min
-        @Property(name="scheduler.concurrent", propertyPrivate=true, boolValue=false)
-})
+//todo: enable the cron job
+//@Component(metatype = true, immediate = true)
+//@Service(value = Runnable.class)
+//@org.apache.felix.scr.annotations.Properties({
+//        @Property(name = "scheduler.expression", value = "0 0 1 1/1 * ? *",
+//                label="Quartz Cron Expression", description="Quartz Scheduler specific cron expression. Do not put unix cron expression"), //1:00am // 0 0/1 * 1/1 * ? * == 1min
+//        @Property(name="scheduler.concurrent", propertyPrivate=true, boolValue=false)
+//})
 public class EXIFParseValidationCronJob implements Runnable {
 
     /** Logger. */

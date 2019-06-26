@@ -8,6 +8,7 @@ import {FormattedMessage} from 'react-intl'; //, FormattedPlural, FormattedDate
 import filesize from 'filesize';
 import uuid from 'uuid';
 
+
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
@@ -31,6 +32,7 @@ import FileUploadIcon from '@material-ui/icons/CloudUpload';
 
 import {Receiver} from 'react-file-uploader';
 import FileActions from '../../actions/FileActions';
+
 
 
 const styleSheet = (theme) => ({
@@ -174,17 +176,54 @@ class UploadDialog extends Component {
 
     handleAddFile(e, files) {
         var _fileList = this.state.files;
+        var _items = e.dataTransfer.items;
         // close the Receiver after file dropped
 
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            _fileList.push(file);
-            if (!file.id) {
-                file.id = uuid();
+        var processFile = function(file_, path_){
+            _fileList.push(file_);
+            if (!file_.id) {
+                file_.id = uuid();
             }
-            file.progress = 0;
-            file.uploadPath = this.props.path;
-            FileActions.uploadFile.source.next(file);
+            file_.progress = 0;
+            file_.uploadPath = path_;
+            FileActions.uploadFile.source.next(file_);
+        };
+
+        var readDir = function(entry, file, path){
+            // Get folder contents
+            //var file = dataTransferItem.getAsFile();
+            var dirReader = entry.createReader();
+            dirReader.readEntries(function(entries) {
+
+                for (let j = 0; j < entries.length; j++) {
+                    var entry = entries[j];
+                    console.dir(entry);
+                    console.dir(entry.file());
+                    console.dir(entry.fullPath);
+                    if(entry.isFile) {
+                        entry.file( (f)=>{
+                            console.log("f=" +f); //todo <---------
+                            processFile(f, path);
+                        });
+                    }else if (entry.isDirectory) {
+                        readDir(entry, file, path);
+                    }
+                }
+
+            });
+        };
+
+        for (var i = 0; i < _items.length; i++) {
+            const _path = this.props.path;
+            var dataTransferItem = _items[i];
+            var file = dataTransferItem.getAsFile();
+            var entry = dataTransferItem.webkitGetAsEntry();
+
+            if( entry.isFile ) {
+                processFile(file, _path)
+            }else if (entry.isDirectory) {
+                readDir(entry, file, _path);
+            }
         }
 
         this.setState({isReceiverOpen: false, files: _fileList});
@@ -193,6 +232,10 @@ class UploadDialog extends Component {
 
     render() {
         var classes = this.props.classes;
+
+        var completedFiles = this.state.files.filter(file_ => file_.progress === 100).length;
+        var completedFilesPercentage = 100 * (completedFiles / this.state.files.length);
+
 
         var filteredFiles =
             this.state.files.filter(file_ => {
@@ -206,10 +249,6 @@ class UploadDialog extends Component {
                     return true; //all
                 }
             });
-
-
-        var completedFiles = this.state.files.filter(file_ => file_.progress === 100).length;
-        var completedFilesPercentage = 100 * (completedFiles / this.state.files.length);
 
 
         return (
@@ -230,8 +269,6 @@ class UploadDialog extends Component {
                         </Button>
                     </Toolbar>
                 </AppBar>
-
-
 
                 <div style={{paddingTop: '24px', paddingBottom: '24px', width: '100%', display: 'flex'}}>
                     <Button className="btn btn-default" onClick={this.handleSelectFileBtnClick}>
@@ -263,9 +300,10 @@ class UploadDialog extends Component {
                 </div>
 
 
+
                 {this.state.files.length === 0 &&
                     <Receiver
-                        style={{marginLeft: '24px', marginRight: '24px', marginBottom: '24px', height: '100%', 'border': '1px #ccc dashed'}}
+                        style={{marginLeft: '24px', marginRight: '24px', marginBottom: '24px', height: '100%', 'border': this.state.isReceiverOpen?'5px #ccc dashed':'3px #ccc dashed'}}
                         isOpen={true}
                         onDragEnter={this.handleOnDragEnter}
                         onDragOver={this.handleOnDragOver}
@@ -291,7 +329,6 @@ class UploadDialog extends Component {
                     </Receiver>
                 }
 
-
                 {this.state.files.length > 0  &&
                     <div style={{paddingLeft:'24px', paddingRight:'24px', position:'absolute', top:'135px', right:'24px', left:'24px'}}>
                         <Typography style={{'display': 'inline'}}>{completedFiles} / {this.state.files.length}</Typography>
@@ -302,7 +339,7 @@ class UploadDialog extends Component {
 
 
                 {(this.state.files.length > 0 && filteredFiles.length > 0) &&
-                    <div  style={{marginLeft: '24px', marginRight: '24px', height: '100%', top:'180px', position: 'absolute'}}>
+                    <div  style={{marginLeft: '24px', marginRight: '24px', height: '100%', top:'180px', position: 'absolute', left:'16px', right:'16px'}}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -325,7 +362,7 @@ class UploadDialog extends Component {
                                         </TableCell>
                                         <TableCell style={{padding: '0 8px 0 8px'}}>
                                             <Typography>{file_.name}</Typography>
-                                            <Typography>{file_.path} {file_.webkitRelativePath}  {file_.error}</Typography>
+                                            <Typography>{file_.webkitRelativePath}  {file_.error}</Typography>
                                         </TableCell>
                                         <TableCell style={{padding: '0 8px 0 8px'}} numeric>{filesize(file_.size, {base: 10})}</TableCell>
                                         <TableCell style={{padding: '0 8px 0 8px'}} numeric>

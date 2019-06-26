@@ -116,15 +116,14 @@ public class AddFileMixinListener implements EventListener {
                         node.addMixin(FamilyDAMCoreConstants.DAM_EXTENSIBLE);
                         node.addMixin(FamilyDAMCoreConstants.DAM_TAGGABLE);
 
-
-                        if (mimeType.startsWith("image")) {
-                            node.addMixin(FamilyDAMCoreConstants.DAM_IMAGE);
-                        }
-                        else if (mimeType.startsWith("video")) {
-                            node.addMixin(FamilyDAMCoreConstants.DAM_VIDEO);
-                        }
-                        else if (mimeType.startsWith("audio")) {
-                            node.addMixin(FamilyDAMCoreConstants.DAM_MUSIC);
+                        if( mimeType != null ) {
+                            if (mimeType.startsWith("image")) {
+                                node.addMixin(FamilyDAMCoreConstants.DAM_IMAGE);
+                            } else if (mimeType.startsWith("video")) {
+                                node.addMixin(FamilyDAMCoreConstants.DAM_VIDEO);
+                            } else if (mimeType.startsWith("audio")) {
+                                node.addMixin(FamilyDAMCoreConstants.DAM_MUSIC);
+                            }
                         }
 
                         session.save();

@@ -26,6 +26,7 @@ import FileListTableHead from './FileListTableHead';
 import AppActions from '../../library/actions/AppActions';
 import fileActions from '../../actions/FileActions';
 import LoadingButton from '../../library/loadingButton/LoadingButton';
+import VirtualizedTable from "../virtualizedTable/VirtualizedTable";
 
 const styleSheet = (theme) => ({
     main:{
@@ -333,6 +334,29 @@ class FileList extends Component{
         );
     }
 
+
+
+
+    renderVirtualTable() {
+
+        const columns = [
+            {width: 300, label: 'Name', dataKey: 'name'},
+            {width: 150, label: 'Created', dataKey: 'jcr:created'},
+            {width: 150, label: 'Actions', actions: ['delete', 'download']}
+
+        ];
+
+        return (
+            <Paper style={{ height: '100%', width: '100%' }}>
+                <VirtualizedTable
+                    rowCount={this.state.files.length}
+                    rowGetter={({ index }) => this.state.files[index]}
+                    columns={columns}
+                />
+            </Paper>
+        )
+    }
+
 }
 
 
@@ -384,9 +408,9 @@ const FileRow = (props, context) => (
         </TableCell>
         <TableCell
             padding="none"
-            style={{'textAlign':'center'}}
+            style={{'textAlign':'center', 'width':'80px'}}
             onClick={event => props.onClick(event, props.file.path)}>
-            { (props.file['path'].toString().endsWith(".jpg") || props.file['path'].toString().endsWith(".png") ) ?
+            { (props.file['path'].toString().toLowerCase().endsWith(".jpg") || props.file['path'].toString().toLowerCase().endsWith(".png") ) ?
                 <img src={"http://localhost:9000" +props.file.path} alt="" style={{maxWidth:'64px'}}/> : <PhotoIcon/>
             }
 
@@ -394,7 +418,7 @@ const FileRow = (props, context) => (
         <TableCell  padding="default" onClick={event => props.onClick(event, props.file.path)}>
             <Typography component="span">{props.file.name}</Typography>
         </TableCell>
-        <TableCell  padding="default" numeric>{props.file['jcr:created']}</TableCell>
+        <TableCell  padding="default" numeric>{props.file['dam:datecreated']}</TableCell>
         <TableCell  padding="default">
             <Button onClick={()=>props.onDelete(props.file.path)} style={{minWidth:'24px', padding:"4px"}}><DeleteIcon /></Button>
             {props.file._links.download &&

@@ -9,7 +9,7 @@ import {CircularProgress} from 'material-ui/Progress';
 import HomePage from './pages/home/HomePage';
 
 import AppSettings from './library/actions/AppSettings';
-import UserActions from './actions/UserActions';
+import UserActions from './library/actions/UserActions';
 
 
 

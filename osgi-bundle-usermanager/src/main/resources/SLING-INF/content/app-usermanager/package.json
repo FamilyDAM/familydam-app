@@ -21,8 +21,9 @@
     "superagent": "^3.8.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "copy:library": "cp -r ../../../../../../../osgi-bundle-client-lib/src/ ./src",
+    "start": "npm run copy:library && react-scripts start --query=?user=Mike&password=admin",
+    "build": "npm run copy:library && set NODE_ENV=development && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "translate": "NODE_ENV=production babel ./src >/dev/null",
