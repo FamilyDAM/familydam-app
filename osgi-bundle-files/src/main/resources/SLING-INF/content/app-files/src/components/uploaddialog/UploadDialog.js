@@ -333,6 +333,9 @@ class UploadDialog extends Component {
                                             <div style={{margin: '16px'}}>
                                                 <FileUploadIcon style={{fontSize:'2rem'}}/>
                                             </div>
+                                            <p style={{fontSize:'1rem'}}>
+                                                {this.props.path}
+                                            </p>
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -345,7 +348,7 @@ class UploadDialog extends Component {
                 {this.state.files.length > 0  &&
                     <div style={{paddingLeft:'24px', paddingRight:'24px', position:'absolute', top:'135px', right:'24px', left:'24px'}}>
                         <Typography style={{'display': 'inline'}}>{completedFiles} / {this.state.files.length}</Typography>
-                        <LinearProgress mode="determinate" value={completedFilesPercentage}/>
+                        <LinearProgress variant="determinate" value={Math.min(completedFilesPercentage, 100)}/>
                         <Typography>Files will be added to: <strong>{this.props.path}</strong></Typography>
                     </div>
                 }
