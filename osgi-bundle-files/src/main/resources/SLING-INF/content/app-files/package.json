@@ -13,6 +13,7 @@
     "filesize": "^3.6.1",
     "jsDump": "^1.1.0",
     "keycode": "^2.2.0",
+    "moment": "^2.24.0",
     "nodedump": "0.0.8",
     "react": "^16.8.6",
     "react-addons-transition-group": "^15.6.2",
@@ -50,7 +51,7 @@
     "@storybook/addons": "^5.1.9",
     "@storybook/react": "^5.1.9",
     "aemsync": "^3.0.0",
-    "babel-loader": "^8.0.6",
+    "babel-loader": "8.0.5",
     "babel-plugin-react-intl": "^3.3.3",
     "babel-plugin-transform-decorators-legacy": "^1.3.5"
   },

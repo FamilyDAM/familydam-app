@@ -32,35 +32,23 @@ class FileListTableHead extends Component {
         return (
             <TableHead className={classes.tableHead}>
                 <TableRow>
-                    <TableCell padding="checkbox" style={{width:'20px'}}>
-                        <Checkbox
-                            indeterminate={numSelected > 0 && numSelected < rowCount}
-                            checked={numSelected === rowCount}
-                            onChange={onSelectAllClick}
-                        />
+                    <TableCell padding="none" style={{width:'100%', padding:'16px 8px 16px 16px'}}>
+                        <TableSortLabel
+                            active={orderBy === "name"}
+                            direction={order}
+                            onClick={this.createSortHandler("name")}>
+                            Name
+                        </TableSortLabel>
                     </TableCell>
-
-                    <TableCell padding="none" style={{minWidth:'49px'}}></TableCell>
-
-                    {this.props.columns.map(column => {
-                        return (
-                            <TableCell
-                                padding="default"
-                                key={column.id}
-                                numeric={column.numeric}
-                                style={column.stylesheet}>
-
-                                <TableSortLabel
-                                    active={orderBy === column.id}
-                                    direction={order}
-                                    onClick={this.createSortHandler(column.id)}>
-                                    {column.label}
-                                </TableSortLabel>
-                            </TableCell>
-                        );
-                    }, this)}
-
-                    <TableCell padding="default" style={{minWidth:'100px'}}>
+                    <TableCell padding="none" style={{minWidth:'200px', padding:'16px 8px'}}>
+                        <TableSortLabel
+                            active={orderBy === "dam:datecreated"}
+                            direction={order}
+                            onClick={this.createSortHandler("dam:datecreated")}>
+                            Created
+                        </TableSortLabel>
+                    </TableCell>
+                    <TableCell padding="none" style={{textAlign:'center', minWidth:'100px', padding:'16px 8px'}}>
                         Actions
                     </TableCell>
                 </TableRow>
@@ -72,7 +60,6 @@ class FileListTableHead extends Component {
 FileListTableHead.propTypes = {
     numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
     order: PropTypes.string.isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,

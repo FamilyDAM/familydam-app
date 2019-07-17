@@ -3,6 +3,7 @@ import {withRouter} from 'react-router-dom';
 import {withStyles} from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
 import keycode from 'keycode';
+import moment from 'moment';
 
 
 import Table from '@material-ui/core/Table';
@@ -46,6 +47,9 @@ const styleSheet = (theme) => ({
 
 class FileList extends Component{
 
+    isCntlPressed = false;
+    isSpacePressed = false;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -72,6 +76,21 @@ class FileList extends Component{
 
     componentDidMount(){
         this.setState({isMounted:true});
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleKeyUp = this.handleKeyUp.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        document.addEventListener("keydown", this.handleKeyDown, false);
+        document.addEventListener("keyup", this.handleKeyUp, false);
+        document.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+        }, false);
+
+        //used by storybook
+        if( this.props.files){
+            this.setState({'files': this.props.files});
+        }
+
+
 
         fileActions.getFileAndFolders.sink.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
 
@@ -91,6 +110,8 @@ class FileList extends Component{
                 }
 
             });
+
+            console.log(JSON.stringify(sortedFiles));
             this.setState({'files': sortedFiles});
         });
 
@@ -106,6 +127,71 @@ class FileList extends Component{
         this.props = newProps;
         fileActions.getFileAndFolders.source.next(this.props.path);
     }
+
+
+    handleKeyDown(e){
+        console.log("keydown=" +e.keyCode);
+        switch (e.keyCode) {
+            case 17:
+                this.isCntlPressed = true;
+                break;
+            case 91:
+                this.isCntlPressed = true;
+                break;
+            case 16: //space
+                this.isSpacePressed = true;
+                break;
+            case 32: //space
+                //todo: open preview
+                break;
+        }
+    }
+
+    handleKeyUp(e){
+        console.log("keyup=" +e.keyCode);
+        switch (e.keyCode) {
+            case 17:
+                this.isCntlPressed = false;
+                break;
+            case 91:
+                this.isCntlPressed = false;
+                break;
+            case 16: //space
+                this.isSpacePressed = false;
+                break;
+        }
+    }
+
+
+    handleClick = (event, id) => {
+        //console.log("handle click | id=" +id +" | " +this.isCntlPressed);
+        const { selected } = this.state;
+        const selectedIndex = selected.indexOf(id);
+        let newSelected = [];
+        if( this.isCntlPressed ){
+            //newSelected = selected
+        }
+
+        console.log('selected =' +selectedIndex);
+        if( selectedIndex == -1 ) {
+            newSelected.push(id);
+        }else{
+            newSelected = [];
+            newSelected = newSelected.concat(
+                selected.slice(0, selectedIndex),
+                selected.slice(selectedIndex + 1),
+            );
+        }
+        //console.dir(selected);
+
+        this.setState({ selected: newSelected });
+
+        if( this.props.onSelectionChange ){
+            this.props.onSelectionChange(newSelected);
+        }
+    };
+
+
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -123,58 +209,7 @@ class FileList extends Component{
         this.setState({ data, order, orderBy });
     };
 
-    handleSelectAllClick = (event, checked) => {
-        if (checked) {
-            var _files = this.state.files
-                .filter(n=> n['jcr:primaryType'] !== "dam:folder" && n['jcr:primaryType']!=='sling:Folder' && n['jcr:primaryType']!=='nt:folder')
-                .map(n => n.path);
 
-            this.setState({ selected: _files });
-
-            if( this.props.onSelectionChange ){
-                this.props.onSelectionChange(_files);
-            }
-            return;
-
-        }else {
-
-            this.setState({selected: []});
-            if (this.props.onSelectionChange) {
-                this.props.onSelectionChange([]);
-            }
-        }
-    };
-
-    handleKeyDown = (event, id) => {
-        if (keycode(event) === 'space') {
-            this.handleClick(event, id);
-        }
-    };
-
-    handleClick = (event, id) => {
-        const { selected } = this.state;
-        const selectedIndex = selected.indexOf(id);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        this.setState({ selected: newSelected });
-
-        if( this.props.onSelectionChange ){
-            this.props.onSelectionChange(newSelected);
-        }
-    };
 
     handleFileDelete(path_){
         this.setState({showDeleteFileDialog:true, pendingFileToDelete: path_});
@@ -244,13 +279,8 @@ class FileList extends Component{
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
-                            onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
                             rowCount={files.length}
-                            columns={[
-                                { id: 'name', numeric: false, label: 'Name', stylesheet:{minWidth:'100%'}},
-                                { id: 'created', numeric: true, label: 'Created', stylesheet:{minWidth:'100px'} }
-                            ]}
                         />
                         <TableBody>
                             {this.state.files.filter((f=>!f.toString().startsWith(".") && !f.toString().startsWith("jcr:")  )).map(node => {
@@ -278,7 +308,7 @@ class FileList extends Component{
                                                  onDelete={()=>this.handleFileDelete(node.path)}
                                                  onDownload={this.handleFileDownload}
                                                  onClick={(event, path_) => this.handleClick(event, path_)}
-                                                 onKeyDown={(event, path_) => this.handleKeyDown(event, path_)}
+                                                 onKeyDown={(event, path_) => this.handleClick(event, path_)}
                                                  onNavigate={(path_) => AppActions.navigateTo.next(path_)}/>
                                     )
                                 }
@@ -367,23 +397,16 @@ const FolderRow = (props, context) => (
         tabIndex={-1}
         selected={props.isSelected}
         aria-checked={props.isSelected}>
-        <TableCell padding="checkbox">
-            <Checkbox checked={false} disabled={true} />
-        </TableCell>
-        <TableCell
-            padding="none"
-            style={{'textAlign':'center'}}
-            onClick={()=>props.onNavigate(props.folder.path)}>
-            <FolderIcon  />
-        </TableCell>
+
         <TableCell
             padding="default"
-            style={{width:'100%'}}
+            style={{padding:'8px 8px 8px 16px'}}
             onClick={()=>props.onNavigate(props.folder.path)}>
-            <Typography component="span">{props.folder.name}</Typography>
+            <FolderIcon  />
+            <Typography component="span" style={{display:'inline', paddingLeft:'16px'}}>{props.folder.name}</Typography>
         </TableCell>
-        <TableCell padding="default" numeric></TableCell>
-        <TableCell padding="default">
+        <TableCell padding="default"></TableCell>
+        <TableCell padding="default" style={{padding:'8px', textAlign:'center'}}>
             <Button onClick={()=>props.onDelete(props.folder.path)} style={{minWidth:'24px', padding:"4px"}}><DeleteIcon /></Button>
             <Button onClick={()=>props.onDownload(props.folder.path)} style={{minWidth:'24px', padding:"4px"}}><DownloadIcon /></Button>
         </TableCell>
@@ -403,23 +426,17 @@ const FileRow = (props, context) => (
         tabIndex={-1}
         selected={props.isSelected}
     >
-        <TableCell padding="checkbox">
-            <Checkbox checked={props.isSelected} onClick={event => {console.log('checkbox clicked'); props.onClick(event, props.file.path)}} />
-        </TableCell>
         <TableCell
-            padding="none"
-            style={{'textAlign':'center', 'width':'80px'}}
-            onClick={event => props.onClick(event, props.file.path)}>
+            padding="default"
+            style={{padding:'8px 8px 8px 16px'}}
+            onClick={event => {console.log('onclick');props.onClick(event, props.file.path)}}>
             { (props.file['path'].toString().toLowerCase().endsWith(".jpg") || props.file['path'].toString().toLowerCase().endsWith(".png") ) ?
-                <img src={"http://localhost:9000" +props.file.path} alt="" style={{maxWidth:'64px'}}/> : <PhotoIcon/>
+                <img src={"http://localhost:9000" +props.file.path} alt="" style={{width:'25px'}}/> : <PhotoIcon/>
             }
-
+            <Typography style={{display:'inline', paddingLeft:'16px'}}>{props.file.name}</Typography>
         </TableCell>
-        <TableCell  padding="default" onClick={event => props.onClick(event, props.file.path)}>
-            <Typography component="span">{props.file.name}</Typography>
-        </TableCell>
-        <TableCell  padding="default" numeric>{props.file['dam:datecreated']}</TableCell>
-        <TableCell  padding="default">
+        <TableCell  padding="default" style={{padding:'8px'}}>{moment(props.file['dam:datecreated']?props.file['dam:datecreated']:props.file['jcr:created']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
+        <TableCell  padding="default" style={{padding:'8px', textAlign:'center'}}>
             <Button onClick={()=>props.onDelete(props.file.path)} style={{minWidth:'24px', padding:"4px"}}><DeleteIcon /></Button>
             {props.file._links.download &&
                <Button onClick={()=>props.onDownload(props.file.name, props.file._links.download)} style={{minWidth:'24px', padding:"4px"}}><DownloadIcon/></Button>

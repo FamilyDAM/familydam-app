@@ -30,6 +30,7 @@ const styleSheet = theme => ({
     },
     actions: {
         color: theme.palette.text.secondary,
+        display:'flex'
     },
     title: {
         flex: '0 0 auto',
@@ -44,26 +45,26 @@ class FileListTableToolbar extends Component {
         let {files, classes} = this.props;
         let numSelected = files.length;
 
+
         return (
             <Toolbar
                 className={classNames(classes.root, {
                     [classes.highlight]: numSelected > 0,
                 })}>
                 <div className={classes.title}>
-                    {numSelected > 0 ? (
-                        <Typography type="subheading">{numSelected} selected</Typography>
-                    ) : (
-                        <Typography type="title">Files</Typography>
-                    )}
+                    {(files.length > 1 ) && <Typography type="subheading">{numSelected} selected</Typography>}
+                    {(files.length === 1) && <Typography type="title">{files[0].substr(files[0].lastIndexOf('/')+1)}</Typography>}
                 </div>
                 <div className={classes.spacer}/>
-                <div className={classes.actions} style={{marginRight:'8px'}}>
-                    {false && ( //numSelected > 0
-                        <IconButton aria-label="Delete">
-                            <DeleteIcon/>
-                            <FileDownloadIcon/>
-                        </IconButton>
-                    )}
+                <div className={classes.actions} style={{width:'100px', marginRight:'8px'}}>
+
+                    <IconButton aria-label="Delete">
+                        <DeleteIcon/>
+                    </IconButton>
+                    <IconButton aria-label="Download">
+                        <FileDownloadIcon/>
+                    </IconButton>
+
                 </div>
             </Toolbar>
         );

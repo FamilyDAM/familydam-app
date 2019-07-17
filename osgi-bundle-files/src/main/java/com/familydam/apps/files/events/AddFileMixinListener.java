@@ -107,7 +107,7 @@ public class AddFileMixinListener implements EventListener {
                         String mimeType = res.getResourceMetadata().getContentType();
                         //log.trace(propPath + " | mimetype=" + mimeType);
 
-
+                        session.save();
                         node.addMixin(NodeType.MIX_LOCKABLE);
                         node.addMixin(NodeType.MIX_REFERENCEABLE);
                         node.addMixin(NodeType.MIX_LAST_MODIFIED);
