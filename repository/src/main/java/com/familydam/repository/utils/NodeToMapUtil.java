@@ -40,12 +40,12 @@ public class NodeToMapUtil
                 //skip internal props
                 if( isInternalProp(property) ) continue;
 
-                if (PropertyType.STRING == property.getType()) {
-                    obj.put(property.getName(), property.getString());
-                } else if (PropertyType.BOOLEAN == property.getType()) {
+                if (PropertyType.BOOLEAN == property.getType()) {
                     obj.put(property.getName(), property.getBoolean());
                 } else if (PropertyType.LONG == property.getType()) {
                     obj.put(property.getName(), property.getLong());
+                } else {
+                    obj.put(property.getName(), property.getString());
                 }
                 //todo, support more types
 

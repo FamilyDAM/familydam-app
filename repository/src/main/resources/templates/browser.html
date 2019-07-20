@@ -17,5 +17,20 @@ Repository Browser
     </tr>
     </tbody>
 </table>
+
+
+<br/><br/>
+<div>
+    <table border="0" cellpadding="4">
+        <thead th:each="map : ${properties}" >
+            <tr th:each="mapEntry : ${map}">
+                <td th:text="${mapEntry.key}"></td>
+                <td>=</td>
+                <td th:text="${mapEntry.value}"></td>
+            </tr>
+        </thead>
+    </table>
+
+</div>
 </body>
 </html>

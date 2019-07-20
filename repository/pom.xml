@@ -14,6 +14,7 @@
     <name>repository</name>
     <description>Standalone JCR Repository</description>
 
+
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -29,18 +30,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <exclusions>
-                <!-- Exclude the Tomcat dependency
+                <!-- Exclude the Tomcat dependency -->
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>-->
+                </exclusion>
             </exclusions>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
@@ -50,11 +51,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
-        <!-- Use Jetty instead
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
-        </dependency> -->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -137,6 +144,20 @@
             <artifactId>jcr</artifactId>
             <version>2.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.jackrabbit/jackrabbit-webdav -->
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-webdav</artifactId>
+            <version>2.19.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.jackrabbit/jackrabbit-jcr-server -->
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-server</artifactId>
+            <version>2.19.3</version>
+        </dependency>
+
+
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
@@ -144,21 +165,6 @@
         </dependency>
 
 
-
-
-
-        <!--
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-            <version>3.0.7.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf-spring4</artifactId>
-            <version>3.0.7.RELEASE</version>
-        </dependency>
-        -->
 
 
 
@@ -188,11 +194,35 @@
         </dependency>
     </dependencies>
 
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/resources/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/client/dashboard/build</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
