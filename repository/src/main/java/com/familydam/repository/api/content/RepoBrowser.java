@@ -4,12 +4,12 @@ import com.familydam.repository.services.fs.FsListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.jcr.*;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -26,15 +26,43 @@ public class RepoBrowser {
 
 
 
-    @GetMapping(value = {"/dam:content", "/dam:content/**"})
+    @GetMapping(value = {"/content", "/content/**"})
     @ResponseBody
-    public List listPath(ServerHttpRequest request) throws LoginException, RepositoryException
+    public List listPath(HttpServletRequest request) throws LoginException, RepositoryException
     {
         Session session = repo.login(new SimpleCredentials("admin", "admin".toCharArray()));
-        String path = request.getURI().getPath().replaceFirst("\\/repo\\/?", "");
+        String path = request.getServletPath().replaceFirst("\\/repo\\/?", "");
 
         return fsListService.listNodes(session, path);
     }
 
-
+/**
+{
+  "parent": "/content",
+  "path": "/content/files",
+  "jcr:created": "3 Jul 2019 18:17:24 GMT",
+  "_links": {
+    "self": {
+      "href": "/content/files"
+    }
+  },
+  "children": [
+    {
+      "parent": "/content/files",
+      "path": "/content/files/mike",
+      "jcr:created": "3 Jul 2019 18:20:42 GMT",
+      "_links": {
+        "self": "/content/files/mike",
+        "delete": "/content/files/mike"
+      },
+      "name": "mike",
+      "index": 1,
+      "jcr:primaryType": "sling:Folder"
+    }
+  ],
+  "name": "files",
+  "index": 1,
+  "jcr:primaryType": "sling:Folder"
+}
+ */
 }

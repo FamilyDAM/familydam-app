@@ -21,7 +21,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
             .loginPage("/").permitAll()
             .and()
                 .authorizeRequests()
-                .antMatchers("/static/**/*.*").permitAll()
+                .antMatchers("**/static/**/*.*").permitAll()
             //.and()
             //    .authorizeRequests()
             //        .antMatchers("/").authenticated()

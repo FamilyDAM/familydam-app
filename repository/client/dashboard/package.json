@@ -37,8 +37,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run copy",
     "test": "react-scripts test --env=jsdom",
+    "copy": "rm -f ../../src/main/resources/static/*.* && rm -f ../../src/main/resources/static/static/**/*.* && cp -rv build/** ../../src/main/resources/static/",
     "eject": "react-scripts eject",
     "translate": "NODE_ENV=development babel ./src >/dev/null",
     "manage:translations": "node ./scripts/translationRunner.js",

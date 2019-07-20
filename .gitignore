@@ -8,6 +8,8 @@ _test-assets
 build-binary
 bower_components
 node_modules
+familydam-repo
+test-repo
 *.iml
 *.idea
 package-lock.json
