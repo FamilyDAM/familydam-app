@@ -11,7 +11,7 @@ class UserActions {
     }
 
     getUser = {'source':new Subject(), 'sink':new Subject() };
-    getAllUsers = {'source':new Subject(), 'sink':new BehaviorSubject( JSON.parse(window.localStorage.getItem("user")) )};
+    getAllUsers = {'source':new Subject(), 'sink':new Subject(  )};
 
 }
 

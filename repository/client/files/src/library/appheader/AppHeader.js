@@ -7,11 +7,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons//MoreVert';
-import MenuIcon from '@material-ui/icons//Menu';
 import Typography from '@material-ui/core/Typography';
+import Menu, { MenuItem } from '@material-ui/core/Menu';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MenuIcon from '@material-ui/icons/Menu';
 
 import AppActions from '../actions/AppActions';
 
@@ -106,8 +105,8 @@ class AppHeader extends Component {
                     <IconButton
                         onClick={this.handleToggle}
                         className={classes.menuButton}
-                        aria-label="Menu">
-                        <MenuIcon style={{color:'white'}} />
+                        color="contrast" aria-label="Menu">
+                        <MenuIcon />
                     </IconButton>
 
                     <Typography type="title" color="inherit" className={classes.flex} onClick={()=>this.handleNavClick('://dashboard/index.html')}>

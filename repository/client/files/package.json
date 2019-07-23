@@ -32,9 +32,10 @@
   },
   "scripts": {
     "start": "react-scripts start --query=?user=Mike&password=admin",
-    "build": "set NODE_ENV=development && react-scripts build && npm run copy",
+    "build": "set NODE_ENV=development && npm run copy:library && react-scripts build && npm run copy:build",
     "test": "react-scripts test --env=jsdom",
-    "copy": "rm -fr ../../src/main/resources/static/files/** && cp -rv build/** ../../src/main/resources/static/files",
+    "copy:library": "cp -rv ../_library/** src/library",
+    "copy:build": "rm -fr ../../src/main/resources/static/files/** && cp -rv build/** ../../src/main/resources/static/files",
     "translate": "NODE_ENV=production babel ./src >/dev/null",
     "manage:translations": "node ./scripts/translationRunner.js",
     "storybook": "start-storybook -p 6006",

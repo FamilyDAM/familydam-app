@@ -1,46 +1,64 @@
 package com.familydam.repository.config;
 
-import org.springframework.context.annotation.Bean;
+import com.familydam.repository.config.security.JcrSecurityProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+
+import javax.jcr.Repository;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
+    @Autowired
+    Repository repository;
+
+    @Override
+    public void configure(AuthenticationManagerBuilder builder) throws Exception {
+        builder.eraseCredentials(false);
+        builder.authenticationProvider(new JcrSecurityProvider(repository));
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .formLogin()
-            .loginPage("/").permitAll()
+            .cors().and().csrf().disable()
+            .httpBasic()
             .and()
                 .authorizeRequests()
-                .antMatchers("**/static/**/*.*").permitAll()
-            //.and()
-            //    .authorizeRequests()
-            //        .antMatchers("/").authenticated()
-            //        .anyRequest().authenticated()
+                .antMatchers("/index.html").permitAll()
+                .antMatchers("/static/css/**/*.*").permitAll()
+                .antMatchers("/static/js/**/*.*").permitAll()
+                .antMatchers("/favicon.ico").permitAll()
+                .antMatchers("*.js").permitAll()
+                .antMatchers("*.*.js").permitAll()
+                .antMatchers("/precache-manifest.*.js").permitAll()
+                .antMatchers("/service-worker.js").permitAll()
+                .antMatchers("/api/v1/auth/users").permitAll()
+                .antMatchers("/api/v1/core/clientapps").permitAll()
+                .anyRequest().authenticated()
+            //.loginProcessingUrl("/perform_login")
+            .and()
+                .formLogin()
+                .loginProcessingUrl("/login")
+                .loginPage("/index.html")
+                .defaultSuccessUrl("/home/index.html", true)
+                .failureUrl("/index.html")
+                .permitAll()
+            .and()
+                // If user isn't authorised to access a path...
+                .exceptionHandling()
+                // ...redirect them to /403
+                .accessDeniedPage("/index.html")
             .and()
                 .logout()
-                .permitAll();
+                .logoutUrl("/logout")
+                .deleteCookies("JSESSIONID");
+
     }
 
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails user =
-            User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("admin")
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
-    }
 }

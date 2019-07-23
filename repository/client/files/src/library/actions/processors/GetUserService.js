@@ -33,7 +33,7 @@ class GetAllUsersService {
         const pwd = AppSettings.basicPwd.getValue();
 
         request
-            .get(baseUrl +'/api/v1/auth/user/' +username_.username)
+            .get(baseUrl +'/api/v1/auth/user/me')
             .withCredentials()
             .set('Accept', 'application/json')
             .set('Authorization', 'user ' +user +":" +pwd)

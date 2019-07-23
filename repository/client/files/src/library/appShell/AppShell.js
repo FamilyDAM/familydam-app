@@ -55,15 +55,10 @@ class AppShell extends Component {
         this.setState({"isMounted":true});
 
         AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
-            if (path.substring(0, 3) === "://") {
-                debugger;
-                var hashPos = window.location.href.indexOf("#");
-                if( hashPos === -1 && window.location.href !== path.substring(2)){
-                    window.location.href = path.substring(2);
-                } else if( window.location.href.substr(hashPos+1) !== path.substring(2)){
-                    window.location.href = path.substring(2);
-                }
-            }else{
+            //debugger;
+            if ( path !== "://" && path.substring(0, 3) === "://") {
+                window.location.href = path.substring(2);
+            }else if(this.props.history){
                 this.props.history.push(path);
             }
         }.bind(this));

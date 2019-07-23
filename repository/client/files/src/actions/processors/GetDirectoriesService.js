@@ -78,7 +78,7 @@ module.exports = {
                         var _token = xhr_.getResponseHeader("X-Auth-Token");
                         if (_token != null && _token !== undefined)
                         {
-                            UserActions.saveToken.onNext(_token);
+                            AuthActions.saveToken.onNext(_token);
                         }
 
 
