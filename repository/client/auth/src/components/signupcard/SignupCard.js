@@ -114,14 +114,11 @@ class SignupCard extends Component {
         if( this.state.password !== this.state.confirmPassword){
             isValid = false;
             this.setState({confirmPasswordError: "The passwords must match"});
-        }else{
-            //AppActions.navigateTo.next("://app-photos/index.html");
         }
 
+
         if( isValid ) {
-
             this.setState({isLoading: true});
-
 
             var _user = {};
             _user.username = this.state.firstName.toLowerCase();
@@ -222,7 +219,7 @@ class SignupCard extends Component {
                     </GridItem>
 
                     <GridItem rows="7" columns="1/3">
-                        After you login, you will be able to create accounts for each member of your family, in the User Manager.
+                        After you login, you will be able to create accounts for each member of your family, in the <strong>User Manager.</strong>
                     </GridItem>
 
                     <GridItem rows="8" columns="1/3" style={{"textAlign":"right"}}>

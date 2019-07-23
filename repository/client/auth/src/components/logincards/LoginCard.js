@@ -78,7 +78,7 @@ class LoginCard extends Component {
         this.setState({"isLoading":true});
 
         if (this.props.onLogin) {
-            this.props.onLogin(this.props.user.username, this.state.password);
+            this.props.onLogin(this.props.user.id, this.state.password);
         }
     }
 

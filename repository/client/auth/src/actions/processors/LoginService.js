@@ -46,7 +46,9 @@ class LoginService {
                 console.dir(response);
                 if(response.redirected) {
                     console.log("redirect to: " +response.url);
-                    window.location = response.url
+                    if( response.url.indexOf("/home/") > -1) {
+                        window.location = response.url
+                    }
                 }
             })
             .catch(e => {

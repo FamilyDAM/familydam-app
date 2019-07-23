@@ -75,7 +75,7 @@ class LoginCards extends Component {
         if( this.props.users ){
             _users = this.props.users;
             if( this.state.selectedUser !== null ) {
-                _users = _users.filter( (u)=>u.username === this.state.selectedUser.username );
+                _users = _users.filter( (u)=>u.id === this.state.selectedUser.id );
             }
         }
 
@@ -86,7 +86,7 @@ class LoginCards extends Component {
 
                         {_users.map((user)=> {
                             return (
-                                <div key={user.username}  className={classes.loginCardItem}>
+                                <div key={user.id}  className={classes.loginCardItem}>
                                     <LoginCard
                                         user={user}
                                         onLogin={this.handleLogin}

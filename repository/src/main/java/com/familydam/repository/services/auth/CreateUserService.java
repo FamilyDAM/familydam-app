@@ -17,7 +17,7 @@ import java.util.Map;
 
 
 @Service
-public class UserCreateService {
+public class CreateUserService {
 
 
     public Map createUser(Session session_, Map user_) throws RepositoryException {
@@ -25,7 +25,7 @@ public class UserCreateService {
 
         Object username = user_.get(":name").toString().toLowerCase();
         Object pwd = user_.get("pwd").toString();
-        Object isFamilyAdmin = user_.get(Constants.IS_FAMILY_ADMIN);
+        Object isFamilyAdmin = new Boolean(user_.get(Constants.IS_FAMILY_ADMIN).toString());
         User _user = userManager.createUser((String) username, (String) pwd);
 
 
@@ -39,8 +39,8 @@ public class UserCreateService {
         // make sure the user has an UUID
         Node userNode = session_.getNode(_user.getPath());
         userNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
-        userNode.addMixin(Constants.MIXIN_DAM_EXTENSIBLE);
-        userNode.addMixin(Constants.MIXIN_DAM_USER);
+        //userNode.addMixin(Constants.MIXIN_DAM_EXTENSIBLE);
+        //userNode.addMixin(Constants.MIXIN_DAM_USER);
         session_.save();
 
 

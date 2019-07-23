@@ -35,56 +35,51 @@ class CreateUserService {
         }
         _data.username = data_.username;
 
-        var _props = {
-            ':name': data_.username,
-            'pwd': data_.password,
-            'pwdConfirm': data_.password,
-            'firstName': data_.userProps.firstName,
-            'lastName': data_.userProps.lastName,
-            'email': data_.userProps.email,
-            'isFamilyAdmin': data_.isFamilyAdmin
-        };
+        var formData = new FormData();
+        formData.append(":name", data_.username);
+        formData.append("pwd", data_.password);
+        formData.append("pwdConfirm", data_.password);
+        formData.append("firstName", data_.userProps.firstName);
+        formData.append("lastName", data_.userProps.lastName);
+        formData.append("email", data_.userProps.email);
+        formData.append("isFamilyAdmin", data_.isFamilyAdmin);
 
 
         const baseUrl = AppSettings.baseHost.getValue();
-        const user = AppSettings.basicUser.getValue();
-        const pwd = AppSettings.basicPwd.getValue();
+        const _url = baseUrl +'/api/v1/auth/user';
 
+        fetch(_url, {
+            method: "POST",
+            body: formData
+        })
+            .then(response => {
+                console.log("CreateeUser success handler");
+                console.dir(response);
+                if(response.redirected) {
+                    console.log("redirect to: " +response.url);
+                    window.location = response.url
+                }
 
-        request
-            .post( baseUrl +'/api/familydam/v1/dashboard/user/create')
-            .send(_props)
-            .withCredentials()
-            .set('Accept', 'application/json')
-            .set('Authorization', 'user ' +user +":" +pwd)
-            .end((err, res)=>{
-
-                if( !err ){
-                    this.sink.next(true);
-                }else{
-                    //send the error to the store (through the sink observer
-                    if (err.status === 401)
-                    {
-                        AppActions.navigateTo.next("/");
-                    }
-                    else if (err.status === 409)
-                    {
-                        // User already exists
-                        AppActions.alert.next("User already exists");
-                    }
-                    else if (err.status === 403)
-                    {
-                        AppActions.alert.next("You do not have permission to add a new user");
-                    }
-                    else
-                    {
-                        var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
-                        this.sink.error(_error);
-                    }
+                //continue on
+                this.sink.next(true);
+            })
+            .catch(err => {
+                console.warn(err);
+                //send the error to the store (through the sink observer
+                if (err.status === 401) {
+                    AppActions.navigateTo.next("/");
+                }
+                else if (err.status === 409) {
+                    // User already exists
+                    AppActions.alert.next("User already exists");
+                }
+                else if (err.status === 403) {
+                    AppActions.alert.next("You do not have permission to add a new user");
+                } else {
+                    var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
+                    this.sink.error(_error);
                 }
             });
-
-
 
     }
 

@@ -11,6 +11,7 @@ public class NodeToMapUtil
 {
     static Logger log = LoggerFactory.getLogger(NodeToMapUtil.class);
 
+
     public static Map convert(Node node) throws RepositoryException {
         Map obj = new HashMap();
 
@@ -30,6 +31,7 @@ public class NodeToMapUtil
 
         return obj;
     }
+
 
     protected static void convertProperties(Node node, Map obj) throws RepositoryException {
         PropertyIterator propertyIterator = node.getProperties();

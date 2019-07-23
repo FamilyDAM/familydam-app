@@ -3,9 +3,10 @@ package com.familydam.repository.config.security;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.jcr.Credentials;
 import java.util.Collection;
 
-public class JcrAuthToken extends UsernamePasswordAuthenticationToken
+public class JcrAuthToken extends UsernamePasswordAuthenticationToken implements Credentials
 {
     public JcrAuthToken(Object principal, Object credentials) {
         super(principal, credentials);

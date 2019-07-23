@@ -28,7 +28,7 @@ public class CreateUserTest {
     UserListService userListService;
 
     @Autowired
-    UserCreateService userCreateService;
+    CreateUserService createUserService;
 
     @Test
     public void createUser() throws Exception
@@ -48,7 +48,7 @@ public class CreateUserTest {
         Assert.assertEquals(1, users.size());
 
         //create new user
-        Map user = userCreateService.createUser(session, _user);
+        Map user = createUserService.createUser(session, _user);
         Assert.assertNotNull(user);
         Assert.assertFalse(user.containsKey("rep:password"));
         Assert.assertFalse(user.containsKey("rep:authorizableId"));

@@ -30,7 +30,7 @@ public class UserList {
 
         Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
 
-        List<Map> users = userListService.listUsers(session, false);
+        List<Map> users = userListService.listUsers(session, true);
         return users;
     }
 }
