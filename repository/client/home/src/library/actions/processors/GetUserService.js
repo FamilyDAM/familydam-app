@@ -2,9 +2,7 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppActions from '../../../library/actions/AppActions';
 import AppSettings from '../../../library/actions/AppSettings';
-import request from 'superagent';
 
 
 /**
@@ -43,19 +41,8 @@ class GetUsersService {
                 }
                 return response;
             })
-            //debug
-            .then(response => {
-                console.log("getUserService: SUCCESS");
-                console.dir(response);
-                return response;
-            })
             //parse json
             .then((response) => response.json())
-            .then(json => {
-                console.log("JSON");
-                console.log(json);
-                return json;
-            })
             .then(json => {
                 if (!json.firstName) {
                     json.firstName = json.username;

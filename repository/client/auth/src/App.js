@@ -3,25 +3,14 @@ import React, {Component} from 'react';
 import {IntlProvider} from 'react-intl';
 
 import {withStyles} from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 //views
 import LoginPage from './pages/login/LoginPage';
 
-import AppActions from './library/actions/AppActions';
-import UserActions from './library/actions/UserActions';
 
 
 const styleSheet = (theme) => ({
-    progress: {
-        margin: `0 ${theme.spacing.unit * 2}px`,
-        width: '100px',
-        height: '100px',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)'
-    }
+   //todo
 });
 
 
@@ -60,7 +49,7 @@ class App extends Component {
 
 
     render() {
-        const classes = this.props.classes;
+        //const classes = this.props.classes;
         const locale = "en-EN";
 
 

@@ -2,8 +2,6 @@ import {Subject} from '@reactivex/rxjs';
 
 import LoginService from './processors/LoginService';
 import CreateUserService from './processors/CreateUserService';
-import GetUserService from './../library/actions/processors/GetUserService';
-import GetAllUsersService from './../library/actions/processors/GetAllUsersService';
 
 class AuthActions {
 

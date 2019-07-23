@@ -1,4 +1,4 @@
-import {Subject, BehaviorSubject} from '@reactivex/rxjs';
+import {Subject} from '@reactivex/rxjs';
 
 import GetUserService from './processors/GetUserService';
 import GetAllUsersService from './processors/GetAllUsersService';
