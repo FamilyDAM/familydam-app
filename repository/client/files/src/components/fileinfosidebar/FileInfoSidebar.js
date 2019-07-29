@@ -133,7 +133,7 @@ const SingleImageView = (props, context) => (
 
             <div className={props.classes.itemPreview} >
                 {props.fileNodes.length === 1 &&
-                    <div style={{height: '100%', maxWidth: '100%', textAlign: 'center', margin:'8px'}}>
+                    <div style={{height: '100%', maxWidth: '100%', textAlign: 'center'}}>
                         {props.fileNodes.map(file => (
                             <img src={AppSettings.baseHost.getValue() + (file['path'])}
                                  alt={file['path']}

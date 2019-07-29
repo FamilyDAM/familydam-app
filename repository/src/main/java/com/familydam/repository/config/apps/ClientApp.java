@@ -1,56 +1,83 @@
 package com.familydam.repository.config.apps;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Collections;
 import java.util.List;
 
-public interface IClientApp
+public class ClientApp
 {
+    public ClientApp() { }
+
     /**
      * Show in the left menu
      * @return
      */
-    public Boolean getPrimary();
-    public void setPrimary(Boolean isPrimary);
+    @Getter
+    @Setter
+    Boolean primary = true;
+
 
     /**
      * Show in the header ... more menu
      * @return
      */
-    public Boolean getSecondary();
-    public void setSecondary(Boolean isSecondary);
+    @Getter
+    @Setter
+    Boolean secondary = false;
+
 
     /**
      * keep inside dashboard shell, in an iFrame
      * @return
      */
-    public Boolean getEmbedded();
-    public void setEmbedded(Boolean isSecondary);
+    @Getter
+    @Setter
+    Boolean embedded = false;
 
 
-    public Integer getOrder();
-    public void setOrder(Integer order);
+    /**
+     * Order in menu
+     */
+    @Getter
+    @Setter
+    Integer order = 1;
+
 
     /**
      * Internal name, to use as i18n key for translation or for code lookups (is app X registered)
      * @return
      */
-    public String getSlug();
-    public void setSlug(String slug);
+    @Getter
+    @Setter
+    String slug = "";
 
-    public String getLabel();
-    public void setLabel(String label);
+
+    /**
+     * Name displayed in UI
+     */
+    @Getter
+    @Setter
+    String label = "";
+
 
     /**
      * Path to new app.
      * if it starts with "://" it will reload the whole browser, if it doesn't it will be a local page in the app-dashboard app
      * @return
      */
-    public String getPath();
-    public void setPath(String path);
+    @Getter
+    @Setter
+    String path = "://";
+
 
     /**
      * No roles means that everyone can see it
      * @return
      */
-    public List<String> getRoles();
-    public void setRoles(List<String> roles);
+    @Getter
+    @Setter
+    List<String> roles = Collections.EMPTY_LIST;
+
 }

@@ -170,7 +170,7 @@ class Sidebar extends Component {
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
                                 <ListItem button key={item.path} onClick={()=>this.handleNavClick(item.path)}>
-                                    <Avatar style={{margin:'8px'}}>
+                                    <Avatar style={{marginRight:'8px'}}>
                                         <FolderIcon />
                                     </Avatar>
                                     <ListItemText primary={item.label} secondary=""

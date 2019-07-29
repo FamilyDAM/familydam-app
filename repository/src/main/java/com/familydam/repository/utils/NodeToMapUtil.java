@@ -83,6 +83,8 @@ public class NodeToMapUtil
                             obj.put(property.getName(), value.getString());
                         }
                     }
+                }  else if (PropertyType.BINARY == property.getType()) {
+                    //skip binary
                 } else {
                     log.warn("Unknown property type: '" +property.getType() +"' for property: '" +property.getName()+"'");
                     //obj.put(property.getName(), property.getString());

@@ -1,0 +1,10 @@
+{
+  "primary": true,
+  "secondary": false,
+  "embedded": false,
+  "order": 1,
+  "slug": "user_manager",
+  "label": "User Manager",
+  "path": "://usermanager/index.html",
+  "roles": []
+}
