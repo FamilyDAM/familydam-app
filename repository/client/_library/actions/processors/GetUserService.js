@@ -27,8 +27,6 @@ class GetUsersService {
     getUser(username_)
     {
         const baseUrl = AppSettings.baseHost.getValue();
-        //const user = AppSettings.basicUser.getValue();
-        //const pwd = AppSettings.basicPwd.getValue();
 
         fetch( baseUrl +'/api/v1/auth/user/me', {
             method: 'GET'
@@ -54,7 +52,7 @@ class GetUsersService {
                 if( err.status === 401 || err.status === 403){
                     window.location = "/";
                 } else {
-                    var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
+                    var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText||err.message};
                     this.sink.error(_error);
                 }
             });

@@ -1,11 +1,12 @@
 package com.familydam.repository.config.apps;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collections;
 import java.util.List;
 
-@Controller
+@Component
 public class PhotosClientApp implements IClientApp
 {
     Boolean primary = true;
@@ -14,7 +15,7 @@ public class PhotosClientApp implements IClientApp
     Integer order = 2;
     String slug = "photos";
     String label = "Photo Gallery";
-    String path = "://app-photos/index.html";
+    String path = "://photos/index.html";
     List<String> roles = Collections.EMPTY_LIST;
 
     @Override

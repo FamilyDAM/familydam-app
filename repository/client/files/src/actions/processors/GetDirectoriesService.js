@@ -35,8 +35,6 @@ module.exports = {
     getDirectories: function(path_)
     {
         const baseUrl = AppSettings.baseHost.getValue();
-        const user = AppSettings.basicUser.getValue();
-        const pwd = AppSettings.basicPwd.getValue();
 
         //console.log("{GetDirectoryService} getDirectories()" );
 
@@ -51,7 +49,6 @@ module.exports = {
                 .get(_url)
                 .withCredentials()
                 .field('jcr:primaryType', 'sling:Folder')
-                .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
                 .end((err, results) => {
                     if( !err ){
 

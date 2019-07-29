@@ -1,13 +1,17 @@
 package com.familydam.repository.services.fs;
 
+import com.familydam.repository.utils.NodeToMapUtil;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.jcr.*;
-import java.util.HashMap;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,36 +26,41 @@ public class FsListService
     public List<Map> listNodes(Session session, String path) throws RepositoryException
     {
         Iterable<Node> childNodes;
-        if( path.startsWith("/")) {
-            path = path.substring(1);
-        }
 
+        Node n;
         if(StringUtils.isEmpty(path)){
-            childNodes = JcrUtils.getChildNodes(session.getRootNode());
+            n = JcrUtils.getNodeIfExists("/content", session);
         }else{
-            childNodes = JcrUtils.getChildNodes(session.getRootNode().getNode(path));
+            n = JcrUtils.getNodeIfExists(path, session);
         }
 
+        if( n == null ) {
+            log.warn("Invalid Path was requested '" +path +"'");
+            return Collections.EMPTY_LIST;
+        }
 
-        return StreamSupport.stream(childNodes.spliterator(), false).map(node -> {
-            try {
-                Map nodeProps = new HashMap();
-                nodeProps.put("name", node.getName());
-                nodeProps.put("path", node.getPath());
+        childNodes = JcrUtils.getChildNodes(n);
 
-                PropertyIterator propertyIterator = node.getProperties();
-                while(propertyIterator.hasNext()){
-                    Property prop = (Property)propertyIterator.next();
-                    if (prop.getType() == PropertyType.STRING) {
-                        nodeProps.put(prop.getName(), prop.getString());
-                    }
+
+        return StreamSupport
+            .stream(childNodes.spliterator(), false)
+            .filter(node -> {
+                try {
+                    return node.getPrimaryNodeType().isNodeType(NodeType.NT_FILE)
+                        || node.getPrimaryNodeType().isNodeType(NodeType.NT_FOLDER)
+                        || node.getPrimaryNodeType().isNodeType(NodeType.NT_UNSTRUCTURED);
+                }catch(RepositoryException ex){
+                    return false;
                 }
-
-                return nodeProps;
-            }catch (RepositoryException re){
-                log.error(re.getMessage(), re);
-            }
-            return null;
-        }).collect(Collectors.toList());
+            })
+            .map(node -> {
+                try {
+                    return NodeToMapUtil.convert(node);
+                }catch (RepositoryException re){
+                    log.error(re.getMessage(), re);
+                }
+                return null;
+            })
+            .collect(Collectors.toList());
     }
 }

@@ -16,9 +16,8 @@ public class JcrAuthToken extends UsernamePasswordAuthenticationToken implements
         super(principal, credentials, authorities);
     }
 
-    @Override
-    public Object getCredentials() {
-        return super.getCredentials();
+    public Credentials getCredentials() {
+        return (Credentials)super.getCredentials();
     }
 
     @Override

@@ -8,7 +8,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
-import Menu, { MenuItem } from '@material-ui/core/Menu';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import MenuIcon from '@material-ui/icons/Menu';
 
@@ -46,9 +47,10 @@ const styleSheet = (theme) => ({
     menuButton: {
         marginLeft: -12,
         marginRight: 20,
+        color: '#ffffff'
     },
     moreButton:{
-        color: '#fff'
+        color: '#ffffff'
     }
 });
 
@@ -92,7 +94,12 @@ class AppHeader extends Component {
         window.localStorage.clear();
         //UserActions.getUser.sink.next(next);
         AppActions.logout.source.next(true);
-        AppActions.navigateTo.next("://");
+        window.location = "/";
+    }
+
+
+    render2() {
+        return(<div>header</div>)
     }
 
 
@@ -109,7 +116,7 @@ class AppHeader extends Component {
                         <MenuIcon />
                     </IconButton>
 
-                    <Typography type="title" color="inherit" className={classes.flex} onClick={()=>this.handleNavClick('://dashboard/index.html')}>
+                    <Typography variant="h5" color="inherit" className={classes.flex} onClick={()=>this.handleNavClick('://home/index.html')}>
                         Family <i>D.A.M</i>
                     </Typography>
 
@@ -122,11 +129,13 @@ class AppHeader extends Component {
                     >
                         <MoreVertIcon/>
                     </IconButton>
+
                     <Menu
                         id="long-menu"
+                        keepMounted
                         anchorEl={this.state.openMoreMenuAnchorEl}
                         open={this.state.openMoreMenu}>
-                        <MenuItem color="contrast" onClick={()=>{this.handleLogout();this.handleMenuClose()}}>Logout</MenuItem>
+                        <MenuItem onClick={()=>{this.handleLogout();this.handleMenuClose()}}>Logout</MenuItem>
                         <Divider/>
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (

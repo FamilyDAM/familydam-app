@@ -24,18 +24,18 @@ public class InitialDAMContent implements RepositoryInitializer, NodeTypeConstan
             log.trace("Root '/content' Node was created");
         }
 
-
         if( !builder.child("content").hasChildNode("files") ){
             NodeBuilder fileNodeBuilder = builder.child("content").setChildNode("files").setProperty(JCR_PRIMARYTYPE, NT_UNSTRUCTURED, Type.NAME);
-            //debug
-            //todo - remove
-            fileNodeBuilder
-                .setChildNode("test1").setProperty(JCR_PRIMARYTYPE, NT_UNSTRUCTURED, Type.NAME)
-                .setChildNode("test1a").setProperty(JCR_PRIMARYTYPE, NT_UNSTRUCTURED, Type.NAME);
-            fileNodeBuilder
-                .setChildNode("test2").setProperty(JCR_PRIMARYTYPE, NT_UNSTRUCTURED, Type.NAME)
-                .setChildNode("test2a").setProperty(JCR_PRIMARYTYPE, NT_UNSTRUCTURED, Type.NAME);
+            log.trace("Content '/files' Node was created");
+        }
 
+        if( !builder.child("content").hasChildNode("email") ){
+            NodeBuilder fileNodeBuilder = builder.child("content").setChildNode("email").setProperty(JCR_PRIMARYTYPE, NT_UNSTRUCTURED, Type.NAME);
+            log.trace("Content '/files' Node was created");
+        }
+
+        if( !builder.child("content").hasChildNode("web") ){
+            NodeBuilder fileNodeBuilder = builder.child("content").setChildNode("web").setProperty(JCR_PRIMARYTYPE, NT_UNSTRUCTURED, Type.NAME);
             log.trace("Content '/files' Node was created");
         }
 
@@ -44,5 +44,7 @@ public class InitialDAMContent implements RepositoryInitializer, NodeTypeConstan
             builder.setChildNode("dam:jobs").setProperty(JCR_PRIMARYTYPE, NT_UNSTRUCTURED, Type.NAME);
         }
     }
+
+
 
 }

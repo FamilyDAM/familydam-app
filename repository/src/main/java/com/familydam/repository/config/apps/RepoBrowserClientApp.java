@@ -1,11 +1,11 @@
 package com.familydam.repository.config.apps;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
-@Controller
+@Component
 public class RepoBrowserClientApp implements IClientApp
 {
     Boolean primary = false;
@@ -14,7 +14,7 @@ public class RepoBrowserClientApp implements IClientApp
     Integer order = 10;
     String slug = "repository_browser";
     String label = "Repository Browser";
-    String path = "://bin/browser.html";
+    String path = "://app/browser.html?path=/content";
     List<String> roles = Collections.EMPTY_LIST;
 
 

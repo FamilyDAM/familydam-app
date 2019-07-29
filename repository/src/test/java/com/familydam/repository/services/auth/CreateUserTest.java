@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,9 @@ public class CreateUserTest {
     @Autowired
     CreateUserService createUserService;
 
+    @Autowired
+    Credentials adminCredentials;
+
     @Test
     public void createUser() throws Exception
     {
@@ -43,7 +46,7 @@ public class CreateUserTest {
 
 
         //make sure we only have the admin user
-        Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        Session session = repository.login(adminCredentials);
         List<Map> users = userListService.listUsers(session, false);
         Assert.assertEquals(1, users.size());
 

@@ -20,10 +20,20 @@ public class Constants {
     public static final String DAM_MUSIC = "dam:music";
     public static final String DAM_VIDEO = "dam:video";
     public static final String DAM_DATECREATED = "dam:datecreated";
+    public static final String USER_DAM_SECURITY = "dam:security";
 
     //mixins
     public static final String MIXIN_DAM_EXTENSIBLE = "dam:extensible";
     public static final String MIXIN_DAM_USER = "dam:user";
+
+    //security
+    public static final String FAMILY_ADMIN_GROUP = "family_admin_group";
+    public static final String FAMILY_GROUP = "family_group";
+    public static final String JWT_TOKEN = "jwtToken";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_BASE64 = "publicKeyBase64";
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PRIVATE_KEY_BASE64 = "privateKeyBase64";
 
     //Cache nodes
     public static final String CACHES = "caches";

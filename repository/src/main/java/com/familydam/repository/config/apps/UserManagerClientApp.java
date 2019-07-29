@@ -1,11 +1,11 @@
 package com.familydam.repository.config.apps;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
-@Controller
+@Component
 public class UserManagerClientApp implements IClientApp
 {
     Boolean primary = false;
@@ -14,7 +14,7 @@ public class UserManagerClientApp implements IClientApp
     Integer order = 1;
     String slug = "user_manager";
     String label = "User Manager";
-    String path = "://app-usermanager/index.html";
+    String path = "://usermanager/index.html";
     List<String> roles = Collections.EMPTY_LIST;
 
     @Override

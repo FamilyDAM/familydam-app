@@ -7,8 +7,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-
 
 
 const styleSheet = theme => ({
@@ -27,7 +25,7 @@ class FileListTableHead extends Component {
     };
 
     render() {
-        const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
+        const { classes, order, orderBy } = this.props;
 
         return (
             <TableHead className={classes.tableHead}>

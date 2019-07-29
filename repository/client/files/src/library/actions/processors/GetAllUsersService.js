@@ -32,14 +32,11 @@ class GetAllUsersService {
     getUsers()
     {
         const baseUrl = AppSettings.baseHost.getValue();
-        const user = AppSettings.basicUser.getValue();
-        const pwd = AppSettings.basicPwd.getValue();
 
         request
             .get(baseUrl +'/api/v1/auth/users')
             .withCredentials()
             .set('Accept', 'application/json')
-            .set('Authorization', 'user ' +user +":" +pwd)
             .end((err, results) => {
 
                 if( !err ){

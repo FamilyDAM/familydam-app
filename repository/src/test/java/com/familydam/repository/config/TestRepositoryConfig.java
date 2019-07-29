@@ -1,6 +1,5 @@
 package com.familydam.repository.config;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.oak.Oak;
@@ -12,9 +11,9 @@ import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder;
 import org.apache.jackrabbit.oak.segment.file.InvalidFileStoreVersionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
-import javax.annotation.PreDestroy;
 import javax.jcr.*;
 import javax.jcr.nodetype.NodeType;
 import java.io.File;
@@ -33,7 +32,8 @@ public class TestRepositoryConfig
     String HOME = "./test-repo";
 
 
-
+    @Autowired
+    Credentials adminCredentials;
 
     @Bean(name="testRepo")
     public Repository Repository() throws RepositoryException, InvalidFileStoreVersionException, ParseException, IOException {
@@ -55,7 +55,7 @@ public class TestRepositoryConfig
 
     private void registerMixins(Repository repo) throws RepositoryException, ParseException, IOException {
 
-        Session session = repo.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        Session session = repo.login(adminCredentials);
 
         InputStream cnd = this.getClass().getClassLoader().getResourceAsStream("nodetypes.cnd");
         NodeType[] nodeTypes = CndImporter.registerNodeTypes(new InputStreamReader(cnd), session);
@@ -67,7 +67,7 @@ public class TestRepositoryConfig
 
     private void initializeRepo(Repository repo) throws RepositoryException {
 
-        Session session = repo.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        Session session = repo.login(adminCredentials);
 
         Node root = session.getRootNode();
         if (!root.hasNode("content")) {

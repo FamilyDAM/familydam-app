@@ -23,9 +23,6 @@ class DeleteFileOrFolderService {
     deleteFileOrFolder(path_)
     {
         const baseUrl = AppSettings.baseHost.getValue();
-        const user = AppSettings.basicUser.getValue();
-        const pwd = AppSettings.basicPwd.getValue();
-
 
         if( path_ !== undefined && path_.length > 0 )
         {
@@ -34,7 +31,6 @@ class DeleteFileOrFolderService {
             request.delete(_url)
                 .withCredentials()
                 .set('Accept', 'application/json')
-                .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
                 .end((err, res)=>{
 
                     if( !err ){

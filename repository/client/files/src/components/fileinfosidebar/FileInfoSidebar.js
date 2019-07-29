@@ -7,9 +7,6 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import IconButton from '@material-ui/core/IconButton';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 
 import FileListTableToolbar from '../filelist/FileListTableToolbar';
@@ -20,12 +17,9 @@ import AppSettings from '../../library/actions/AppSettings';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import FolderIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import Button from "@material-ui/core/Button";
 
 const styleSheet = (theme) => ({
 
@@ -87,12 +81,12 @@ class FileInfoSidebar extends Component {
         if( this.props.fileNodes ){  //used by Storyboard
             this.setState({"fileNodes": this.props.fileNodes});
         }else {
-            FileActions.getFilesByPath.sink.takeWhile(() => this.state.isMounted).subscribe((files) => {
+            FileActions.getFileData.sink.takeWhile(() => this.state.isMounted).subscribe((files) => {
                 console.log(JSON.stringify(files));
                 this.setState({"fileNodes": files});
             });
 
-            FileActions.getFilesByPath.source.next(this.props.files);
+            FileActions.getFileData.source.next(this.props.files);
         }
     }
 
@@ -103,7 +97,7 @@ class FileInfoSidebar extends Component {
     componentWillReceiveProps(newProps) {
         this.props = newProps;
 
-        FileActions.getFilesByPath.source.next(this.props.files);
+        FileActions.getFileData.source.next(this.props.files);
     }
 
     handleTabChange(event, newValue){
@@ -138,13 +132,12 @@ const SingleImageView = (props, context) => (
         <div className={props.classes.gridListRoot}>
 
             <div className={props.classes.itemPreview} >
-                {props.fileNodes.length == 1 &&
-                    <div style={{height: '100%', maxWidth: '100%', textAlign: 'center'}}>
+                {props.fileNodes.length === 1 &&
+                    <div style={{height: '100%', maxWidth: '100%', textAlign: 'center', margin:'8px'}}>
                         {props.fileNodes.map(file => (
-
-                            <img src={AppSettings.baseHost.getValue() + (file['jcr:path']||file['path'])}
-                                 alt={file['jcr:path']}
-                                 style={{height: '100%', maxWidth: '100%', alignSelf: 'center'}}/>
+                            <img src={AppSettings.baseHost.getValue() + (file['path'])}
+                                 alt={file['path']}
+                                 style={{maxHeight: '100%', maxWidth: '100%', alignSelf: 'center'}}/>
 
                         ))}
                     </div>

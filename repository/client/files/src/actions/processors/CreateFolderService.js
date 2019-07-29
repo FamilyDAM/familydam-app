@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import request from 'superagent';
 import AppActions from "../../library/actions/AppActions";
 import AppSettings from '../../library/actions/AppSettings';
 
@@ -27,35 +26,48 @@ class CreateFolderService {
     createDirectory(data_)
     {
         const baseUrl = AppSettings.baseHost.getValue();
-        const user = AppSettings.basicUser.getValue();
-        const pwd = AppSettings.basicPwd.getValue();
 
         var _name = data_.name ;
-        var _dir = baseUrl +data_.path +"/" +_name;
+        var _url = baseUrl +data_.path +"/" +_name;
 
-        request
-            .post(_dir)
-            .withCredentials()
-            .field('jcr:primaryType', 'sling:Folder')
-            .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
-            .end((err, results) => {
-                if (!err) {
+        var formData = new FormData();
+        formData.append("name", data_.username);
+        formData.append("jcr:primaryType", "nt:folder");
 
-                    this.sink.next(results);
-
-                }else{
-                    console.log(err);
-                    //send the error to the store (through the sink observer
-                    //send the error to the store (through the sink observer
-                    if( err.status === 401){
-                        AppActions.navigateTo.next("/");
-                    } else {
-                        var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
-                        this.sink.error(_error);
-                    }
+        fetch(_url, {
+            method: "POST",
+            body: formData
+        })
+            .then(response => {
+                console.info("CreateFolder success handler");
+                if(response.redirected) {
+                    console.debug("redirect to: " +response.url);
+                    window.location = response.url
+                }
+                //continue on
+                this.sink.next(true);
+            })
+            .then((response) => response.json())
+            .then(json => {
+                if (!json.firstName) {
+                    json.firstName = json.username;
+                }
+                this.sink.next(json);
+            })
+            .catch(err => {
+                console.warn(err);
+                //send the error to the store (through the sink observer
+                if (err.status === 401) {
+                    AppActions.navigateTo.next("/");
+                }
+                else if (err.status === 403) {
+                    AppActions.alert.next("You do not have permission to add a new user");
+                } else {
+                    console.error(err);
+                    var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
+                    this.sink.error(_error);
                 }
             });
-
 
 
         /**

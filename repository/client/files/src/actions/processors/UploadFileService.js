@@ -1,16 +1,14 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import {Subject, Observable} from '@reactivex/rxjs';
+import {Observable, Subject} from '@reactivex/rxjs';
 
 import request from 'superagent';
-import AppActions from '../../library/actions/AppActions';
 import AppSettings from '../../library/actions/AppSettings';
 import FileActions from './../FileActions';
 
 class UploadFileService {
 
-    host = "http://localhost:9000";
     sink = undefined;
     fileQueue = new Subject();
     /**
@@ -28,6 +26,7 @@ class UploadFileService {
             //console.log("done");
         });
 
+        const baseUrl = AppSettings.baseHost.getValue();
 
         this.fileQueue
             //.take(3)
@@ -35,10 +34,10 @@ class UploadFileService {
                 if( Array.isArray(file_) ){
                     for (var i = 0; i < file_.length; i++) {
                         var file = file_[i];
-                        return this.uploadNextFile(file);
+                        return this.uploadNextFile(baseUrl, file);
                     }
                 }else {
-                    return this.uploadNextFile(file_);
+                    return this.uploadNextFile(baseUrl, file_);
                 }
             }, null, 3)
             .subscribe(val_ => {
@@ -47,7 +46,7 @@ class UploadFileService {
     }
 
 
-    uploadNextFile(file) {
+    uploadNextFile(baseUrl, file) {
 
         console.log("file: " + file);
         if (file)//!file.path)
@@ -55,7 +54,7 @@ class UploadFileService {
             //console.log("else clause, upload");
             //debugger;
             return Observable.of(file).flatMap(req => new Promise((resolve, reject) => {
-                return this.uploadFile(file)
+                return this.uploadFile(baseUrl, file)
                     .then(result=>resolve(result))
                     .catch(err => {
                         //debugger;
@@ -117,74 +116,13 @@ class UploadFileService {
 
 
 
-
-    /**
-     * Check to see if the file is accessible to the embedded server, so we can do a quick copy. Instead of upload.
-     * @param dir - passthrough for the next step in the sequence
-     * @param path
-     * @returns {HttpPromise}
-     */
-    checkAccess(file_){
-
-        const baseUrl = AppSettings.baseHost.getValue();
-        const user = AppSettings.basicUser.getValue();
-        const pwd = AppSettings.basicPwd.getValue();
-
-        return request
-            .get(baseUrl +'/api/familydam/v1/files/upload/info')
-            .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
-            .withCredentials()
-            .send({path: encodeURI(file_.path).replace("&", "%26")})
-            .then(data => {
-                //debugger;
-                return JSON.parse(data);
-            }, error => {
-                if (error.status === 401) {
-                    AppActions.navigateTo.next('://login');
-                } else {
-                    var _error = {'code': error.status, 'message': error.message};
-                    //file_.error = _error;
-                    FileActions.uploadError.next(_error);
-                }
-            });
-    }
-
-
-    /**
-     * Tell the embedded server to copy a local file, by path.
-     * @param dir
-     * @param path
-     */
-    copyLocalFile(file_) {
-
-        if (!file_.recursive) {
-            file_.recursive = true;
-        }
-
-        return request
-            .post(this.host +'/api/familydam/v1/files/upload/copy')
-            .withCredentials()
-            .field("dir", file_.uploadPath)
-            .field("path", file_.path)
-            .field("recursive", file_.recursive)
-            .then(data_ => {
-                //debugger;
-                file_.status = "COMPLETE";
-                file_.percentComplete = "100";
-                FileActions.uploadCompleted.next(data_);
-                return JSON.parse(data_);
-            });
-
-    }
-
-
     /**
      * The server can't access the file locally, or we are in a browser.
      * So this method will do a regular AJAX file upload
      * @param dir
      * @param path
      */
-    uploadFile(file_) {
+    uploadFile(baseUrl, file_) {
 
         var filePathName = file_.uploadPath;
         if( file_.webkitRelativePath ){
@@ -198,19 +136,17 @@ class UploadFileService {
         formData.append("name", file_.name);
         formData.append("path", filePathName);
         formData.append("destination", filePathName);
-        formData.append(file_.name, file_);
-
-        var u = window.localStorage.getItem("u");
-        var p = window.localStorage.getItem("p");
-        //.set('Authorization', 'user ' +u +":" +p)
+        formData.append("file", file_);
+        formData.append("jcr:primaryType", "nt:file");
 
 
-        console.log("Upload to:" +this.host +filePathName );
+
+        console.log("Upload to:" +baseUrl +filePathName );
         console.dir(file_);
+
         return request
-            .post('http://localhost:9000/api/familydam/v1/files/upload')
+            .post(baseUrl +filePathName)
             .withCredentials()
-            .set('Authorization', 'user ' +u +":" +p)
             .send(formData)
             .on('progress', event => {
                 console.log(event);
@@ -259,51 +195,65 @@ class UploadFileService {
     }
 
 
+
+
     /**
-     * Invoke service
+     * Check to see if the file is accessible to the embedded server, so we can do a quick copy. Instead of upload.
+     * @param dir - passthrough for the next step in the sequence
+     * @param path
+     * @returns {HttpPromise}
 
-     execute: function (file_) {
-        //console.log("{upload single file} " +file_.path);
-        //console.dir(file_);
+    checkAccess(file_){
+
+        const baseUrl = AppSettings.baseHost.getValue();
+
+        return request
+            .get(baseUrl +'/api/familydam/v1/files/upload/info')
+            .withCredentials()
+            .send({path: encodeURI(file_.path).replace("&", "%26")})
+            .then(data => {
+                //debugger;
+                return JSON.parse(data);
+            }, error => {
+                if (error.status === 401) {
+                    AppActions.navigateTo.next('://login');
+                } else {
+                    var _error = {'code': error.status, 'message': error.message};
+                    //file_.error = _error;
+                    FileActions.uploadError.next(_error);
+                }
+            });
+    }*/
 
 
-        var _this = this;
-        var _currentFile = file_;
+    /**
+     * Tell the embedded server to copy a local file, by path.
+     * @param dir
+     * @param path
 
-        //flip start flag
-        _currentFile.status = "UPLOADING";
-        _currentFile.percentComplete = "0";
+    copyLocalFile(baseUrl, file_) {
 
-
-        // short circut the check access. If the path is null we know we have to do a regular update
-        if (file_.path == undefined)
-        {
-            this.uploadFile(file_);
-            return;
+        if (!file_.recursive) {
+            file_.recursive = true;
         }
 
-
-        var _action;
-        // First check access, can we copy a local file (desktop mode) or do we need to upload the file)
-        var _hasAccess = false;
-        UploadActions.fileStatusAction.onNext(file_);
-        var _checkAccess = _this.checkAccess(_currentFile)
-            .then(function (result_, status_, xhr_) {
-                _hasAccess = result_.visible;
-
-                if (!_hasAccess)
-                {
-                    _this.uploadFile(file_);
-                } else
-                {
-                    _this.copyLocalFile(file_);
-                }
-
-            }, function (result_, status_, xhr_) {
-                _this.uploadFile(file_);
+        return request
+            .post(baseUrl +'/api/familydam/v1/files/upload/copy')
+            .withCredentials()
+            .field("dir", file_.uploadPath)
+            .field("path", file_.path)
+            .field("recursive", file_.recursive)
+            .then(data_ => {
+                //debugger;
+                file_.status = "COMPLETE";
+                file_.percentComplete = "100";
+                FileActions.uploadCompleted.next(data_);
+                return JSON.parse(data_);
             });
-    },
-     */
+
+    }*/
+
+
 
 }
 

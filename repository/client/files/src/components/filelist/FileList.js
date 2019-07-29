@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
-import keycode from 'keycode';
 import moment from 'moment';
 
 
@@ -12,7 +11,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import FolderIcon from '@material-ui/icons/Folder';
 import PhotoIcon from '@material-ui/icons/Photo';
@@ -116,6 +114,7 @@ class FileList extends Component{
         });
 
 
+        //trigger file load
         fileActions.getFileAndFolders.source.next(this.props.path);
     }
 
@@ -144,6 +143,8 @@ class FileList extends Component{
             case 32: //space
                 //todo: open preview
                 break;
+            default:
+                break;
         }
     }
 
@@ -159,6 +160,8 @@ class FileList extends Component{
             case 16: //space
                 this.isSpacePressed = false;
                 break;
+            default:
+                break;
         }
     }
 
@@ -173,7 +176,7 @@ class FileList extends Component{
         }
 
         console.log('selected =' +selectedIndex);
-        if( selectedIndex == -1 ) {
+        if( selectedIndex === -1 ) {
             newSelected.push(id);
         }else{
             newSelected = [];
@@ -285,10 +288,9 @@ class FileList extends Component{
                         <TableBody>
                             {this.state.files.filter((f=>!f.toString().startsWith(".") && !f.toString().startsWith("jcr:")  )).map(node => {
 
-
                                 const isSelected = checkIsSelected(node.path);
 
-                                if( (node['jcr:primaryType'] === "dam:folder" || node['jcr:primaryType'] === "sling:Folder" || node['jcr:primaryType'] === "nt:folder") ){
+                                if( (node['jcr:primaryType'] === "dam:folder" || node['jcr:primaryType'] === "nt:folder") ){
 
                                     return (
                                        <FolderRow key={node.path}
@@ -408,7 +410,7 @@ const FolderRow = (props, context) => (
         <TableCell padding="default"></TableCell>
         <TableCell padding="default" style={{padding:'8px', textAlign:'center'}}>
             <Button onClick={()=>props.onDelete(props.folder.path)} style={{minWidth:'24px', padding:"4px"}}><DeleteIcon /></Button>
-            <Button onClick={()=>props.onDownload(props.folder.path)} style={{minWidth:'24px', padding:"4px"}}><DownloadIcon /></Button>
+            <Button onClick={()=>window.alert('Coming Soon')} style={{minWidth:'24px', padding:"4px"}}><DownloadIcon /></Button>
         </TableCell>
     </TableRow>
 );

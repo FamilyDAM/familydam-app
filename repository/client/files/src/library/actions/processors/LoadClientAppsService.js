@@ -27,15 +27,11 @@ class LoginService {
      */
     loadApps(data_)
     {
-        var u = window.localStorage.getItem("u");
-        var p = window.localStorage.getItem("p");
-        //.set('Authorization', 'user ' +u +":" +p)
 
         //call server get list of apps
         request.get('/api/v1/core/clientapps')
             .withCredentials()
             .set('Accept', 'application/json')
-            .set('Authorization', 'user ' +u +":" +p)
             .end((err, res)=>{
 
                 if( !err ){

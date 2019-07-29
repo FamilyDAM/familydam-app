@@ -1,7 +1,7 @@
 import request from 'superagent';
 import AppSettings from '../../library/actions/AppSettings';
 
-class GetFilesByPathService {
+class GetFileDataService {
 
     sink=undefined;
 
@@ -22,8 +22,6 @@ class GetFilesByPathService {
     getFiles(paths_)
     {
         const baseUrl = AppSettings.baseHost.getValue();
-        const user = AppSettings.basicUser.getValue();
-        const pwd = AppSettings.basicPwd.getValue();
 
 
         if( paths_ !== undefined && paths_.length > 0 )
@@ -33,9 +31,8 @@ class GetFilesByPathService {
             for (var i = 0; i < paths_.length; i++) {
                 var path = paths_[i];
 
-                var promise = request.get( baseUrl +path +".1.json" )
+                var promise = request.get( baseUrl +path )
                     .withCredentials()
-                    .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
                     .set('Accept', 'application/json');
 
                 pathPromises.push(promise);
@@ -59,4 +56,4 @@ class GetFilesByPathService {
 };
 
 
-export default GetFilesByPathService;
+export default GetFileDataService;

@@ -1,5 +1,6 @@
 package com.familydam.repository.api.v1.auth;
 
+import com.familydam.repository.models.AdminUser;
 import com.familydam.repository.services.auth.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,11 +25,14 @@ public class UserList {
     @Autowired
     UserListService userListService;
 
+    @Autowired
+    AdminUser adminUser;
+
     @GetMapping(value = {"/api/v1/auth/users"})
     @ResponseBody
     public List listUsers(HttpServletRequest request) throws Exception {
 
-        Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
 
         List<Map> users = userListService.listUsers(session, true);
         return users;

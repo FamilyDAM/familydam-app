@@ -27,8 +27,6 @@ class GetFilesAndFoldersService {
         console.log("loading files & folders: " +path_);
 
         const baseUrl = AppSettings.baseHost.getValue();
-        const user = AppSettings.basicUser.getValue();
-        const pwd = AppSettings.basicPwd.getValue();
 
 
         if( path_ !== undefined && path_.length > 0 )
@@ -42,14 +40,13 @@ class GetFilesAndFoldersService {
             request.get(_url)
                 .withCredentials()
                 .set('Accept', 'application/json')
-                .set('Authorization', 'Basic ' +btoa(unescape(encodeURIComponent(user +":" +pwd))))
                 .end((err, res) => {
 
                     if (!err) {
 
                         var _nodes = [];
-                        if (res.body.children) {
-                            _nodes = res.body.children.filter(f => !f.name.toString().startsWith("."));
+                        if (res.body) {
+                            _nodes = res.body.filter(f => !f.name.toString().startsWith("."));
                         }
                         this.sink.next(_nodes);
 

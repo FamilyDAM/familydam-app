@@ -1,11 +1,11 @@
 package com.familydam.repository.config.apps;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
-@Controller
+@Component
 public class DashboardClientApp implements IClientApp
 {
     Boolean primary = true;
@@ -14,7 +14,7 @@ public class DashboardClientApp implements IClientApp
     Integer order = 0;
     String slug = "home";
     String label = "Home";
-    String path = "://index.html";
+    String path = "://home/index.html";
     List<String> roles = Collections.EMPTY_LIST;
 
     

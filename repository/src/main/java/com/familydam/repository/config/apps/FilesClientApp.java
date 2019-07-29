@@ -1,11 +1,12 @@
 package com.familydam.repository.config.apps;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collections;
 import java.util.List;
 
-@Controller
+@Component
 public class FilesClientApp implements IClientApp
 {
     Boolean primary = true;
@@ -14,7 +15,7 @@ public class FilesClientApp implements IClientApp
     Integer order = 1;
     String slug = "files";
     String label = "File Browser";
-    String path = "://app-files/index.html";
+    String path = "://files/index.html";
     List<String> roles = Collections.EMPTY_LIST;
 
     
