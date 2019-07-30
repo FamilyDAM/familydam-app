@@ -1,6 +1,7 @@
 package com.familydam.repository.services.auth;
 
 import com.familydam.repository.Constants;
+import com.familydam.repository.services.IRestService;
 import com.familydam.repository.utils.NodeToMapUtil;
 import com.familydam.repository.utils.jcr.AccessControlUtil;
 import com.familydam.repository.utils.security.KeyEncryption;
@@ -30,7 +31,8 @@ import java.util.Set;
 
 
 @Service
-public class CreateUserService {
+public class CreateUserService implements IRestService
+{
     Logger log = LoggerFactory.getLogger(CreateUserService.class);
 
     public Map createUser(Session session_, Map user_) throws RepositoryException {

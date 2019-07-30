@@ -1,5 +1,6 @@
 package com.familydam.repository.services.auth;
 
+import com.familydam.repository.services.IRestService;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.QueryBuilder;
@@ -13,7 +14,8 @@ import java.util.*;
 
 
 @Service
-public class UserListService {
+public class UserListService implements IRestService
+{
     public List<Map> listUsers(Session session_, Boolean excludeAdmin_) throws RepositoryException {
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
 

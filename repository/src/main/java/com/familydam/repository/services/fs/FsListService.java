@@ -1,5 +1,6 @@
 package com.familydam.repository.services.fs;
 
+import com.familydam.repository.services.IRestService;
 import com.familydam.repository.utils.NodeToMapUtil;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class FsListService
+public class FsListService implements IRestService
 {
     Logger log = LoggerFactory.getLogger(FsListService.class);
 

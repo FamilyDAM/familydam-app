@@ -40,3 +40,13 @@
 [dam:user] mixin
 + dam:security (nt:unstructured)
 + dam:friends (nt:unstructured)
+
+[dam:image] mixin
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
+[dam:music] mixin
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
+[dam:movie] mixin
+- * (UNDEFINED) multiple
+- * (UNDEFINED)

@@ -2,17 +2,12 @@ package com.familydam.repository.config;
 
 import com.familydam.repository.config.repo.InitialDAMContent;
 import com.familydam.repository.models.AdminUser;
-import com.familydam.repository.observers.ContentNodeAddedObserver;
 import org.apache.commons.io.FileUtils;
-import org.apache.jackrabbit.api.observation.JackrabbitEventFilter;
-import org.apache.jackrabbit.api.observation.JackrabbitObservationManager;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.data.FileDataStore;
 import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.jcr.Jcr;
-import org.apache.jackrabbit.oak.jcr.observation.filter.FilterFactory;
-import org.apache.jackrabbit.oak.jcr.observation.filter.OakEventFilter;
 import org.apache.jackrabbit.oak.plugins.blob.datastore.DataStoreBlobStore;
 import org.apache.jackrabbit.oak.security.internal.SecurityProviderBuilder;
 import org.apache.jackrabbit.oak.segment.SegmentNodeStore;
@@ -39,7 +34,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PreDestroy;
 import javax.jcr.*;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.observation.ObservationManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,11 +134,13 @@ public class RepositoryConfig
     @Bean
     public Oak oak(NodeStore nodeStore, SecurityProvider securityProvider) throws InvalidFileStoreVersionException, IOException {
 
+        //ContentNodeAddedObserver contentNodeAddedObserver = new ContentNodeAddedObserver("/content/files", "jcr:name");
+        //contentNodeAddedObserver.setPhotoSizeInfoService(photoSizeInfoService);
 
         Oak oak = new Oak(nodeStore)
             .with("default")
             .with(securityProvider)
-            .with(new InitialDAMContent())  //
+            .with(new InitialDAMContent());
             // add initial content and folder structure
             //.with(new DefaultTypeEditor())     // automatically set default types
             //.with(new NameValidatorProvider()) // allow only valid JCR names
@@ -152,7 +148,7 @@ public class RepositoryConfig
             //.with(new PropertyIndexProvider()) // search support for the indexes
             //.with(new JcrAllCommitHook())
             //.withAsyncIndexing()
-            .with(new ContentNodeAddedObserver("/content/files", "jcr:name"));
+            //.with(contentNodeAddedObserver);
         return oak;
     }
 
@@ -168,21 +164,19 @@ public class RepositoryConfig
         Repository repo = jcr.createRepository();
 
         registerMixIns(repo, new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-        registerObservers(repo, new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-        configSecurity(repo, new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-
+        //configSecurity(repo, new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
 
         return repo;
     }
 
-    private void configSecurity(Repository repo, SimpleCredentials adminCredentials) throws RepositoryException {
+//    private void configSecurity(Repository repo, SimpleCredentials adminCredentials) throws RepositoryException {
 //        Session session = repo.login(adminCredentials);
 //        // remove all access for the anonymouse user
 //        UserManager userManager = ((JackrabbitSession) session).getUserManager();
 //        User anonUser = (User) userManager.getAuthorizable("anonymous");
 //        //assignPermission(activeSession, anonUser.getPrincipal(), activeSession.getRootNode().getNode("home"), null, new String[]{Privilege.JCR_WRITE});
 //        assignPermission(session_, anonUser.getPrincipal(), securityNode, null, new String[]{Privilege.JCR_ALL});
-    }
+//    }
 
 
     private void registerMixIns(Repository repo, Credentials adminCredentials) throws RepositoryException, ParseException, IOException {
@@ -195,25 +189,5 @@ public class RepositoryConfig
         session.save();
     }
 
-
-    private void registerObservers(Repository repo, Credentials adminCredentials) throws RepositoryException {
-        Session session = repo.login(adminCredentials);
-        ObservationManager om = session.getWorkspace().getObservationManager();
-        //Cast to JackrabbitObservationManager
-        JackrabbitObservationManager jrom = (JackrabbitObservationManager) om;
-
-        //Construct a JackrabbitEventFilter
-        JackrabbitEventFilter jrFilter = new JackrabbitEventFilter();
-
-        //Wrap it as OakEventFilter
-        OakEventFilter oakFilter = FilterFactory.wrap(jrFilter);
-
-        oakFilter.withIncludeSubtreeOnRemove();
-        //Set other filtering criteria
-
-        //EventListener listener = new ContentNodeAddedObserver();
-        //jrom.addEventListener(listener, oakFilter);
-        //session.save();
-    }
 
 }

@@ -1,5 +1,6 @@
 package com.familydam.repository.services.auth;
 
+import com.familydam.repository.services.IRestService;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class GetUserService {
+public class GetUserService implements IRestService
+{
 
     @Autowired
     UserListService userListService;

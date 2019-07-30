@@ -433,7 +433,7 @@ const FileRow = (props, context) => (
             style={{padding:'8px 8px 8px 16px'}}
             onClick={event => {console.log('onclick');props.onClick(event, props.file.path)}}>
             { (props.file['path'].toString().toLowerCase().endsWith(".jpg") || props.file['path'].toString().toLowerCase().endsWith(".png") ) ?
-                <img src={"http://localhost:9000" +props.file.path} alt="" style={{width:'25px'}}/> : <PhotoIcon/>
+                <img src={"http://localhost:9000" +props.file.path +"?size=100"} alt="" style={{width:'25px'}}/> : <PhotoIcon/>
             }
             <Typography style={{display:'inline', paddingLeft:'16px'}}>{props.file.name}</Typography>
         </TableCell>

@@ -1,0 +1,59 @@
+package com.familydam.repository.services.fs;
+
+import com.familydam.repository.Constants;
+import com.familydam.repository.services.IRestService;
+import org.apache.jackrabbit.commons.JcrUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+
+@Service
+public class FsNewFileService implements IRestService
+{
+    Logger log = LoggerFactory.getLogger(FsNewFileService.class);
+
+    public ResponseEntity createFile(StandardMultipartHttpServletRequest request, Session session) throws RepositoryException, IOException {
+        String name = request.getParameter("name");
+        //String path = request.getParameter("path");
+        String destination = request.getParameter("destination");
+        //a list, but client always sends 1 file
+        List<MultipartFile> files = request.getMultiFileMap().get("file");
+
+
+        if( !session.hasPermission(destination, Session.ACTION_ADD_NODE) ){
+            return ResponseEntity.status(403).build();
+        }
+
+
+        Node destNode = JcrUtils.getOrCreateByPath(destination, NodeType.NT_FOLDER,  session);
+        for (MultipartFile file : files) {
+            Node n = JcrUtils.putFile(destNode, cleanName(name), file.getContentType(), file.getInputStream());
+            if( file.getContentType().startsWith("image") ){
+                n.addMixin(Constants.DAM_IMAGE);
+            }
+            session.save();
+            log.info("File Created: " +n.getPath() +" | thread=" +Thread.currentThread().getId());
+            return ResponseEntity.created( URI.create(n.getPath()) ).build();
+        }
+
+
+        return ResponseEntity.badRequest().build();
+    }
+
+
+
+    private String cleanName(String name_){
+        return name_.trim().replaceAll("\\[", "(").replaceAll("]", ")").replaceAll(":", "").replaceAll("\n", "").replaceAll(" ", "+");
+    }
+}
