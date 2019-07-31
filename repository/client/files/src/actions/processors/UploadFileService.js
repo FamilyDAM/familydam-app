@@ -49,6 +49,7 @@ class UploadFileService {
     uploadNextFile(baseUrl, file) {
 
         console.log("file: " + file);
+
         if (file)//!file.path)
         {
             //console.log("else clause, upload");
@@ -137,7 +138,11 @@ class UploadFileService {
         formData.append("path", filePathName);
         formData.append("destination", filePathName);
         formData.append("file", file_);
+        formData.append("type", file_.type);
+        formData.append("size", file_.size);
         formData.append("jcr:primaryType", "nt:file");
+        formData.append("dam:date.created", file_.lastModified);
+        formData.append("dam:date.modified", file_.lastModified);
 
 
 

@@ -21,6 +21,7 @@ public class Constants {
     public static final String DAM_MUSIC = "dam:music";
     public static final String DAM_VIDEO = "dam:video";
     public static final String DAM_DATECREATED = "dam:date.created";
+    public static final String DAM_DATEMODIFIED= "dam:date.modified";
     public static final String USER_DAM_SECURITY = "dam:security";
 
     //mixins

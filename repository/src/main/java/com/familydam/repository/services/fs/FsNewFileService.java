@@ -16,6 +16,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -38,11 +39,23 @@ public class FsNewFileService implements IRestService
 
         Node destNode = JcrUtils.getOrCreateByPath(destination, NodeType.NT_FOLDER,  session);
         for (MultipartFile file : files) {
+
             Node n = JcrUtils.putFile(destNode, cleanName(name), file.getContentType(), file.getInputStream());
             if( file.getContentType().startsWith("image") ){
                 n.addMixin(Constants.DAM_IMAGE);
             }
             n.addMixin(Constants.MIXIN_DAM_EXTENSIBLE);
+
+            if( request.getParameter(Constants.DAM_DATECREATED) != null){
+                Calendar dateCreatedCal = Calendar.getInstance();
+                dateCreatedCal.setTimeInMillis(new Long(request.getParameter(Constants.DAM_DATECREATED)));
+                n.setProperty(Constants.DAM_DATECREATED, dateCreatedCal);
+            }
+            if( request.getParameter(Constants.DAM_DATEMODIFIED) != null){
+                Calendar dateModCal = Calendar.getInstance();
+                dateModCal.setTimeInMillis(new Long(request.getParameter(Constants.DAM_DATEMODIFIED)));
+                n.setProperty(Constants.DAM_DATEMODIFIED, dateModCal);
+            }
 
             session.save();
             log.info("File Created: " +n.getPath() +" | thread=" +Thread.currentThread().getId());

@@ -127,18 +127,17 @@ public class PhotoExifParserService implements EventListener, IEventService {
 
 
         // Extract Image Date Stamp, and save to root
-        Date date = new Date();
         if (metadata.getFirstDirectoryOfType(ExifIFD0Directory.class) != null) {
             Date metadataDate = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getDate(306);
             if (metadataDate != null) {
-                date = metadataDate;
+                Calendar dateCreatedCal = Calendar.getInstance();
+                dateCreatedCal.setTime(metadataDate);
+                node.setProperty(Constants.DAM_DATECREATED, dateCreatedCal);
             }
         }
 
 
-        Calendar dateCreatedCal = Calendar.getInstance();
-        dateCreatedCal.setTime(date);
-        node.setProperty(Constants.DAM_DATECREATED, dateCreatedCal);
+
         //new DateCreatedIndexGenerator(resolverFactory).addToIndex(null, new Calendar[]{dateCreatedCal});
     }
 

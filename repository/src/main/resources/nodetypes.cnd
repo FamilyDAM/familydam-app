@@ -52,6 +52,7 @@
 
 [dam:image] mixin
 - dam:date.created (STRING)
+- dam:date.modified (STRING)
 - dam:phash (STRING)
 - dam:date.phash (DATE)
 - dam:date.exif (DATE)
