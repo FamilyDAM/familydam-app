@@ -57,7 +57,6 @@ public class PhotoSizeInfoService implements IEventService, EventListener
             if( Event.NODE_ADDED == event.getType() ) {
                 try {
                     if( "nt:file".equals(event.getInfo().get("jcr:primaryType")) ) {
-                        log.info("[EVENT] PhotoSizeInfo - ADDED " + event.getPath() + " | " + Thread.currentThread().getId());
                         process(event.getPath());
                     }
                 }catch (RepositoryException ex){
@@ -75,6 +74,8 @@ public class PhotoSizeInfoService implements IEventService, EventListener
             if( node.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {
                 String mimeType = node.getNode("jcr:content").getProperty("jcr:mimeType").getString();
                 if( mimeType.startsWith("image") ) {
+                    log.info("[EVENT] PhotoSizeInfo - ADDED " + node.getPath() + " | " + Thread.currentThread().getId());
+
                     Map size = getImageSize(session, node);
                     node.addMixin(Constants.DAM_IMAGE);
                     node.setProperty("width", (Integer) size.get("width"));

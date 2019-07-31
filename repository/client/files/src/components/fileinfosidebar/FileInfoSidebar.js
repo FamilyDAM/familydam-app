@@ -192,7 +192,7 @@ const SingleImageView = (props, context) => (
                                 </TableRow>
                                 <TableRow>
                                     <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Created</TableCell>
-                                    <TableCell align="left">{props.fileNodes[0]['dam:datecreated']}</TableCell>
+                                    <TableCell align="left">{props.fileNodes[0]['dam:date.created']}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Modified</TableCell>

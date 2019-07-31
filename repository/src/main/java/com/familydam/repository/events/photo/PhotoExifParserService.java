@@ -14,6 +14,7 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.jcr.*;
@@ -28,6 +29,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
+@Service
 public class PhotoExifParserService implements EventListener, IEventService {
     Logger log = LoggerFactory.getLogger(PhotoSizeInfoService.class);
 
@@ -45,9 +47,10 @@ public class PhotoExifParserService implements EventListener, IEventService {
     public void activate() throws RepositoryException {
         Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
         ObservationManager om = session.getWorkspace().getObservationManager();
-        om.addEventListener(this, Event.NODE_ADDED, "/content/files", false, null, null, false);
+        om.addEventListener(this, Event.NODE_ADDED, "/content/files", true, null, null, false);
         session.save();
     }
+
 
     @Override
     public void onEvent(EventIterator events) {
@@ -55,7 +58,6 @@ public class PhotoExifParserService implements EventListener, IEventService {
             Event event = events.nextEvent();
             if (Event.NODE_ADDED == event.getType()) {
                 try {
-                    log.info("[EVENT] PhotoExifParse - ADDED " + event.getPath() + " | " + Thread.currentThread().getId());
                     process(event.getPath());
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage(), ex);
@@ -63,6 +65,7 @@ public class PhotoExifParserService implements EventListener, IEventService {
             }
         }
     }
+
 
     @Override
     public void process(String path) {
@@ -73,7 +76,9 @@ public class PhotoExifParserService implements EventListener, IEventService {
             if (node.getPrimaryNodeType().isNodeType(NodeType.NT_FILE)) {
                 String mimeType = node.getNode("jcr:content").getProperty("jcr:mimeType").getString();
                 if (mimeType.startsWith("image")) {
+                    log.info("[EVENT] PhotoExifParse - ADDED " + node.getPath() + " | " + Thread.currentThread().getId());
                     parseExif(node);
+                    node.setProperty("dam:date.exif", Calendar.getInstance());
                     session.save();
                 }
             }
@@ -82,7 +87,9 @@ public class PhotoExifParserService implements EventListener, IEventService {
         }
     }
 
-    private void parseExif(Node node) throws RepositoryException, ImageProcessingException, IOException
+
+
+    public void parseExif(Node node) throws RepositoryException, ImageProcessingException, IOException
     {
         Node metadataNode = JcrUtils.getOrAddNode(node, Constants.METADATA, "nt:unstructured");
 
@@ -94,21 +101,27 @@ public class PhotoExifParserService implements EventListener, IEventService {
         for (Directory directory : directories) {
             String _name = directory.getName();
 
-            Node dir = JcrUtils.getOrAddNode(metadataNode, _name, JcrConstants.NT_UNSTRUCTURED);
+            Node tagNode = JcrUtils.getOrAddNode(metadataNode, _name, JcrConstants.NT_UNSTRUCTURED);
 
             Collection<Tag> tags = directory.getTags();
             for (Tag tag : tags) {
                 int tagType = tag.getTagType();
-                String tagTypeHex = tag.getTagTypeHex();
-                String tagName = tag.getTagName();
-                String nodeName = tagName.replace(" ", "_").replace("/", "_");
+                String tagName = tag.getTagName().replace(" ", "_").replace("/", "_");
                 String desc = tag.getDescription();
+                tagNode.setProperty(tagName, desc);
 
-                Node prop = JcrUtils.getOrAddNode(dir, nodeName, JcrConstants.NT_UNSTRUCTURED);
-                prop.setProperty("name", tagName);
-                prop.setProperty("description", desc);
-                prop.setProperty("type", tagType);
-                prop.setProperty("typeHex", tagTypeHex);
+                /**
+                 String tagTypeHex = tag.getTagTypeHex();
+                 String tagName = tag.getTagName();
+                 String nodeName = tagName.replace(" ", "_").replace("/", "_");
+                 String desc = tag.getDescription();
+
+                 Node prop = JcrUtils.getOrAddNode(dir, nodeName, JcrConstants.NT_UNSTRUCTURED);
+                 prop.setProperty("name", tagName);
+                 prop.setProperty("description", desc);
+                 prop.setProperty("type", tagType);
+                 prop.setProperty("typeHex", tagTypeHex);
+                 **/
             }
         }
 
@@ -129,5 +142,5 @@ public class PhotoExifParserService implements EventListener, IEventService {
         //new DateCreatedIndexGenerator(resolverFactory).addToIndex(null, new Calendar[]{dateCreatedCal});
     }
 
-
 }
+

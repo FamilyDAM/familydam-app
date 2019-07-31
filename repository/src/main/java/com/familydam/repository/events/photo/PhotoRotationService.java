@@ -75,7 +75,6 @@ public class PhotoRotationService implements IEventService, EventListener
             if( Event.NODE_ADDED == event.getType() ) {
                 try {
                     if( "nt:file".equals(event.getInfo().get("jcr:primaryType")) ) {
-                        log.info("[EVENT] PhotoRotation - ADDED " + event.getPath() + " | " + Thread.currentThread().getId());
                         process(event.getPath());
                     }
                 }catch (RepositoryException ex){
@@ -93,6 +92,8 @@ public class PhotoRotationService implements IEventService, EventListener
             if( node.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {
                 String mimeType = node.getNode("jcr:content").getProperty("jcr:mimeType").getString();
                 if( mimeType.startsWith("image") ) {
+                    log.info("[EVENT] PhotoRotation - ADDED " + node.getPath() + " | " + Thread.currentThread().getId());
+
                     //rotate
                     BufferedImage image = rotateImage(node);
                     //rewrite rotated image
@@ -100,7 +101,7 @@ public class PhotoRotationService implements IEventService, EventListener
                     ImageIO.write(image, mimeType.split("/")[1], os);
                     InputStream is = new ByteArrayInputStream(os.toByteArray());
                     //save image
-                    JcrUtils.putFile(node, node.getName(), mimeType, is);
+                    JcrUtils.putFile(node.getParent(), node.getName(), mimeType, is);
                     session.save();
                 }
             }

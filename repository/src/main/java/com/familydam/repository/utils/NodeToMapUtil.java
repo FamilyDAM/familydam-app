@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
+import javax.jcr.nodetype.NodeType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +16,19 @@ public class NodeToMapUtil
 
 
     public static Map convert(Node node) throws RepositoryException {
+        return convert(node, true);
+    }
+
+
+    public static Map convert(Node node, boolean includeChildNodes) throws RepositoryException {
         Map obj = new HashMap();
 
         //convert root properties
         convertProperties(node, obj);
 
         //walk the tree and map child nodes
-        if( node.hasNodes() ){
+
+        if( includeChildNodes && node.hasNodes() ){
             NodeIterator nodeIterator = node.getNodes();
             while( nodeIterator.hasNext() ){
                 Node n = nodeIterator.nextNode();
@@ -45,7 +52,9 @@ public class NodeToMapUtil
         obj.put("path", node.getPath());
         obj.put("index", node.getIndex());
         obj.put("_links", new HashMap<>());
-        ((Map)obj.get("_links")).put("download", node.getPath() +"?download=true");
+        if( node.getPrimaryNodeType().isNodeType(NodeType.NT_FILE)) {
+            ((Map) obj.get("_links")).put("download", node.getPath() + "?download=true");
+        }
 
 
         PropertyIterator propertyIterator = node.getProperties();

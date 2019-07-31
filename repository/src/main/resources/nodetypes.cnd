@@ -27,26 +27,46 @@
 
 <dam='http://familydam.com/ns/1.0'>
 
+//Node Types
+[dam:exif] > nt:unstructured
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
 
-[dam:systemfolder] mixin
-[dam:contentfolder] mixin
-[dam:userfolder] mixin
+/////////////////
+// Mixins
 
-
+//Generic CatchAll mixins
 [dam:extensible] mixin
 - * (UNDEFINED) multiple
 - * (UNDEFINED)
 
+[dam:taggable] mixin
+ - dam:tags (STRING) multiple
+ - dam:people (STRING) multiple
+
+
+//Node Specific mixins
 [dam:user] mixin
 + dam:security (nt:unstructured)
 + dam:friends (nt:unstructured)
 
 [dam:image] mixin
-- * (UNDEFINED) multiple
-- * (UNDEFINED)
+- dam:date.created (STRING)
+- dam:phash (STRING)
+- dam:date.phash (DATE)
+- dam:date.exif (DATE)
++ dam:metadata (nt:unstructured)
+
+
 [dam:music] mixin
-- * (UNDEFINED) multiple
-- * (UNDEFINED)
+- dam:date.created (STRING)
+- dam:date.id3 (DATE)
++ dam:metadata (nt:unstructured)
+
+[dam:video] mixin
+- dam:date.created (STRING)
++ dam:metadata (nt:unstructured)
+
 [dam:movie] mixin
-- * (UNDEFINED) multiple
-- * (UNDEFINED)
+- dam:date.created (STRING)
++ dam:metadata (nt:unstructured)

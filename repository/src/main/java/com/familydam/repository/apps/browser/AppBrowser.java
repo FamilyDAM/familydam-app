@@ -53,10 +53,9 @@ public class AppBrowser {
         List<Map> nodes = fsListService.listNodes(session, path);
         model.addAttribute("nodes", nodes);
 
-        if( nodes.size() == 0 ){
             Node node = JcrUtils.getNodeIfExists( path, session );
-            model.addAttribute("properties", NodeToMapUtil.convert(node) );
-        }
+            model.addAttribute("properties", NodeToMapUtil.convert(node, false) );
+        if( nodes.size() == 0 ){ }
 
         if(  path.startsWith("/") ){
             model.addAttribute("parent", session.getRootNode().getPath());

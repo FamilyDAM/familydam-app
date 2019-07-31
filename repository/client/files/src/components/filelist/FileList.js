@@ -109,7 +109,7 @@ class FileList extends Component{
 
             });
 
-            console.log(JSON.stringify(sortedFiles));
+            //console.log(JSON.stringify(sortedFiles));
             this.setState({'files': sortedFiles});
         });
 
@@ -129,7 +129,7 @@ class FileList extends Component{
 
 
     handleKeyDown(e){
-        console.log("keydown=" +e.keyCode);
+        //console.log("keydown=" +e.keyCode);
         switch (e.keyCode) {
             case 17:
                 this.isCntlPressed = true;
@@ -149,7 +149,7 @@ class FileList extends Component{
     }
 
     handleKeyUp(e){
-        console.log("keyup=" +e.keyCode);
+        //console.log("keyup=" +e.keyCode);
         switch (e.keyCode) {
             case 17:
                 this.isCntlPressed = false;
@@ -175,7 +175,7 @@ class FileList extends Component{
             //newSelected = selected
         }
 
-        console.log('selected =' +selectedIndex);
+        //console.log('selected =' +selectedIndex);
         if( selectedIndex === -1 ) {
             newSelected.push(id);
         }else{
@@ -323,9 +323,9 @@ class FileList extends Component{
 
                 <Dialog
                     ignoreBackdropClick
-                    ignoreEscapeKeyUp
-                    maxWidth="xs"
-                    open={this.state.showDeleteFileDialog}>
+                    maxWidth="sm"
+                    open={this.state.showDeleteFileDialog}
+                    style={{'padding':'8px'}}>
                     <DialogTitle>Delete Confirmation</DialogTitle>
                     <DialogContent>
                         <Typography>Are you sure you want to delete this file?</Typography>
@@ -337,15 +337,16 @@ class FileList extends Component{
                         <LoadingButton
                             isLoading={this.state.isLoading}
                             label="Delete"
+                            onKeyDown={(e)=>{if(e.keyCode===13) this.handleFileDeleteOk()}}
                             onClick={this.handleFileDeleteOk}></LoadingButton>
                     </DialogActions>
                 </Dialog>
 
                 <Dialog
                     ignoreBackdropClick
-                    ignoreEscapeKeyUp
-                    maxWidth="xs"
-                    open={this.state.showDeleteFolderDialog}>
+                    maxWidth="sm"
+                    open={this.state.showDeleteFolderDialog}
+                    style={{'padding':'8px'}}>
                     <DialogTitle>Delete Confirmation</DialogTitle>
                     <DialogContent>
                         <Typography>Are you sure you want to delete this folder and all of the files in it?</Typography>
@@ -357,6 +358,7 @@ class FileList extends Component{
                         <LoadingButton
                             isLoading={this.state.isLoading}
                             label="Delete"
+                            onKeyDown={(e)=>{if(e.keyCode===13) this.handleFolderDeleteOk()}}
                             onClick={this.handleFolderDeleteOk}></LoadingButton>
                     </DialogActions>
                 </Dialog>
@@ -431,13 +433,13 @@ const FileRow = (props, context) => (
         <TableCell
             padding="default"
             style={{padding:'8px 8px 8px 16px'}}
-            onClick={event => {console.log('onclick');props.onClick(event, props.file.path)}}>
+            onClick={event => {props.onClick(event, props.file.path)}}>
             { (props.file['path'].toString().toLowerCase().endsWith(".jpg") || props.file['path'].toString().toLowerCase().endsWith(".png") ) ?
                 <img src={"http://localhost:9000" +props.file.path +"?size=100"} alt="" style={{width:'25px'}}/> : <PhotoIcon/>
             }
             <Typography style={{display:'inline', paddingLeft:'16px'}}>{props.file.name}</Typography>
         </TableCell>
-        <TableCell  padding="default" style={{padding:'8px'}}>{moment(props.file['dam:datecreated']?props.file['dam:datecreated']:props.file['jcr:created']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
+        <TableCell  padding="default" style={{padding:'8px'}}>{moment(props.file['dam:date.created']?props.file['dam:date.created']:props.file['jcr:created']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
         <TableCell  padding="default" style={{padding:'8px', textAlign:'center'}}>
             <Button onClick={()=>props.onDelete(props.file.path)} style={{minWidth:'24px', padding:"4px"}}><DeleteIcon /></Button>
             {props.file._links.download &&

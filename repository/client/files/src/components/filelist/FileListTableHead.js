@@ -40,9 +40,9 @@ class FileListTableHead extends Component {
                     </TableCell>
                     <TableCell padding="none" style={{minWidth:'200px', padding:'16px 8px'}}>
                         <TableSortLabel
-                            active={orderBy === "dam:datecreated"}
+                            active={orderBy === "dam:date.created"}
                             direction={order}
-                            onClick={this.createSortHandler("dam:datecreated")}>
+                            onClick={this.createSortHandler("dam:date.created")}>
                             Created
                         </TableSortLabel>
                     </TableCell>

@@ -13,11 +13,10 @@ import org.apache.jackrabbit.webdav.jcr.transaction.TxLockManagerImpl;
 import org.apache.jackrabbit.webdav.server.AbstractWebdavServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 
 import javax.jcr.Repository;
 
-@Controller
+//@Controller
 public class WebDavServer extends AbstractWebdavServlet
 {
     Logger log = LoggerFactory.getLogger(WebDavServer.class);

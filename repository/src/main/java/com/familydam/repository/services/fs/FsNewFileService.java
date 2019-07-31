@@ -42,6 +42,8 @@ public class FsNewFileService implements IRestService
             if( file.getContentType().startsWith("image") ){
                 n.addMixin(Constants.DAM_IMAGE);
             }
+            n.addMixin(Constants.MIXIN_DAM_EXTENSIBLE);
+
             session.save();
             log.info("File Created: " +n.getPath() +" | thread=" +Thread.currentThread().getId());
             return ResponseEntity.created( URI.create(n.getPath()) ).build();
