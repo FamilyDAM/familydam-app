@@ -91,54 +91,57 @@ public class PhotoExifParserService implements EventListener, IEventService {
 
     public void parseExif(Node node) throws RepositoryException, ImageProcessingException, IOException
     {
-        Node metadataNode = JcrUtils.getOrAddNode(node, Constants.METADATA, "nt:unstructured");
+        try {
+            Node metadataNode = JcrUtils.getOrAddNode(node, Constants.METADATA, "nt:unstructured");
 
-        InputStream is = readFileService.readFile(node);
-        Metadata metadata = ImageMetadataReader.readMetadata(is);
+            InputStream is = readFileService.readFile(node);
+            Metadata metadata = ImageMetadataReader.readMetadata(is);
 
-        Iterable<Directory> directories = metadata.getDirectories();
+            Iterable<Directory> directories = metadata.getDirectories();
 
-        for (Directory directory : directories) {
-            String _name = directory.getName();
+            for (Directory directory : directories) {
+                String _name = directory.getName();
 
-            Node tagNode = JcrUtils.getOrAddNode(metadataNode, _name, JcrConstants.NT_UNSTRUCTURED);
+                Node tagNode = JcrUtils.getOrAddNode(metadataNode, _name, JcrConstants.NT_UNSTRUCTURED);
 
-            Collection<Tag> tags = directory.getTags();
-            for (Tag tag : tags) {
-                int tagType = tag.getTagType();
-                String tagName = tag.getTagName().replace(" ", "_").replace("/", "_");
-                String desc = tag.getDescription();
-                tagNode.setProperty(tagName, desc);
+                Collection<Tag> tags = directory.getTags();
+                for (Tag tag : tags) {
+                    int tagType = tag.getTagType();
+                    String tagName = tag.getTagName().replace(" ", "_").replace("/", "_");
+                    String desc = tag.getDescription();
+                    tagNode.setProperty(tagName, desc);
 
-                /**
-                 String tagTypeHex = tag.getTagTypeHex();
-                 String tagName = tag.getTagName();
-                 String nodeName = tagName.replace(" ", "_").replace("/", "_");
-                 String desc = tag.getDescription();
+                    /**
+                     String tagTypeHex = tag.getTagTypeHex();
+                     String tagName = tag.getTagName();
+                     String nodeName = tagName.replace(" ", "_").replace("/", "_");
+                     String desc = tag.getDescription();
 
-                 Node prop = JcrUtils.getOrAddNode(dir, nodeName, JcrConstants.NT_UNSTRUCTURED);
-                 prop.setProperty("name", tagName);
-                 prop.setProperty("description", desc);
-                 prop.setProperty("type", tagType);
-                 prop.setProperty("typeHex", tagTypeHex);
-                 **/
+                     Node prop = JcrUtils.getOrAddNode(dir, nodeName, JcrConstants.NT_UNSTRUCTURED);
+                     prop.setProperty("name", tagName);
+                     prop.setProperty("description", desc);
+                     prop.setProperty("type", tagType);
+                     prop.setProperty("typeHex", tagTypeHex);
+                     **/
+                }
             }
-        }
 
 
-        // Extract Image Date Stamp, and save to root
-        if (metadata.getFirstDirectoryOfType(ExifIFD0Directory.class) != null) {
-            Date metadataDate = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getDate(306);
-            if (metadataDate != null) {
-                Calendar dateCreatedCal = Calendar.getInstance();
-                dateCreatedCal.setTime(metadataDate);
-                node.setProperty(Constants.DAM_DATECREATED, dateCreatedCal);
+            // Extract Image Date Stamp, and save to root
+            if (metadata.getFirstDirectoryOfType(ExifIFD0Directory.class) != null) {
+                Date metadataDate = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getDate(306);
+                if (metadataDate != null) {
+                    Calendar dateCreatedCal = Calendar.getInstance();
+                    dateCreatedCal.setTime(metadataDate);
+                    node.setProperty(Constants.DAM_DATECREATED, dateCreatedCal);
+                }
             }
+
+
+            //new DateCreatedIndexGenerator(resolverFactory).addToIndex(null, new Calendar[]{dateCreatedCal});
+        }catch(Exception ex){
+            log.warn("[" +node.getPath() +"] " +ex.getMessage());
         }
-
-
-
-        //new DateCreatedIndexGenerator(resolverFactory).addToIndex(null, new Calendar[]{dateCreatedCal});
     }
 
 }

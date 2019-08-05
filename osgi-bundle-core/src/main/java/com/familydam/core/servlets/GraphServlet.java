@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.familydam.core.FamilyDAMCoreConstants.HATEAOS_CONTENTTYPE;
-import static com.familydam.core.FamilyDAMCoreConstants.HATEAOS_EMBEDDED;
 import static com.familydam.core.FamilyDAMCoreConstants.HATEAOS_LINKS;
 
 /**
@@ -187,7 +186,7 @@ public class GraphServlet extends SlingAllMethodsServlet
         }
 
 
-        TreeWalker treeWalker = new TreeWalker( resource, _depth, suffixTypes, suffixProps );
+        TreeWalker treeWalker = new TreeWalker( resource, 1, suffixTypes, suffixProps );
         Map _modifiedNode = treeWalker.walkTree();
 
 

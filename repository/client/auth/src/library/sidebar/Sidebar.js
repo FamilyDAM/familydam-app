@@ -132,7 +132,7 @@ class Sidebar extends Component {
     render() {
         var classes = this.props.classes;
         //find specific app in the installed list of apps, if it's not installed don't show link
-        var profileApp = this.findApp('user_manager', this.props.secondaryApps);
+        var profileApp = this.findApp('user manager', this.props.secondaryApps);
 
         return (
             <Paper className={this.props.open?classes.sidebarOpen:classes.sidebarClosed} >
@@ -170,7 +170,7 @@ class Sidebar extends Component {
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
                                 <ListItem button key={item.path} onClick={()=>this.handleNavClick(item.path)}>
-                                    <Avatar>
+                                    <Avatar style={{marginRight:'8px'}}>
                                         <FolderIcon />
                                     </Avatar>
                                     <ListItemText primary={item.label} secondary=""

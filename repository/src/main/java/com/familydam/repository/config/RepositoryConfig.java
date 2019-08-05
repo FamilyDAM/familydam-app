@@ -15,6 +15,7 @@ import org.apache.jackrabbit.oak.segment.SegmentNodeStoreBuilders;
 import org.apache.jackrabbit.oak.segment.file.FileStore;
 import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder;
 import org.apache.jackrabbit.oak.segment.file.InvalidFileStoreVersionException;
+import org.apache.jackrabbit.oak.segment.tool.iotrace.IOTraceLogWriter;
 import org.apache.jackrabbit.oak.spi.blob.BlobStore;
 import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
@@ -110,8 +111,8 @@ public class RepositoryConfig
     public FileStore fileStore(BlobStore blobStore) throws InvalidFileStoreVersionException, IOException {
         FileStore fs = FileStoreBuilder
             .fileStoreBuilder(new File(HOME +"/repo"))
-            .withIOLogging(log)
-            .withBlobStore(blobStore)
+            .withIOLogging(LoggerFactory.getLogger(IOTraceLogWriter.class))
+            //.withBlobStore(blobStore)
             //.withMaxFileSize(256)
             .build();
         return fs;

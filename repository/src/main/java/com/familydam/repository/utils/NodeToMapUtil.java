@@ -1,5 +1,6 @@
 package com.familydam.repository.utils;
 
+import com.familydam.repository.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,10 +52,8 @@ public class NodeToMapUtil
         obj.put("name", node.getName());
         obj.put("path", node.getPath());
         obj.put("index", node.getIndex());
-        obj.put("_links", new HashMap<>());
-        if( node.getPrimaryNodeType().isNodeType(NodeType.NT_FILE)) {
-            ((Map) obj.get("_links")).put("download", node.getPath() + "?download=true");
-        }
+        obj.put(Constants.HATEAOS_LINKS, hateosDecorator(node));
+
 
 
         PropertyIterator propertyIterator = node.getProperties();
@@ -121,5 +120,44 @@ public class NodeToMapUtil
         if( "rep:password".equals(property.getName()) ) return true;
         else if( "rep:authorizableId".equals(property.getName()) ) return true;
         return false;
+    }
+
+
+    private static Object hateosDecorator(Node node_) throws RepositoryException
+    {
+        Map linksMap = new HashMap();
+        linksMap.put("self", node_.getPath());
+
+        if (isFile(node_)) {
+            linksMap.put("delete", node_.getPath()); //todo check permission
+            linksMap.put("download", node_.getPath() + "?download=true");  //todo check permission
+        }
+        if (isFolder(node_)) {
+            linksMap.put("delete", node_.getPath()); //todo check permission
+        }
+        if (isDamImage(node_)) {
+            String _path = node_.getPath().substring(0, node_.getPath().lastIndexOf("."));
+            String _ext = node_.getPath().substring(node_.getPath().lastIndexOf("."));
+            linksMap.put("thumb", node_.getPath() + "?size=250");
+            linksMap.put("resize", node_.getPath() + "?size={size}");
+        }
+
+        return linksMap;
+    }
+
+
+    private static boolean isFile(Node node) throws RepositoryException
+    {
+        return node.isNodeType(NodeType.NT_FILE);
+    }
+
+    private static boolean isFolder(Node node) throws RepositoryException
+    {
+        return node.isNodeType(NodeType.NT_FOLDER);
+    }
+
+    private static boolean isDamImage(Node node) throws RepositoryException
+    {
+        return node.isNodeType(Constants.DAM_IMAGE);
     }
 }

@@ -180,7 +180,6 @@ class UploadDialog extends Component {
 
     handleAddFile(e, files) {
         var _fileList = this.state.files;
-        var _items = e.dataTransfer.items;
         // close the Receiver after file dropped
 
         var processFile = function(file_, path_, relPath_){
@@ -193,14 +192,15 @@ class UploadDialog extends Component {
             if( relPath_ ){
                 file_.relativePath = relPath_;
             }
-            FileActions.uploadFile.source.next(file_);
+            //FileActions.uploadFile.source.next(file_);
         };
 
-        var readDir = function(entry, file, path){
+
+        var readDir = function (entry, file, path) {
             // Get folder contents
             //var file = dataTransferItem.getAsFile();
             var dirReader = entry.createReader();
-            dirReader.readEntries(function(entries) {
+            dirReader.readEntries(function (entries) {
 
                 for (let j = 0; j < entries.length; j++) {
                     var entry = entries[j];
@@ -208,11 +208,11 @@ class UploadDialog extends Component {
                     console.dir(entry.file);
                     console.dir(entry.fullPath);
                     const relPath = entry.fullPath;
-                    if(entry.isFile) {
-                        entry.file( (f)=>{
+                    if (entry.isFile) {
+                        entry.file((f) => {
                             processFile(f, path, relPath);
                         });
-                    }else if (entry.isDirectory) {
+                    } else if (entry.isDirectory) {
                         readDir(entry, file, path);
                     }
                 }
@@ -220,22 +220,43 @@ class UploadDialog extends Component {
             });
         };
 
-        for (var i = 0; i < _items.length; i++) {
-            const _path = this.props.path;
-            var dataTransferItem = _items[i];
-            var file = dataTransferItem.getAsFile();
-            var entry = dataTransferItem.webkitGetAsEntry();
 
-            if( entry.isFile ) {
-                processFile(file, _path)
-            }else if (entry.isDirectory) {
-                readDir(entry, file, _path);
+
+
+        if( e.dataTransfer ) {
+            var _items = e.dataTransfer.items;
+            for (var i = 0; i < _items.length; i++) {
+                const _path = this.props.path;
+                var dataTransferItem = _items[i];
+                var file = dataTransferItem.getAsFile();
+                var entry = dataTransferItem.webkitGetAsEntry();
+
+                if (entry.isFile) {
+                    processFile(file, _path)
+                } else if (entry.isDirectory) {
+                    readDir(entry, file, _path);
+                }
+            }
+        } else if( files ){
+            const _path = this.props.path;
+            for (const file of files) {
+                processFile(file, _path);
             }
         }
 
+        console.log(_fileList.length +" Files are loaded");
         this.setState({isReceiverOpen: false, files: _fileList});
+
+        this.startDelayedFileUploads(_fileList)
     }
 
+    startDelayedFileUploads(files) {
+        setTimeout(function(){
+            for (const file of files) {
+                FileActions.uploadFile.source.next(file);
+            }
+        }, 1000);
+    }
 
     render() {
         var classes = this.props.classes;
@@ -259,7 +280,6 @@ class UploadDialog extends Component {
 
 
 
-        console.log("render")
         let uploadDragBorderStyles = {marginLeft: '24px', marginRight: '24px', marginBottom: '24px', height: '100%', 'border': '3px #ccc dashed'};
         if( this.state.isReceiverOpen ){
             uploadDragBorderStyles.border = '5px #ccc dashed';

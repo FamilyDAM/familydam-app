@@ -6,6 +6,7 @@ import {Observable, Subject} from '@reactivex/rxjs';
 import request from 'superagent';
 import AppSettings from '../../library/actions/AppSettings';
 import FileActions from './../FileActions';
+require('superagent-charset')(request);
 
 class UploadFileService {
 
@@ -152,19 +153,23 @@ class UploadFileService {
         return request
             .post(baseUrl +filePathName)
             .withCredentials()
+            .charset('UTF-8')
             .send(formData)
+            .parse(({ text }) => {
+                if( text.length === 0 ) return {};
+                return JSON.parse(text)
+            })
             .on('progress', event => {
                 console.log(event);
                 file_.progress = event.percent;
                 FileActions.uploadProgress.next(file_);
-                /* the event is:
-                {
-                  direction: "upload" or "download"
-                  percent: 0 to 100 // may be missing if file size is unknown
-                  total: // total file size, may be missing
-                  loaded: // bytes downloaded or uploaded so far
-                } */
+                //the event is:
+                //{direction: "upload" or "download"
+                //  percent: 0 to 100 // may be missing if file size is unknown
+                //  total: // total file size, may be missing
+                //  loaded: // bytes downloaded or uploaded so far}
             });
+
 
 
         /**

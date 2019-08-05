@@ -2,7 +2,7 @@
   "primary": false,
   "secondary": true,
   "embedded": false,
-  "order": 1,
+  "order": 2,
   "slug": "repository_browser",
   "label": "Repository Browser",
   "path": "://app/browser.html?path=/content",

@@ -61,8 +61,7 @@ class App extends Component {
             }
         });
 
-        //todo remove
-        UserActions.getUser.source.next({username:"admin"});
+        UserActions.getUser.source.next(null);
     }
 
 

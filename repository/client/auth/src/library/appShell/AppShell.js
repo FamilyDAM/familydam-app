@@ -99,11 +99,6 @@ class AppShell extends Component {
     render() {
         var classes = this.props.classes;
 
-        if( !this.props.user ){
-            this.handleLogout();
-            return;
-        }
-
         return (
             <div className={this.state.isOpen?classes.dashboardShellContainerOpen:classes.dashboardShellContainerClosed}>
                 <header className={classes.header}>

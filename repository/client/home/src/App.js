@@ -13,7 +13,7 @@ import UserActions from './library/actions/UserActions';
 
 const styleSheet = (theme) => ({
     progress: {
-        margin: `0 ${theme.spacing.unit * 2}px`,
+        margin: `0 ${theme.spacing(2)}px`,
         width: '100px',
         height: '100px',
         position: 'absolute',

@@ -16,6 +16,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class FsNewFileService implements IRestService
 
             session.save();
             log.info("File Created: " +n.getPath() +" | thread=" +Thread.currentThread().getId());
-            return ResponseEntity.created( URI.create(n.getPath()) ).build();
+            return ResponseEntity.created( URI.create(URLEncoder.encode(n.getPath())) ).build();
         }
 
 
