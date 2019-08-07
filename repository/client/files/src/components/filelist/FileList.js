@@ -371,6 +371,8 @@ class FileList extends Component{
 
 
 
+    //TODO: Work in progress
+    /**
     renderVirtualTable() {
 
         const columns = [
@@ -390,6 +392,7 @@ class FileList extends Component{
             </Paper>
         )
     }
+     **/
 
 }
 

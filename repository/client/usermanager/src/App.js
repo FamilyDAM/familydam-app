@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
-//import {HashRouter as Router, Route, Switch} from 'react-router-dom';
+import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 import {IntlProvider} from 'react-intl';
 
 import {withStyles} from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 //views
-import HomePage from './pages/home/HomePage';
+import UserList from './pages/userlist/UserList';
+import UserDetails from './pages/userdetails/UserDetails';
 
-import AppSettings from './library/actions/AppSettings';
+//import AppSettings from './library/actions/AppSettings';
 import UserActions from './library/actions/UserActions';
 
 
@@ -84,7 +85,12 @@ class App extends Component {
         }else {
             return (
                 <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
-                    <HomePage user={this.state.user}/>
+                    <Router>
+                        <Switch>
+                            <Route path="/" exact={true} component={() => <UserList user={this.state.user}/>}/>
+                            <Route path="/:user"  component={(path_) => <UserDetails userId={path_.match.params.user}/>}/>
+                        </Switch>
+                    </Router>
                 </IntlProvider>
             );
         }

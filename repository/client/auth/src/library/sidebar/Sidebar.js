@@ -132,7 +132,7 @@ class Sidebar extends Component {
     render() {
         var classes = this.props.classes;
         //find specific app in the installed list of apps, if it's not installed don't show link
-        var profileApp = this.findApp('user manager', this.props.secondaryApps);
+        var profileApp = this.findApp('usermanager', this.props.secondaryApps);
 
         return (
             <Paper className={this.props.open?classes.sidebarOpen:classes.sidebarClosed} >

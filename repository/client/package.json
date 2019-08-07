@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "workspaces": [
+    "auth",
+    "home",
+    "files",
+    "photos",
+    "usermanager"
+  ],
+  "scripts": {
+    "build": "npm run build:auth & npm run build:home & npm run build:files & npm run build:photos & npm run build:usermanager",
+    "build:auth": "npm run build --prefix=auth",
+    "build:home": "npm run build --prefix=home",
+    "build:files": "npm run build --prefix=files",
+    "build:photos": "npm run build --prefix=photos",
+    "build:usermanager": "npm run build --prefix=usermanager"
+  }
+}

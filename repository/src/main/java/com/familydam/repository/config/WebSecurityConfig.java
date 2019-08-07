@@ -46,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/api/v1/auth/users").permitAll()
                 .antMatchers("/api/v1/core/clientapps").permitAll()
                 .antMatchers("/app/**").permitAll()
-                .anyRequest().permitAll() //authenticated()
+                .anyRequest().authenticated()
             //.loginProcessingUrl("/perform_login")
             .and()
                 .formLogin()

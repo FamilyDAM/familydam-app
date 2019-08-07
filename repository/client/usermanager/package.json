@@ -1,5 +1,5 @@
 {
-  "name": "app-files",
+  "name": "usermanager",
   "version": "0.1.0",
   "private": true,
   "homepage": "/usermanager/",
@@ -7,14 +7,13 @@
     "@material-ui/core": "~4.3.0",
     "@material-ui/icons": "~4.2.1",
     "@reactivex/rxjs": "~6.5.2",
-    "ajv": "^6.5.4",
-    "js-base64": "^2.4.9",
-    "react": "^16.5.2",
+    "ajv": "^6.7.0",
+    "react": "^16.8.6",
     "react-dom": "^16.5.2",
     "react-intl": "^2.4.0",
     "react-router-dom": "~5.0.1",
     "react-scripts": "~3.0.1",
-    "rxjs": "~6.5.2",
+    "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2",
     "schema-utils": "~2.0.1",
     "superagent": "~5.1.0"
@@ -44,12 +43,12 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-stage-2": "^7.0.0",
-    "@storybook/addon-actions": "^5.1.9",
-    "@storybook/addon-links": "^5.1.9",
-    "@storybook/addons": "^5.1.9",
-    "@storybook/react": "^5.1.9",
-    "aemsync": "^4.0.0-rc1",
-    "babel-plugin-react-intl": "^4.1.4",
+    "@storybook/addon-actions": "~5.1.10",
+    "@storybook/addon-links": "~5.1.10",
+    "@storybook/addons": "~5.1.10",
+    "@storybook/react": "~5.1.10",
+    "aemsync": "~4.0.0",
+    "babel-plugin-react-intl": "~4.1.5",
     "babel-plugin-transform-decorators-legacy": "^1.3.5"
   }
 }
