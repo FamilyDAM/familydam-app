@@ -183,7 +183,7 @@ class UploadDialog extends Component {
         // close the Receiver after file dropped
 
         var processFile = function(file_, path_, relPath_){
-            _fileList.push(file_);
+            //_fileList.push(file_);
             if (!file_.id) {
                 file_.id = uuid();
             }
@@ -193,6 +193,17 @@ class UploadDialog extends Component {
                 file_.relativePath = relPath_;
             }
             //FileActions.uploadFile.source.next(file_);
+
+            if(navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage(
+                    {
+                        command: 'upload-file',
+                        file: file_,
+                        message: {id: file_.id, progress: file_.progress, uploadPath: file_.uploadPath, relativePath: file_.relativePath}
+                    });
+            }else{
+                console.log("[app] Controller is NULL");
+            }
         };
 
 

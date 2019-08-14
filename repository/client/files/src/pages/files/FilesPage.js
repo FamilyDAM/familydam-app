@@ -119,6 +119,17 @@ class FilesPage extends Component {
 
             //this.setState({"selectedFiles":[]});
         });
+
+        //Call Service Worker to get list of outstanding Files that need to be uploaded
+        if(navigator.serviceWorker.controller) {
+            var messageChannel = new MessageChannel();
+            messageChannel.port1.onmessage = function(event) {
+                console.log("[app] Response the SW : ", event.data.message);
+            };
+            navigator.serviceWorker.controller.postMessage({command: 'listFiles', message: "some data"}, [messageChannel.port2]);
+        }else{
+            console.log("[app] Controller is NULL");
+        }
     }
 
     componentWillUnmount(){

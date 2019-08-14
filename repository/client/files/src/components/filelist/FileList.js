@@ -25,7 +25,7 @@ import FileListTableHead from './FileListTableHead';
 import AppActions from '../../library/actions/AppActions';
 import fileActions from '../../actions/FileActions';
 import LoadingButton from '../../library/loadingButton/LoadingButton';
-import VirtualizedTable from "../virtualizedTable/VirtualizedTable";
+//import VirtualizedTable from "../virtualizedTable/VirtualizedTable";
 
 const styleSheet = (theme) => ({
     main:{
