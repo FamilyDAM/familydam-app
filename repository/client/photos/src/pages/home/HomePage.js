@@ -99,13 +99,13 @@ class HomePage extends Component {
 
         if( this.state.isLoading ){
             return (
-                <AppShell user={this.props.user||{}}>
+                <AppShell user={this.props.user||{}} open={false}>
                     <CircularProgress className={classes.progress} size={50} />
                 </AppShell>
             );
         }else {
             return (
-                <AppShell user={this.props.user||{}}>
+                <AppShell user={this.props.user||{}} open={false}>
                     {this.state.photos.map( (p)=>{
                         return (
                             <PhotoGroup key={p.value} photos={p}></PhotoGroup>

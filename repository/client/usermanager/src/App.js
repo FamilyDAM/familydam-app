@@ -88,7 +88,8 @@ class App extends Component {
                     <Router>
                         <Switch>
                             <Route path="/" exact={true} component={() => <UserList user={this.state.user}/>}/>
-                            <Route path="/:user"  component={(path_) => <UserDetails userId={path_.match.params.user}/>}/>
+                            <Route path="/new" exact={true} component={(path_) => <UserDetails user={this.state.user} userId={path_.match.params.user}/>}/>
+                            <Route path="/u/:user" component={(path_) => <UserDetails user={this.state.user} userId={path_.match.params.user}/>}/>
                         </Switch>
                     </Router>
                 </IntlProvider>

@@ -44,11 +44,17 @@ class App extends Component {
 
         UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
             // redirect to dashboard
+            //console.dir(user_);
+            //console.log("UserActions.getUser.sink");
             if( user_ )
             {
-                this.setState({"isAuthenticated":true, "user": user_});
+                this.setState({"user": user_});
+            }else{
+                window.location = "/index.html";
             }
         });
+
+        UserActions.getUser.source.next(null)
     }
 
 

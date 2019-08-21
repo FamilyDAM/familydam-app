@@ -31,8 +31,13 @@ class SaveUserService {
         const formData = new FormData();
         Object.keys(user_).forEach(key => formData.append(key, user_[key]));
 
+        var _url = baseUrl +'/api/v1/auth/user/' +user_.id;
+        if( !user_.id ){
+            _url = baseUrl +'/api/v1/auth/user';
+        }
 
-        fetch( baseUrl +'/api/v1/auth/user/' +user_.id, {
+        //Save or Create user
+        fetch( _url, {
             method: 'POST',
             body: formData
         })
@@ -46,6 +51,7 @@ class SaveUserService {
             })
             //parse json
             .then((response) => response.json())
+            .then( (json) => this.sink.next(json))
             .catch(err => {
                 //send the error to the store (through the sink observer
                 if( err.status === 401 || err.status === 403){
@@ -55,8 +61,6 @@ class SaveUserService {
                     this.sink.error(_error);
                 }
             });
-
-
 
 
     }

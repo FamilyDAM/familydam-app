@@ -1,6 +1,5 @@
 package com.familydam.repository.api.v1.auth;
 
-import com.familydam.repository.Constants;
 import com.familydam.repository.config.security.JcrAuthToken;
 import com.familydam.repository.models.AdminUser;
 import com.familydam.repository.services.auth.CreateUserService;
@@ -24,6 +23,7 @@ import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 public class User {
@@ -47,59 +47,6 @@ public class User {
 
     @Autowired
     AdminUser adminUser;
-
-
-    @PostMapping(value={"/api/v1/auth/user"})
-    public ResponseEntity createUser(Principal principal, HttpServletRequest request) throws Exception
-    {
-        Session session;
-        if( principal == null ){
-            //For the first user we'll use the admin session, for all future users a admin family member has to create the account.
-            Session adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-            if(userListService.listUsers(adminSession, true).size() == 0) {
-                session = adminSession;
-            }else {
-                throw new AccessDeniedException("Invalid Principle");
-            }
-        }else {
-            session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-        }
-
-        Map newParams = new HashMap();
-        Map params = request.getParameterMap();
-        for (Object key : params.keySet()) {
-            newParams.put(key, request.getParameter((String)key));
-        }
-
-        Map user = createUserService.createUser(session, newParams);
-        return ResponseEntity.created(URI.create("/api/v1/auth/user/me")).build();
-    }
-
-
-
-    @PostMapping(value = {"/api/v1/auth/user/{username}"})
-    @ResponseBody
-    public ResponseEntity updateUser(Principal principal, HttpServletRequest request, @PathVariable String username) throws Exception
-    {
-        if( principal == null ){
-            return ResponseEntity.status(401).build();
-        }
-
-        Map user = new HashMap();
-        user.put(Constants.FIRST_NAME, request.getParameter("firstName"));
-        user.put(Constants.LAST_NAME, request.getParameter("lastName"));
-        user.put(Constants.EMAIL, request.getParameter("email"));
-        user.put(Constants.IS_FAMILY_ADMIN, true);
-
-        //todo add logic to use user permission
-        //Session session = repository.login( ((JcrAuthToken)principal).getCredentials() );
-        Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-        user = updateUserService.updateUser(session, username, user);
-        if( user == null ){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
-    }
 
 
     @GetMapping(value = {"/api/v1/auth/user/me"})
@@ -136,5 +83,54 @@ public class User {
         return ResponseEntity.ok(user);
     }
 
+
+    /**
+     * Create New User
+     * @param principal
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(value={"/api/v1/auth/user", "/api/v1/auth/user/{username}"})
+    public ResponseEntity createUser(Principal principal, HttpServletRequest request, @PathVariable(required = false) String username) throws Exception
+    {
+        Session session;
+        Session adminSession;
+        if( principal != null ){
+            //Check permission of user, needs to be family admin
+            session = repository.login(((JcrAuthToken)principal).getCredentials());
+            //For the first user we'll use the admin session, for all future users a admin family member has to create the account.
+            adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
+            if(userListService.listUsers(adminSession, true).size() == 0) {
+                session = adminSession;
+            }
+        }else {
+            //First User
+            adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
+            if(userListService.listUsers(adminSession, true).size() == 0) {
+                session = adminSession;
+            }else {
+                throw new AccessDeniedException("Invalid Principle");
+            }
+        }
+
+        Map newParams = new HashMap();
+        Map params = request.getParameterMap();
+        for (Object key : params.keySet()) {
+            if( key.equals("id") ) {
+                newParams.put(key, UUID.randomUUID().toString());
+            }else{
+                newParams.put(key, request.getParameter((String) key));
+            }
+        }
+
+        Map user;
+        if( username == null ) {
+            user = createUserService.createUser(session, newParams);
+        }else{
+            user = updateUserService.updateUser(session, username, newParams);
+        }
+        return ResponseEntity.created(URI.create("/api/v1/auth/user/me")).build();
+    }
 
 }

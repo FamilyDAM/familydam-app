@@ -46,7 +46,8 @@ class UserDetails extends Component {
             isLoading:false,
             anchorEl:null,
             error:null,
-            user:null
+            user:props.user,
+            selectedUser:{id:null, firstName:"", lastName:""}
         };
     }
 
@@ -56,20 +57,21 @@ class UserDetails extends Component {
         const _userId = this.props.userId;
         UserActions.getAllUsers.sink.takeWhile(() => this.state.isMounted).subscribe(users_ => {
             if (users_) {
-                var bFound = false;
+                this.setState({"isLoading": false});
                 for (const user of users_) {
                     if( user.id === _userId){
-                        this.setState({"isLoading": false, "user": user});
-                        bFound = true;
+                        this.setState({"selectedUser": user});
                         break;
                     }
                 }
-
-                if(!bFound)this.setState({"error": "User Not Found"});
             }
         });
 
         UserActions.getAllUsers.source.next(true);
+
+        if( !_userId ){
+            this.setState({"isMounted":true, "isLoading":false});
+        }
     }
 
 
@@ -94,10 +96,11 @@ class UserDetails extends Component {
                 </AppShell>
             );
         }else {
+            //Edit User
             return (
                 <AppShell user={this.state.user}>
                     <div className={classes.container}>
-                        <UserEditForm user={this.state.user}/>
+                        <UserEditForm user={this.state.selectedUser}/>
                     </div>
                 </AppShell>
             );

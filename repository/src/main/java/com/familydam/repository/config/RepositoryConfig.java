@@ -3,6 +3,9 @@ package com.familydam.repository.config;
 import com.familydam.repository.config.repo.InitialDAMContent;
 import com.familydam.repository.models.AdminUser;
 import org.apache.commons.io.FileUtils;
+import org.apache.jackrabbit.api.JackrabbitSession;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.data.FileDataStore;
@@ -17,7 +20,6 @@ import org.apache.jackrabbit.oak.segment.file.FileStoreBuilder;
 import org.apache.jackrabbit.oak.segment.file.InvalidFileStoreVersionException;
 import org.apache.jackrabbit.oak.segment.tool.iotrace.IOTraceLogWriter;
 import org.apache.jackrabbit.oak.spi.blob.BlobStore;
-import org.apache.jackrabbit.oak.spi.security.ConfigurationParameters;
 import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
 import org.apache.jackrabbit.oak.spi.state.NodeStore;
 import org.slf4j.Logger;
@@ -45,12 +47,13 @@ import java.util.stream.StreamSupport;
 
 @Service
 @Profile("local")
-public class RepositoryConfig
-{
+public class RepositoryConfig {
     Logger log = LoggerFactory.getLogger(RepositoryConfig.class);
 
     @Value("${familydam.home}")
     String HOME = "./fd-repo";
+
+
 
     @Autowired
     private Environment environment;
@@ -69,40 +72,32 @@ public class RepositoryConfig
             .forEach(propName -> props.setProperty(propName, environment.getProperty(propName)));
 
         for (Object key : props.keySet()) {
-            if( ((String)key).startsWith("oak.") ){
-                String property = ((String)key).substring(4);
-                System.getProperties().setProperty(property, environment.getProperty(((String)key)));
+            if (((String) key).startsWith("oak.")) {
+                String property = ((String) key).substring(4);
+                System.getProperties().setProperty(property, environment.getProperty(((String) key)));
             }
         }
 
     }
 
 
-
     @PreDestroy
     @Profile("test")
-    public void wipeRepo() throws  IOException {
+    public void wipeRepo() throws IOException {
         String[] profiles = this.environment.getActiveProfiles();
-        if(Arrays.asList(profiles).contains("test")) {
+        if (Arrays.asList(profiles).contains("test")) {
             FileUtils.deleteDirectory(new File(HOME));
         }
     }
 
-    @Bean
-    public AdminUser adminCredentials(){
-        //
-        // todo use admin pwd
-        AdminUser adminUser = new AdminUser("admin", "admin");
-        return adminUser;
-    }
 
 
     @Bean
     public BlobStore fileDataStore() {
         FileDataStore fds = new FileDataStore();
-        fds.setMinRecordLength(1024);
-        fds.setPath(HOME +"/repo/files");
-        fds.init(HOME +"/repo/files");
+        fds.setMinRecordLength(100);
+        fds.setPath(HOME + "/repo/files");
+        fds.init(HOME + "/repo/files");
         return new DataStoreBlobStore(fds);
     }
 
@@ -110,25 +105,25 @@ public class RepositoryConfig
     @Bean
     public FileStore fileStore(BlobStore blobStore) throws InvalidFileStoreVersionException, IOException {
         FileStore fs = FileStoreBuilder
-            .fileStoreBuilder(new File(HOME +"/repo"))
+            .fileStoreBuilder(new File(HOME + "/repo"))
             .withIOLogging(LoggerFactory.getLogger(IOTraceLogWriter.class))
-            //.withBlobStore(blobStore)
-            //.withMaxFileSize(256)
+            .withBlobStore(blobStore)
+            .withMaxFileSize(256)
             .build();
         return fs;
     }
 
 
     @Bean
-    public NodeStore segmentNodeStore(FileStore fileStore)  {
+    public SegmentNodeStore segmentNodeStore(FileStore fileStore) {
         SegmentNodeStore ns = SegmentNodeStoreBuilders.builder(fileStore).build();
         return ns;
     }
 
+
     @Bean
-    public SecurityProvider securityProvider()  {
-        ConfigurationParameters params = ConfigurationParameters.EMPTY;
-        SecurityProvider sp = SecurityProviderBuilder.newBuilder().with(params).build();
+    public SecurityProvider securityProvider() {
+        SecurityProvider sp = SecurityProviderBuilder.newBuilder().build();
         return sp;
     }
 
@@ -142,20 +137,20 @@ public class RepositoryConfig
             .with("default")
             .with(securityProvider)
             .with(new InitialDAMContent());
-            // add initial content and folder structure
-            //.with(new DefaultTypeEditor())     // automatically set default types
-            //.with(new NameValidatorProvider()) // allow only valid JCR names
-            //.with(new PropertyIndexHook())     // simple indexing support
-            //.with(new PropertyIndexProvider()) // search support for the indexes
-            //.with(new JcrAllCommitHook())
-            //.withAsyncIndexing()
-            //.with(contentNodeAddedObserver);
+        // add initial content and folder structure
+        //.with(new DefaultTypeEditor())     // automatically set default types
+        //.with(new NameValidatorProvider()) // allow only valid JCR names
+        //.with(new PropertyIndexHook())     // simple indexing support
+        //.with(new PropertyIndexProvider()) // search support for the indexes
+        //.with(new JcrAllCommitHook())
+        //.withAsyncIndexing()
+        //.with(contentNodeAddedObserver);
         return oak;
     }
 
     @Bean
-    public Jcr jcr(Oak oak) throws InvalidFileStoreVersionException, IOException{
-        Jcr jcr = new Jcr(oak);
+    public Jcr jcr(Oak oak, SecurityProvider securityProvider) throws InvalidFileStoreVersionException, IOException {
+        Jcr jcr = new Jcr(oak).with(securityProvider);
         return jcr;
     }
 
@@ -164,13 +159,39 @@ public class RepositoryConfig
 
         Repository repo = jcr.createRepository();
 
-        registerMixIns(repo, new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-        //configSecurity(repo, new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
+        //get admin user and change pwd
+        checkAndSetAdminPassword(repo, adminUser);
+
+        registerMixIns(repo, adminUser);
+        //registerPermissions(repo, new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
 
         return repo;
     }
 
-//    private void configSecurity(Repository repo, SimpleCredentials adminCredentials) throws RepositoryException {
+
+    /**
+     * If the password matches the userId we need to change this.
+     * We do not want to keep the default admin/admin login.
+     * @param repo
+     */
+    private void checkAndSetAdminPassword(Repository repo, AdminUser adminCredentials) throws RepositoryException {
+        try{
+            String adminId = adminCredentials.username; //environment.getProperty("oak.PARAM_ADMIN_ID");
+            Session session = repo.login(new SimpleCredentials( adminId, adminId.toCharArray() ));
+
+            Authorizable auth = ((JackrabbitSession)session).getUserManager().getAuthorizable(adminId);
+            ((User) auth).changePassword(adminCredentials.password, adminCredentials.username);
+            session.save();
+            session.logout();
+
+        }catch (LoginException ex){
+            //ex.printStackTrace();
+            //password has been changed so admin/admin is no longer valid. This is what we want so skipN
+        }
+
+    }
+
+//    private void registerPermissions(Repository repo, SimpleCredentials adminCredentials) throws RepositoryException {
 //        Session session = repo.login(adminCredentials);
 //        // remove all access for the anonymouse user
 //        UserManager userManager = ((JackrabbitSession) session).getUserManager();
@@ -180,14 +201,16 @@ public class RepositoryConfig
 //    }
 
 
-    private void registerMixIns(Repository repo, Credentials adminCredentials) throws RepositoryException, ParseException, IOException {
+    private void registerMixIns(Repository repo, AdminUser adminUser) throws RepositoryException, ParseException, IOException {
 
+        Credentials adminCredentials = new SimpleCredentials(adminUser.username, adminUser.password.toCharArray());
         Session session = repo.login(adminCredentials);
 
         InputStream cnd = this.getClass().getClassLoader().getResourceAsStream("nodetypes.cnd");
         NodeType[] nodeTypes = CndImporter.registerNodeTypes(new InputStreamReader(cnd), session);
 
         session.save();
+        session.logout();
     }
 
 

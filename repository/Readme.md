@@ -6,6 +6,11 @@
  java -jar tools/oak-run/oak-run.jar check ../familydam-repo/repo --notify 10
 ```
 
+*Repair*
+```bash
+ java -jar tools/oak-run/oak-run.jar repair ../familydam-repo/repo --notify 10
+```
+
 *Compact*
 ```bash
  java -jar tools/oak-run/oak-run.jar compact ../familydam-repo/repo

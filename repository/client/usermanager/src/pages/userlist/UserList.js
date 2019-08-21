@@ -91,7 +91,7 @@ class UserList extends Component {
 
     handleEdit(user_) {
         this.setState({anchorEl:null});
-        AppActions.navigateTo.next("/" +user_.id)
+        AppActions.navigateTo.next("/u/" +user_.id)
     }
 
 
@@ -108,11 +108,9 @@ class UserList extends Component {
             return (
                 <AppShell user={this.props.user}>
                     <div className={classes.container}>
-                    {this.state.users.map( user_ =>
-                        <UserListCard user={user_} onEdit={this.handleEdit}/>
-                    )}
-
-
+                        {this.state.users.map( user_ =>
+                            <UserListCard user={user_} onEdit={this.handleEdit}/>
+                        )}
                         <AddUserCard/>
                     </div>
                 </AppShell>

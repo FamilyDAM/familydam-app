@@ -13,6 +13,7 @@ import Card from "@material-ui/core/Card";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from '@material-ui/icons/Add';
 
+import AppActions from '../../library/actions/AppActions';
 
 
 const styleSheet = (theme) => ({
@@ -34,6 +35,8 @@ class UserListCard extends Component {
 
     constructor(props, context) {
         super(props);
+
+        this.handleClick = this.handleClick.bind(this);
     }
 
 
@@ -45,6 +48,10 @@ class UserListCard extends Component {
 
     }
 
+    handleClick(e){
+        AppActions.navigateTo.next("/new");
+    }
+
 
     render(){
         var classes = this.props.classes;
@@ -53,10 +60,10 @@ class UserListCard extends Component {
             <Card className={classes.card}>
                 <CardHeader/>
                 <CardContent className={classes.content}>
-                    <Fab color="secondary" aria-label="add" className={classes.fab}>
+                    <Fab color="secondary" aria-label="add" className={classes.fab} onClick={this.handleClick}>
                         <AddIcon />
                     </Fab>
-                    <Typography align="center">
+                    <Typography align="center" onClick={this.handleClick}>
                         Add Family Member
                     </Typography>
                 </CardContent>

@@ -1,6 +1,8 @@
 package com.familydam.repository.config;
 
 import com.familydam.repository.config.security.JcrSecurityProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,8 +16,12 @@ import javax.jcr.Repository;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
+    Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
+
     @Autowired
     Repository repository;
+
+
 
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
@@ -67,5 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .deleteCookies("JSESSIONID");
 
     }
+
+
 
 }

@@ -8,10 +8,12 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import LoadingButton from "../../library/loadingButton/LoadingButton";
+import Button from "@material-ui/core/Button";
 
 import UserManagerActions from '../../actions/UserManagerActions';
-import UserActions from "../../library/actions/UserActions";
+//import UserActions from "../../library/actions/UserActions";
+import AppActions from "../../library/actions/AppActions";
+import LoadingButton from "../../library/loadingButton/LoadingButton";
 
 const styleSheet = (theme) => ({
     outerContainer:{
@@ -80,29 +82,36 @@ class UserEditForm extends Component {
         this.handleTabChange = this.handleTabChange.bind(this);
         this.handleFormChange = this.handleFormChange.bind(this);
         this.handleSave = this.handleSave.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
+
 
         this.state = {
-            selectedUser:2,
             selectedTab:0,
-            user: this.props.user
+            user: this.props.user,
+            isLoading:false
         };
     }
 
 
     componentWillMount(){
-        this.setState({"isMounted":true, "isLoading": true});
+        this.setState({"isMounted":true, "isLoading": false});
 
         UserManagerActions.saveUser.sink.takeWhile(() => this.state.isMounted).subscribe(user_ => {
             this.setState({user: user_});
             this.setState({"isLoading": false});
+
+            AppActions.navigateTo.next("/");
         });
+    }
+
+    componentWillReceiveProps(newProp, oldProp){
+        this.setState({"user":newProp.user});
     }
 
 
     componentWillUnmount() {
         this.setState({"isMounted":false});
     }
-
 
 
     handleTabChange(event, value){
@@ -120,22 +129,41 @@ class UserEditForm extends Component {
         UserManagerActions.saveUser.source.next(this.state.user);
     }
 
+    handleCancel(event){
+        this.setState({'isLoading':false});
+
+        if (this.props.onCancel) {
+            this.props.onCancel();
+        }else{
+            AppActions.navigateTo.next("/");
+        }
+    }
+
 
     render(){
         var classes = this.props.classes;
 
 
         return(
-            <Paper  className={classes.outerContainer}>
+            <Paper className={classes.outerContainer}>
                 <div className={classes.headerContainer}>
-                    <Typography type="title" variant="h4" color={'primary'} className={classes.title} style={{'float': 'left'}} display="inline">
-                        {this.state.user.firstName} {this.state.user.lastName}
-                    </Typography>
+                    {(this.state.user && this.state.user.id) ?
+                        <Typography type="title" variant="h4" color={'primary'} className={classes.title} style={{'float': 'left'}} display="inline">
+                            {this.state.user.firstName} {this.state.user.lastName}
+                        </Typography>
+                        :
+                        <Typography type="title" variant="h4" color={'primary'} className={classes.title} style={{'float': 'left'}} display="inline">
+                            Create New User
+                        </Typography>
+                    }
 
                     <div style={{'float': 'right', 'margin':'16px'}}>
+                        <Button color="primary" style={{marginRight:'16px'}} onClick={this.handleCancel}>Cancel</Button>
+
                         <LoadingButton
                             style={{width:'100px'}}
                             onClick={this.handleSave}
+                            isLoading={this.state.isLoading}
                             label={"Save"}></LoadingButton>
                     </div>
                 </div>
@@ -177,7 +205,7 @@ class UserEditForm extends Component {
                             </div>
 
 
-
+                        {this.state.user.id &&
                             <div className={classes.fullColumn} style={{gridRow: '4'}}>
                                 <Tabs
                                     value={this.state.selectedTab}
@@ -195,6 +223,7 @@ class UserEditForm extends Component {
                                 {this.state.selectedTab === 1 && <div className={classes.tabContainer}>TBD Permission</div>}
                                 {this.state.selectedTab === 2 && <div className={classes.tabContainer}>TBD Friends</div>}
                             </div>
+                        }
                         </div>
 
                     </form>

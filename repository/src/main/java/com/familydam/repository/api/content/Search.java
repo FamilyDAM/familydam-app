@@ -40,7 +40,6 @@ public class Search {
     FsSearchService fsSearchService;
 
 
-
     @PostMapping(value = {"/search"})
     @ResponseBody
     public ResponseEntity searchPath(Principal principal, HttpServletRequest request) throws IOException, RepositoryException
