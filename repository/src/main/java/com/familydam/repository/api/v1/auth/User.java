@@ -28,8 +28,6 @@ import java.util.UUID;
 @Controller
 public class User {
 
-    private String sample = "{\"lastName\":\"nimer\",\"firstName\":\"mike\",\"isFamilyAdmin\":\"true\",\"_isAdmin\":false,\"_isDisabled\":false,\"email\":\"mnimer@gmail.com\",\"username\":\"admin\"}";
-
     @Autowired
     Repository repository;
 
@@ -125,12 +123,19 @@ public class User {
         }
 
         Map user;
-        if( username == null ) {
-            user = createUserService.createUser(session, newParams);
-        }else{
-            user = updateUserService.updateUser(session, username, newParams);
+        try {
+            if (username == null) {
+                //todo,  give admin user admin permissions so we can use the logged in user instead of system permission
+                session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
+                user = createUserService.createUser(session, newParams);
+            } else {
+                user = updateUserService.updateUser(session, username, newParams);
+            }
+            return ResponseEntity.created(URI.create("/api/v1/auth/user/me")).build();
+        }catch (Exception ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
         }
-        return ResponseEntity.created(URI.create("/api/v1/auth/user/me")).build();
+
     }
 
 }

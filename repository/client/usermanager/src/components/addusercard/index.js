@@ -63,7 +63,7 @@ class UserListCard extends Component {
                     <Fab color="secondary" aria-label="add" className={classes.fab} onClick={this.handleClick}>
                         <AddIcon />
                     </Fab>
-                    <Typography align="center" onClick={this.handleClick}>
+                    <Typography align="center" onClick={this.handleClick} style={{'marginTop':'16px'}}>
                         Add Family Member
                     </Typography>
                 </CardContent>

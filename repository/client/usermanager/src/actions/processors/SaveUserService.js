@@ -29,11 +29,18 @@ class SaveUserService {
         const baseUrl = AppSettings.baseHost.getValue();
 
         const formData = new FormData();
-        Object.keys(user_).forEach(key => formData.append(key, user_[key]));
+        Object.keys(user_)
+                .filter(key=> key != "pwdConfirm")
+                .forEach(key => formData.append(key, user_[key]));
 
-        var _url = baseUrl +'/api/v1/auth/user/' +user_.id;
-        if( !user_.id ){
-            _url = baseUrl +'/api/v1/auth/user';
+        //Create system name prop, from first name and last name
+        formData.append(":name", user_['firstName']);
+        formData.append("isFamilyAdmin", true);
+
+        var _url = baseUrl +'/api/v1/auth/user';
+
+        if( user_ && user_.id ){
+            _url = baseUrl +'/api/v1/auth/user/' +user_.id;
         }
 
         //Save or Create user

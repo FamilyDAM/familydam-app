@@ -80,15 +80,22 @@ public class Content {
         if( !"application/json".equals(accept) && n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) )
         {
             InputStream inputStream;
+            byte[] out = null;
+
+            //Check the type, if a file, we want to read the file as a stream to return.
             if( n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {
                 String mimeType = n.getNode("jcr:content").getProperty("jcr:mimeType").getString();
                 if (mimeType.startsWith("image")) {
-                    //special handeling of images (with cached resize support)
+                    //special handling of images (with cached resize support)
                     inputStream = fsReadImageService.readFile(n, request);
+                    out=org.apache.commons.io.IOUtils.toByteArray(inputStream);
+                }else{
+                    //read raw file
+                    inputStream = fsReadFileService.readFile(n);
+                    out=org.apache.commons.io.IOUtils.toByteArray(inputStream);
                 }
             }
-            //read raw file
-            inputStream = fsReadFileService.readFile(n);
+
 
             //set headers
             HttpHeaders responseHeaders = new HttpHeaders();
@@ -98,8 +105,12 @@ public class Content {
             responseHeaders.add("Content-Type", n.getNode("jcr:content").getProperty("jcr:mimeType").getString());
 
             //return stream
-            byte[] out=org.apache.commons.io.IOUtils.toByteArray(inputStream);
-            return new ResponseEntity(out, responseHeaders, HttpStatus.OK);
+
+            if( out != null ) {
+                return new ResponseEntity(out, responseHeaders, HttpStatus.OK);
+            }else{
+                return ResponseEntity.notFound().build();
+            }
         }
         // Get Data for Node (json of properties)
         else if( n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {

@@ -17,8 +17,6 @@ import java.util.Map;
 @Controller
 public class UserList {
 
-    private String sample = "[{\"lastName\":\"nimer\",\"firstName\":\"mike\",\"isFamilyAdmin\":\"true\",\"_isAdmin\":false,\"_isDisabled\":false,\"email\":\"mnimer@gmail.com\",\"username\":\"admin\"}]";
-
     @Autowired
     Repository repository;
 

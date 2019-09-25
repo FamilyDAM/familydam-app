@@ -29,15 +29,15 @@ const styleSheet = (theme) => ({
         borderBottom: '1px solid #000000'
     },
     formContainer:{
-        marginLeft:'16px',
-        marginRight:'16px',
+        marginLeft:'48px',
+        marginRight:'48px',
         clear: 'left'
     },
     oneColumnGrid:{
         display:'grid',
         gridGap: '0px',
         gridTemplateRows: "auto auto 40px auto auto",
-        gridTemplateColumns: "1fr"
+        gridTemplateColumns: "1fr auto 1fr"
     },
     twoColumnGrid:{
         display:'grid',
@@ -54,7 +54,7 @@ const styleSheet = (theme) => ({
         gridRow: "1"
     },
     fullColumn:{
-        gridColumn: "1/2",
+        gridColumn: "1/4",
         gridRow: "1"
     },
     textField:{
@@ -192,8 +192,8 @@ class UserEditForm extends Component {
                             </div>
                         </div>
 
-                        <div className={classes.oneColumnGrid}>
-                            <div className={classes.fullColumn}>
+                        <div className={classes.twoColumnGrid} style={{'gridGap':'48px'}}>
+                            <div className={classes.leftColumn}>
                                 <TextField
                                     id="email"
                                     label="Email"
@@ -204,6 +204,36 @@ class UserEditForm extends Component {
                                 />
                             </div>
 
+
+                            <div className={classes.rightColumn}>
+                                <div className={classes.oneColumnGrid}>
+                                    <div className={classes.fullColumn}>
+                                        <div>Is Family Admin</div>
+                                        <br clear="left"/>
+
+                                        <TextField
+                                            id="pwd"
+                                            label="pwd"
+                                            type="password"
+                                            className={classes.textField}
+                                            value={this.state.user.pwd}
+                                            onChange={this.handleFormChange}
+                                            margin="normal"
+                                        /><br clear="left"/>
+
+                                        <TextField
+                                            id="pwdConfim"
+                                            label="pwdConfim"
+                                            type="password"
+                                            className={classes.textField}
+                                            value={this.state.user.pwdConfim}
+                                            margin="normal"
+                                        /><br clear="left"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={classes.oneColumnGrid}>
 
                         {this.state.user.id &&
                             <div className={classes.fullColumn} style={{gridRow: '4'}}>
