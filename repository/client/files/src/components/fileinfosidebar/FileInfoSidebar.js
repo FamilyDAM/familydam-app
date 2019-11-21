@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -192,11 +193,11 @@ const SingleImageView = (props, context) => (
                                 </TableRow>
                                 <TableRow>
                                     <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Created</TableCell>
-                                    <TableCell align="left">{props.fileNodes[0]['dam:date.created']}</TableCell>
+                                    <TableCell align="left">{moment(props.fileNodes[0]['dam:date.created']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Modified</TableCell>
-                                    <TableCell align="left">{props.fileNodes[0]['jcr:lastModified']}</TableCell>
+                                    <TableCell align="left">{moment(props.fileNodes[0]['jcr:lastModified']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>

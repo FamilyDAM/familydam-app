@@ -107,9 +107,7 @@ class Breadcrumb extends Component {
                                     {path_.label}
                                 </li>
                             );
-
-                        } else
-                        {
+                        } else {
                             return ( <li className={classes.li} key={path_.label}>{path_.label}</li> );
                         }
                     })}

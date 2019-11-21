@@ -12,6 +12,9 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import java.net.URI;
 
+/**
+ * Create a new nt:folder
+ */
 @Service
 public class FsNewFolderService implements IRestService
 {

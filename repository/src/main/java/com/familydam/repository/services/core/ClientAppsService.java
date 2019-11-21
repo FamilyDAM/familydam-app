@@ -15,11 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Get a list of all apps/modules registerd in the app
+ */
 @Service
 public class ClientAppsService implements IRestService
 {
-
-    private String sample = "{\"apps\":{\"secondary\":[{\"primary\":false,\"secondary\":true,\"embedded\":false,\"order\":1,\"slug\":\"user_manager\",\"label\":\"User Manager\",\"path\":\"://usermanager/index.html\",\"roles\":[]},{\"primary\":false,\"secondary\":true,\"embedded\":false,\"order\":10,\"slug\":\"repository_browser\",\"label\":\"Repository Browser\",\"path\":\"://bin/browser.html\",\"roles\":[\"family_admin_group\"]},{\"primary\":false,\"secondary\":true,\"embedded\":false,\"order\":11,\"slug\":\"system_console\",\"label\":\"System Console\",\"path\":\"://system/console\",\"roles\":[\"family_admin_group\"]}],\"primary\":[{\"primary\":true,\"secondary\":false,\"embedded\":false,\"order\":0,\"slug\":\"home\",\"label\":\"Home\",\"path\":\"://index.html\",\"roles\":[]},{\"primary\":true,\"secondary\":false,\"embedded\":false,\"order\":1,\"slug\":\"files\",\"label\":\"File Browser\",\"path\":\"://files/index.html\",\"roles\":[]},{\"primary\":true,\"secondary\":false,\"embedded\":false,\"order\":2,\"slug\":\"photos\",\"label\":\"Photo Gallery\",\"path\":\"://photos/index.html\",\"roles\":[]}]}}";
+    //private String sample = "{\"apps\":{\"secondary\":[{\"primary\":false,\"secondary\":true,\"embedded\":false,\"order\":1,\"slug\":\"user_manager\",\"label\":\"User Manager\",\"path\":\"://usermanager/index.html\",\"roles\":[]},{\"primary\":false,\"secondary\":true,\"embedded\":false,\"order\":10,\"slug\":\"repository_browser\",\"label\":\"Repository Browser\",\"path\":\"://bin/browser.html\",\"roles\":[\"family_admin_group\"]},{\"primary\":false,\"secondary\":true,\"embedded\":false,\"order\":11,\"slug\":\"system_console\",\"label\":\"System Console\",\"path\":\"://system/console\",\"roles\":[\"family_admin_group\"]}],\"primary\":[{\"primary\":true,\"secondary\":false,\"embedded\":false,\"order\":0,\"slug\":\"home\",\"label\":\"Home\",\"path\":\"://index.html\",\"roles\":[]},{\"primary\":true,\"secondary\":false,\"embedded\":false,\"order\":1,\"slug\":\"files\",\"label\":\"File Browser\",\"path\":\"://files/index.html\",\"roles\":[]},{\"primary\":true,\"secondary\":false,\"embedded\":false,\"order\":2,\"slug\":\"photos\",\"label\":\"Photo Gallery\",\"path\":\"://photos/index.html\",\"roles\":[]}]}}";
 
     List<ClientApp> clientApps = new ArrayList();
 

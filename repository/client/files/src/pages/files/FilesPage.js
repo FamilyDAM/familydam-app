@@ -17,12 +17,14 @@ import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 
 import AppShell from '../../library/appShell/AppShell';
 import AppActions from '../../library/actions/AppActions';
-import Breadcrumb from '../../components/breadcrumb/Breadcrumb';
+import Breadcrumb from '../../library/breadcrumb/Breadcrumb';
 import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
 import UploadDialog from '../../components/uploaddialog/UploadDialog';
 import NewFolderDialog from '../../components/newfolderdialog/NewFolderDialog';
 import fileActions from "../../actions/FileActions";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
 
 const styleSheet = (theme) => ({
     progress: {
@@ -36,16 +38,14 @@ const styleSheet = (theme) => ({
     },
 
     toolbarContainer:{
-        display:'grid',
-        gridTemplateRows:'auto',
-        gridTemplateColumns:'48px auto auto'
+
     },
 
     fileGrid:{
         height:'100%',
         display:'grid',
         gridTemplateRows:'64px auto',
-        gridTemplateColumns:'4fr 2fr'
+        gridTemplateColumns:'4fr minmax(2px, 400px)'
     },
 
     fileGridAppBar:{
@@ -72,7 +72,13 @@ const styleSheet = (theme) => ({
         gridGap:'16px',
         gridTemplateRows:'1fr 1fr 1fr',
         gridTemplateColumns:'2fr 6fr'
-    }
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+    },
 });
 
 
@@ -128,7 +134,6 @@ class FilesPage extends Component {
     componentWillReceiveProps(newProps){
         this.props = newProps;
         this.validatePath();
-
     }
 
 
@@ -199,13 +204,13 @@ class FilesPage extends Component {
                             style={{'colorDefault':'#eeeeee'}}>
 
                         <Toolbar className={classes.toolbarContainer}>
-                            <div style={{gridRow:'1', gridColumn:'1'}}>
-                                <FolderIcon style={{width:'36px', height:'36px'}}/>
-                            </div>
-                            <div style={{gridRow:'1', gridColumn:'2'}}>
+                            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                                <FolderIcon />
+                            </IconButton>
+                            <Typography variant="h6" className={classes.title}>
                                 <Breadcrumb root={this.state.root} path={this.state.path}/>
-                            </div>
-                            <div style={{gridRow:'1', gridColumn:'3', textAlign:'right'}}>
+                            </Typography>
+                            <div>
                                 <Button
                                     color="primary"
                                     disabled={!this.state.canAddFile}

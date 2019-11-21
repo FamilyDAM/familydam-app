@@ -41,25 +41,27 @@ class GetAllUsersService {
 
                 if( !err ){
 
-                    var list = [];
+                    if( results.body ){
+                        var list = [];
 
-                    for (var i = 0; i < results.body.length; i++) {
-                        var item = results.body[i];
+                        for (var i = 0; i < results.body.length; i++) {
+                            var item = results.body[i];
 
-                        if (item.firstName === undefined) {
-                            item.firstName = item.username;
+                            if (item.firstName === undefined) {
+                                item.firstName = item.username;
+                            }
+                            list.push(item);
                         }
-                        list.push(item);
+
+
+                        var _sortedUsers = list.sort(function (a, b) {
+                            if (a.username > b.username) return 1;
+                            if (a.username < b.username) return -1;
+                            return 0;
+                        });
+
+                        this.sink.next(_sortedUsers);
                     }
-
-
-                    var _sortedUsers = list.sort(function (a, b) {
-                        if (a.username > b.username) return 1;
-                        if (a.username < b.username) return -1;
-                        return 0;
-                    });
-
-                    this.sink.next(_sortedUsers);
 
                 }else{
                     //send the error to the store (through the sink observer

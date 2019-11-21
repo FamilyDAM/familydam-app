@@ -10,6 +10,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.io.InputStream;
 
+/**
+ * Return InputStream of a nt:file
+ */
 @Service
 public class FsReadFileService implements IRestService
 {

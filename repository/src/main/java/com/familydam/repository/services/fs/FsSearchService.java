@@ -12,13 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Search for files by specific type
+ */
 @Service
 public class FsSearchService
 {
 
     public List<Map> search(Session session, String path, String type, String groupBy_, String orderField_, String orderDir_, Integer limit, Integer offset) throws RepositoryException
     {
-        String _sql = "select * from [dam:image] as _node " +
+        String _sql = "select * from [" +type +"] as _node " +
             " where isdescendantnode(_node, '" +path +"') " +
             " order by [" +orderField_ +"] " +orderDir_ +", [name] asc";
         Query query = session.getWorkspace().getQueryManager().createQuery(_sql, "JCR-SQL2");

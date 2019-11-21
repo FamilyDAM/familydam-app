@@ -8,6 +8,6 @@
                            __/ |                                 \_\            __/ |                                                                     __/ |           /_/
                           |___/                                                |___/                                                                     |___/
 ---------------------------------------------
-:: ${application.name} (v${application.version} / v${spring-boot.version})  ::
-${AnsiColor.BLUE} :: http://www.familydam.com ${Ansi.DEFAULT}
+:: ${application.name} (v${application.version} ::
+${AnsiColor.BLUE}:: http://www.familydam.com ${Ansi.DEFAULT}
 ---------------------------------------------

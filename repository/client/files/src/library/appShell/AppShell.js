@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
+import {withRouter} from 'react-router-dom';
 import {withStyles} from "@material-ui/core/styles";
 
 
@@ -41,9 +42,17 @@ class AppShell extends Component {
 
         var isOpenCachedValue = window.localStorage.getItem("AppShell.isOpen");
 
+        if( !isOpenCachedValue ){
+            if( props.open !== undefined ) {
+                isOpenCachedValue = props.open;
+            }else{
+                isOpenCachedValue = true;
+            }
+        }
+
         this.state = {
             isMounted:true,
-            isOpen:isOpenCachedValue ?isOpenCachedValue:true
+            isOpen:Boolean(isOpenCachedValue)
         };
 
         this.handleOpenCloseToggle = this.handleOpenCloseToggle.bind(this);
@@ -99,6 +108,10 @@ class AppShell extends Component {
     render() {
         var classes = this.props.classes;
 
+        if( !this.props.user ){
+            return (<div></div>);
+        }
+
         return (
             <div className={this.state.isOpen?classes.dashboardShellContainerOpen:classes.dashboardShellContainerClosed}>
                 <header className={classes.header}>
@@ -126,4 +139,4 @@ class AppShell extends Component {
     }
 }
 
-export default injectIntl(withStyles(styleSheet)(AppShell));
+export default injectIntl(withRouter(withStyles(styleSheet)(AppShell)));

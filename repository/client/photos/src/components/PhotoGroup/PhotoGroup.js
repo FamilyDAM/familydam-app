@@ -16,6 +16,17 @@ const styleSheet = (theme) => ({
         overflow: "auto",
         padding:"24px"
     },
+    captionStyle: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        maxHeight: "240px",
+        overflow: "hidden",
+        position: "absolute",
+        bottom: "0",
+        width: "100%",
+        color: "white",
+        padding: "2px",
+        fontSize: "90%"
+    }
 
 });
 
@@ -24,7 +35,8 @@ class PhotoGroup extends Component{
 
     constructor(props, context) {
         super(props, context);
-        this.state = {}
+        this.state = {images: this.props.photos.children};
+        this.onSelectImage = this.onSelectImage.bind(this);
     }
 
     componentDidMount() {
@@ -39,14 +51,40 @@ class PhotoGroup extends Component{
         this.props = newProps;
     }
 
+    onSelectImage (index, image) {
+
+        var images = this.state.images.slice();
+        var img = images[index];
+        if(img.hasOwnProperty("isSelected")) {
+            img.isSelected = !img.isSelected;
+        }
+        this.setState({images: images});
+
+        //send to parent only the selected images
+        this.props.onImageSelect(img);
+    }
+
     render() {
         const classes = this.props.classes;
+
+        var images =
+            this.state.images.map((i) => {
+                i.thumbnailCaption = (<button key="editImage" onClick={(e)=>{e.preventDefault();console.log('todo:edit');}}>edit</button>);
+                return i;
+            });
 
         return(
 
             <div className={classes.imgGroup} >
                 <Typography>{this.props.photos.label}</Typography>
-                <Gallery images={this.props.photos.children}/>
+                <Gallery
+                    onSelectImage={this.onSelectImage}
+                    images={images}
+                    showLightboxThumbnails={true}
+                    customControls={[
+                        <button key="editImage" onClick={()=>console.log('todo:edit')}>edit</button>,
+                        <button key="deleteImage" onClick={()=>console.log('todo:delete')}>delete</button>
+                    ]}/>
             </div>
 
         )

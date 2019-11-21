@@ -20,6 +20,10 @@ import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.List;
 
+
+/**
+ * Create a new nt:File with extra mixins applied
+ */
 @Service
 public class FsNewFileService implements IRestService
 {

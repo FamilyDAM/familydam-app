@@ -13,6 +13,9 @@ import javax.jcr.Session;
 import java.util.*;
 
 
+/**
+ * return a list of all users, excluding the system accounts, including the 'admin' account
+ */
 @Service
 public class UserListService implements IRestService
 {

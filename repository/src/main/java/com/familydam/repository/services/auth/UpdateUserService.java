@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+
 @Service
 public class UpdateUserService implements IRestService
 {
@@ -81,7 +82,7 @@ public class UpdateUserService implements IRestService
         //add read permission to all family root content
         assignPrivilege(session_, user_, contentNode, Privilege.JCR_READ);
         assignPrivilege(session_, user_, contentFileNode, Privilege.JCR_READ);
-        //add read/write/all permision to this users files
+        //add read/write/all permission to this users files
         assignPrivilege(session_, user_, contentNode, Privilege.JCR_ALL);
         assignPrivilege(session_, user_, contentNode, Privilege.JCR_ALL);
         assignPrivilege(session_, user_, contentNode, Privilege.JCR_ALL);

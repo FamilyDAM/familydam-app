@@ -10,14 +10,14 @@ import AppActions from "../../library/actions/AppActions";
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors
  * @type {{subscribe: Function, onNext: Function}}
  */
-class ListPhotosService {
+class ListFoldersService {
 
     sink=undefined;
 
     constructor(source_, sink_) {
         //console.log("{GetUsers Service} subscribe");
         this.sink = sink_;
-        source_.subscribe(this.listPhotos.bind(this));
+        source_.subscribe(this.listResults.bind(this));
     }
 
     /**
@@ -25,11 +25,11 @@ class ListPhotosService {
      * @param val_
      * @returns {*}
      */
-    listPhotos(args_)
+    listResults(args_)
     {
         //pull out arguments
         const path_ = args_.path;
-        const groupBy_ = args_.groupBy || 'date:day';
+        const groupBy_ = args_.groupBy || 'path';
 
         const baseUrl = AppSettings.baseHost.getValue();
         //const user = AppSettings.basicUser.getValue();
@@ -39,21 +39,21 @@ class ListPhotosService {
 
         var formData = new FormData();
         formData.append("path", path_);
-        formData.append("type", "dam:image");
+        formData.append("type", "nt:folder");
         formData.append("limit", 100);
         formData.append("offset", 0);
         formData.append("group", groupBy_);
-        formData.append("order.field", "dam:date.created");
-        formData.append("order.direction", "desc");
+        formData.append("order.field", "name");
+        formData.append("order.direction", "asc");
 
 
-
+        debugger;
         fetch( _url, {
             "method":"post",
             body: formData
         })
             .then(response => {
-                console.log("Image Search Success handler");
+                console.log("Folder Search Success handler");
                 console.dir(response);
                 if(response.redirected) {
                     console.log("redirect to: " +response.url);
@@ -63,15 +63,32 @@ class ListPhotosService {
             })
             .then((response) => response.json())
             .then(json => {
-                //Update the properties required for the React Photo Gallery Component
+                //Build a nested tree of nodes
+                var nodes = {};
+                nodes[path_] = {};
+                nodes[path_].children = [];
+                nodes[path_].name = "Family"; //todo: localize
+                nodes[path_].path = path_;
+
                 for (const node of json) {
-                    node.src = node._links.self;
-                    node.isSelected = false;
-                    node.thumbnail = node._links.thumb;
-                    node.thumbnailWidth = node.width;
-                    node.thumbnailHeight = node.height;
+                    const _parent = node.path.substr(0, node.path.lastIndexOf('/'));
+                    nodes[node.path] = node;
+                    nodes[node.path].parent = _parent;
+
+                    if( nodes[_parent] ){
+                        if( !nodes[_parent].children ) nodes[_parent].children = [];
+                        nodes[_parent].children.push(nodes[node.path]);
+                    }
                 }
-                this.sink.next(json);
+
+
+                nodes[path_].children = nodes[path_].children.sort(function (a, b) {
+                    if (a.name > b.name) return 1;
+                    if (a.name < b.name) return -1;
+                    return 0;
+                });
+                //console.dir(nodes[path_]);
+                this.sink.next([nodes[path_]]);//return as Array in case we ever want to add more
             })
             .catch(err => {
                 console.warn(err);
@@ -95,4 +112,4 @@ class ListPhotosService {
 }
 
 
-export default ListPhotosService;
+export default ListFoldersService;

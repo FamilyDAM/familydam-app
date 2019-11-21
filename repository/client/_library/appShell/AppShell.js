@@ -42,12 +42,17 @@ class AppShell extends Component {
 
         var isOpenCachedValue = window.localStorage.getItem("AppShell.isOpen");
 
-        var _open = true;
-        if( props.open ) _open = props.open;
+        if( !isOpenCachedValue ){
+            if( props.open !== undefined ) {
+                isOpenCachedValue = props.open;
+            }else{
+                isOpenCachedValue = true;
+            }
+        }
 
         this.state = {
             isMounted:true,
-            isOpen:isOpenCachedValue ?isOpenCachedValue:_open
+            isOpen:Boolean(isOpenCachedValue)
         };
 
         this.handleOpenCloseToggle = this.handleOpenCloseToggle.bind(this);

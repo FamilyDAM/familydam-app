@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Get all files under path, under /content
+ */
 @Service
 public class FsListService implements IRestService
 {

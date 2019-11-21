@@ -34,6 +34,9 @@ const styleSheet = theme => ({
     },
     title: {
         flex: '0 0 auto',
+        overflow:'hidden',
+        maxWidth:'250px',
+        overflowWrap: 'break-word'
     },
 });
 
