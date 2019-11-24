@@ -14,11 +14,10 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
 const styleSheet = (theme) => ({
     root: {
+        width:'100%',
         height: 'auto',
-        maxHeight:'300px',
-        flexGrow: 1,
         maxWidth: 400,
-        width:'100%'
+        flexGrow: 1
     },
     stylizedRoot: {
         color: theme.palette.text.secondary,

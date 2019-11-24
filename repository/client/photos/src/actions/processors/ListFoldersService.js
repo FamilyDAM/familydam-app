@@ -40,14 +40,12 @@ class ListFoldersService {
         var formData = new FormData();
         formData.append("path", path_);
         formData.append("type", "nt:folder");
-        formData.append("limit", 100);
+        formData.append("limit", 10000);
         formData.append("offset", 0);
         formData.append("group", groupBy_);
         formData.append("order.field", "name");
         formData.append("order.direction", "asc");
-
-
-        debugger;
+        
         fetch( _url, {
             "method":"post",
             body: formData

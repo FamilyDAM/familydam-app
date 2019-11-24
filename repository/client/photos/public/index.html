@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#000000">
@@ -19,22 +19,58 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>
-      You need to enable JavaScript to run this app.
-    </noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <!--link href='http://fonts.googleapis.com/css?family=Roboto:500,300,400' rel='stylesheet' type='text/css'-->
+    <!--link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"-->
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    <style>
+        /* roboto-300 - latin */
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 300;
+            src: url('fonts/roboto-v20-latin-300.eot'); /* IE9 Compat Modes */
+            src: local('Roboto Light'), local('Roboto-Light'),
+            url('fonts/roboto-v20-latin-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('fonts/roboto-v20-latin-300.woff2') format('woff2'), /* Super Modern Browsers */ url('fonts/roboto-v20-latin-300.woff') format('woff'), /* Modern Browsers */ url('fonts/roboto-v20-latin-300.ttf') format('truetype'), /* Safari, Android, iOS */ url('fonts/roboto-v20-latin-300.svg#Roboto') format('svg'); /* Legacy iOS */
+        }
+
+        /* roboto-regular - latin */
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            src: url('fonts/roboto-v20-latin-regular.eot'); /* IE9 Compat Modes */
+            src: local('Roboto'), local('Roboto-Regular'),
+            url('fonts/roboto-v20-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('fonts/roboto-v20-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */ url('fonts/roboto-v20-latin-regular.woff') format('woff'), /* Modern Browsers */ url('fonts/roboto-v20-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */ url('fonts/roboto-v20-latin-regular.svg#Roboto') format('svg'); /* Legacy iOS */
+        }
+
+        /* roboto-500 - latin */
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 500;
+            src: url('fonts/roboto-v20-latin-500.eot'); /* IE9 Compat Modes */
+            src: local('Roboto Medium'), local('Roboto-Medium'),
+            url('fonts/roboto-v20-latin-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('fonts/roboto-v20-latin-500.woff2') format('woff2'), /* Super Modern Browsers */ url('fonts/roboto-v20-latin-500.woff') format('woff'), /* Modern Browsers */ url('fonts/roboto-v20-latin-500.ttf') format('truetype'), /* Safari, Android, iOS */ url('fonts/roboto-v20-latin-500.svg#Roboto') format('svg'); /* Legacy iOS */
+        }
+    </style>
+
+    <title>FamilyDAM (1.0.0)</title>
+</head>
+<body>
+<noscript>
+    You need to enable JavaScript to run this app.
+</noscript>
+<div id="root"></div>
+<!--
+  This HTML file is a template.
+  If you open it directly in the browser, you will see an empty page.
+
+  You can add webfonts, meta tags, or analytics to this file.
+  The build step will place the bundled scripts into the <body> tag.
+
+  To begin the development, run `npm start` or `yarn start`.
+  To create a production bundle, use `npm run build` or `yarn build`.
+-->
+</body>
 </html>

@@ -88,10 +88,14 @@ class HomePage extends Component {
             this.setState({"folders":results});
         });
 
+        PhotoActions.listPhotos.source.subscribe( results => {
+            this.setState({'photos': []} );
+        });
+
         PhotoActions.listPhotos.sink.subscribe( results => {
 
             let groups = {};
-            let photoList = this.state.photos.concat(results);
+            let photoList = results;//this.state.photos.concat(results);
             for (const node of photoList) {  //todo, append to this.state.photos
                 if( node['dam:date.created'] ) {
                     try {
@@ -136,17 +140,18 @@ class HomePage extends Component {
     componentWillReceiveProps(newProps){
         this.props = newProps;
         this.validatePath();
-
     }
 
     validatePath() {
         let _path = this.state.path;
         if( this.props.location.pathname && this.props.location.pathname.startsWith(this.state.root) ){
             _path = this.props.location.pathname;
+            PhotoActions.listPhotos.source.next({path:_path});
+        }else{
+            PhotoActions.listPhotos.source.next({path:this.state.root});
         }
 
         this.setState({"path": _path});
-        PhotoActions.listPhotos.source.next({path:_path});
     }
 
 
@@ -197,7 +202,10 @@ class HomePage extends Component {
                             <Typography variant="h6" className={classes.title}>
                                 <Breadcrumb root={this.state.root} path={this.state.path}/>
                             </Typography>
-                            <Button color="inherit">Download</Button>
+                            <div>
+                                <Button color="inherit">Download</Button>
+                                <Button color="inherit">Delete</Button>
+                            </div>
                         </Toolbar>
                     </AppBar>
 

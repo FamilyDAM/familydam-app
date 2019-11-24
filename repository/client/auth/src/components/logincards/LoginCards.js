@@ -8,18 +8,23 @@ import LoginCard from './LoginCard';
 
 const styleSheet = (theme) => ({
     outerContainer:{
+        width:'100%',
+        height:'100%',
         display: 'grid',
         gridGap: '24px',
-        gridTemplateRows: '1fr auto 1fr',
-        gridTemplateColumns: '1fr auto 1fr'
+        gridTemplateRows: '1fr 80% 1fr',
+        gridTemplateColumns: '1fr 80% 1fr'
     },
     loginGrids:{
+        width:'100%',
+        height:'100%',
         display: 'grid',
-        gridGap: '32px',
-        gridAutoFlow: 'column',
-        gridTemplateRows: 'repeat(2, 1fr)'
+        gridGap: '24px',
+        gridAutoRows: 'auto',
+        gridTemplateColumns: 'repeat(auto-fill, 150px)'
     },
     loginCardItem:{
+
     }
 });
 

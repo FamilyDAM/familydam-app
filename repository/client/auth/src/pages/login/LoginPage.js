@@ -17,6 +17,10 @@ import AppActions from '../../library/actions/AppActions';
 
 
 const styleSheet = (theme) => ({
+    wrapper:{
+
+    },
+
     loginView: {
         position: 'absolute',
         top: 0,
@@ -37,8 +41,8 @@ const styleSheet = (theme) => ({
     timeClock: {
         position: 'absolute',
         bottom:   '20px',
-        left:     '40px',
-        width:    '100%'
+        right:    '40px',
+        width:    '270px'
     },
     progress: {
         margin: `0 ${theme.spacing.unit * 2}px`,
@@ -60,13 +64,14 @@ class Login extends Component {
             isMounted:true,
             users: undefined,
             activeUser: undefined,
+            offlineImage: "/images/hex-grid-blue-fade.jpg",
             backgrounds: [
                 "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933080/graphicstock/AS6_9771-180__.jpg"
-                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933187/graphicstock/lake-marina_GkuzZvKu__.jpg"
-                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933186/graphicstock/DSC_5803-777__.jpg"
-                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933181/graphicstock/pebble-stack_XJX4rE__.jpg"
-                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933172/graphicstock/fire-texture-15_GyOwSEFd__.jpg"
-                //, "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933171/graphicstock/lake_GyXLZDKu__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933187/graphicstock/lake-marina_GkuzZvKu__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933186/graphicstock/DSC_5803-777__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933181/graphicstock/pebble-stack_XJX4rE__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933172/graphicstock/fire-texture-15_GyOwSEFd__.jpg"
+                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933171/graphicstock/lake_GyXLZDKu__.jpg"
             ]
         };
 
@@ -122,31 +127,37 @@ class Login extends Component {
         });
     }
 
+    randomIntFromInterval(min, max) { // min and max included
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
 
     render() {
-        var classes = this.props.classes;
-        var randomBackground = this.state.backgrounds[0];
+        const classes = this.props.classes;
+        const randomBackground =  this.state.backgrounds[this.randomIntFromInterval(0,this.state.backgrounds.length)];
 
         if( this.state.isLoading ){
             return (
-                <div>
+                <div className={classes.loginView}>
                     <CircularProgress className={classes.progress} size={50}/>
                 </div>
             );
         }else {
             return (
-                <div className={classes.loginView} style={{background: "url('" + randomBackground + "') no-repeat"}}>
+                <div className={classes.loginView} style={{background: "url('" + this.state.offlineImage + "') no-repeat"}}>
+                    <div className={classes.loginView} style={{background: "url('" + randomBackground + "') no-repeat"}}>
 
-                    {(!this.state.users || this.state.users.length === 0) ?
-                        <SignupCard/>
-                        :
-                        <LoginCards
-                            users={this.state.users}
-                            onLogin={this.handleLogin}/>
-                    }
+                        {(!this.state.users || this.state.users.length === 0) ?
+                            <SignupCard/>
+                            :
+                            <LoginCards
+                                users={this.state.users}
+                                onLogin={this.handleLogin}/>
+                        }
 
-                    <div className={classes.timeClock}>
-                        <Clock/>
+                        <div className={classes.timeClock}>
+                            <Clock/>
+                        </div>
                     </div>
                 </div>
             );
