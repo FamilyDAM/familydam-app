@@ -5,9 +5,18 @@ import PropTypes from 'prop-types';
 
 import Gallery from 'react-grid-gallery';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import InfoIcon from '@material-ui/icons/Info';
+import EditIcon from '@material-ui/icons/Edit';
+import DownloadIcon from '@material-ui/icons/CloudDownload';
 
 
 const styleSheet = (theme) => ({
+    margin: {
+        margin: '8px',
+        padding: '0px'
+    },
     imgGroup:{
         display: "block",
         minHeight: "1px",
@@ -26,6 +35,9 @@ const styleSheet = (theme) => ({
         color: "white",
         padding: "2px",
         fontSize: "90%"
+    },
+    thumbnailSmall:{
+        border:'5px solid red'
     }
 
 });
@@ -69,7 +81,22 @@ class PhotoGroup extends Component{
 
         var images =
             this.state.images.map((i) => {
-                i.thumbnailCaption = (<button key="editImage" onClick={(e)=>{e.preventDefault();console.log('todo:edit');}}>edit</button>);
+                i.thumbnailCaption = (
+                    <div>
+                        <IconButton aria-label="delete" className={classes.margin} onClick={(e)=>{e.preventDefault();console.log('todo:info');}}>
+                            <InfoIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton aria-label="delete" className={classes.margin} onClick={(e)=>{e.preventDefault();console.log('todo:edit');}}>
+                            <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton aria-label="delete" className={classes.margin} onClick={(e)=>{e.preventDefault();console.log('todo:delete');}}>
+                            <DeleteIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton aria-label="delete" className={classes.margin} style={{float: 'right'}} onClick={(e)=>{e.preventDefault();console.log('todo:download');}}>
+                            <DownloadIcon fontSize="small" />
+                        </IconButton>
+                    </div>
+                );
                 return i;
             });
 
@@ -81,6 +108,8 @@ class PhotoGroup extends Component{
                     onSelectImage={this.onSelectImage}
                     images={images}
                     showLightboxThumbnails={true}
+                    thumbnailWidth="190px"
+                    margin="4px"
                     customControls={[
                         <button key="editImage" onClick={()=>console.log('todo:edit')}>edit</button>,
                         <button key="deleteImage" onClick={()=>console.log('todo:delete')}>delete</button>
