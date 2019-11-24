@@ -197,7 +197,7 @@ class FilesPage extends Component {
 
 
         return (
-            <AppShell user={this.props.user}>
+            <AppShell user={this.props.user} open={false}>
                 <div className={classes.fileGrid}>
                     <AppBar color="default" position="static" elevation={0}
                             className={classes.fileGridAppBar}
