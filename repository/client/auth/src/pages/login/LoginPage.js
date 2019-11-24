@@ -42,7 +42,7 @@ const styleSheet = (theme) => ({
         position: 'absolute',
         bottom:   '20px',
         right:    '40px',
-        width:    '270px'
+        width:    '280px'
     },
     progress: {
         margin: `0 ${theme.spacing.unit * 2}px`,
@@ -50,8 +50,7 @@ const styleSheet = (theme) => ({
         height: '100px',
         position: 'absolute',
         top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)'
+        left: '50%'
     }
 });
 
@@ -84,8 +83,9 @@ class Login extends Component {
         this.setState({"isMounted":true, "isLoading": true});
 
         UserActions.getAllUsers.sink.takeWhile(() => this.state.isMounted).subscribe(users_ => {
+            this.setState({"isLoading": false});
             if (users_) {
-                this.setState({"isLoading": false, "users": users_});
+                this.setState({"users": users_});
             }
         });
 
@@ -93,16 +93,13 @@ class Login extends Component {
         UserActions.getAllUsers.source.next(true);
     }
 
-
     componentWillUnmount() {
         this.setState({"isMounted":false});
     }
 
-
     handleCardSelection(user) {
         this.setState({activeUser: user});
     }
-
 
     handleCancelCardSelection(event) {
         this.setState({activeUser: undefined});
