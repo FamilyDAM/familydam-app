@@ -40,7 +40,7 @@ class ListPhotosService {
         var formData = new FormData();
         formData.append("path", path_);
         formData.append("type", "dam:image");
-        formData.append("limit", 10000);
+        formData.append("limit", 1000);
         formData.append("offset", 0);
         formData.append("group", groupBy_);
         formData.append("order.field", "dam:date.created");
