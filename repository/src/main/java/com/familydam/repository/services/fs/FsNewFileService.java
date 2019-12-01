@@ -30,12 +30,22 @@ public class FsNewFileService implements IRestService
     Logger log = LoggerFactory.getLogger(FsNewFileService.class);
 
     public ResponseEntity createFile(StandardMultipartHttpServletRequest request, Session session) throws RepositoryException, IOException {
-        String name = request.getParameter("name");
-        //String path = request.getParameter("path");
-        String destination = request.getParameter("destination");
-        //a list, but client always sends 1 file
-        List<MultipartFile> files = request.getMultiFileMap().get("file");
+        String name;
+        String destination;
+        List<MultipartFile> files;
 
+        if( request.getParameter("filepond") != null  ){
+            name = request.getHeader("Upload-Name");
+            destination = request.getParameter("destination"); //todo:  get from POST  path
+            //a list, but client always sends 1 file
+            files = request.getMultiFileMap().get("filepond");
+
+        }else {
+            name = request.getParameter("name");
+            destination = request.getParameter("destination");
+            //a list, but client always sends 1 file
+            files = request.getMultiFileMap().get("file");
+        }
 
         if( !session.hasPermission(destination, Session.ACTION_ADD_NODE) ){
             return ResponseEntity.status(403).build();

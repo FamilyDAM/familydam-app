@@ -6979,6 +6979,16 @@ file-system-cache@^1.0.5:
     fs-extra "^0.30.0"
     ramda "^0.21.0"
 
+filepond-plugin-file-metadata@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-file-metadata/-/filepond-plugin-file-metadata-1.0.6.tgz#aca6a74a0bdeb9895edc1e109490425492b47ae8"
+  integrity sha512-dps0BcEp+lYWoeJCN2gO/5N1BeZOOWPd1lF9EZDWE2GAKoG/G04j/6L4/tuFheqvt8reYcoNBMNEtSrdXatbqQ==
+
+filepond-plugin-image-exif-orientation@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/filepond-plugin-image-exif-orientation/-/filepond-plugin-image-exif-orientation-1.0.6.tgz#75920935a5da298884718bfd454f03362ad783e8"
+  integrity sha512-CxoZSa3tjZaoQrRAvsYgDuYhyQPtylnOJ5usbbH5qo/m4x/CbZpkrbFjWXr3MvdiKz3SV8d+CadsLbSXKgWKjA==
+
 filepond-plugin-image-preview@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/filepond-plugin-image-preview/-/filepond-plugin-image-preview-4.5.0.tgz#44bccdf1245c64437217db0e41ef1655e56a3c55"

@@ -20,7 +20,7 @@ import AppActions from '../../library/actions/AppActions';
 import Breadcrumb from '../../library/breadcrumb/Breadcrumb';
 import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
-import UploadDialog from '../../components/uploaddialog/UploadDialog';
+import FilePondSidebar from '../../components/filepondsidebar/FilePondSidebar';
 import NewFolderDialog from '../../components/newfolderdialog/NewFolderDialog';
 import fileActions from "../../actions/FileActions";
 import IconButton from "@material-ui/core/IconButton";
@@ -65,6 +65,14 @@ const styleSheet = (theme) => ({
         margin: '24px'
     },
 
+    filePondSidebar:{
+        gridRow:'2',
+        gridColumn:'2',
+        margin: '24px'
+    },
+
+
+
     mainGrid:{
         height: '100%',
         overflow: 'scroll',
@@ -78,7 +86,7 @@ const styleSheet = (theme) => ({
     },
     title: {
         flexGrow: 1,
-    },
+    }
 });
 
 
@@ -94,7 +102,7 @@ class FilesPage extends Component {
             canAddFile:true,
             canAddFolder:true,
             showAddFolderDialog:false,
-            showUploadDialog:false,
+            showUploadSidebar:false,
             showNewFolderDialog:false,
             selectedFiles:[],
             root:"/content",
@@ -156,11 +164,11 @@ class FilesPage extends Component {
 
 
     handleFileSelectionChange(files){
-        this.setState({selectedFiles:files});
+        this.setState({selectedFiles:files, showUploadSidebar:false});
     }
 
     handleUploadClosed(){
-        this.setState({'showUploadDialog':false});
+        this.setState({'showUploadSidebar':false});
         fileActions.getFileAndFolders.source.next(this.state.path);
     }
 
@@ -185,6 +193,7 @@ class FilesPage extends Component {
 
     render() {
         var classes = this.props.classes;
+        const _sidebarVisible = this.state.showUploadSidebar || this.state.selectedFiles.length>0;
 
         if( this.state.isLoading ){
             return (
@@ -214,7 +223,7 @@ class FilesPage extends Component {
                                 <Button
                                     color="primary"
                                     disabled={!this.state.canAddFile}
-                                    onClick={()=>{this.setState({'showUploadDialog':true})}}>
+                                    onClick={()=>{this.setState({'showUploadSidebar':true})}}>
                                     <FileUpload/>&nbsp;&nbsp;Add Files
                                 </Button>
 
@@ -230,7 +239,7 @@ class FilesPage extends Component {
                     </AppBar>
 
 
-                    <div className={classes.fileGridFileList} style={{gridColumn:this.state.selectedFiles.length>0?'1/2':'1/3'}}>
+                    <div className={classes.fileGridFileList} style={{gridColumn:_sidebarVisible?'1/2':'1/3'}}>
                         <FileList
                             path={this.state.path}
                             onSelectionChange={this.handleFileSelectionChange}
@@ -238,16 +247,22 @@ class FilesPage extends Component {
                             style={{gridRow:"1 / 4", gridColumn:"1 / 3"}}/>
                     </div>
 
+
+
+
                     <FileInfoSidebar
                         files={this.state.selectedFiles}
                         className={classes.fileGridSidebar}
                         style={{display:this.state.selectedFiles.length>0?'block':'none'}}
                     />
 
-                    <UploadDialog
+
+                    <FilePondSidebar
+                        path={this.props.path}
+                        className={classes.filePondSidebar}
+                        style={{display:this.state.showUploadSidebar?'block':'none'}}
                         onClose={this.handleUploadClosed}
-                        open={this.state.showUploadDialog}
-                        path={this.state.path}/>
+                    />
 
                     <NewFolderDialog
                         onClose={()=>{this.setState({'showNewFolderDialog':false})}}
