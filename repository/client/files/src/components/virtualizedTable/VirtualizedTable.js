@@ -3,8 +3,10 @@ import clsx from 'clsx';
 import TableCell from '@material-ui/core/TableCell';
 import {withStyles} from "@material-ui/core/styles";
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import DownloadIcon from '@material-ui/icons/CloudDownload';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
 import {AutoSizer, Column, Table} from 'react-virtualized';
 
 const styles = theme => ({
@@ -55,11 +57,21 @@ class VirtualizedTable extends React.PureComponent {
                     }
                     else if( "download" === icon ){
                         return (<Button onClick={()=>this.props.onDownload(this.props.folder.path)} style={{minWidth:'24px', padding:"4px"}}><DownloadIcon /></Button>);
-                    }else {
+                    }
+                    else if( "close" === icon ){
+                        return (<Button onClick={()=>this.props.onClose(this.props.folder.path)} style={{minWidth:'24px', padding:"4px"}}><CloseIcon /></Button>);
+                    }
+                    else if( "xdelete" === icon ){
+                        return (<Button onClick={()=>this.props.onDelete(this.props.folder.path)} style={{minWidth:'24px', padding:"4px"}}><CloseIcon /></Button>);
+                    }
+                    else {
                         return (<div></div>)
                     }
                 })
             )
+        }
+        else if( columns[columnIndex].component ){
+            return React.cloneElement(columns[columnIndex].component, cellData);
         }else {
             return (
                 <TableCell

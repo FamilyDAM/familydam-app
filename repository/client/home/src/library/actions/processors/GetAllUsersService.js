@@ -1,11 +1,8 @@
-
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppActions from '../../../library/actions/AppActions';
+import UserActions from '../UserActions';
 import AppSettings from '../../../library/actions/AppSettings';
-import request from 'superagent';
-
 
 /**
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors
@@ -29,49 +26,57 @@ class GetAllUsersService {
      * @param val_
      * @returns {*}
      */
-    getUsers()
+    async getUsers()
     {
         const baseUrl = AppSettings.baseHost.getValue();
+        const _url = baseUrl +'/api/v1/auth/users';
 
-        request
-            .get(baseUrl +'/api/v1/auth/users')
-            .withCredentials()
-            .set('Accept', 'application/json')
-            .end((err, results) => {
-
-                if( !err ){
-
-                    var list = [];
-
-                    for (var i = 0; i < results.body.length; i++) {
-                        var item = results.body[i];
-
-                        if (item.firstName === undefined) {
-                            item.firstName = item.username;
-                        }
-                        list.push(item);
-                    }
+        const headers = new Headers();
+        headers.append('pragma', 'no-cache');
+        headers.append('cache-control', 'no-cache');
 
 
-                    var _sortedUsers = list.sort(function (a, b) {
-                        if (a.username > b.username) return 1;
-                        if (a.username < b.username) return -1;
-                        return 0;
-                    });
-
-                    this.sink.next(_sortedUsers);
-
-                }else{
-                    //send the error to the store (through the sink observer
-                    if( err.status === 401){
-                        AppActions.navigateTo.next("/");
-                    } else {
-                        var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
-                        this.sink.error(_error);
-                    }
+        //Save or Create user
+        const users = await fetch( _url, {
+            method: 'GET',
+            cache: "no-cache",
+            headers: headers
+        })
+        //parse json
+        .then((response) => response.json())
+        .then( (users) => {
+            var list = [];
+            for (var i = 0; i < users.length; i++) {
+                var item = users[i];
+                if (item.firstName === undefined) {
+                    item.firstName = item.username;
                 }
+                list.push(item);
+            }
+            //sort by username (friendly first name0
+            var _sortedUsers = list.sort(function (a, b) {
+                if (a.username > b.username) return 1;
+                if (a.username < b.username) return -1;
+                return 0;
             });
 
+            return _sortedUsers;
+        })
+        .catch(err => {
+            //send the error to the store (through the sink observer
+            if( err.status === 401 || err.status === 403){
+                window.location = "/";
+            } else {
+                var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText||err.message};
+                this.sink.error(_error);
+                //reload
+                UserActions.getAllUsers.source.next(true);
+            }
+        });
+
+        if( users ) {
+            this.sink.next(users);
+        }
     }
 
 }

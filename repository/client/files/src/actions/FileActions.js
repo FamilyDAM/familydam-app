@@ -13,12 +13,17 @@ class FileActions {
 
 
     constructor() {
+
+        this.stageFileService = new StageFileService(this.stageFile.source, this.stageFile.sink);
+
         this.getFilesAndFoldersService = new GetFilesAndFoldersService(this.getFileAndFolders.source, this.getFileAndFolders.sink);
         this.getFileDataService = new GetFileDataService(this.getFileData.source, this.getFileData.sink);
         this.uploadFileService = new UploadFileService(this.uploadFile.source, this.uploadFile.sink);
         this.deleteFileOrFolderService = new DeleteFileOrFolderService(this.deleteFileOrFolder.source, this.deleteFileOrFolder.sink);
         this.createFolderService = new CreateFolderService(this.createFolder.source, this.createFolder.sink);
     }
+
+    stageFile = {}
 
     /**
      * Call the server to load the file list

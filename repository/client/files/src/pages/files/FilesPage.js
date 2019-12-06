@@ -20,11 +20,13 @@ import AppActions from '../../library/actions/AppActions';
 import Breadcrumb from '../../library/breadcrumb/Breadcrumb';
 import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
-import FilePondSidebar from '../../components/filepondsidebar/FilePondSidebar';
+import UploadSidebar from '../../components/uploadsidebar/UploadSidebar';
 import NewFolderDialog from '../../components/newfolderdialog/NewFolderDialog';
 import fileActions from "../../actions/FileActions";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
+
+import FileReceiver from "../../components/filereceiver/FileReceiver";
 
 const styleSheet = (theme) => ({
     progress: {
@@ -105,6 +107,7 @@ class FilesPage extends Component {
             showUploadSidebar:false,
             showNewFolderDialog:false,
             selectedFiles:[],
+            uploadFiles:[],
             root:"/content",
             visibleRoot:"/content/files",
             path:"/content/files"
@@ -113,6 +116,7 @@ class FilesPage extends Component {
         this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
         this.handleUploadClosed = this.handleUploadClosed.bind(this);
         this.handleAfterOnDelete = this.handleAfterOnDelete.bind(this);
+        this.handleOnFileDrop  = this.handleOnFileDrop.bind(this);
     }
 
     componentWillMount(){
@@ -189,11 +193,17 @@ class FilesPage extends Component {
         fileActions.getFileAndFolders.source.next(this.state.path);
     }
 
+    handleOnFileDrop(files_){
+        const _files = this.state.uploadFiles;
+        _files.push(files_);
+        this.setState({"uploadFiles":_files})
+    }
+
 
 
     render() {
         var classes = this.props.classes;
-        const _sidebarVisible = this.state.showUploadSidebar || this.state.selectedFiles.length>0;
+        const _sidebarVisible = this.state.showUploadSidebar || this.state.uploadFiles.length>0 || this.state.selectedFiles.length>0;
 
         if( this.state.isLoading ){
             return (
@@ -202,8 +212,6 @@ class FilesPage extends Component {
                 </AppShell>
             );
         }
-
-
 
         return (
             <AppShell user={this.props.user} open={false}>
@@ -240,11 +248,15 @@ class FilesPage extends Component {
 
 
                     <div className={classes.fileGridFileList} style={{gridColumn:_sidebarVisible?'1/2':'1/3'}}>
+                        <FileReceiver
+                            onFileDrop={this.handleOnFileDrop}/>
+
                         <FileList
                             path={this.state.path}
                             onSelectionChange={this.handleFileSelectionChange}
                             onDelete={this.handleAfterOnDelete}
                             style={{gridRow:"1 / 4", gridColumn:"1 / 3"}}/>
+
                     </div>
 
 
@@ -257,10 +269,11 @@ class FilesPage extends Component {
                     />
 
 
-                    <FilePondSidebar
-                        path={this.props.path}
+                    <UploadSidebar
+                        path={this.state.path}
+                        files={this.state.uploadFiles}
                         className={classes.filePondSidebar}
-                        style={{display:this.state.showUploadSidebar?'block':'none'}}
+                        style={{display:(this.state.showUploadSidebar || this.state.uploadFiles.length>0)?'block':'none'}}
                         onClose={this.handleUploadClosed}
                     />
 
