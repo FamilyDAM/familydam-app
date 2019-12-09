@@ -49,7 +49,7 @@ class UploadFileService {
 
     uploadNextFile(baseUrl, file) {
 
-        console.log("file: " + file);
+        //console.log("file: " + file);
 
         if (file)//!file.path)
         {
@@ -147,8 +147,8 @@ class UploadFileService {
 
 
 
-        console.log("Upload to:" +baseUrl +filePathName );
-        console.dir(file_);
+        //console.log("Upload to:" +baseUrl +filePathName );
+        //console.dir(file_);
 
         return request
             .post(baseUrl +filePathName)
@@ -160,7 +160,7 @@ class UploadFileService {
                 return JSON.parse(text)
             })
             .on('progress', event => {
-                console.log(event);
+                //console.log(event);
                 file_.progress = event.percent;
                 FileActions.uploadProgress.next(file_);
                 //the event is:

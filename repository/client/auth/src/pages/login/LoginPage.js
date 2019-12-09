@@ -63,7 +63,7 @@ class Login extends Component {
             isMounted:true,
             users: undefined,
             activeUser: undefined,
-            offlineImage: "/images/hex-grid-blue-fade.jpg",
+            offlineImage: "/images/hex-grid-tran.jpg",
             backgrounds: [
                 "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933080/graphicstock/AS6_9771-180__.jpg"
                 , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933187/graphicstock/lake-marina_GkuzZvKu__.jpg"

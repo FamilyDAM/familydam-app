@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/usermanager/static/css/main.a2b7b0b6.chunk.css",
-    "main.js": "/usermanager/static/js/main.16c51663.chunk.js",
-    "main.js.map": "/usermanager/static/js/main.16c51663.chunk.js.map",
+    "main.js": "/usermanager/static/js/main.09a3c936.chunk.js",
+    "main.js.map": "/usermanager/static/js/main.09a3c936.chunk.js.map",
     "runtime~main.js": "/usermanager/static/js/runtime~main.754bb4a5.js",
     "runtime~main.js.map": "/usermanager/static/js/runtime~main.754bb4a5.js.map",
-    "static/js/2.50d33467.chunk.js": "/usermanager/static/js/2.50d33467.chunk.js",
-    "static/js/2.50d33467.chunk.js.map": "/usermanager/static/js/2.50d33467.chunk.js.map",
+    "static/js/2.559ef054.chunk.js": "/usermanager/static/js/2.559ef054.chunk.js",
+    "static/js/2.559ef054.chunk.js.map": "/usermanager/static/js/2.559ef054.chunk.js.map",
     "index.html": "/usermanager/index.html",
-    "precache-manifest.b3fc7500045bdb5297c34e51407cc20b.js": "/usermanager/precache-manifest.b3fc7500045bdb5297c34e51407cc20b.js",
+    "precache-manifest.bf5f6260f824d6809cd4ca0e3a329114.js": "/usermanager/precache-manifest.bf5f6260f824d6809cd4ca0e3a329114.js",
     "service-worker.js": "/usermanager/service-worker.js",
     "static/css/main.a2b7b0b6.chunk.css.map": "/usermanager/static/css/main.a2b7b0b6.chunk.css.map"
   }

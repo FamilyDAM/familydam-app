@@ -50,6 +50,8 @@ class FileActions {
     /**
      * local event called when upload is complete
      */
+    stageAction = new Subject();
+    stageFile = new Subject();
     uploadProgress = new Subject();
     uploadCompleted = new Subject();
     uploadError = new Subject();

@@ -4,7 +4,7 @@
 import React, {Component} from 'react';
 import {withStyles} from "@material-ui/core/styles";
 //import AppActions from "../../actions/AppActions";
-import {FormattedMessage} from 'react-intl'; //, FormattedPlural, FormattedDate
+//import {FormattedMessage} from 'react-intl'; //, FormattedPlural, FormattedDate
 import filesize from 'filesize';
 import uuid from 'uuid';
 
@@ -28,9 +28,9 @@ import Dialog from '@material-ui/core/Dialog';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CheckIcon from '@material-ui/icons/Check';
-import FileUploadIcon from '@material-ui/icons/CloudUpload';
+//import FileUploadIcon from '@material-ui/icons/CloudUpload';
 
-import {Receiver} from 'react-file-uploader';
+//import {Receiver} from 'react-file-uploader';
 import FileActions from '../../actions/FileActions';
 
 
@@ -41,6 +41,9 @@ const styleSheet = (theme) => ({
     },
     flex: {
         flex: 1,
+    },
+    dialogPaper: {
+        minHeight: '90%',
     },
 });
 
@@ -63,39 +66,15 @@ class UploadDialog extends Component {
         };
 
         this.handleClose = this.handleClose.bind(this);
-        this.handleOnDragEnter = this.handleOnDragEnter.bind(this);
-        this.handleOnDragOver = this.handleOnDragOver.bind(this);
-        this.handleOnDragLeave = this.handleOnDragLeave.bind(this);
-        this.handleAddFile = this.handleAddFile.bind(this);
-        this.handleFileChange = this.handleFileChange.bind(this);
-        this.handleFolderChange = this.handleFolderChange.bind(this);
-        this.handleSelectFileBtnClick = this.handleSelectFileBtnClick.bind(this);
-        this.handleSelectFolderBtnClick = this.handleSelectFolderBtnClick.bind(this);
-        this.handleFilterChange = this.handleFilterChange.bind(this);
     }
 
     componentDidMount() {
-        this.setState({isMounted: true, files: []});
-
-
-        //.takeWhile(() => this.state.isMounted)
-        FileActions.uploadFile.sink.subscribe((file_) => {
-            let _files = [];
-            for (var i = 0; i < this.state.files.length; i++) {
-                var _fileInState = this.state.files[i];
-                if (file_.id === _fileInState.id) {
-                    _fileInState.progress = 100;
-                }
-                _files.push(_fileInState);
-            }
-            this.setState({files: _files});
-        });
-
+        this.setState({isMounted: true});
 
         FileActions.uploadProgress.subscribe(file_ => {
             let _files = [];
-            for (var i = 0; i < this.state.files.length; i++) {
-                var _fileInState = this.state.files[i];
+            for (var i = 0; i < this.props.files.length; i++) {
+                var _fileInState = this.props.files[i];
                 if (file_.id === _fileInState.id && file_.progress !== 100) {
                     _fileInState.progress = file_.progress;
                 }
@@ -104,11 +83,10 @@ class UploadDialog extends Component {
             this.setState({files: _files});
         });
 
-
         FileActions.uploadError.subscribe((file_) => {
             let _files = [];
-            for (var i = 0; i < this.state.files.length; i++) {
-                var _fileInState = this.state.files[i];
+            for (var i = 0; i < this.props.files.length; i++) {
+                var _fileInState = this.props.files[i];
                 if (file_.id === _fileInState.id) {
                     _fileInState.error = file_.error;
                 }
@@ -117,12 +95,16 @@ class UploadDialog extends Component {
             this.setState({files: _files});
         });
 
-
+        setTimeout(()=>this.startFileUploads(this.props.files), 500);
     }
-
 
     componentWillUnmount() {
         this.setState({isMounted: false});
+    }
+
+    componentWillReceiveProps(newProps){
+        this.props = newProps;
+        setTimeout(()=>this.startFileUploads(this.props.files), 1000);
     }
 
     handleClose() {
@@ -133,140 +115,32 @@ class UploadDialog extends Component {
         }
     }
 
-    handleOnDragEnter(e) {
-        //console.log("onDragEnter");
-        this.setState({isReceiverOpen: true});
-    }
-
-    handleOnDragOver(e) {
-        // your codes here
-        if( this.state.isReceiverOpen ) {
-            this.setState({isReceiverOpen: true});
-        }
-    }
-
-    handleOnDragLeave(e) {
-        this.setState({isReceiverOpen: false});
-    }
-
-    handleFilterChange(event) {
-        //debugger;
-        this.setState({filter: event.target.value});
-    }
-
-
-    handleSelectFileBtnClick(event) {
-        //debugger;
-        this.refs.fileInputField.click();
-    }
-
-    handleSelectFolderBtnClick(event) {
-        this.refs.folderInputField.setAttribute("directory", "directory");
-        this.refs.folderInputField.setAttribute("webkitdirectory", "webkitdirectory");
-        this.refs.folderInputField.click();
-    }
-
-
-    handleFileChange(event, files) {
-        var _files = event.currentTarget.files;
-        this.handleAddFile(event, _files);
-    }
-
-    handleFolderChange(event) {
-        var _files = event.currentTarget.files;
-        this.handleAddFile(event, _files);
-    }
-
-
-    handleAddFile(e, files) {
-        var _fileList = this.state.files;
-        // close the Receiver after file dropped
-
-        var processFile = function(file_, path_, relPath_){
-            _fileList.push(file_);
-            if (!file_.id) {
-                file_.id = uuid();
+    startFileUploads(files) {
+        if( this.props.files.length > 0 ) {
+            for (let i = 0; i < Math.min(3, this.props.files.length); i++) {
+                //console.log("Upload; " + this.props.files[i].path);
+                //FileActions.uploadFile.source.next(this.props.files[i]);
             }
-            file_.progress = 0;
-            file_.uploadPath = path_;
-            if( relPath_ ){
-                file_.relativePath = relPath_;
-            }
-            //FileActions.uploadFile.source.next(file_);
-        };
 
-
-        var readDir = function (entry, file, path) {
-            // Get folder contents
-            //var file = dataTransferItem.getAsFile();
-            var dirReader = entry.createReader();
-            dirReader.readEntries(function (entries) {
-
-                for (let j = 0; j < entries.length; j++) {
-                    var entry = entries[j];
-                    console.dir(entry);
-                    console.dir(entry.file);
-                    console.dir(entry.fullPath);
-                    const relPath = entry.fullPath;
-                    if (entry.isFile) {
-                        entry.file((f) => {
-                            processFile(f, path, relPath);
-                        });
-                    } else if (entry.isDirectory) {
-                        readDir(entry, file, path);
-                    }
-                }
-
-            });
-        };
-
-
-
-
-        if( e.dataTransfer ) {
-            var _items = e.dataTransfer.items;
-            for (var i = 0; i < _items.length; i++) {
-                const _path = this.props.path;
-                var dataTransferItem = _items[i];
-                var file = dataTransferItem.getAsFile();
-                var entry = dataTransferItem.webkitGetAsEntry();
-
-                if (entry.isFile) {
-                    processFile(file, _path)
-                } else if (entry.isDirectory) {
-                    readDir(entry, file, _path);
+            for (let file of this.props.files) {
+                if(file.status === "uploadReady") {
+                    //console.log("Upload; " + file);
+                    file.status = "uploading";
+                    FileActions.uploadFile.source.next(file);
                 }
             }
-        } else if( files ){
-            const _path = this.props.path;
-            for (const file of files) {
-                processFile(file, _path);
-            }
         }
-
-        console.log(_fileList.length +" Files are loaded");
-        this.setState({isReceiverOpen: false, files: _fileList});
-
-        this.startDelayedFileUploads(_fileList)
-    }
-
-    startDelayedFileUploads(files) {
-        setTimeout(function(){
-            for (const file of files) {
-                FileActions.uploadFile.source.next(file);
-            }
-        }, 1000);
     }
 
     render() {
         var classes = this.props.classes;
 
-        var completedFiles = this.state.files.filter(file_ => file_.progress === 100).length;
-        var completedFilesPercentage = 100 * (completedFiles / this.state.files.length);
+        var completedFiles = this.props.files.filter(file_ => file_.progress === 100).length;
+        var completedFilesPercentage = 100 * (completedFiles / this.props.files.length);
 
 
         var filteredFiles =
-            this.state.files.filter(file_ => {
+            this.props.files.filter(file_ => {
                 if (this.state.filter === "completed") {
                     return file_.progress === 100;
                 } else if (this.state.filter === "uploading") {
@@ -278,104 +152,42 @@ class UploadDialog extends Component {
                 }
             });
 
-
-
-        let uploadDragBorderStyles = {marginLeft: '24px', marginRight: '24px', marginBottom: '24px', height: '100%', 'border': '3px #ccc dashed'};
-        if( this.state.isReceiverOpen ){
-            uploadDragBorderStyles.border = '5px #ccc dashed';
-        }
-
-
+        filteredFiles.sort((a,b)=>{
+            if (a.progress < b.progress) return 1;
+            if (a.progress > b.progress) return -1;
+            return 0;
+        });
 
         return (
             <Dialog
-                maxWidth="md"
-                fullScreen={true}
+                maxWidth="lg"
+                fullWidth={true}
                 open={this.props.open}
-                transition={SlideTransition}>
+                transition={SlideTransition}
+                classes={{ paper: classes.dialogPaper }}>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
                         <Typography type="title" color="inherit" className={classes.flex}>
-                            Import Files
+                            Adding Files
                         </Typography>
-                        <Button onClick={this.handleClose} disabled={completedFiles !== this.state.files.length} style={{'color':'white'}}>
+                        <Button onClick={this.handleClose} style={{'color':'white'}}>
                             close
                         </Button>
                     </Toolbar>
                 </AppBar>
 
-                <div style={{paddingTop: '24px', paddingBottom: '24px', width: '100%', display: 'flex'}}>
-                    <Button className="btn btn-default" onClick={this.handleSelectFileBtnClick}>
-                        <FormattedMessage
-                            id="selectFiles"
-                            defaultMessage="Select Files"
-                        />
-                    </Button>
-                    <Button className="btn btn-default" onClick={this.handleSelectFolderBtnClick}>
-                        <FormattedMessage
-                            id="selectFiles"
-                            defaultMessage="Select Folder"
-                        />
-                    </Button>
-
-                    <Select
-                        value={this.state.filter}
-                        onChange={this.handleFilterChange}
-                        defaultValue={"all"}
-                        input={<Input id="filterInput"/>}
-                        style={{textAlign: 'right', right: '24px', position: 'absolute', minWidth: '100px'}}
-                        autoWidth
-                    >
-                        <MenuItem value="all"><em>All</em></MenuItem>
-                        <MenuItem value="waiting">Waiting</MenuItem>
-                        <MenuItem value="uploading">Uploading</MenuItem>
-                        <MenuItem value="completed">Completed</MenuItem>
-                    </Select>
-                </div>
 
 
-                {this.state.files.length === 0 &&
-                    <Receiver
-                        style={uploadDragBorderStyles}
-                        isOpen={true}
-                        onDragEnter={this.handleOnDragEnter}
-                        onDragOver={this.handleOnDragOver}
-                        onDragLeave={this.handleOnDragLeave}
-                        onFileDrop={this.handleAddFile}>
-
-                        {this.state.files.length === 0 &&
-                        <Table style={{minHeight: '150px', maxHeight: '70%', minWidth: '50%', margin:'24px'}}>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell style={{padding: '0 8px 0 8px', border: '0px'}}>
-                                        <div onClick={this.handleSelectFileBtnClick} style={{margin: '40px', textAlign: 'center', fontSize:'1.4rem'}}>
-                                            Click or drag files to this area to upload
-                                            <div style={{margin: '16px'}}>
-                                                <FileUploadIcon style={{fontSize:'2rem'}}/>
-                                            </div>
-                                            <p style={{fontSize:'1rem'}}>
-                                                {this.props.path}
-                                            </p>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                        }
-                    </Receiver>
-                }
-
-                {this.state.files.length > 0  &&
-                    <div style={{paddingLeft:'24px', paddingRight:'24px', position:'absolute', top:'135px', right:'24px', left:'24px'}}>
-                        <Typography style={{'display': 'inline'}}>{completedFiles} / {this.state.files.length}</Typography>
+                {this.props.files.length > 0  &&
+                    <div style={{position:'absolute', top:'80px', right:'24px', left:'24px'}}>
+                        <Typography style={{'display': 'inline'}}>{completedFiles} / {this.props.files.length}</Typography>
                         <LinearProgress variant="determinate" value={Math.min(completedFilesPercentage, 100)}/>
                         <Typography>Files will be added to: <strong>{this.props.path}</strong></Typography>
                     </div>
                 }
 
-
-                {(this.state.files.length > 0 && filteredFiles.length > 0) &&
-                    <div  style={{marginLeft: '24px', marginRight: '24px', height: '100%', top:'180px', position: 'absolute', left:'16px', right:'16px'}}>
+                {(this.props.files.length > 0 && filteredFiles.length > 0) &&
+                    <div  style={{height: '100%',overflow: 'scroll', position: 'absolute',top:'148px', bottom: '24px', left:'16px', right:'16px'}}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -387,41 +199,33 @@ class UploadDialog extends Component {
                         </TableHead>
                         <TableBody>
                             {filteredFiles.map(file_ => {
-                                return (
-                                    <TableRow key={file_.id}>
-                                        <TableCell style={{padding: '0 8px 0 8px'}}>
-                                            {file_.progress < 100 ?
-                                                <CircularProgress size={24}/>
-                                                :<CheckIcon color="primary"/>
-                                            }
-                                        </TableCell>
-                                        <TableCell style={{padding: '0 8px 0 8px'}}>
-                                            <Typography>{file_.name}</Typography>
-                                            <Typography>{file_.webkitRelativePath}  {file_.error}</Typography>
-                                        </TableCell>
-                                        <TableCell style={{padding: '0 8px 0 8px'}} numeric>{filesize(file_.size, {base: 10})}</TableCell>
-                                        <TableCell style={{padding: '0 8px 0 8px'}} numeric>
-                                            {Math.round(file_.progress)}%
-                                        </TableCell>
-                                    </TableRow>
-                                );
+                                if( file_.progress < 100 ) {
+                                    return (
+                                        <TableRow key={file_.id}>
+                                            <TableCell style={{padding: '0 8px 0 8px'}}>
+                                                {file_.progress < 100 ?
+                                                    <CircularProgress size={24}/>
+                                                    : <CheckIcon color="primary"/>
+                                                }
+                                            </TableCell>
+                                            <TableCell style={{padding: '0 8px 0 8px'}}>
+                                                <Typography>{file_.name}</Typography>
+                                                <Typography
+                                                    variant="caption">{file_.relativePath} {file_.error}</Typography>
+                                            </TableCell>
+                                            <TableCell style={{padding: '0 8px 0 8px'}}
+                                                       numeric>{filesize(file_.size, {base: 10})}</TableCell>
+                                            <TableCell style={{padding: '0 8px 0 8px'}} numeric>
+                                                {Math.round(file_.progress)}%
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                }
                             })}
                         </TableBody>
                     </Table>
                     </div>
                 }
-
-
-
-                <input type="file"
-                       ref="fileInputField"
-                       multiple
-                       style={{'display': 'none'}}
-                       onChange={this.handleFileChange}/>
-                <input type="file"
-                       ref="folderInputField"
-                       style={{'display': 'none'}}
-                       onChange={this.handleFolderChange}/>
 
 
             </Dialog>

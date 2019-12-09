@@ -24,7 +24,7 @@ class GetFilesAndFoldersService {
      */
     getFilesAndFolders(path_)
     {
-        console.log("loading files & folders: " +path_);
+        //console.log("loading files & folders: " +path_);
 
         const baseUrl = AppSettings.baseHost.getValue();
 

@@ -23,9 +23,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import FileListTableHead from './FileListTableHead';
 import AppActions from '../../library/actions/AppActions';
-import fileActions from '../../actions/FileActions';
+import FileActions from '../../actions/FileActions';
 import LoadingButton from '../../library/loadingButton/LoadingButton';
-//import VirtualizedTable from "../virtualizedTable/VirtualizedTable";
 
 const styleSheet = (theme) => ({
     main:{
@@ -90,7 +89,7 @@ class FileList extends Component{
 
 
 
-        fileActions.getFileAndFolders.sink.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
+        FileActions.getFileAndFolders.sink.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
 
             var sortBy = this.state.orderBy;
             var sortedFiles = data_.sort((a, b) => {
@@ -115,7 +114,7 @@ class FileList extends Component{
 
 
         //trigger file load
-        fileActions.getFileAndFolders.source.next(this.props.path);
+        FileActions.getFileAndFolders.source.next(this.props.path);
     }
 
     componentWillUnmount(){
@@ -123,8 +122,10 @@ class FileList extends Component{
     }
 
     componentWillReceiveProps(newProps){
-        this.props = newProps;
-        fileActions.getFileAndFolders.source.next(this.props.path);
+        if( this.props.path !== newProps.path ) {
+            this.props = newProps;
+            FileActions.getFileAndFolders.source.next(this.props.path);
+        }
     }
 
 
@@ -239,10 +240,10 @@ class FileList extends Component{
     }
 
     handleFileDeleteOk(){
-        fileActions.deleteFileOrFolder.source.next(this.state.pendingFileToDelete);
+        FileActions.deleteFileOrFolder.source.next(this.state.pendingFileToDelete);
 
         var _fileToDelete = this.state.pendingFileToDelete;
-        fileActions.deleteFileOrFolder.sink.subscribe(()=>{
+        FileActions.deleteFileOrFolder.sink.subscribe(()=>{
             if( this.props.onDelete){
                 this.props.onDelete(_fileToDelete);
             }
@@ -252,9 +253,9 @@ class FileList extends Component{
     }
 
     handleFolderDeleteOk(path_){
-        fileActions.deleteFileOrFolder.source.next(this.state.pendingFolderToDelete);
+        FileActions.deleteFileOrFolder.source.next(this.state.pendingFolderToDelete);
 
-        fileActions.deleteFileOrFolder.sink.subscribe(()=>{
+        FileActions.deleteFileOrFolder.sink.subscribe(()=>{
             if( this.props.onDelete){
                 this.props.onDelete(this.state.pendingFolderToDelete);
             }
@@ -367,32 +368,6 @@ class FileList extends Component{
             </Paper>
         );
     }
-
-
-
-
-    //TODO: Work in progress
-    /**
-    renderVirtualTable() {
-
-        const columns = [
-            {width: 300, label: 'Name', dataKey: 'name'},
-            {width: 150, label: 'Created', dataKey: 'jcr:created'},
-            {width: 150, label: 'Actions', actions: ['delete', 'download']}
-
-        ];
-
-        return (
-            <Paper style={{ height: '100%', width: '100%' }}>
-                <VirtualizedTable
-                    rowCount={this.state.files.length}
-                    rowGetter={({ index }) => this.state.files[index]}
-                    columns={columns}
-                />
-            </Paper>
-        )
-    }
-     **/
 
 }
 
