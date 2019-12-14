@@ -1,8 +1,8 @@
 package com.familydam.repository.config;
 
 import com.familydam.repository.models.AdminUser;
-import com.github.javakeyring.BackendNotSupportedException;
-import com.github.javakeyring.Keyring;
+import net.east301.keyring.BackendNotSupportedException;
+import net.east301.keyring.Keyring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

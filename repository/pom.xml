@@ -232,18 +232,17 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--
         <dependency>
             <groupId>com.github.xafero</groupId>
             <artifactId>java-keyring</artifactId>
             <version>master</version>
         </dependency>
-        -->
+        <!--
         <dependency>
             <groupId>com.github.javakeyring</groupId>
             <artifactId>java-keyring</artifactId>
             <version>LATEST</version>
-        </dependency>
+        </dependency>-->
 
 
 

@@ -115,7 +115,7 @@ class PhotoGroup extends Component {
 
         var link = document.createElement('a');
         document.body.appendChild(link);
-        link.href = "http://localhost:9000" + path_;
+        link.href = path_;
         link.download = name_;
         link.click();
 
