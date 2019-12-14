@@ -2,13 +2,18 @@ sling
 tools
 build
 target
+_test-assets
 .sass-cache
 .build-app
 build-binary
 bower_components
 node_modules
+familydam-repo
+test-repo
 *.iml
 *.idea
 package-lock.json
 .classpath
+.DS_Store
+
 

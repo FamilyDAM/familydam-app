@@ -1,9 +1,0 @@
-{
-  "jcr:primaryType": "sling:OsgiConfig",
-  "auth.annonymous":B"true",
-  "auth.http":"enabled",
-  "auth.http.realm":"FamilyDAM",
-  "sling.auth.requirements": [
-    "-/"
-  ]
-}

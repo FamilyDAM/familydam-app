@@ -1,0 +1,36 @@
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Repository Browser</title>
+</head>
+<body>
+Repository Browser
+<table>
+    <thead>
+    <tr>
+        <td><a th:href="@{/app/browser.html(path=${parent})}" th:text="..."/></td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="node: ${nodes}">
+        <td><a th:href="@{/app/browser.html(path=${node.path})}" th:text="${node.name}"/></td>
+    </tr>
+    </tbody>
+</table>
+
+
+<br/><br/>
+<div>
+    <table border="0" cellpadding="4">
+        <thead th:each="map : ${properties}" >
+            <tr th:each="mapEntry : ${map}">
+                <td th:text="${mapEntry.key}"></td>
+                <td>=</td>
+                <td th:text="${mapEntry.value}"></td>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+</body>
+</html>
