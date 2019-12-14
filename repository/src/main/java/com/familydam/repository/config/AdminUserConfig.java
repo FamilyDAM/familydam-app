@@ -1,9 +1,8 @@
 package com.familydam.repository.config;
 
 import com.familydam.repository.models.AdminUser;
-import net.east301.keyring.BackendNotSupportedException;
-import net.east301.keyring.Keyring;
-import net.east301.keyring.PasswordRetrievalException;
+import com.github.javakeyring.BackendNotSupportedException;
+import com.github.javakeyring.Keyring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import javax.jcr.RepositoryException;
-import java.io.File;
-import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Configuration
@@ -22,7 +20,7 @@ public class AdminUserConfig
     Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
 
     @Value("${familydam.home}")
-    String HOME = "./fd-repo";
+    String HOME = "./familydam-repo";
 
     @Value("${spring.security.user.name}")
     String adminUserName;
@@ -32,20 +30,26 @@ public class AdminUserConfig
 
 
     @Bean
-    public AdminUser adminCredentials(Keyring keyring) throws RepositoryException {
+    public AdminUser adminCredentials(Optional<Keyring> keyring) throws RepositoryException {
 
         // Retrieve password from key store
         try {
-            String password = keyring.getPassword("FamilyDAM", adminUserName);
-            AdminUser adminUser = new AdminUser(adminUserName, password);
-            return adminUser;
+            if( keyring.isPresent() ) {
+                String password = keyring.get().getPassword("FamilyDAM", adminUserName);
+                AdminUser adminUser = new AdminUser(adminUserName, password);
+                return adminUser;
+            }else{
+                log.warn("Unable to access or initialize Keyring on this OS, using unsecure u/p instead");
+            }
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
-            throw new RepositoryException("Error Setting up User nin Keyring");
+            //throw new RepositoryException("Error Setting up User nin Keyring");
         }
 
-
+        AdminUser adminUser = new AdminUser(adminUserName, StringUtils.isEmpty(adminUserPassword)?adminUserName:adminUserPassword);
+        return adminUser;
     }
+
 
 
     @Bean
@@ -65,26 +69,30 @@ public class AdminUserConfig
         try {
             keyring = Keyring.create();
         } catch (BackendNotSupportedException ex) {
-            log.error(ex.getMessage(), ex);
-            throw new RepositoryException("Error Setting up User Credentials - Creating Keyring");
+            return null;
+            //log.error(ex.getMessage(), ex);
+            //throw new RepositoryException("Error Setting up User Credentials - Creating Keyring");
         }
 
         // some backend directory handles a file to store password to disks.
         // in this case, we must set path to key store file by Keyring.setKeyStorePath
         // before using Keyring.getPassword and Keyring.getPassword.
+        /** not supported in new lib, was supported in xafero dependency.
         if (keyring.isKeyStorePathRequired()) {
             try {
-                File dir = new File(HOME +"/config");
-                if( !dir.exists()){
+                File dir = new File(HOME + "/config");
+                if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                File keyStoreFile = File.createTempFile("keystore", ".keystore", dir);
+                File keyStoreFile = new File(dir.getPath() + "/familydam.keystore");
                 keyring.setKeyStorePath(keyStoreFile.getPath());
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 log.error(ex.getMessage(), ex);
                 throw new RepositoryException("Error Setting up User Credentials Path");
             }
-        }
+        }**/
+
+
 
         //
         // store password to key store
@@ -95,8 +103,11 @@ public class AdminUserConfig
         // LockException is thrown when keyring backend failed to lock key store file.
         try {
             String password = keyring.getPassword("FamilyDAM", adminUserName);
-            log.trace("Admin User Exists in Keyring");
-        }catch (PasswordRetrievalException pre){
+
+            if( password != null) {
+                log.trace("Admin User Exists in Keyring");
+            }
+        }catch (Exception pre){
             try {
                 //Set initial password
                 if (StringUtils.isEmpty(adminUserPassword)) {
@@ -108,9 +119,6 @@ public class AdminUserConfig
                 log.error(ex.getMessage(), ex);
                 throw new RepositoryException("Error Setting up User Keyring");
             }
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
-            throw new RepositoryException("Error Setting up User Keyring - Lock Exception");
         }
 
         if( keyring == null ){
@@ -119,4 +127,7 @@ public class AdminUserConfig
             return keyring;
         }
     }
+
+
+
 }
