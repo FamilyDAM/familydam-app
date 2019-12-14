@@ -104,6 +104,8 @@ public class RepositoryConfig {
 
     @Bean
     public FileStore fileStore(BlobStore blobStore) throws InvalidFileStoreVersionException, IOException {
+        log.info("Initialize Home Dir = " +new File(HOME).getAbsolutePath());
+
         FileStore fs = FileStoreBuilder
             .fileStoreBuilder(new File(HOME + "/repo"))
             .withIOLogging(LoggerFactory.getLogger(IOTraceLogWriter.class))
