@@ -59,6 +59,7 @@ public class RepositoryConfig {
     private Environment environment;
 
 
+
     @Autowired
     public RepositoryConfig(Environment environment) {
 
@@ -157,13 +158,14 @@ public class RepositoryConfig {
     @Bean
     public Repository Repository(Jcr jcr, AdminUser adminUser) throws RepositoryException, InvalidFileStoreVersionException, ParseException, IOException {
 
+        System.out.println("Checking admin user | " +adminUser.username +":" +adminUser.password);
         Repository repo = jcr.createRepository();
 
         //get admin user and change pwd
         checkAndSetAdminPassword(repo, adminUser);
 
         registerMixIns(repo, adminUser);
-        //registerPermissions(repo, new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
+        //registerPermissions(repo, adminUser   );
 
         return repo;
     }
@@ -174,19 +176,21 @@ public class RepositoryConfig {
      * We do not want to keep the default admin/admin login.
      * @param repo
      */
-    private void checkAndSetAdminPassword(Repository repo, AdminUser adminCredentials) throws RepositoryException {
+    private void checkAndSetAdminPassword(Repository repo, AdminUser adminUser) throws RepositoryException {
         try{
-            String adminId = adminCredentials.username; //environment.getProperty("oak.PARAM_ADMIN_ID");
+            System.out.println("checkAndSetAdminPassword | " +adminUser.username +":" +adminUser.password);
+            String adminId = adminUser.username; //environment.getProperty("oak.PARAM_ADMIN_ID");
             Session session = repo.login(new SimpleCredentials( adminId, adminId.toCharArray() ));
 
             Authorizable auth = ((JackrabbitSession)session).getUserManager().getAuthorizable(adminId);
-            ((User) auth).changePassword(adminCredentials.password, adminCredentials.username);
+            ((User) auth).changePassword(adminUser.password, adminUser.username);
             session.save();
             session.logout();
 
         }catch (LoginException ex){
             //ex.printStackTrace();
-            //password has been changed so admin/admin is no longer valid. This is what we want so skipN
+            System.out.println("default admin/admin login did not work, password has already been reset");
+            //password has been changed so admin/admin is no longer valid. This is what we want so skip the rest
         }
 
     }
@@ -203,6 +207,7 @@ public class RepositoryConfig {
 
     private void registerMixIns(Repository repo, AdminUser adminUser) throws RepositoryException, ParseException, IOException {
 
+        System.out.println("registerMixIns | " +adminUser.username +":" +adminUser.password);
         Credentials adminCredentials = new SimpleCredentials(adminUser.username, adminUser.password.toCharArray());
         Session session = repo.login(adminCredentials);
 

@@ -297,6 +297,7 @@
 
 
     <build>
+        <finalName>${project.name}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -448,12 +449,13 @@
                     </plugins>
                 </pluginManagement>
                 <plugins>
+                    <!--
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <configuration>
                             <descriptorRefs>
-                                <descriptor>tools/NAS/drobo/assembly.xml</descriptor>
+                                <descriptor>./nas/drobo/assembly.xml</descriptor>
                             </descriptorRefs>
                             <outputDirectory>target/nas-bundles/drobo</outputDirectory>
                             <finalName>FamilyDAM</finalName>
@@ -467,6 +469,7 @@
                             </execution>
                         </executions>
                     </plugin>
+                    -->
                 </plugins>
             </build>
         </profile>

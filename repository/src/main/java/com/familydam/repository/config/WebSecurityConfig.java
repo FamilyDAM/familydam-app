@@ -50,6 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("*.js").permitAll()
                 .antMatchers("*.*.js").permitAll()
+                .antMatchers("/webdav").permitAll()
                 .antMatchers("/precache-manifest.*.js").permitAll()
                 .antMatchers("/service-worker.js").permitAll()
                 .antMatchers("/api/v1/auth/user").permitAll()
