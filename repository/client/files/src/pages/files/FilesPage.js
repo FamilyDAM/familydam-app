@@ -10,7 +10,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
-import FileUpload from '@material-ui/icons/Folder';//todo change back to upload icon
+import FileUpload from '@material-ui/icons/Folder'; //todo change back to upload icon
 import FolderIcon from '@material-ui/icons/Folder';
 import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import FileScanner from '../../utilities/FileScanner';
@@ -23,12 +23,10 @@ import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
 import UploadDialog from '../../components/uploaddialog/UploadDialog';
 import NewFolderDialog from '../../components/newfolderdialog/NewFolderDialog';
 import fileActions from "../../actions/FileActions";
+import FileActions from "../../actions/FileActions";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-
-import FileActions from '../../actions/FileActions';
 import FileReceiver from "../../components/filereceiver/FileReceiver";
-import Dialog from "@material-ui/core/Dialog";
 
 const styleSheet = (theme) => ({
     progress: {
