@@ -22,8 +22,8 @@
     <groupId>com.familydam</groupId>
     <artifactId>desktop</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.1</version>
-    <name>FamilyDAM Desktop App</name>
+    <version>0.3.0</version>
+    <name>Client Desktop</name>
     <description>Maven module to build Electron Based Desktop</description>
 
     <properties>
@@ -38,7 +38,7 @@
     <parent>
         <groupId>com.familydam.repository</groupId>
         <artifactId>familydam</artifactId>
-        <version>0.3.1</version>
+        <version>0.3.0</version>
         <relativePath>..</relativePath>
     </parent>
 
