@@ -57,9 +57,6 @@ class GetUsersService {
                 }
             });
 
-
-
-
     }
 
 }

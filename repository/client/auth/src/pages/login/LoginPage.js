@@ -63,14 +63,14 @@ class Login extends Component {
             isMounted:true,
             users: undefined,
             activeUser: undefined,
-            offlineImage: "/images/hex-grid-tran.jpg",
+            offlineImage: "/images/hex-grid-blue_tran.jpg",
             backgrounds: [
-                "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933080/graphicstock/AS6_9771-180__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933187/graphicstock/lake-marina_GkuzZvKu__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933186/graphicstock/DSC_5803-777__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933181/graphicstock/pebble-stack_XJX4rE__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933172/graphicstock/fire-texture-15_GyOwSEFd__.jpg"
-                , "http://res.cloudinary.com/1158-labs/image/upload/c_scale,w_1024/v1453933171/graphicstock/lake_GyXLZDKu__.jpg"
+                "/images/AS6_9771-180__.jpg"
+                , "/images/lake-marina_GkuzZvKu__.jpg"
+                , "/images/DSC_5803-777__.jpg"
+                , "/images/pebble-stack_XJX4rE__.jpg"
+                , "/images/fire-texture-15_GyOwSEFd__.jpg"
+                , "/images/lake_GyXLZDKu__.jpg"
             ]
         };
 

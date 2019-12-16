@@ -32,27 +32,32 @@ public class AdminUserConfig
     @Bean
     public AdminUser adminCredentials(Optional<Keyring> keyring) throws RepositoryException {
 
-        // Retrieve password from key store
-        try {
-            if( keyring.isPresent() ) {
-                String password = keyring.get().getPassword("FamilyDAM", adminUserName);
-                AdminUser adminUser = new AdminUser(adminUserName, password);
-                return adminUser;
-            }else{
-                log.warn("Unable to access or initialize Keyring on this OS, using unsecure u/p instead");
-            }
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
-            //throw new RepositoryException("Error Setting up User nin Keyring");
-        }
-
         AdminUser adminUser = new AdminUser(adminUserName, StringUtils.isEmpty(adminUserPassword)?adminUserName:adminUserPassword);
         return adminUser;
+
+        /** comment out the use of a key ring for now.
+            // Retrieve password from key store
+            try {
+                if( keyring.isPresent() ) {
+                    String password = keyring.get().getPassword("FamilyDAM", adminUserName);
+                    AdminUser adminUser = new AdminUser(adminUserName, password);
+                    return adminUser;
+                }else{
+                    log.warn("Unable to access or initialize Keyring on this OS, using unsecure u/p instead");
+                }
+            } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
+                //throw new RepositoryException("Error Setting up User nin Keyring");
+            }
+
+            AdminUser adminUser = new AdminUser(adminUserName, StringUtils.isEmpty(adminUserPassword)?adminUserName:adminUserPassword);
+            return adminUser;
+         **/
     }
 
 
 
-    @Bean
+    //@Bean
     public Keyring keyring() throws RepositoryException {
 
         //
