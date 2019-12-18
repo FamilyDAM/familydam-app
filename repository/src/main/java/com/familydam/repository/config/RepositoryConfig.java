@@ -53,11 +53,6 @@ public class RepositoryConfig {
     @Value("${familydam.home}")
     String HOME = "./fd-repo";
 
-    @Value("${spring.servlet.multipart.location}")
-    String TMP_DIR;
-
-
-
     @Autowired
     private Environment environment;
 
@@ -109,11 +104,6 @@ public class RepositoryConfig {
     @Bean
     public FileStore fileStore(BlobStore blobStore) throws InvalidFileStoreVersionException, IOException {
         log.info("Initialize Home Dir = " +new File(HOME).getAbsolutePath());
-
-        if(!new File(TMP_DIR).exists()){
-            new File(TMP_DIR).mkdirs();
-        }
-
 
         FileStore fs = FileStoreBuilder
             .fileStoreBuilder(new File(HOME + "/repo"))
