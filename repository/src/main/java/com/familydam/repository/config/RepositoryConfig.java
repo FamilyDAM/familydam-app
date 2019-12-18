@@ -53,6 +53,9 @@ public class RepositoryConfig {
     @Value("${familydam.home}")
     String HOME = "./fd-repo";
 
+    @Value("${spring.servlet.multipart.location}")
+    String TMP_DIR;
+
 
 
     @Autowired
@@ -107,6 +110,11 @@ public class RepositoryConfig {
     public FileStore fileStore(BlobStore blobStore) throws InvalidFileStoreVersionException, IOException {
         log.info("Initialize Home Dir = " +new File(HOME).getAbsolutePath());
 
+        if(!new File(TMP_DIR).exists()){
+            new File(TMP_DIR).mkdirs();
+        }
+
+
         FileStore fs = FileStoreBuilder
             .fileStoreBuilder(new File(HOME + "/repo"))
             .withIOLogging(LoggerFactory.getLogger(IOTraceLogWriter.class))
@@ -160,7 +168,7 @@ public class RepositoryConfig {
     @Bean
     public Repository Repository(Jcr jcr, AdminUser adminUser) throws RepositoryException, InvalidFileStoreVersionException, ParseException, IOException {
 
-        System.out.println("Checking admin user | " +adminUser.username +":" +adminUser.password);
+        //System.out.println("Checking admin user | " +adminUser.username +":" +adminUser.password);
         Repository repo = jcr.createRepository();
 
         //get admin user and change pwd
@@ -180,7 +188,7 @@ public class RepositoryConfig {
      */
     private void checkAndSetAdminPassword(Repository repo, AdminUser adminUser) throws RepositoryException {
         try{
-            System.out.println("checkAndSetAdminPassword | " +adminUser.username +":" +adminUser.password);
+            //System.out.println("checkAndSetAdminPassword | " +adminUser.username +":" +adminUser.password);
             String adminId = adminUser.username; //environment.getProperty("oak.PARAM_ADMIN_ID");
             Session session = repo.login(new SimpleCredentials( adminId, adminId.toCharArray() ));
 
@@ -209,7 +217,7 @@ public class RepositoryConfig {
 
     private void registerMixIns(Repository repo, AdminUser adminUser) throws RepositoryException, ParseException, IOException {
 
-        System.out.println("registerMixIns | " +adminUser.username +":" +adminUser.password);
+        //System.out.println("registerMixIns | " +adminUser.username +":" +adminUser.password);
         Credentials adminCredentials = new SimpleCredentials(adminUser.username, adminUser.password.toCharArray());
         Session session = repo.login(adminCredentials);
 

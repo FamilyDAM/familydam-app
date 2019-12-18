@@ -23,7 +23,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Dialog from '@material-ui/core/Dialog';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
 //import {Receiver} from 'react-file-uploader';
 import FileActions from '../../actions/FileActions';
 //import FileUploadIcon from '@material-ui/icons/CloudUpload';
@@ -197,9 +197,9 @@ class UploadDialog extends Component {
                                     return (
                                         <TableRow key={file_.id}>
                                             <TableCell style={{padding: '0 8px 0 8px'}}>
-                                                {file_.progress < 100 ?
+                                                {file_.progress > 0.0 ?
                                                     <CircularProgress size={24}/>
-                                                    : <CheckIcon color="primary"/>
+                                                    : <CloseIcon color="primary"/>
                                                 }
                                             </TableCell>
                                             <TableCell style={{padding: '0 8px 0 8px'}}>

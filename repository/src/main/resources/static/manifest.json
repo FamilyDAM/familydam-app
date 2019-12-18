@@ -1,10 +1,10 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "FamilyDAM",
+  "name": "FamilyD.A.M (Digital Asset Manager)",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "192x192",
+      "sizes": "16x16",
       "type": "image/png"
     }
   ],

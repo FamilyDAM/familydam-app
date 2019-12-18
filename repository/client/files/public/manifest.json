@@ -1,14 +1,14 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "FamilyDAM-Files",
+  "name": "FamilyD.A.M (Digital Asset Manager) File Manager",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "192x192",
+      "sizes": "16x16",
       "type": "image/png"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": "/files/index.html",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"

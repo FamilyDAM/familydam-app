@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Repository;
+import java.io.IOException;
 
 //@Controller
 public class WebDavServer extends AbstractWebdavServlet
@@ -87,6 +88,12 @@ public class WebDavServer extends AbstractWebdavServlet
     @Override
     public void setResourceFactory(DavResourceFactory davResourceFactory) {
         this.davResourceFactory = davResourceFactory;
+    }
+
+
+    @Override
+    protected void doPut(WebdavRequest request, WebdavResponse response, DavResource resource) throws IOException, DavException {
+        super.doPut(request, response, resource);
     }
 
 }

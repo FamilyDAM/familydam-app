@@ -11,7 +11,6 @@ require('superagent-charset')(request);
 class UploadFileService {
 
     sink = undefined;
-    fileQueue = new Subject();
     /**
      * Setup action Listeners
      */
@@ -19,19 +18,11 @@ class UploadFileService {
 
         this.sink = sink_;
 
-        source_.subscribe((file_) => {
-            //debugger;
-            this.fileQueue.next(file_);
-            //this.uploadNextFile();
-
-            //console.log("done");
-        });
 
         const baseUrl = AppSettings.baseHost.getValue();
 
-        this.fileQueue
-            //.take(3)
-            .flatMap(file_ => {
+        source_
+            .mergeMap(file_ => {
                 if( Array.isArray(file_) ){
                     for (var i = 0; i < file_.length; i++) {
                         var file = file_[i];
@@ -40,10 +31,8 @@ class UploadFileService {
                 }else {
                     return this.uploadNextFile(baseUrl, file_);
                 }
-            }, null, 3)
-            .subscribe(val_ => {
-                //debugger;
-            });
+            }, 3)
+            .subscribe(console.debug);
     }
 
 
@@ -55,27 +44,29 @@ class UploadFileService {
         {
             //console.log("else clause, upload");
             //debugger;
-            return Observable.of(file).flatMap(req => new Promise((resolve, reject) => {
-                return this.uploadFile(baseUrl, file)
-                    .then(result=>resolve(result))
-                    .catch(err => {
-                        //debugger;
-                        let retry = 1;
-                        if( file.retry ){
-                            retry=file.retry+1;
-                        }
-                        file.progress = 0;
-                        file.retry = retry;
-                        file.error = "Retrying request (" +retry +"/3)";
-                        return reject(err);
-                    });
-            })).retry(2).catch(err => {
-                //debugger;
-                //var _error = {'code': err.status, 'message': err.message};
-                file.error = err.status +": " +err.message;
-                file.progress = 0;
-                return Observable.of(err);
-            });
+            return Observable
+                .of(file)
+                .flatMap(req => new Promise((resolve, reject) => {
+                    return this.uploadFile(baseUrl, file)
+                        .then(result=>resolve(result))
+                        .catch(err => {
+                            //debugger;
+                            let retry = 1;
+                            if( file.retry ){
+                                retry=file.retry+1;
+                            }
+                            file.progress = 0;
+                            file.retry = retry;
+                            file.error = "Retrying request (" +retry +"/3)";
+                            return reject(err);
+                        });
+                })).retry(2).catch(err => {
+                    //debugger;
+                    //var _error = {'code': err.status, 'message': err.message};
+                    file.error = err.status +": " +err.message;
+                    file.progress = 0;
+                    return Observable.of(err);
+                });
 
         }
 
