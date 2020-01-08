@@ -158,6 +158,7 @@ class FilesPage extends Component {
 
     }
 
+
     componentWillUnmount(){
         this.setState({isMounted:false});
     }
@@ -166,6 +167,19 @@ class FilesPage extends Component {
         this.props = newProps;
         this.validatePath();
     }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.path !== this.props.path
+            || nextProps.location !== this.props.location
+            || nextProps.user !== this.props.user
+            || nextState.path !== this.state.path
+            || nextState.root !== this.state.root
+            || nextState.selectedFiles !== this.state.selectedFiles
+            || nextState.showUploadDialog !== this.state.showUploadDialog
+            || nextState.showNewFolderDialog !== this.state.showNewFolderDialog
+        );
+    }
+
 
 
     validatePath() {

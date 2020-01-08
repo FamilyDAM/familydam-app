@@ -69,6 +69,12 @@ class AppHeader extends Component {
         this.handleLogout = this.handleLogout.bind(this);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.onToggle !== this.props.onToggle
+                || nextProps.apps !== this.props.apps
+                || nextState.openMoreMenu !== this.state.openMoreMenu);
+    }
+
     handleOpenMoreMenu(event){
         this.setState({ openMoreMenu: true, openMoreMenuAnchorEl: event.currentTarget });
     }
@@ -95,11 +101,6 @@ class AppHeader extends Component {
         //UserActions.getUser.sink.next(next);
         AppActions.logout.source.next(true);
         window.location = "/";
-    }
-
-
-    render2() {
-        return(<div>header</div>)
     }
 
 

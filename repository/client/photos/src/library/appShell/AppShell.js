@@ -59,6 +59,12 @@ class AppShell extends Component {
         this.handleOpenMoreMenu = this.handleOpenMoreMenu.bind(this);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.open !== this.props.open
+            || nextProps.user !== this.props.user
+            || nextProps.children !== this.props.children);
+    }
+
 
     componentWillMount(){
         this.setState({"isMounted":true});

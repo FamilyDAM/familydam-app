@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import {Observable, Subject} from '@reactivex/rxjs';
+import {Observable} from '@reactivex/rxjs';
 
 import request from 'superagent';
 import AppSettings from '../../library/actions/AppSettings';
@@ -17,7 +17,6 @@ class UploadFileService {
     constructor(source_, sink_) {
 
         this.sink = sink_;
-
 
         const baseUrl = AppSettings.baseHost.getValue();
 

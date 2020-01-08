@@ -98,6 +98,12 @@ class Sidebar extends Component {
         this.handleNavClick = this.handleNavClick.bind(this);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.open !== this.props.open
+            || nextProps.user !== this.props.user
+            || nextProps.apps !== this.props.apps
+            || nextProps.secondaryApps !== this.props.secondaryApps);
+    }
 
 
     handleNavClick(path){
@@ -115,7 +121,6 @@ class Sidebar extends Component {
 
 
     findApp(slug, apps){
-
         if( apps ) {
             for (let app of apps) {
                 if (app.slug === slug) {
@@ -123,7 +128,6 @@ class Sidebar extends Component {
                 }
             }
         }
-
         return null;
     }
 

@@ -62,10 +62,16 @@ class FileListTableToolbar extends Component {
                 <div className={classes.actions} style={{width:'100px', marginRight:'8px'}}>
 
                     <IconButton aria-label="Delete">
-                        <DeleteIcon/>
+                        <DeleteIcon
+                            onChange={(event, newValue) => {
+                                alert('todo');
+                            }}/>
                     </IconButton>
                     <IconButton aria-label="Download">
-                        <FileDownloadIcon/>
+                        <FileDownloadIcon
+                            onChange={(event, newValue) => {
+                                alert('todo');
+                            }}/>
                     </IconButton>
 
                 </div>

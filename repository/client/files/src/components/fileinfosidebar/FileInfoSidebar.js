@@ -4,11 +4,12 @@ import {withStyles} from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
+import Rating from '@material-ui/lab/Rating';
 import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 
+import {TagPicker} from 'rsuite';
 
 import FileListTableToolbar from '../filelist/FileListTableToolbar';
 
@@ -161,14 +162,29 @@ const SingleImageView = (props, context) => (
 
             {props.fileNodes.length === 1 &&
                 <div className={props.classes.itemRating}>
-                    <Typography>TODO: ADD RATING</Typography>
+                    <Rating
+                        name="img-ratings"
+                        value={3}
+                        onChange={(event, newValue) => {
+                            alert('todo');
+                        }}
+                    />
                 </div>
             }
 
 
             {props.fileNodes.length === 1 &&
                 <div className={props.classes.itemKeywords}>
-                    <Typography>TODO: ADD Keywords</Typography>
+                    <TagPicker creatable
+                               data={[{label:'tag1', value:'tag1'}, {label:'tag2', value:'tag2'}]}
+                               style={{ width: 300 }}
+                               menuStyle={{width: 300}}
+                               onChange={(event, newValue) => {
+                                   alert('todo');
+                               }}
+                               onClean={(event, newValue) => {
+                                   alert('todo');
+                               }}/>
                 </div>
             }
 

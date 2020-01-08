@@ -27,6 +27,10 @@ class LoadingButton extends Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.label !== this.props.label);
+    }
+
     handleClick(e){
         console.log("loading button click");
         if( this.props.onClick ){

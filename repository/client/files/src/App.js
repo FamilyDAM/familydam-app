@@ -5,6 +5,9 @@ import {IntlProvider} from 'react-intl';
 import {withStyles} from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+// https://rsuitejs.com/
+import 'rsuite/dist/styles/rsuite-default.css';
+
 //views
 import FilesPage from './pages/files/FilesPage';
 

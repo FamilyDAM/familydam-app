@@ -129,6 +129,17 @@ class FileList extends Component{
     }
 
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.path !== this.props.path
+            || nextState.files  !== this.state.files
+            || nextState.order  !== this.state.order
+            || nextState.orderBy  !== this.state.orderBy
+            || nextState.showDeleteFolderDialog  !== this.state.showDeleteFolderDialog
+            || nextState.showDeleteFileDialog  !== this.state.showDeleteFileDialog
+        );
+    }
+
+
     handleKeyDown(e){
         //console.log("keydown=" +e.keyCode);
         switch (e.keyCode) {

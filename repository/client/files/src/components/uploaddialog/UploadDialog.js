@@ -216,6 +216,9 @@ class UploadDialog extends Component {
                                         </TableRow>
                                     );
                                 }
+                                else {
+                                    return "";
+                                }
                             })}
                         </TableBody>
                     </Table>

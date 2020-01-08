@@ -69,6 +69,7 @@ public class Content {
             return ResponseEntity.status(500).body(re.getMessage());
         }
 
+        // todo find workaround for '+' char: "/content/files/mike/Photos/alaska/kayden - garage sell 2019/smugmug/Flowers+"
         Node n = session.getNode(path);
         if( n == null ){
             return ResponseEntity.notFound().build();

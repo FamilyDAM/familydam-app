@@ -69,6 +69,11 @@ class AppHeader extends Component {
         this.handleLogout = this.handleLogout.bind(this);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.onToggle !== this.props.onToggle
+                || nextProps.apps !== this.props.apps);
+    }
+
     handleOpenMoreMenu(event){
         this.setState({ openMoreMenu: true, openMoreMenuAnchorEl: event.currentTarget });
     }
