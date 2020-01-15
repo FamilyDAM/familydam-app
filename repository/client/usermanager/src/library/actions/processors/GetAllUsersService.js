@@ -43,7 +43,7 @@ class GetAllUsersService {
             headers: headers
         })
         //parse json
-        .then((response) => response.json())
+        .then(async (response) => response.json())
         .then( (users) => {
             var list = [];
             for (var i = 0; i < users.length; i++) {
@@ -68,9 +68,13 @@ class GetAllUsersService {
                 window.location = "/";
             } else {
                 var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText||err.message};
-                this.sink.error(_error);
+                console.warn(_error);
+                //this.sink.error(_error);
                 //reload
-                UserActions.getAllUsers.source.next(true);
+                setTimeout(()=>{
+                    UserActions.getAllUsers.source.next(true);
+                }, 500);
+
             }
         });
 

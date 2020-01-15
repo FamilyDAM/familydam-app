@@ -8,6 +8,7 @@ import GetFileDataService from "./processors/GetFileDataService";
 import UploadFileService from "./processors/UploadFileService";
 import DeleteFileOrFolderService from "./processors/DeleteFileOrFolderService";
 import CreateFolderService from "./processors/CreateFolderService";
+import SetFilePropertyService from "./processors/SetFilePropertyService";
 
 class FileActions {
 
@@ -15,6 +16,7 @@ class FileActions {
     constructor() {
         this.getFilesAndFoldersService = new GetFilesAndFoldersService(this.getFileAndFolders.source, this.getFileAndFolders.sink);
         this.getFileDataService = new GetFileDataService(this.getFileData.source, this.getFileData.sink);
+        this.setFilePropertyService = new SetFilePropertyService(this.setFileProperty.source, this.setFileProperty.sink);
         this.uploadFileService = new UploadFileService(this.uploadFile.source, this.uploadFile.sink);
         this.deleteFileOrFolderService = new DeleteFileOrFolderService(this.deleteFileOrFolder.source, this.deleteFileOrFolder.sink);
         this.createFolderService = new CreateFolderService(this.createFolder.source, this.createFolder.sink);
@@ -29,6 +31,11 @@ class FileActions {
      * Get the file nodes for all files, using an array of paths
      */
     getFileData = {source:new Subject(), sink:new Subject()};
+
+    /**
+     * Get the file nodes for all files, using an array of paths
+     */
+    setFileProperty = {source:new Subject(), sink:new Subject()};
 
     /**
      * Upload a files

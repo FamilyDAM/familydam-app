@@ -62,7 +62,6 @@ class FileList extends Component{
 
         this.handleFileDelete = this.handleFileDelete.bind(this);
         this.handleFolderDelete = this.handleFolderDelete.bind(this);
-        this.handleFileDownload = this.handleFileDownload.bind(this);
         this.handleFolderDownload = this.handleFolderDownload.bind(this);
         this.handleCancelDialog = this.handleCancelDialog.bind(this);
         this.handleFileDeleteOk = this.handleFileDeleteOk.bind(this);
@@ -236,15 +235,6 @@ class FileList extends Component{
         return false;
     }
 
-    handleFileDownload(name_, path_){
-        var link=document.createElement('a');
-        document.body.appendChild(link);
-        link.href=path_ ;
-        link.download=name_;
-        link.click();
-
-        return false;
-    }
 
     handleFolderDownload(path_){
         return false;
@@ -320,7 +310,7 @@ class FileList extends Component{
                                                  file={node}
                                                  isSelected={isSelected}
                                                  onDelete={()=>this.handleFileDelete(node.path)}
-                                                 onDownload={this.handleFileDownload}
+                                                 onDownload={this.props.handleFileDownload}
                                                  onClick={(event, path_) => this.handleClick(event, path_)}
                                                  onKeyDown={(event, path_) => this.handleClick(event, path_)}
                                                  onNavigate={(path_) => AppActions.navigateTo.next(path_)}/>

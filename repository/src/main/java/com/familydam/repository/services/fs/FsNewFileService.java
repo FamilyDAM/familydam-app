@@ -58,6 +58,7 @@ public class FsNewFileService implements IRestService
             Node n = JcrUtils.putFile(destNode, cleanName(name), file.getContentType(), file.getInputStream());
             if( file.getContentType().startsWith("image") ){
                 n.addMixin(Constants.DAM_IMAGE);
+                n.addMixin(Constants.DAM_TAGGABLE);
             }
             n.addMixin(Constants.MIXIN_DAM_EXTENSIBLE);
 

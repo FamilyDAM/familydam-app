@@ -32,7 +32,7 @@ public class UserList {
         Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
 
         List<Map> users = userListService.listUsers(session, true);
-        System.out.println("Users: " +users.size());
+        //System.out.println("Users: " +users.size());
         return users;
     }
 }

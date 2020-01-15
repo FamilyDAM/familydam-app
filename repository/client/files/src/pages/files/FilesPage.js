@@ -241,6 +241,17 @@ class FilesPage extends Component {
 
 
 
+    handleFileDownload(name_, path_){
+        var link=document.createElement('a');
+        document.body.appendChild(link);
+        link.href=path_ ;
+        link.download=name_;
+        link.click();
+
+        return false;
+    }
+
+
     render() {
         //console.log("render:" +this.state.uploadFiles.length);
         var classes = this.props.classes;
@@ -309,6 +320,8 @@ class FilesPage extends Component {
                     <FileInfoSidebar
                         files={this.state.selectedFiles}
                         className={classes.fileGridSidebar}
+                        onDelete={this.handleAfterOnDelete}
+                        onDownload={this.handleFileDownload}
                         style={{display:this.state.selectedFiles.length>0?'block':'none'}}
                     />
 

@@ -2,54 +2,17 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
-import moment from 'moment';
-
-import Rating from '@material-ui/lab/Rating';
 import Paper from "@material-ui/core/Paper";
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-
-import {TagPicker} from 'rsuite';
 
 import FileListTableToolbar from '../filelist/FileListTableToolbar';
 
 import FileActions from '../../actions/FileActions';
-import AppSettings from '../../library/actions/AppSettings';
-
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import SingleImageView from "./SingleImageView";
+import MultiImageView from "./MultiImageView";
 
 const styleSheet = (theme) => ({
 
-    gridListRoot: {
-        margin: '24px',
-        display:'grid',
-        gridTemplateRows:'175px 25px 50px 3fr',
-        gridTemplateColumns:'16px auto 16px',
-        background: theme.palette.background.paper,
-        justifyContent: 'center'
-},
-    itemPreview: {
-        gridRow: '1',
-        gridColumn: '2',
-        justifyContent: 'center'
-    },
-    itemRating: {
-        gridRow: '2',
-        gridColumn: '2'
-    },
-    itemKeywords: {
-        gridRow: '3',
-        gridColumn: '2'
-    },
-    itemInfo: {
-        gridRow: '4',
-        gridColumn: '2'
-    },
+
     gridSingleItemInfo: {
 
     },
@@ -77,8 +40,9 @@ class FileInfoSidebar extends Component {
     }
 
     componentWillMount() {
-        this.setState({isMounted: true});
-        this.handleTabChange = this.handleTabChange.bind(this);
+        this.setState({isMounted: true, fileActions: FileActions});
+        this.handleRatingChange = this.handleRatingChange.bind(this);
+        this.handleTagChange = this.handleTagChange.bind(this);
 
         if( this.props.fileNodes ){  //used by Storyboard
             this.setState({"fileNodes": this.props.fileNodes});
@@ -102,8 +66,32 @@ class FileInfoSidebar extends Component {
         FileActions.getFileData.source.next(this.props.files);
     }
 
-    handleTabChange(event, newValue){
-        this.setState({'tabIndex':newValue});
+
+    handleRatingChange(event, newValue) {
+        //set value on current object
+        const nodes = this.state.fileNodes;
+        nodes[0]['dam:rating'] = newValue;
+        this.setState({"fileNodes": nodes});
+
+        //create message
+        const msg = {"path":this.props.files[0], "dam:rating":newValue};
+        FileActions.setFileProperty.source.next(msg)
+    }
+
+    handleTagChange( newValue) {
+        var values = newValue;
+        if( !Array.isArray(newValue) ) {
+            values = newValue.split(',');
+        }
+
+        //set value on current object
+        const nodes = this.state.fileNodes;
+        nodes[0]['dam:tags'] = values;
+        this.setState({"fileNodes": nodes});
+
+        //create message
+        const msg  = {"path":this.props.files[0], "dam:tags":values };
+        this.state.fileActions.setFileProperty.source.next(msg)
     }
 
     render() {
@@ -112,120 +100,27 @@ class FileInfoSidebar extends Component {
         return (
             <Paper style={this.props.style}>
                 <FileListTableToolbar
+                    onDownload={this.props.handleDownload}
                     files={this.props.files}/>
 
-                {(this.props.files.length===1) &&
+                {(this.state.fileNodes.length===1 && this.state.fileNodes[0]['jcr:mixinTypes'].indexOf('dam:image') > -1) &&
                     <SingleImageView
-                        handleTabChange={this.handleTabChange}
+                        node={this.state.fileNodes[0]}
                         tabIndex={this.state.tabIndex}
-                        fileNodes={this.state.fileNodes}
-                        classes={classes}/>
+                        handleTabChange={this.handleTabChange}
+                        handleRatingChange={this.handleRatingChange}
+                        handleTagChange={this.handleTagChange}/>
+                }
+
+                {(this.state.fileNodes.length > 1) &&
+                    <MultiImageView
+                        nodes={this.state.fileNodes}/>
                 }
 
             </Paper>
         )
     }
 }
-
-
-
-const SingleImageView = (props, context) => (
-
-        <div className={props.classes.gridListRoot}>
-
-            <div className={props.classes.itemPreview} >
-                {props.fileNodes.length === 1 &&
-                    <div style={{height: '100%', maxWidth: '100%', textAlign: 'center'}}>
-                        {props.fileNodes.map(file => (
-                            <img src={AppSettings.baseHost.getValue() + (file['path'])}
-                                 alt={file['path']}
-                                 style={{maxHeight: '100%', maxWidth: '100%', alignSelf: 'center'}}/>
-
-                        ))}
-                    </div>
-                }
-
-                {props.fileNodes.length > 1 &&
-                    <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', overflow: 'hidden'}}>
-                        <GridList cellHeight={160} style={{width: '100%', height: '100%'}} cols={3}>
-                            {props.fileNodes.map(file => (
-                                <GridListTile key={file['path']} cols={file.cols || 1}>
-                                    <img src={AppSettings.baseHost.getValue() + file['path']}
-                                         alt={file['jcr:path']}
-                                         style={{height: '100%', maxWidth: '100%', alignSelf: 'center'}}/>
-                                </GridListTile>
-                            ))}
-                        </GridList>
-                    </div>
-                }
-            </div>
-
-            {props.fileNodes.length === 1 &&
-                <div className={props.classes.itemRating}>
-                    <Rating
-                        name="img-ratings"
-                        value={3}
-                        onChange={(event, newValue) => {
-                            alert('todo');
-                        }}
-                    />
-                </div>
-            }
-
-
-            {props.fileNodes.length === 1 &&
-                <div className={props.classes.itemKeywords}>
-                    <TagPicker creatable
-                               data={[{label:'tag1', value:'tag1'}, {label:'tag2', value:'tag2'}]}
-                               style={{ width: 300 }}
-                               menuStyle={{width: 300}}
-                               onChange={(event, newValue) => {
-                                   alert('todo');
-                               }}
-                               onClean={(event, newValue) => {
-                                   alert('todo');
-                               }}/>
-                </div>
-            }
-
-            {props.fileNodes.length === 1 &&
-                <div className={props.classes.itemInfo}>
-                    <Tabs value="Details" indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={props.handleTabChange}>
-                        <Tab label="Details" />
-                        <Tab label="Versions" disabled />
-                    </Tabs>
-
-                    {props.tabIndex === 0 &&
-                    <div>
-                        <Table>
-                            <TableBody>
-                                <TableRow style={{padding:'8px'}}>
-                                    <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Type</TableCell>
-                                    <TableCell align="left">{props.fileNodes[0]['jcr:content']['jcr:mimeType']}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Resolution</TableCell>
-                                    <TableCell align="left">{props.fileNodes[0]['width']} x {props.fileNodes[0]['height']}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Created</TableCell>
-                                    <TableCell align="left">{moment(props.fileNodes[0]['dam:date.created']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Modified</TableCell>
-                                    <TableCell align="left">{moment(props.fileNodes[0]['jcr:lastModified']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </div>
-                    }
-                    {props.tabIndex === 1 && <div>Versions Panel</div>}
-                </div>
-            }
-
-        </div>
-
-);
 
 
 

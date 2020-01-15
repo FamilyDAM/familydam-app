@@ -62,7 +62,10 @@ class AppShell extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         return (nextProps.open !== this.props.open
             || nextProps.user !== this.props.user
-            || nextProps.children !== this.props.children);
+            || nextProps.children !== this.props.children
+            || nextState.isOpen !== this.state.isOpen
+            || nextState.primaryApps !== this.state.primaryApps
+            || nextState.secondaryApps !== this.state.secondaryApps );
     }
 
 

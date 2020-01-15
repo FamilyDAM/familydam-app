@@ -48,6 +48,14 @@ class GetFilesAndFoldersService {
                         if (res.body) {
                             _nodes = res.body.filter(f => !f.name.toString().startsWith("."));
                         }
+
+                        //fix arrays that serialize as a csv list in an array of 1
+                        for (const node of _nodes) {
+                            if( node['dam:tags'] && node['dam:tags'].length == 1){
+                                node['dam:tags'] = node['dam:tags'][0].split(',');
+                            }
+                        }
+
                         this.sink.next(_nodes);
 
                     } else {

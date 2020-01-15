@@ -12,7 +12,7 @@
     "react-dom": "^16.5.2",
     "react-intl": "^2.4.0",
     "react-router-dom": "~5.0.1",
-    "react-scripts": "~3.0.1",
+    "react-scripts": "3.3.0",
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2",
     "schema-utils": "~2.0.1",
@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "npm run copy:library && react-scripts start",
-    "build": "npm run copy:library && set NODE_ENV=development && react-scripts build ",
+    "build": "npm run copy:library && set NODE_ENV=development && react-scripts build --profile",
     "postbuild": "npm run copy:build",
     "test": "react-scripts test --env=jsdom",
     "copy:library": "cp -rv ../_library/** src/library",

@@ -71,7 +71,8 @@ class AppHeader extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         return (nextProps.onToggle !== this.props.onToggle
-                || nextProps.apps !== this.props.apps);
+                || nextProps.apps !== this.props.apps
+                || nextState.openMoreMenu !== this.state.openMoreMenu);
     }
 
     handleOpenMoreMenu(event){
@@ -100,11 +101,6 @@ class AppHeader extends Component {
         //UserActions.getUser.sink.next(next);
         AppActions.logout.source.next(true);
         window.location = "/";
-    }
-
-
-    render2() {
-        return(<div>header</div>)
     }
 
 

@@ -3,6 +3,7 @@ package com.familydam.repository.api.content;
 import com.familydam.repository.config.security.JcrAuthToken;
 import com.familydam.repository.models.AdminUser;
 import com.familydam.repository.services.fs.*;
+import com.familydam.repository.services.node.NodeUpdatePropertyService;
 import com.familydam.repository.utils.NodeToMapUtil;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.slf4j.Logger;
@@ -48,6 +49,9 @@ public class Content {
 
     @Autowired
     FsNewFileService fsNewFileService;
+
+    @Autowired
+    NodeUpdatePropertyService nodeUpdatePropertyService;
 
     @Autowired
     FsNewFolderService fsNewFolderService;
@@ -126,7 +130,14 @@ public class Content {
     }
 
 
-
+    /**
+     * Modify the whole object
+     * @param principal
+     * @param request
+     * @return
+     * @throws RepositoryException
+     * @throws IOException
+     */
     @PostMapping(value = {"/content/**"})
     public ResponseEntity postEntry(Principal principal, StandardMultipartHttpServletRequest request) throws RepositoryException, IOException
     {
@@ -139,7 +150,29 @@ public class Content {
         } else {
             return fsNewFileService.createFile(request, session);
         }
+    }
 
+    /**
+     * update properties on object
+     * @param principal
+     * @param request
+     * @return
+     * @throws RepositoryException
+     * @throws IOException
+     */
+    @PutMapping(value = {"/content/**"})
+    public ResponseEntity putEntry(Principal principal, StandardMultipartHttpServletRequest request) throws RepositoryException, IOException
+    {
+        Session session = repo.login( ((JcrAuthToken)principal).getCredentials() );
+        //Session session = repo.login( new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()) );
+
+        if( !session.hasPermission(request.getRequestURI(), Session.ACTION_SET_PROPERTY) ){
+            return ResponseEntity.status(403).build();
+        }
+
+        nodeUpdatePropertyService.updateNode(session, request.getRequestURI(), request.getParameterMap());
+
+        return ResponseEntity.ok().build();
     }
 
 

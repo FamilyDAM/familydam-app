@@ -69,8 +69,8 @@ class FileListTableToolbar extends Component {
                     </IconButton>
                     <IconButton aria-label="Download">
                         <FileDownloadIcon
-                            onChange={(event, newValue) => {
-                                alert('todo');
+                            onClixk={(event, newValue) => {
+                                this.props.handleDownload(files[0].name, files[0].path);
                             }}/>
                     </IconButton>
 

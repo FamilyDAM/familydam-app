@@ -18,6 +18,7 @@ public class Constants {
     public static final String EXIF = "dam:exif";
     public static final String RENDITIONS = "dam:renditions";
     public static final String DAM_IMAGE = "dam:image";
+    public static final String DAM_TAGGABLE = "dam:taggable";
     public static final String DAM_MUSIC = "dam:music";
     public static final String DAM_VIDEO = "dam:video";
     public static final String DAM_DATECREATED = "dam:date.created";

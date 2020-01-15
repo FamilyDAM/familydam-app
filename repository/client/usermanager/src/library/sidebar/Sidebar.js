@@ -121,7 +121,6 @@ class Sidebar extends Component {
 
 
     findApp(slug, apps){
-
         if( apps ) {
             for (let app of apps) {
                 if (app.slug === slug) {
@@ -129,7 +128,6 @@ class Sidebar extends Component {
                 }
             }
         }
-
         return null;
     }
 

@@ -43,6 +43,7 @@
 [dam:taggable] mixin
  - dam:tags (STRING) multiple
  - dam:people (STRING) multiple
+ - dam:rating (LONG)
 
 
 //Node Specific mixins

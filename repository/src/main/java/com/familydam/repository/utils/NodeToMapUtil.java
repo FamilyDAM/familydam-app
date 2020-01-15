@@ -69,7 +69,17 @@ public class NodeToMapUtil
                 } else if (PropertyType.LONG == property.getType()) {
                     obj.put(property.getName(), property.getLong());
                 } else if (PropertyType.STRING == property.getType()) {
-                    obj.put(property.getName(), property.getString());
+                    if( property.isMultiple() ){
+                        Value[] values = property.getValues();
+                        List valueList = new ArrayList();
+                        for (int i = 0; i < values.length; i++) {
+                            Value v = values[i];
+                            valueList.add(v.getString());
+                        }
+                        obj.put(property.getName(), valueList);
+                    }else {
+                        obj.put(property.getName(), property.getString());
+                    }
                 } else if (PropertyType.DATE == property.getType()) {
                     obj.put(property.getName(), property.getDate());
                 } else if (PropertyType.DECIMAL == property.getType()) {

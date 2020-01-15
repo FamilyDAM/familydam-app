@@ -17,7 +17,7 @@
     "react-intl": "^2.4.0",
     "react-router": "^4.3.1",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "3.3.0",
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2",
     "superagent": "~5.1.0",
@@ -38,7 +38,7 @@
   },
   "scripts": {
     "start": "npm run copy:library && react-scripts start",
-    "build": "set NODE_ENV=development && npm run copy:library && react-scripts build && npm run copy:build",
+    "build": "set NODE_ENV=development && npm run copy:library && react-scripts build --profile && npm run copy:build",
     "test": "react-scripts test --env=jsdom",
     "copy:library": "cp -rv ../_library/** src/library",
     "copy:build": "rm -f ../../src/main/resources/static/home/*.* && rm -f ../../src/main/resources/static/home/static/**/*.* && cp -rv build/** ../../src/main/resources/static/home",
