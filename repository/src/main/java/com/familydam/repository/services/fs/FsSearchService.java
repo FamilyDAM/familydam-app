@@ -37,6 +37,24 @@ public class FsSearchService
         }
 
         return results; //.stream().sorted((Comparator<Object>) (o1, o2) -> ((Map)o1).get(orderField_).toString().compareTo(((Map)o2).get(orderField_).toString())).collect(Collectors.toList());
+
+
+        /** try this instead
+         *return Files.fileTreeTraverser().postOrderTraversal(new File(path))
+         *             .filter(new Predicate<File>() {
+         *                 @Override
+         *                 public boolean apply(File input) {
+         *                     return input.isFile() &&
+         *                         !input.getParent().equals(path);
+         *                 }
+         *             })
+         *             .transform(new Function<File, DataRecord>() {
+         *                 @Override
+         *                 public DataRecord apply(File input) {
+         *                     return new FileDataRecord(store, new DataIdentifier(input.getName()), input);
+         *                 }
+         *             }).iterator();
+         */
     }
 
 }

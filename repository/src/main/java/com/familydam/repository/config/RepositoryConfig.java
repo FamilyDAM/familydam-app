@@ -12,6 +12,7 @@ import org.apache.jackrabbit.core.data.FileDataStore;
 import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.oak.jcr.Jcr;
 import org.apache.jackrabbit.oak.plugins.blob.datastore.DataStoreBlobStore;
+import org.apache.jackrabbit.oak.plugins.blob.datastore.OakFileDataStore;
 import org.apache.jackrabbit.oak.security.internal.SecurityProviderBuilder;
 import org.apache.jackrabbit.oak.segment.SegmentNodeStore;
 import org.apache.jackrabbit.oak.segment.SegmentNodeStoreBuilders;
@@ -93,7 +94,8 @@ public class RepositoryConfig {
 
     @Bean
     public BlobStore fileDataStore() {
-        FileDataStore fds = new FileDataStore();
+        //FileDataStore fds = new FileDataStore();
+        FileDataStore fds = new OakFileDataStore();
         fds.setMinRecordLength(100);
         fds.setPath(HOME + "/repo/files");
         fds.init(HOME + "/repo/files");
