@@ -22,7 +22,7 @@
     <groupId>com.familydam.repository</groupId>
     <artifactId>familydam</artifactId>
     <packaging>pom</packaging>
-    <version>0.3.1</version>
+    <version>0.4.0</version>
     <name>FamilyDAM App</name>
     <description>Parent POM for FamilyDAM Applications</description>
 

@@ -8,6 +8,7 @@
                            __/ |                                 \_\            __/ |                                                                     __/ |           /_/
                           |___/                                                |___/                                                                     |___/
 ---------------------------------------------
-:: ${application.name} (v${application.version}) ::
+:: ${application.name} (v${application.version}) ${server.port} ::
 ${AnsiColor.BLUE}:: http://www.familydam.com ${Ansi.DEFAULT}
+${AnsiColor.BLUE}:: http://localhost:9000 ${Ansi.DEFAULT}
 ---------------------------------------------

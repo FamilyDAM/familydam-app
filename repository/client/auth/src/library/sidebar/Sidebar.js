@@ -177,7 +177,7 @@ class Sidebar extends Component {
                                     <Avatar style={{marginRight:'8px'}}>
                                         <FolderIcon />
                                     </Avatar>
-                                    <ListItemText primary={item.label} secondary=""
+                                    <ListItemText primary={item.label} primaryTypographyProps={{type:"body2"}}
                                                   className={this.props.open?classes.openLabel:classes.closedLabel}/>
                                 </ListItem>
 

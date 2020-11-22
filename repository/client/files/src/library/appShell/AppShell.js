@@ -15,6 +15,7 @@ const styleSheet = (theme) => ({
         display: "grid",
         gridTemplateRows: "64px auto",
         gridTemplateColumns: "240px auto"
+
     },
     dashboardShellContainerClosed:{
         display: "grid",
@@ -29,6 +30,7 @@ const styleSheet = (theme) => ({
     },
 
     main:{
+        fontSize: '.5rem',
         background:'#eee'
     },
 
