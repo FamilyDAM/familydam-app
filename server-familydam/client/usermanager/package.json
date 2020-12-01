@@ -1,0 +1,24 @@
+{
+  "name": "usermanager",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "/usermanager/",
+  "scripts": {
+    "start": "npm run copy:library && react-scripts start",
+    "build": "npm run copy:library && set NODE_ENV=development && react-scripts build --profile",
+    "postbuild": "npm run copy:build",
+    "test": "react-scripts test --env=jsdom",
+    "copy:library": "cp -rv ../_library/** src/library",
+    "copy:build": "rm -fr ../../src/main/resources/static/usermanager/** && cp -rv build/** ../../src/main/resources/static/usermanager",
+    "translate": "NODE_ENV=production babel ./src >/dev/null",
+    "manage:translations": "node ./scripts/translationRunner.js",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

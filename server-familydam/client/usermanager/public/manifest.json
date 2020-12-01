@@ -1,0 +1,15 @@
+{
+  "short_name": "FamilyDAM-UserManager",
+  "name": "FamilyD.A.M (Digital Asset Manager) User Manager",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/usermanager/index.html",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

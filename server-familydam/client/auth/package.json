@@ -1,0 +1,51 @@
+{
+  "name": "auth",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "/",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "set NODE_ENV=development && npm run copy:library && react-scripts build --profile && npm run copy:build",
+    "test": "react-scripts test --env=jsdom",
+    "copy:library": "cp -rv ../_library/** src/library",
+    "copy:build": "rm -f ../../src/main/resources/static/*.* && cp -rv build/** ../../src/main/resources/static/",
+    "eject": "react-scripts eject",
+    "translate": "NODE_ENV=development babel ./src >/dev/null",
+    "manage:translations": "node ./scripts/translationRunner.js",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-react": "^7.12.7",
+    "@babel/preset-stage-2": "^7.8.3",
+    "aemsync": "^4.0.2",
+    "babel-loader": "^8.2.2"
+  },
+  "dependencies": {
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "ajv-keywords": "^3.5.2",
+    "classnames": "^2.2.6",
+    "clsx": "^1.1.1",
+    "filesize": "^6.1.0",
+    "jsDump": "^1.1.0",
+    "keycode": "^2.2.0",
+    "nodedump": "^0.0.8",
+    "react-addons-transition-group": "^15.6.2",
+    "react-dropzone": "^11.2.4",
+    "react-file-uploader": "^1.0.0",
+    "react-filepond": "^7.1.0",
+    "react-virtualized": "^9.22.2",
+    "recompose": "^0.30.0",
+    "rsuite": "^4.8.5",
+    "superagent-charset": "^1.2.0"
+  }
+}
