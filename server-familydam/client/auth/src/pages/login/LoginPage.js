@@ -4,6 +4,7 @@
 import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
+import { takeWhile } from 'rxjs/operators';
 
 import Clock from '../../components/clock/Clock';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -11,9 +12,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import LoginCards from '../../components/logincards/LoginCards';
 import SignupCard from '../../components/signupcard/SignupCard';
 
-import AuthActions from '../../actions/AuthActions';
-import UserActions from '../../library/actions/UserActions';
 import AppActions from '../../library/actions/AppActions';
+import LoginService from "../../services/LoginService";
+import GetAllUsersService from "../../library/actions/processors/GetAllUsersService.js";
 
 
 const styleSheet = (theme) => ({
@@ -61,6 +62,7 @@ class Login extends Component {
 
         this.state = {
             isMounted:true,
+            isLoading:true,
             users: undefined,
             activeUser: undefined,
             offlineImage: "/images/hex-grid-blue_tran.jpg",
@@ -79,22 +81,28 @@ class Login extends Component {
         this.handleCardSelection = this.handleCardSelection.bind(this);
     }
 
-    componentWillMount(){
-        this.setState({"isMounted":true, "isLoading": true});
 
-        UserActions.getAllUsers.sink.takeWhile(() => this.state.isMounted).subscribe(users_ => {
-            this.setState({"isLoading": false});
-            if (users_) {
-                this.setState({"users": users_});
-            }
+    componentWillMount(){
+        this.setState({"mounted":true});
+
+        //takeWhile(() => this.state.mounted).
+        GetAllUsersService.isLoading.subscribe(data => {
+            this.setState({"isLoading": data});
         });
 
+        //
+        GetAllUsersService.sink.takeWhile(() => this.state.mounted).subscribe(users_ => {
+            this.setState({"users": users_});
+        });
+
+        //force a logout on page load
         AppActions.logout.source.next(true);
-        UserActions.getAllUsers.source.next(true);
+        //load all users
+        GetAllUsersService.source.next(true);
     }
 
     componentWillUnmount() {
-        this.setState({"isMounted":false});
+        this.setState({"mounted":false});
     }
 
     handleCardSelection(user) {
@@ -112,13 +120,13 @@ class Login extends Component {
      */
     handleLogin(username_, password_)
     {
-        AuthActions.login.source.next({'username':username_, 'password':password_});
+        LoginService.source.next({'username':username_, 'password':password_});
 
-        AuthActions.login.sink.subscribe((data)=>{
-            console.log("AuthActions.login.sink: SUCCESS");
+        LoginService.sink.subscribe((data)=>{
+            console.log("LoginService.sink: SUCCESS");
             console.dir(data);
         }, (err)=>{
-            console.log("AuthActions.login.sink: ERROR");
+            console.log("LoginService.sink: ERROR");
             console.dir(err);
             window.alert(err.message);
         });

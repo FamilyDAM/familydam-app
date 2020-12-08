@@ -4,17 +4,17 @@
 import React, {Component} from "react";
 import {injectIntl, FormattedMessage} from "react-intl";
 import {withStyles} from "@material-ui/core/styles";
+import { takeWhile } from 'rxjs/operators';
 
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 
 import LoadingButton from '../../library/loadingButton/LoadingButton';
-import AuthActions from '../../actions/AuthActions';
-import UserActions from '../../library/actions/UserActions';
 //import AppActions from "../../actions/AppActions";
 
 import { GridContainer, GridItem } from "../../library/CssGrid";
-
+import CreateUserService from "../../services/CreateUserService";
+import GetAllUsersService from "../../library/actions/processors/GetAllUsersService.js";
 
 const styleSheet = (theme) => ({
     loginCardForm:{
@@ -42,7 +42,7 @@ class SignupCard extends Component {
             passwordError:'',
             confirmPasswordError:'',
             user: {
-                "firstName":"",
+                "name":"",
                 "lastName":"",
                 "email":"",
                 "password":"",
@@ -51,26 +51,22 @@ class SignupCard extends Component {
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
 
-
-    componentWillUnmount(){
-        if( this.createUserSubscription !== undefined ){
-            //this.createUserSubscription.dispose();
-        }
     }
 
 
     componentDidMount(){
-        /**
-        $(".loginCardForm").bind("keypress",(e)=>{
-            if(e.keyCode === 13) {
-                this.handleSubmit(e);
-                //put button.click() here
-            }
-        });
-         **/
+        this.setState({"mounted":true});
+        //add listener
+        CreateUserService.isLoading.pipe(takeWhile(f => f==true)).subscribe( (data)=>{
+            this.setState({isLoading: data});
+        } )
     }
+
+    componentWillUnmount(){
+        this.setState({"mounted":false});
+    }
+
 
 
     clearValidationErrors(){
@@ -86,7 +82,7 @@ class SignupCard extends Component {
         this.clearValidationErrors();
 
         let isValid = true;
-        if(!this.state.firstName){
+        if(!this.state.name){
             isValid = false;
             this.setState({firstNameError: "First name is required"});
         }
@@ -101,6 +97,8 @@ class SignupCard extends Component {
 
         return isValid;
     }
+
+
     /**
      * Submit form, on success redirect to the dashboard.
      * @param event
@@ -108,6 +106,8 @@ class SignupCard extends Component {
     handleSubmit(event)
     {
         console.log("handleSubmit - create user");
+
+        //block double-click
         if( this.state.isLoading ) return;
 
         let isValid = this.isValidForm();
@@ -121,27 +121,27 @@ class SignupCard extends Component {
             this.setState({isLoading: true});
 
             var _user = {};
-            _user.username = this.state.firstName.toLowerCase();
+            _user.name = this.state.name;
+            _user.lastName = this.state.lastName;
+            _user.email = this.state.email;
             _user.password = this.state.password;
-            _user.isFamilyAdmin = true;
-            _user.userProps = {};
-            _user.userProps.firstName = this.state.firstName;
-            _user.userProps.lastName = this.state.lastName;
-            _user.userProps.email = this.state.email;
 
 
-            this.createUserSubscription = AuthActions.createUser.sink.subscribe( (data_) => {
-                //load all the users (with our new user)
-                console.log("AuthActions.createUser.sink: ");
-                console.dir(data_);
-                this.setState({isLoading: false});
-                UserActions.getAllUsers.source.next(true);
-            }, (error_) => {
-                alert(error_);
-            });
+            this.createUserSubscription = CreateUserService.sink
+                .pipe(takeWhile(f => f==true))
+                .subscribe( (data_) => {
+                    //load all the users (with our new user)
+                    console.log("AuthActions.createUser.sink: ");
+                    console.dir(data_);
+
+                    //after creation, reload all users
+                    GetAllUsersService.source.next(true);
+                }, (error_) => {
+                    alert(error_);
+                });
 
 
-            AuthActions.createUser.source.next(_user);
+            CreateUserService.source.next(_user);
         }
 
     }
@@ -155,7 +155,7 @@ class SignupCard extends Component {
                 <GridContainer gap="16px" rowTemplate="48px auto" columnTemplate="1fr 1fr" style={{'margin':'16px'}}>
 
                     <GridItem rows="1" columns="1 / 3" style={{'borderBottom':'1px solid #ccc'}}>
-                        <h2><FormattedMessage id="SignupCard.label" defaultMessage="Create First User"/></h2>
+                        <div><strong><FormattedMessage id="SignupCard.label" defaultMessage="Create First User"/></strong></div>
                     </GridItem>
 
                     <GridItem rows="2" columns="1/2">
@@ -163,8 +163,8 @@ class SignupCard extends Component {
                             label="First Name"
                             required={true}
                             className={classes.textField}
-                            value={this.state.firstName}
-                            onChange={(e)=>{this.setState({firstName:e.target.value});this.clearValidationErrors()}}
+                            value={this.state.name}
+                            onChange={(e)=>{this.setState({name:e.target.value});this.clearValidationErrors()}}
                             error={this.state.firstNameError.length>0} helperText={this.state.firstNameError}
                         />
                     </GridItem>

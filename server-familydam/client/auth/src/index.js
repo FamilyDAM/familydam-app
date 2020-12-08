@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {addLocaleData} from 'react-intl';
-import registerServiceWorker from './registerServiceWorker';
+//import registerServiceWorker from './registerServiceWorker';
 
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
@@ -50,4 +50,4 @@ const renderApp = function(){
 }
 
 renderApp();
-registerServiceWorker();
+//registerServiceWorker();

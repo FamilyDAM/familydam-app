@@ -1,9 +1,10 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppActions from '../../library/actions/AppActions';
-import AppSettings from '../../library/actions/AppSettings';
+import AppActions from '../library/actions/AppActions';
+import AppSettings from '../library/actions/AppSettings';
 import request from 'superagent';
+import {Subject, BehaviorSubject} from "@reactivex/rxjs";
 
 /**
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors
@@ -11,13 +12,13 @@ import request from 'superagent';
  */
 class CreateUserService {
 
-    sink=undefined;
+    isLoading=new BehaviorSubject(false);
+    source=new Subject()
+    sink=new Subject();
 
-    constructor(source_, sink_) {
+    constructor() {
         //console.log("{createUser Service} subscribe");
-        this.sink = sink_;
-
-        source_.subscribe(function (data_) {
+        this.source.subscribe(function (data_) {
             this.createUser(data_);
         }.bind(this));
     }
@@ -29,42 +30,37 @@ class CreateUserService {
      */
     createUser(data_) {
 
-        var _data = {};
-        if( !data_.username ){
-            data_.username = data_.userProps.firstName.toLowerCase();
-        }
-        _data.username = data_.username;
+        //flip flag
+        this.isLoading.next(true);
 
-        var formData = new FormData();
-        formData.append(":name", data_.username);
-        formData.append("pwd", data_.password);
-        formData.append("pwdConfirm", data_.password);
-        formData.append("firstName", data_.userProps.firstName);
-        formData.append("lastName", data_.userProps.lastName);
-        formData.append("email", data_.userProps.email);
-        formData.append("isFamilyAdmin", data_.isFamilyAdmin);
+        const _data = {};
+
+        const formData = new FormData();
+        formData.append("name", data_.name);
+        formData.append("lastName", data_.lastName);
+        formData.append("password", data_.password);
+        formData.append("pwdConfirm", data_.passwordConfirm);
+        formData.append("email", data_.email);
+
 
 
         const baseUrl = AppSettings.baseHost.getValue();
-        const _url = baseUrl +'/api/v1/auth/user';
+        const _url = baseUrl +'/core/api/users';
 
         fetch(_url, {
             method: "POST",
             body: formData
         })
             .then(response => {
-                console.log("CreateeUser success handler");
-                console.dir(response);
-                if(response.redirected) {
-                    console.log("redirect to: " +response.url);
-                    window.location = response.url
-                }
-
+                //console.log("CreateUser success handler");
                 //continue on
+                this.isLoading.next(false);
                 this.sink.next(true);
             })
             .catch(err => {
                 console.warn(err);
+                this.isLoading.next(false);
+
                 //send the error to the store (through the sink observer
                 if (err.status === 401) {
                     AppActions.navigateTo.next("/");
@@ -85,5 +81,5 @@ class CreateUserService {
 
 }
 
-export default CreateUserService;
+export default new CreateUserService();
 

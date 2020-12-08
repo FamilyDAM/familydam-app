@@ -39,12 +39,11 @@ class App extends Component {
 
 
     componentDidMount(){
-        this.setState({"isMounted":true});
+        this.setState({"mounted":true});
     }
 
-
     componentWillUnmount(){
-        this.setState({"isMounted":false});
+        this.setState({"mounted":false});
     }
 
 
@@ -52,13 +51,11 @@ class App extends Component {
         //const classes = this.props.classes;
         const locale = "en-EN";
 
-
         return (
             <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
                 <LoginPage mode="login"/>
             </IntlProvider>
         );
-
     }
 
 }

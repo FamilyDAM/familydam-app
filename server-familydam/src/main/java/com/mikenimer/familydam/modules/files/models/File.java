@@ -1,6 +1,7 @@
 package com.mikenimer.familydam.modules.files.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mikenimer.familydam.modules.core.models.Application;
 import com.mikenimer.familydam.modules.core.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import org.springframework.data.neo4j.core.support.DateString;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Node("File")
@@ -33,15 +35,22 @@ public class File {
 
     @JsonIgnore
     @Relationship(type = "IS_CHILD", direction = Relationship.Direction.INCOMING)
-    public Object parent;
+    public Folder parent;
+
+    //Metadata
+    @JsonIgnore
+    @Relationship(type = "CREATED_BY_APP", direction = Relationship.Direction.INCOMING)
+    public Application application;
 
     @JsonIgnore
     @Relationship(type = "IS_OWNER", direction = Relationship.Direction.INCOMING)
     public User owner;
 
 
-    public File(String name, Object parent, User owner) {
+
+    public File(String name, @NotNull Application app, @NotNull Folder parent, @NotNull User owner) {
         this.name = name;
+        this.application = app;
         this.parent = parent;
         this.owner = owner;
     }

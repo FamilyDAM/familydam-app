@@ -2,7 +2,8 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppSettings from '../../../library/actions/AppSettings';
+import AppSettings from '../AppSettings';
+import {BehaviorSubject, Subject} from "@reactivex/rxjs";
 
 
 /**
@@ -11,12 +12,14 @@ import AppSettings from '../../../library/actions/AppSettings';
  */
 class GetUsersService {
 
-    sink=undefined;
+    isLoading=new BehaviorSubject(false); //todo, wire up
+    source = new Subject();
+    sink = new Subject();
 
-    constructor(source_, sink_) {
+
+    constructor() {
         //console.log("{GetUsers Service} subscribe");
-        this.sink = sink_;
-        source_.subscribe(this.getUser.bind(this));
+        this.source.subscribe(this.getUser.bind(this));
     }
 
     /**
@@ -42,9 +45,6 @@ class GetUsersService {
             //parse json
             .then((response) => response.json())
             .then(json => {
-                if (!json.firstName) {
-                    json.firstName = json.username;
-                }
                 this.sink.next(json);
             })
             .catch(err => {
@@ -62,4 +62,4 @@ class GetUsersService {
 }
 
 
-export default GetUsersService;
+export default new GetUsersService();

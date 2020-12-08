@@ -48,23 +48,15 @@ class LoginCard extends Component {
     }
 
 
-    componentWillMount() {
-        this.setState({"isLoading":false});
-    }
 
     componentDidMount() {
+        this.setState({"mounted":true});
         if (this.refs.pwdField) this.refs.pwdField.focus();
-
-        /**
-         $(".loginCard").bind('keypress',function(e){
-            if(e.keyCode === 13)
-            {
-                this.handleLogin(e);
-            }
-        }.bind(this));
-         **/
     }
 
+    componentWillUnmount() {
+        this.setState({"mounted":false});
+    }
 
     handleCancel() {
         this.setState({mode: 'minimal', 'isLoading':false});
@@ -75,8 +67,6 @@ class LoginCard extends Component {
     }
 
     handleLogin(){
-        this.setState({"isLoading":true});
-
         if (this.props.onLogin) {
             this.props.onLogin(this.props.user.id, this.state.password);
         }
@@ -114,7 +104,7 @@ class LoginCard extends Component {
                     <ButtonBase focusRipple
                                 onClick={this.handleSelect}
                                 style={{'width': '100%', 'backgroundColor': '#fff'}}>
-                        <h2 style={{'textAlign': 'center'}}>{this.props.user.firstName}</h2>
+                        <h2 style={{'textAlign': 'center'}}>{this.props.user.name}</h2>
                     </ButtonBase>
                 </Paper>
             );
@@ -128,7 +118,7 @@ class LoginCard extends Component {
                             />
                         </div>
                         <div style={{gridRow: '2', gridColumn: '2'}}>
-                            <Typography type="title" style={{'textAlign': 'left'}}>{this.props.user.firstName}</Typography>
+                            <Typography type="title" style={{'textAlign': 'left'}}>{this.props.user.name}</Typography>
                         </div>
                         <div style={{gridRow: '3', gridColumn: '2'}}>
                             <TextField

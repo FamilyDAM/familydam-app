@@ -29,9 +29,24 @@ public class User {
 
     @Property
     public String name;
+    @Property
+    public String lastName;
+    @Property
+    public String email;
+    @Property
+    public String password;
+
 
     @JsonIgnore
     @Relationship(type = "IN_FAMILY", direction = Relationship.Direction.INCOMING)
     public Family family;
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        String shaHex = password;//new DigestUtils("SHA-256").digestAsHex(originalString);
+        this.password = shaHex;
+    }
 }

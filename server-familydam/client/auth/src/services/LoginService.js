@@ -2,7 +2,8 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppSettings from '../../library/actions/AppSettings';
+import AppSettings from '../library/actions/AppSettings';
+import {Subject, BehaviorSubject} from "@reactivex/rxjs";
 
 
 /**
@@ -11,11 +12,12 @@ import AppSettings from '../../library/actions/AppSettings';
  */
 class LoginService {
 
-    sink=undefined;
+    isLoading=new BehaviorSubject(false); //todo, wire up
+    source = new Subject();
+    sink = new Subject();
 
-    constructor(source_, sink_) {
-        this.sink = sink_;
-        source_.subscribe(this.login.bind(this));
+    constructor() {
+        this.source.subscribe(this.login.bind(this));
     }
 
     /**
@@ -61,4 +63,4 @@ class LoginService {
 }
 
 
-export default LoginService;
+export default new LoginService();

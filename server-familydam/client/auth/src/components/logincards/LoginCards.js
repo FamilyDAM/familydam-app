@@ -43,16 +43,12 @@ class LoginCards extends Component {
 
 
     componentDidMount() {
-        if(this.refs.pwdField) this.refs.pwdField.focus();
+        this.setState({"mounted":true});
+        if (this.refs.pwdField) this.refs.pwdField.focus();
+    }
 
-        /**
-        $(".loginCard").bind('keypress',function(e){
-            if(e.keyCode === 13)
-            {
-                this.handleLogin(e);
-            }
-        }.bind(this));
-         **/
+    componentWillUnmount() {
+        this.setState({"mounted":false});
     }
 
 
@@ -108,10 +104,7 @@ class LoginCards extends Component {
 
     }
 
-
-
 }
-
 
 
 export default withStyles(styleSheet)(LoginCards);
