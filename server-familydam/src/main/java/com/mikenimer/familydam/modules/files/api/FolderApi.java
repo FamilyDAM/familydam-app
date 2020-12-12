@@ -1,7 +1,7 @@
 package com.mikenimer.familydam.modules.files.api;
 
-import com.mikenimer.familydam.modules.core.api.UserApi;
-import com.mikenimer.familydam.modules.core.repositories.UserRepository;
+import com.mikenimer.familydam.modules.auth.api.UserApi;
+import com.mikenimer.familydam.modules.auth.repositories.UserRepository;
 import com.mikenimer.familydam.modules.files.models.Folder;
 import com.mikenimer.familydam.modules.files.repositories.FolderRepository;
 import io.swagger.annotations.Api;

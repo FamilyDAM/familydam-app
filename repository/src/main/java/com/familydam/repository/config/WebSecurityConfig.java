@@ -40,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .authorizeRequests()
                 .antMatchers("/index.html").permitAll()
                 .antMatchers("/fonts/**/*.*").permitAll()
+                .antMatchers("/fonts/**/*.*").permitAll()
                 .antMatchers("**/fonts/**/*.*").permitAll()
                 .antMatchers("/images/**/*.*").permitAll()
                 .antMatchers("**/images/**/*.*").permitAll()

@@ -1,6 +1,6 @@
 package com.mikenimer.family.familygraph;
 
-import com.mikenimer.familydam.modules.core.models.Family;
+import com.mikenimer.familydam.modules.auth.models.Family;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;

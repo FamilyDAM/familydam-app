@@ -1,8 +1,8 @@
 package com.mikenimer.familydam.modules.files.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mikenimer.familydam.modules.core.models.Application;
-import com.mikenimer.familydam.modules.core.models.User;
+import com.mikenimer.familydam.modules.auth.models.Application;
+import com.mikenimer.familydam.modules.auth.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
