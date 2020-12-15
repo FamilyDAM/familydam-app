@@ -10,7 +10,7 @@ class Clock extends HTMLElement {
     connectedCallback(){
         const _this = this;
         this.timer = setInterval(()=>{
-            console.log("clock timer, tick tock")
+            //console.log("clock timer, tick tock")
             let timestamp = new Date();
             this.element.innerHTML = timestamp.toLocaleTimeString();
         }, 1000);
@@ -21,7 +21,7 @@ class Clock extends HTMLElement {
     }
 
     constructHtml() {
-        console.log('[Clock] render()');
+        //console.log('[Clock] render()');
         const shadow = this.attachShadow({mode: 'open'});
         const wrapper = document.createElement('div');
         wrapper.setAttribute("class", "clock");

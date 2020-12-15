@@ -1,5 +1,6 @@
 package com.mikenimer.familydam.modules.auth.api;
 
+import com.mikenimer.familydam.exceptions.ForbiddenException;
 import com.mikenimer.familydam.modules.auth.models.Family;
 import com.mikenimer.familydam.modules.auth.repositories.FamilyRepository;
 import io.swagger.annotations.Api;
@@ -11,7 +12,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,7 +43,8 @@ public class FamilyApi {
 
     @ApiOperation(value = "List all Families", response = Family.class, nickname = "families")
     @GetMapping(path = "/families")
-    public CollectionModel<EntityModel<Family>> getFamilies(@AuthenticationPrincipal Principal principal) {
+    public CollectionModel<EntityModel<Family>> getFamilies(Principal principal) {
+        if( principal == null) throw new ForbiddenException("Not logged in");
         //Hateoas links
         Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FamilyApi.class).getFamilies(principal)).withSelfRel();
 
@@ -59,9 +61,11 @@ public class FamilyApi {
     }
 
 
+    @PreAuthorize("hasRole('FAMILY_MEMBER')")
     @ApiOperation(value = "Get family by id", response = Family.class, nickname = "family by id")
     @GetMapping(path = "/families/{id}")
-    public EntityModel<Family> getFamilyById(@RequestParam String id, @AuthenticationPrincipal Principal principal){
+    public EntityModel<Family> getFamilyById(@RequestParam String id, Principal principal){
+        if( principal == null) throw new ForbiddenException("Not logged in");
         Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FamilyApi.class).getFamilyById(id, principal)).withSelfRel();
         Link membersLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FamilyApi.class).getFamilyMembers(id, principal)).withRel("members");
 
@@ -74,9 +78,12 @@ public class FamilyApi {
     //todo: Add POST to update family settings
 
 
+
+    @PreAuthorize("hasRole('FAMILY_MEMBER')")
     @ApiOperation(value = "Get all users in family", response = Family.class, nickname = "members")
     @GetMapping(path = "/families/{id}/members", produces = MediaType.APPLICATION_JSON_VALUE)
-    public EntityModel<Family> getFamilyMembers(@RequestParam  String id, @AuthenticationPrincipal Principal principal){
+    public EntityModel<Family> getFamilyMembers(@RequestParam  String id, Principal principal){
+        if( principal == null) throw new ForbiddenException("Not logged in");
         Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FamilyApi.class).getFamilyById(id, principal)).withSelfRel();
         Link membersLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FamilyApi.class).getFamilyById(id, principal)).withRel("members");
 

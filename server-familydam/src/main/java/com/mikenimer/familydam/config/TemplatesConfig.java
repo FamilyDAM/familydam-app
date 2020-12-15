@@ -1,8 +1,6 @@
 package com.mikenimer.familydam.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -12,7 +10,12 @@ public class TemplatesConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry
+            .addResourceHandler("/auth/**/*.svg")
+            .addResourceLocations("classpath:/static/auth/")
+            .setCachePeriod(0)
+            .resourceChain(false);
+        //registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
     }
 
     @Override
@@ -24,17 +27,4 @@ public class TemplatesConfig implements WebMvcConfigurer {
         //registry.addViewController("/user").setViewName("forward:/user/index.html");
     }
 
-    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
-    public class NotYetImplemented extends Exception {
-        public NotYetImplemented(String message) {
-            super(message);
-        }
-    }
-
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public class ForbiddenException extends Exception {
-        public ForbiddenException(String message) {
-            super(message);
-        }
-    }
 }

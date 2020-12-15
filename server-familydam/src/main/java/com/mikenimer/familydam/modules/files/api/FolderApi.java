@@ -1,6 +1,7 @@
 package com.mikenimer.familydam.modules.files.api;
 
 import com.mikenimer.familydam.modules.auth.api.UserApi;
+import com.mikenimer.familydam.modules.auth.models.User;
 import com.mikenimer.familydam.modules.auth.repositories.UserRepository;
 import com.mikenimer.familydam.modules.files.models.Folder;
 import com.mikenimer.familydam.modules.files.repositories.FolderRepository;
@@ -42,7 +43,7 @@ public class FolderApi {
     }
 
     @GetMapping(path = "/folders/{id}")
-    public EntityModel<Folder> getFolderById(@PathVariable("id") String id, @AuthenticationPrincipal Principal principal) {
+    public EntityModel<Folder> getFolderById(@PathVariable("id") String id, Principal principal) {
         //Hateoas links
         Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserApi.class).getUserById(id, principal)).withSelfRel();
 

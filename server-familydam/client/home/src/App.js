@@ -7,8 +7,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //views
 import DashboardPage from './pages/dashboard/DashboardPage';
+import GetUserService from "./library/actions/processors/GetUserService";
 
-import UserActions from './library/actions/UserActions';
 
 
 const styleSheet = (theme) => ({
@@ -28,7 +28,6 @@ class App extends Component {
     constructor(props, context) {
         super(props, context);
 
-
         this.state = {
             "context": context,
             "locale": "en-EN",
@@ -36,22 +35,13 @@ class App extends Component {
             "isAuthenticated": false
         };
 
-
-        // set it running locally with npm start, so you can still call running server
-        /*
-        if( window.location.href.indexOf(":3000") > -1){
-            AppSettings.baseHost.next("http://localhost:9000");
-            AppSettings.basicUser.next("Mike");
-            AppSettings.basicPwd.next("admin");
-            UserActions.getUser.sink.next( {"user":{"firstName":"","lastName":""}} );
-        }*/
     }
 
 
     componentDidMount(){
         this.setState({"isMounted":true});
 
-        UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
+        GetUserService.sink.subscribe( (user_)=>{
             // redirect to dashboard
             console.dir(user_);
             console.log("UserActions.getUser.sink");
@@ -63,7 +53,7 @@ class App extends Component {
             }
         });
 
-        UserActions.getUser.source.next(null)
+        GetUserService.source.next("me");
     }
 
 

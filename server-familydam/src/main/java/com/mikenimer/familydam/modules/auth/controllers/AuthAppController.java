@@ -1,5 +1,6 @@
 package com.mikenimer.familydam.modules.auth.controllers;
 
+import com.mikenimer.familydam.modules.auth.AuthConstants;
 import com.mikenimer.familydam.modules.auth.models.Family;
 import com.mikenimer.familydam.modules.auth.models.User;
 import com.mikenimer.familydam.modules.auth.repositories.FamilyRepository;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -30,15 +30,20 @@ public class AuthAppController {
         this.userRepository = userRepository;
     }
 
+    private String getBackgroundImageUrl(){
+        return "https://picsum.photos/1024/1024";
+    }
 
 
-    @GetMapping(path="/index.html")
-    public ModelAndView loginHomePage(){
+
+    @GetMapping(path = "/index.html")
+    public ModelAndView loginHomePage() {
 
         ModelAndView mv = new ModelAndView();
 
         List<Family> familyList = familyRepository.findAll();
-        if( familyList.size() == 0){
+        if (familyList.size() == 0) {
+            mv.addObject("backgroundImage", getBackgroundImageUrl());
             mv.setViewName("auth/init");
             return mv;
         }
@@ -46,20 +51,24 @@ public class AuthAppController {
 
         List<User> users = userRepository.findAll();
         mv.addObject("users", users);
+        mv.addObject("backgroundImage", getBackgroundImageUrl());
         mv.setViewName("auth/index");
         return mv;
     }
 
 
-    @PostMapping(path="/init.html")
+    @PostMapping(path = "/init.html")
     public ModelAndView initHandler(
         @RequestParam("name") String name,
         @RequestParam("lastName") String lastName,
         @RequestParam("password") String password
-    ){
+    ) {
         List<Family> familyList = familyRepository.findAll();
-        if( familyList.size() > 0){
-            throw new RuntimeException("Family has already been registered");
+        if (familyList.size() > 0) {
+            //throw new RuntimeException("Family has already been registered");
+            ModelAndView mv = new ModelAndView("redirect:/index.html");
+            //mv.addObject("backgroundImage", getBackgroundImageUrl());
+            return mv;
         }
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -74,22 +83,14 @@ public class AuthAppController {
         User user = new User();
         user.setName(name);
         user.setLastName(lastName);
+        user.setRoles(AuthConstants.ROLE_FAMILY_ADMIN + "," + AuthConstants.ROLE_FAMILY_MEMBER);
         user.setPassword(encoder.encode(password)); //link to family
         userRepository.save(user);
 
 
         ModelAndView mv = new ModelAndView("redirect:/index.html");
+        mv.addObject("backgroundImage", "https://picsum.photos/1024/1024");
         return mv;
     }
 
-
-
-
-        @GetMapping(path="/logout.html")
-    public ModelAndView logoutHomePage(){
-        ModelAndView mv = new ModelAndView("auth/logout");
-            mv.addObject("name", "logout");
-            mv.addObject("ts", new Date());
-        return mv;
-    }
 }

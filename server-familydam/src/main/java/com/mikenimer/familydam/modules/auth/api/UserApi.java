@@ -1,6 +1,7 @@
 package com.mikenimer.familydam.modules.auth.api;
 
-import com.mikenimer.familydam.modules.auth.models.Family;
+import com.mikenimer.familydam.exceptions.ForbiddenException;
+import com.mikenimer.familydam.modules.auth.config.security.AppUserDetails;
 import com.mikenimer.familydam.modules.auth.models.User;
 import com.mikenimer.familydam.modules.auth.repositories.FamilyRepository;
 import com.mikenimer.familydam.modules.auth.repositories.UserRepository;
@@ -11,15 +12,17 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -40,54 +43,8 @@ public class UserApi {
     }
 
 
-    @PostMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public EntityModel<User> createUser(@AuthenticationPrincipal Principal principal, @ModelAttribute User user_) {
-
-        //get family reference
-        Family family = getOrCreateFamily(user_.getLastName());
-
-        //create user
-        User user = new User();
-        user.setFamily(family);
-        user.setId(UUID.randomUUID().toString());
-        user.setName(user_.getName());
-        user.setLastName(user_.getLastName());
-        user.setEmail(user_.getEmail());
-        user.setPassword(user_.getPassword());
-        user.setCreatedDate(new Date());
-        user.setLastModifiedDate(new Date());
-
-        User _user = userRepository.save(user);
-
-        //return user w/hateoas links
-        Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserApi.class).getUserById(user.getId(), principal)).withSelfRel();
-        return EntityModel.of(_user, selfLink);
-    }
-
-
-    /**
-     * Check if a family has been registered, if not create a family, with the last name of the first user
-     * @param familyName
-     * @return
-     */
-    private Family getOrCreateFamily(String familyName) {
-        List<Family> family = familyRepository.findAll();
-
-        if( family.size() == 0){
-            Family f = new Family();
-            f.setId(UUID.randomUUID().toString());
-            f.setName(familyName);
-            f.setCreatedDate(new Date());
-            f.setLastModifiedDate(new Date());
-            familyRepository.save(f);
-        }
-
-        return familyRepository.findAll().get(0);
-    }
-
-
     @GetMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollectionModel<EntityModel<User>> getUsers(@AuthenticationPrincipal Principal principal) {
+    public CollectionModel<EntityModel<User>> getUsers(Principal principal) {
         //Hateoas links
         Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserApi.class).getUsers(principal)).withSelfRel();
 
@@ -102,26 +59,25 @@ public class UserApi {
     }
 
 
+    @PreAuthorize("hasRole('FAMILY_MEMBER')")
     @GetMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public EntityModel<User> getUserById(@PathVariable("id") String id, @AuthenticationPrincipal Principal principal) {
+    public EntityModel<User> getUserById(@PathVariable("id") String id, Principal principal) {
+        if( principal == null) throw new ForbiddenException("Not logged in");
         //Hateoas links
         Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserApi.class).getUserById(id, principal)).withSelfRel();
         Link allUsers = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserApi.class).getUsers(principal)).withRel("users");
 
-        Optional<User> user = userRepository.findById(id);
+        User authUser = ((AppUserDetails)(((UsernamePasswordAuthenticationToken) principal).getPrincipal())).getUser();
+        Optional<User> user;
+        if( id.equalsIgnoreCase("me") ){
+            user = userRepository.findById(authUser.getId());
+        } else {
+            user = userRepository.findById(id);
+        }
+
         if (user.isPresent()) return EntityModel.of(user.get(), selfLink, allUsers);
         //Not found, 404
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found");
     }
 
-
-//    @PostMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public String createUser() {
-//
-//        try (Session session = driver.session()) {
-//            try(Transaction tx = session.beginTransaction() ) {
-//                tx.run()
-//            }
-//        }
-//    }
 }

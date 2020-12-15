@@ -30,9 +30,20 @@ class GetUsersService {
     getUser(username_)
     {
         const baseUrl = AppSettings.baseHost.getValue();
+        const _url = baseUrl +'/core/api/users/' +username_;
 
-        fetch( baseUrl +'/api/v1/auth/user/me', {
-            method: 'GET'
+        const headers = new Headers();
+        headers.append('pragma', 'no-cache');
+        headers.append('cache-control', 'no-cache');
+
+        this.isLoading.next(true);
+
+        fetch( _url, {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: "no-cache",
+            headers: headers,
+            credentials: "include"
         })
             //check for redirect
             .then(response => {

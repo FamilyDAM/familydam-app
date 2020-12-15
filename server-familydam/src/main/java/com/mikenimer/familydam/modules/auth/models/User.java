@@ -33,6 +33,7 @@ public class User {
     public String lastName;
     @Property
     public String email;
+    @JsonIgnore
     @Property
     public String password;
     @Property //comma separated list of roles
@@ -46,7 +47,7 @@ public class User {
     public Family family;
 
     public String getPassword() {
-        return "$2a$10$zTeRKK3m6SceWY/mnfCDp.O2eEn4/hYHgxIgKuVHd96YdF5/HIa6K"; //password;
+        return password;
     }
 
     public void setPassword(String password) {

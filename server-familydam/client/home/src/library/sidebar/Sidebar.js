@@ -116,7 +116,7 @@ class Sidebar extends Component {
         window.localStorage.clear();
         //UserActions.getUser.sink.next(next);
         AppActions.logout.source.next(true);
-        AppActions.navigateTo.next("://");
+        window.location = "/";
     }
 
 
