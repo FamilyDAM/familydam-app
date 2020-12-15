@@ -1,6 +1,7 @@
 package com.mikenimer.familydam.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -26,5 +27,31 @@ public class TemplatesConfig implements WebMvcConfigurer {
         //registry.addViewController("/files").setViewName("forward:/files/index.html");
         //registry.addViewController("/user").setViewName("forward:/user/index.html");
     }
+
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+            .allowCredentials(true)
+            .allowedOriginPatterns("*")
+            .allowedMethods("OPTIONS", "PUT", "POST", "GET", "DELETE")
+            .exposedHeaders("*");
+        //.allowedOrigins("*")
+    }
+
+//    @Bean
+//    public FilterRegistrationBean corsFilterBean() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.addAllowedOrigin("*");
+//        config.addAllowedHeader("*");
+//        config.addAllowedMethod("*");
+//        source.registerCorsConfiguration("/**", config);
+//        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+//        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+//        return bean;
+//    }
+
 
 }

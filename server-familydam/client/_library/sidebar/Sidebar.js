@@ -148,7 +148,7 @@ class Sidebar extends Component {
                         />
                     </div>
                     <div className={classes.sidebarProfileName}>
-                        <Typography component="div" type={"title"}>{this.props.user.firstName} {this.props.user.lastName}</Typography>
+                        <Typography component="div" type={"title"}>{this.props.user.name} {this.props.user.lastName}</Typography>
                     </div>
                     <div className={classes.sidebarButtons}>
 

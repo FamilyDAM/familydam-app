@@ -56,8 +56,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .cors().and().csrf().disable()
-            .sessionManagement().invalidSessionUrl("/index.html")
+            .cors()
+            .and()
+                .csrf().disable()
+                .sessionManagement().invalidSessionUrl("/index.html")
             .and()
                 .authorizeRequests()
                 .antMatchers("/index.html").permitAll()

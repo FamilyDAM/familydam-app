@@ -35,13 +35,13 @@ class GetUsersService {
         const headers = new Headers();
         headers.append('pragma', 'no-cache');
         headers.append('cache-control', 'no-cache');
+        headers.append('accept', 'application/json');
 
         this.isLoading.next(true);
 
         fetch( _url, {
             method: 'GET',
-            mode: 'no-cors',
-            cache: "no-cache",
+            mode: 'cors',
             headers: headers,
             credentials: "include"
         })
@@ -63,6 +63,7 @@ class GetUsersService {
                 if( err.status === 401 || err.status === 403){
                     window.location = "/";
                 } else {
+                    console.error(err.statusText);
                     var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText||err.message};
                     this.sink.error(_error);
                 }
