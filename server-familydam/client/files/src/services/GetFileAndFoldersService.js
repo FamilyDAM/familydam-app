@@ -1,16 +1,15 @@
-import AppActions from '../../library/actions/AppActions';
-import AppSettings from '../../library/actions/AppSettings';
-import request from 'superagent';
+import AppActions from '../library/actions/AppActions.js';
+import AppSettings from '../library/actions/AppSettings.js';
+
 
 class GetFilesAndFoldersService {
 
-    sink=undefined;
+    sink=new Subject();
+    source=new Subject();
 
-    constructor(source_, sink_) {
+    constructor() {
         //console.log("{createUser Service} subscribe");
-        this.sink = sink_;
-
-        source_.subscribe(function (path_) {
+        this.source.subscribe(function (path_) {
             this.getFilesAndFolders(path_);
         }.bind(this));
 
@@ -22,7 +21,7 @@ class GetFilesAndFoldersService {
      * @param val_
      * @returns {*}
      */
-    getFilesAndFolders(path_)
+    async getFilesAndFolders(path_)
     {
         //console.log("loading files & folders: " +path_);
 
@@ -33,8 +32,30 @@ class GetFilesAndFoldersService {
         {
 
             //console.log("{GetFiles Service} getFiles()");
-            //"http://localhost:9000/"
-            var _url = baseUrl +path_;// + ".graph.1.json/nt:file,sling:file,nt:folder,sling:folder,dam:file,dam:folder/name,index,parent,links,path,jcr:primaryType,jcr:created,jcr:mixinTypes&t=1";
+            const baseUrl = AppSettings.baseHost.getValue();
+            const _url = baseUrl +'/files/api/files?path=' +path_;
+
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+
+            this.isLoading.next(true);
+
+            //Save or Create user
+            const apps = await fetch( _url, {
+                method: 'GET',
+                cache: "no-cache",
+                headers: headers,
+                credentials: 'include'
+            });
+
+            const response = await apps.json();
+            if( apps.status == 200 && response._embedded.files ){
+                this.sink.next(response._embedded.files);
+            }else{
+                console.dir(err);
+                var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
+                this.sink.error(_error);
+            }
 
 
             request.get(_url)
@@ -82,4 +103,4 @@ class GetFilesAndFoldersService {
 };
 
 
-export default GetFilesAndFoldersService;
+export default new GetFilesAndFoldersService();

@@ -7,7 +7,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //views
 import DashboardPage from './pages/dashboard/DashboardPage';
-import GetUserService from "./library/actions/processors/GetUserService";
+import GetUserService from "./library/services/GetUserService";
 
 
 

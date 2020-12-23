@@ -1,8 +1,11 @@
 package com.mikenimer.familydam.modules.auth.controllers;
 
+import com.mikenimer.familydam.modules.IApplicationConfig;
 import com.mikenimer.familydam.modules.auth.AuthConstants;
+import com.mikenimer.familydam.modules.auth.models.Application;
 import com.mikenimer.familydam.modules.auth.models.Family;
 import com.mikenimer.familydam.modules.auth.models.User;
+import com.mikenimer.familydam.modules.auth.repositories.ApplicationRepository;
 import com.mikenimer.familydam.modules.auth.repositories.FamilyRepository;
 import com.mikenimer.familydam.modules.auth.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +20,19 @@ import java.util.List;
 
 @Controller
 public class AuthAppController {
-    public AuthAppController() {
-        System.out.println("Starting AuthAppController");
-    }
 
     FamilyRepository familyRepository;
     UserRepository userRepository;
+    ApplicationRepository applicationRepository;
 
     @Autowired
-    public AuthAppController(FamilyRepository familyRepository, UserRepository userRepository) {
+    IApplicationConfig[] applicationConfigs;
+
+    @Autowired
+    public AuthAppController(FamilyRepository familyRepository, UserRepository userRepository, ApplicationRepository applicationRepository) {
         this.familyRepository = familyRepository;
         this.userRepository = userRepository;
+        this.applicationRepository = applicationRepository;
     }
 
     private String getBackgroundImageUrl(){
@@ -76,7 +81,7 @@ public class AuthAppController {
 
         //first create a new family
         Family family = new Family();
-        family.setName(name);
+        family.setName(lastName);
         family = familyRepository.save(family);
 
         //second, add the first user
@@ -85,7 +90,16 @@ public class AuthAppController {
         user.setLastName(lastName);
         user.setRoles(AuthConstants.ROLE_FAMILY_ADMIN + "," + AuthConstants.ROLE_FAMILY_MEMBER);
         user.setPassword(encoder.encode(password)); //link to family
+        user.setFamily(family);
         userRepository.save(user);
+
+
+        //Create nodes for installed applications
+        for (IApplicationConfig config : applicationConfigs) {
+            Application a = config.getAppNode();
+            a.setFamily(family);
+            applicationRepository.save(a);
+        }
 
 
         ModelAndView mv = new ModelAndView("redirect:/index.html");

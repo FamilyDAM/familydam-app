@@ -22,11 +22,10 @@ import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
 import UploadDialog from '../../components/uploaddialog/UploadDialog';
 import NewFolderDialog from '../../components/newfolderdialog/NewFolderDialog';
-import fileActions from "../../actions/FileActions";
-import FileActions from "../../actions/FileActions";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import FileReceiver from "../../components/filereceiver/FileReceiver";
+import GetFileAndFoldersService from "../../services/GetFileAndFoldersService";
 
 const styleSheet = (theme) => ({
     progress: {
@@ -108,9 +107,9 @@ class FilesPage extends Component {
             showNewFolderDialog:false,
             selectedFiles:[],
             uploadFiles:[],
-            root:"/content",
-            visibleRoot:"/content/files",
-            path:"/content/files"
+            root:"/",
+            visibleRoot:"/",
+            path:"/"
         };
 
         this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
@@ -141,6 +140,7 @@ class FilesPage extends Component {
         });
 
         //.takeWhile(() => this.state.isMounted)
+        /**
         FileActions.stageFile.bufferTime(5).subscribe((files_)=>{
             if( files_.length > 0) {
                 var _files = this.state.uploadFiles;
@@ -155,7 +155,7 @@ class FilesPage extends Component {
         FileActions.stageAction.subscribe((action_)=>{
             this.setState({showUploadDialog:true})
         });
-
+        **/
     }
 
 
@@ -209,7 +209,7 @@ class FilesPage extends Component {
 
     handleUploadClosed(){
         this.setState({'showUploadDialog':false, uploadFiles:[]});
-        fileActions.getFileAndFolders.source.next(this.state.path);
+        GetFileAndFoldersService.source.next(this.state.path);
     }
 
     handleAfterOnDelete(path_){
@@ -225,7 +225,7 @@ class FilesPage extends Component {
         }
         this.setState({selectedFiles:selectedFiles});
 
-        fileActions.getFileAndFolders.source.next(this.state.path);
+        GetFileAndFoldersService.source.next(this.state.path);
     }
 
     /**

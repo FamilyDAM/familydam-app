@@ -86,7 +86,6 @@ class AppHeader extends Component {
     }
 
     handleNavClick(path){
-
         if( this.props.onNavClick){
             this.props.onNavClick(path);
         }
@@ -126,8 +125,7 @@ class AppHeader extends Component {
                         aria-owns={this.state.open ? 'long-menu' : null}
                         aria-haspopup="true"
                         onClick={this.handleOpenMoreMenu}
-                        className={classes.moreButton}
-                    >
+                        className={classes.moreButton}>
                         <MoreVertIcon/>
                     </IconButton>
 

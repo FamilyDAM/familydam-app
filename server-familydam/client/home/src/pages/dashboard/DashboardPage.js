@@ -5,6 +5,7 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
+import {takeWhile} from 'rxjs/operators';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
@@ -14,6 +15,7 @@ import Paper from '@material-ui/core/Paper';
 
 import AppShell from '../../library/appShell/AppShell';
 import AppActions from '../../library/actions/AppActions';
+import LoadClientAppsService from "../../library/services/LoadClientAppsService";
 
 
 const styleSheet = (theme) => ({
@@ -89,11 +91,11 @@ class DashboardPage extends Component {
         this.setState({"isMounted":true});
 
 
-        AppActions.loadClientApps.sink.takeWhile(() => this.state.isMounted).subscribe( (data)=> {
+        LoadClientAppsService.sink.pipe(takeWhile(() => this.state.isMounted)).subscribe( (data)=> {
             if( data ) {
                this.setState({
-                    "primaryApps": data.primaryApps,
-                    "secondaryApps": data.secondaryApps
+                    "primaryApps": data.primaryApps || [],
+                    "secondaryApps": data.secondaryApps || []
                 });
             }
         });
@@ -129,9 +131,9 @@ class DashboardPage extends Component {
 
                         {this.state.primaryApps && this.state.primaryApps.filter(app=>app.slug !== "home").map((app, indx)=> {
                             return (
-                                <Paper key={app.path} data-indx={indx} className={classes['contentAppCard' +indx]} onClick={() => AppActions.navigateTo.next(app.path)}>
+                                <Paper key={app.path} data-indx={indx} className={classes['contentAppCard' +indx]} onClick={() => window.location = app.homeUrl}>
                                     <FileIcon style={{width: '48px', height: '48px'}}/>
-                                    <Typography style={{fontSize: '24px'}}>{app.label}</Typography>
+                                    <Typography style={{fontSize: '24px'}}>{app.name}</Typography>
                                 </Paper>
                             )
                         })}

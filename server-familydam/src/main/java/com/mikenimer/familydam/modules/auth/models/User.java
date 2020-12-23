@@ -43,8 +43,10 @@ public class User {
 
 
     @JsonIgnore
-    @Relationship(type = "IN_FAMILY", direction = Relationship.Direction.INCOMING)
+    @Relationship(type = "IN_FAMILY", direction = Relationship.Direction.OUTGOING)
     public Family family;
+
+
 
     public String getPassword() {
         return password;

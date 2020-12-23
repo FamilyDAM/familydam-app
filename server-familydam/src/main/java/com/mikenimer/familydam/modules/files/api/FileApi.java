@@ -5,6 +5,7 @@ import com.mikenimer.familydam.modules.files.repositories.FileRepository;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.NotImplementedException;
 import org.neo4j.driver.Driver;
+import org.springframework.data.neo4j.core.Neo4jTemplate;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.ws.rs.QueryParam;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +27,22 @@ public class FileApi {
 
     private final Driver driver;
     FileRepository fileRepository;
+    Neo4jTemplate template;
 
-    public FileApi(Driver driver, FileRepository fileRepository) {
+    public FileApi(Driver driver, FileRepository fileRepository, Neo4jTemplate template) {
         this.driver = driver;
         this.fileRepository = fileRepository;
+        this.template = template;
     }
+
+
+    @GetMapping(path = "/")
+    public CollectionModel<File> getFilesAndFoldersInFolder(@QueryParam("path") String path) {
+        //template.toExecutableQuery(Prepar)
+        return null;
+    }
+
+
 
 
     @GetMapping(path = "/folder/{folderId}/files")

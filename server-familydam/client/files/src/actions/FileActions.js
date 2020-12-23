@@ -3,7 +3,6 @@
  */
 import {Subject} from '@reactivex/rxjs';
 
-import GetFilesAndFoldersService from './processors/GetFileAndFoldersService';
 import GetFileDataService from "./processors/GetFileDataService";
 import UploadFileService from "./processors/UploadFileService";
 import DeleteFileOrFolderService from "./processors/DeleteFileOrFolderService";
@@ -14,7 +13,6 @@ class FileActions {
 
 
     constructor() {
-        this.getFilesAndFoldersService = new GetFilesAndFoldersService(this.getFileAndFolders.source, this.getFileAndFolders.sink);
         this.getFileDataService = new GetFileDataService(this.getFileData.source, this.getFileData.sink);
         this.setFilePropertyService = new SetFilePropertyService(this.setFileProperty.source, this.setFileProperty.sink);
         this.uploadFileService = new UploadFileService(this.uploadFile.source, this.uploadFile.sink);
@@ -22,10 +20,6 @@ class FileActions {
         this.createFolderService = new CreateFolderService(this.createFolder.source, this.createFolder.sink);
     }
 
-    /**
-     * Call the server to load the file list
-     */
-    getFileAndFolders = {source:new Subject(), sink:new Subject()};
 
     /**
      * Get the file nodes for all files, using an array of paths

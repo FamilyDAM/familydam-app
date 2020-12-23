@@ -2,11 +2,9 @@ package com.mikenimer.familydam.modules.files.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mikenimer.familydam.modules.auth.models.Application;
+import com.mikenimer.familydam.modules.auth.models.Family;
 import com.mikenimer.familydam.modules.auth.models.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.neo4j.core.schema.*;
 import org.springframework.data.neo4j.core.support.DateString;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
@@ -18,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
+@Builder
 public class Folder {
     private static String LABEL = "Folder";
 
@@ -33,6 +32,8 @@ public class Folder {
 
     @Property
     public String name;
+    @Property
+    public String slug;
 
     @JsonIgnore
     @Relationship(type = "IS_CHILD", direction = Relationship.Direction.INCOMING)
@@ -40,18 +41,28 @@ public class Folder {
 
     //Metadata
     @JsonIgnore
-    @Relationship(type = "CREATED_BY_APP", direction = Relationship.Direction.INCOMING)
+    @Relationship(type = "IN_APP", direction = Relationship.Direction.INCOMING)
     public Application application;
 
     @JsonIgnore
-    @Relationship(type = "IS_OWNER", direction = Relationship.Direction.INCOMING)
-    public User owner;
+    @Relationship(type = "CREATED_BY", direction = Relationship.Direction.OUTGOING)
+    public User createdBy;
+
+    @JsonIgnore
+    @Relationship(type = "IN_FAMILY", direction = Relationship.Direction.OUTGOING)
+    public Family family;
 
 
-    public Folder(String name, @NotNull Application app, Folder parent, @NotNull User owner) {
+    public Folder(@NotNull String name, @NotNull Application app, Folder parent, @NotNull User createdBy) {
         this.name = name;
+        this.slug = name.trim().toLowerCase().replaceAll("[^a-z0-9]+", "_");
         this.application = app;
         this.parent = parent;
-        this.owner = owner;
+        this.createdBy = createdBy;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        this.slug = name.trim().toLowerCase().replaceAll("[^a-z0-9- ]+", "_");
     }
 }

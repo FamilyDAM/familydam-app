@@ -10,9 +10,7 @@ import 'rsuite/dist/styles/rsuite-default.css';
 
 //views
 import FilesPage from './pages/files/FilesPage';
-
-import UserActions from './library/actions/UserActions';
-//import AppSettings from './library/actions/AppSettings';
+import GetUserService from "./library/services/GetUserService";
 
 const styleSheet = (theme) => ({
     progress: {
@@ -56,7 +54,7 @@ class App extends Component {
 
     componentDidMount(){
 
-        UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
+        GetUserService.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
             // redirect to dashboard
             if( user_ )
             {
@@ -64,7 +62,7 @@ class App extends Component {
             }
         });
 
-        UserActions.getUser.source.next(null);
+        GetUserService.source.next(null);
     }
 
 

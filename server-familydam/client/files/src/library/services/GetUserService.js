@@ -2,7 +2,7 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppSettings from '../AppSettings';
+import AppSettings from '../actions/AppSettings';
 import {BehaviorSubject, Subject} from "@reactivex/rxjs";
 
 

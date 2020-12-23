@@ -1,16 +1,13 @@
 {
     "presets": [
-        ["@babel/preset-env", { "modules": false }],
-        "@babel/preset-react"
+        "stage-1",
+        "react-app"
     ],
     "plugins": [
-        "@babel/plugin-transform-runtime",
-        "@babel/plugin-syntax-dynamic-import",
-        ["@babel/plugin-proposal-decorators", { "legacy": true }],
-        ["@babel/plugin-proposal-class-properties", { "loose": true }],
+        ["@babel/plugin-proposal-class-properties", {"loose": true}],
+        ["transform-decorators-legacy"],
         ["react-intl", {
             "messagesDir": "./src/i18n/messages"
         }]
-    ],
-    "env": {}
+    ]
 }

@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "/files/",
   "scripts": {
-    "start": "react-scripts start",
+    "start": "npm run copy:library && react-scripts start",
     "build": "set NODE_ENV=development && npm run copy:library && react-scripts build --profile && npm run copy:build",
     "test": "react-scripts test --env=jsdom",
     "copy:library": "cp -rv ../_library/** src/library",

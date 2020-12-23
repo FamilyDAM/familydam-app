@@ -67,6 +67,7 @@ public class GraphDbLocalConfig {
             .setConfig( ExternalSettings.windows_service_name, "FamilyD.A.M." )
             .setConfig( GraphDatabaseSettings.default_database, dbName )
             .setConfig( GraphDatabaseSettings.mode, GraphDatabaseSettings.Mode.SINGLE )
+            .setConfig( GraphDatabaseSettings.fail_on_missing_files,  false )
             .setConfig( BoltConnector.enabled, true )
             .setConfig( BoltConnector.listen_address, new SocketAddress( "localhost", 7687 ) )
             .build();
