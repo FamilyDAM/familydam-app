@@ -32,6 +32,11 @@ public class File {
 
     @Property
     public String name;
+    @Property
+    public String slug;
+
+    @Property
+    public String contentType = "application/octet-stream";
 
     @JsonIgnore
     @Relationship(type = "IS_CHILD", direction = Relationship.Direction.INCOMING)
@@ -53,5 +58,10 @@ public class File {
         this.application = app;
         this.parent = parent;
         this.owner = owner;
+    }
+
+    public void setName(String name) {
+        this.name = name.trim();
+        this.slug = name.trim().toLowerCase().replaceAll("[^a-z0-9-]+", "_");
     }
 }

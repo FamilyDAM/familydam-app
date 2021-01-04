@@ -51,7 +51,7 @@ class UserDetails extends Component {
         };
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({"isMounted":true, "isLoading": true});
 
         const _userId = this.props.userId;

@@ -5,16 +5,11 @@ import React, {Component} from 'react';
 import {withStyles} from "@material-ui/core/styles";
 //import AppActions from "../../actions/AppActions";
 
-import Button from '@material-ui/core/Button';
-//import Typography from '@material-ui/core/Typography';
-import Slide from '@material-ui/core/Slide';
+import { Modal } from 'antd';
 import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 
 import FileActions from '../../actions/FileActions';
+import GetFilesAndFoldersService from "../../services/GetFileAndFoldersService";
 
 const styleSheet = (theme) => ({ });
 
@@ -30,7 +25,8 @@ class NewFolderDialog extends Component {
         super(props);
 
         this.state = {
-            folderName:""
+            folderName:"",
+            open:false
         };
 
         this.handleSave = this.handleSave.bind(this);
@@ -45,27 +41,42 @@ class NewFolderDialog extends Component {
         this.setState({isMounted:false});
     }
 
+    componentWillReceiveProps(newProps){
+        this.props = newProps;
+        this.setState({"open":newProps.open})
+    }
+
+
+    showModal = () => {
+        this.setState({
+            open: true,
+        });
+    };
+
+    hideModal = () => {
+        this.setState({
+            open: false,
+        });
+    };
+
 
     handleSave(){
-        //send event
-        FileActions.createFolder.source.next({name:this.state.folderName, path:this.props.path});
-
-        FileActions.createFolder.sink.subscribe( ()=> {
-            if( this.props.onClose ) this.props.onClose();
-        });
+        if( this.props.handleSave && this.state.folderName.length > 0) {
+            this.props.handleSave(this.state.folderName)
+        }
     }
 
 
     render() {
         //var classes = this.props.classes;
         return (
-            <Dialog
-                maxWidth="md"
-                fullScreen={false}
-                open={this.props.open}
-                transition={SlideTransition}>
-                <DialogTitle>Create New Folder</DialogTitle>
-                <DialogContent>
+            <Modal
+                visible={this.state.open}
+                onCancel={this.hideModal}
+                onOk={this.handleSave}
+                okText="Create"
+                cancelText="Cancel"
+                title="New Folder">
 
                     <TextField
                         id="newFolderName"
@@ -75,28 +86,7 @@ class NewFolderDialog extends Component {
                         margin="dense"
                     />
 
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={this.props.onClose} color="primary">
-                        Close
-                    </Button>
-                    <Button raised color="primary" onClick={this.handleSave}>
-                        Save
-                    </Button>
-                </DialogActions>
-
-
-                <input type="file"
-                       ref="fileInputField"
-                       multiple
-                       style={{'display': 'none'}}
-                       onChange={this.handleFileChange}/>
-                <input type="file"
-                       ref="folderInputField"
-                       style={{'display': 'none'}}
-                       onChange={this.handleFolderChange}/>
-
-            </Dialog>
+            </Modal>
 
         );
     }

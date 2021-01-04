@@ -40,14 +40,6 @@ class UserListCard extends Component {
     }
 
 
-    componentWillMount() {
-
-    }
-
-    componentWillUnmount() {
-
-    }
-
     handleClick(e){
         AppActions.navigateTo.next("/new");
     }

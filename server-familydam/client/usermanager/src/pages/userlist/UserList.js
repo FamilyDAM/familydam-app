@@ -59,7 +59,7 @@ class UserList extends Component {
         };
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({"isMounted":true, "isLoading": true});
 
         UserActions.getAllUsers.sink.takeWhile(() => this.state.isMounted).subscribe(users_ => {

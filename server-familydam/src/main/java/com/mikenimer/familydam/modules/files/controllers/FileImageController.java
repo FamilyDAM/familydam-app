@@ -10,7 +10,7 @@ import java.security.Principal;
 @Controller
 public class FileImageController {
 
-    @GetMapping(path = "/files/{id}.{ext}")
+    @GetMapping(path = "/files/image/{id}.{ext}")
     public ModelAndView getImage(Principal principal, @PathVariable String id, @PathVariable String ext) {
         //todo: @see https://www.baeldung.com/spring-mvc-image-media-data
         return null;

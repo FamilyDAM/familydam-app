@@ -112,7 +112,7 @@ class AppHeader extends Component {
                     <IconButton
                         onClick={this.handleToggle}
                         className={classes.menuButton}
-                        color="contrast" aria-label="Menu">
+                        color="secondary" aria-label="Menu">
                         <MenuIcon />
                     </IconButton>
 
@@ -139,7 +139,7 @@ class AppHeader extends Component {
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
                                 <MenuItem key={item.path}
-                                          color="contrast"
+                                          color="secondary"
                                           onClick={()=>{this.handleNavClick(item.path);this.handleMenuClose()}}>{item.label}</MenuItem>
                             )
                         })}

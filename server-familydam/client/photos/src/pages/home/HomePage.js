@@ -80,7 +80,7 @@ class HomePage extends Component {
         this.handleSelectedImages = this.handleSelectedImages.bind(this);
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({'isLoading':true, "isMounted":true});
 
 

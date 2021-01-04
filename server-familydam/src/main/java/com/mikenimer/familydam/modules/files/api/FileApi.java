@@ -1,8 +1,9 @@
 package com.mikenimer.familydam.modules.files.api;
 
+import com.mikenimer.familydam.modules.auth.repositories.ApplicationRepository;
 import com.mikenimer.familydam.modules.files.models.File;
 import com.mikenimer.familydam.modules.files.repositories.FileRepository;
-import io.swagger.annotations.Api;
+import com.mikenimer.familydam.modules.files.repositories.FolderRepository;
 import org.apache.commons.lang3.NotImplementedException;
 import org.neo4j.driver.Driver;
 import org.springframework.data.neo4j.core.Neo4jTemplate;
@@ -11,40 +12,37 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.ws.rs.QueryParam;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@Api(value = "File API")
-@RequestMapping(value = "/files/api", produces = "application/hal+json")
+//@RestController
+//@Api(value = "File API")
+//@RequestMapping(value = "/files/api", produces = "application/hal+json")
 public class FileApi {
 
     private static final System.Logger LOGGER = System.getLogger(FileApi.class.getName());
 
     private final Driver driver;
+    FolderRepository folderRepository;
     FileRepository fileRepository;
+    ApplicationRepository applicationRepository;
     Neo4jTemplate template;
 
-    public FileApi(Driver driver, FileRepository fileRepository, Neo4jTemplate template) {
+    public FileApi(Driver driver, FolderRepository folderRepository, FileRepository fileRepository, ApplicationRepository applicationRepository, Neo4jTemplate template) {
         this.driver = driver;
+        this.folderRepository = folderRepository;
         this.fileRepository = fileRepository;
+        this.applicationRepository = applicationRepository;
         this.template = template;
     }
 
-
-    @GetMapping(path = "/")
-    public CollectionModel<File> getFilesAndFoldersInFolder(@QueryParam("path") String path) {
-        //template.toExecutableQuery(Prepar)
-        return null;
-    }
-
-
-
-
+    
     @GetMapping(path = "/folder/{folderId}/files")
     public CollectionModel<File> getFilesInFolder(@PathVariable("folderId") String folderId) {
         //Hateoas links
@@ -64,6 +62,7 @@ public class FileApi {
         //todo create File and write file to storage locations
         throw new NotImplementedException("Not Implemented Exception");
     }
+
 
     @GetMapping(path = "/files/{id}")
     public EntityModel<File> getFolderById(@PathVariable("id") String id) {

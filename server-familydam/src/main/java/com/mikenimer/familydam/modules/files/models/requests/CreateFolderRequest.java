@@ -1,4 +1,4 @@
-package com.mikenimer.familydam.modules.files.models;
+package com.mikenimer.familydam.modules.files.models.requests;
 
 import lombok.Builder;
 import lombok.Data;

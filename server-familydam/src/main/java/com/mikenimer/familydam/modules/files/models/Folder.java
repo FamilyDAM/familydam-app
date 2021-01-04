@@ -1,6 +1,8 @@
 package com.mikenimer.familydam.modules.files.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mikenimer.familydam.modules.auth.models.Application;
 import com.mikenimer.familydam.modules.auth.models.Family;
 import com.mikenimer.familydam.modules.auth.models.User;
@@ -9,16 +11,18 @@ import org.springframework.data.neo4j.core.schema.*;
 import org.springframework.data.neo4j.core.support.DateString;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Node("Folder")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter @Setter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(setterPrefix = "with")
 public class Folder {
     private static String LABEL = "Folder";
+
+    List embedded;
 
     @Id
     @GeneratedValue(UUIDStringGenerator.class)
@@ -34,6 +38,9 @@ public class Folder {
     public String name;
     @Property
     public String slug;
+
+    @Property
+    public String contentType = "application/folder";
 
     @JsonIgnore
     @Relationship(type = "IS_CHILD", direction = Relationship.Direction.INCOMING)
@@ -53,16 +60,29 @@ public class Folder {
     public Family family;
 
 
-    public Folder(@NotNull String name, @NotNull Application app, Folder parent, @NotNull User createdBy) {
-        this.name = name;
-        this.slug = name.trim().toLowerCase().replaceAll("[^a-z0-9]+", "_");
-        this.application = app;
-        this.parent = parent;
-        this.createdBy = createdBy;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonProperty("_embedded")
+    public List getEmbedded() {
+        return embedded;
+    }
+    public void setEmbedded(List resources) {
+        embedded = resources;
     }
 
-    public void setName(String name) {
-        this.name = name;
-        this.slug = name.trim().toLowerCase().replaceAll("[^a-z0-9- ]+", "_");
+
+    public static class FolderBuilder {
+        private String name;
+        private String slug;
+        private Date createdDate = new Date();
+        private Date lastModifiedDate = new Date();
+        private String contentType = "application/folder";
+
+        public FolderBuilder withName(String name) {
+            this.name = name;
+            this.slug = name.trim().toLowerCase().replaceAll("[^a-z0-9-]+", "_");
+            return this;
+        }
     }
-}
+ }
+
+

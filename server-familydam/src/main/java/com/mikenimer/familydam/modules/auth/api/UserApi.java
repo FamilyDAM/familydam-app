@@ -69,6 +69,8 @@ public class UserApi {
         Optional<User> user;
         if( id.equalsIgnoreCase("me") ){
             user = userRepository.findById(authUser.getId());
+        } else if( id == null || id.equalsIgnoreCase("null") ){
+            user = userRepository.findById(authUser.getId());
         } else {
             user = userRepository.findById(id);
         }

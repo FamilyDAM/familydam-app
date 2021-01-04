@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import {addLocaleData} from 'react-intl';
 import registerServiceWorker from './registerServiceWorker';
 
+import 'antd/dist/antd.css';
+
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 //@see https://www.materialpalette.com

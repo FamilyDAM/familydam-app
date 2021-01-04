@@ -42,13 +42,6 @@ class UserListCard extends Component {
     }
 
 
-    componentWillMount() {
-
-    }
-
-    componentWillUnmount() {
-
-    }
 
 
     render(){

@@ -71,7 +71,7 @@ class AppShell extends Component {
     }
 
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({"isMounted":true});
 
         AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){

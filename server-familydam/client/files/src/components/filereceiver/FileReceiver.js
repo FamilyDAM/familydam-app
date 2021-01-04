@@ -17,7 +17,7 @@ class FileReceiver extends Component {
         this.handleAddFile = this.handleAddFile.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.setState({isMounted: true});
     }
 

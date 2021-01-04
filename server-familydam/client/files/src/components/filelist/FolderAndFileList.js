@@ -23,8 +23,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import FileListTableHead from './FileListTableHead';
 import AppActions from '../../library/actions/AppActions';
-import FileActions from '../../actions/FileActions';
 import LoadingButton from '../../library/loadingButton/LoadingButton';
+import GetFilesAndFoldersService from '../../services/GetFileAndFoldersService.js';
 
 const styleSheet = (theme) => ({
     main:{
@@ -42,7 +42,7 @@ const styleSheet = (theme) => ({
 });
 
 
-class FileList extends Component{
+class FolderAndFileList extends Component {
 
     isCntlPressed = false;
     isSpacePressed = false;
@@ -50,12 +50,13 @@ class FileList extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            files:[],
             rootPath:'/content',
             isMounted:true,
             order: 'asc',
             orderBy: 'name',
             selected: [],
+            folders: [],
+            files: [],
             showDeleteFileDialog:false,
             showDeleteFolderDialog:false
         };
@@ -85,35 +86,9 @@ class FileList extends Component{
         if( this.props.files){
             this.setState({'files': this.props.files});
         }
-
-
-
-        FileActions.getFileAndFolders.sink.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
-
-            var sortBy = this.state.orderBy;
-            var sortedFiles = data_.sort((a, b) => {
-
-                if( a['jcr:primaryType'] && b['jcr:primaryType'] ){
-                    if( a['jcr:primaryType'] !== b['jcr:primaryType'] ){
-                        //folders before files
-                        return a['jcr:primaryType'] > b['jcr:primaryType']?-1:1
-                    }
-                }
-                if( a[sortBy] && b[sortBy]) {
-                    return (a[sortBy].toString().toLowerCase() < b[sortBy].toString().toLowerCase() ? -1 : 1);
-                }else{
-                    return 0;
-                }
-
-            });
-
-            //console.log(JSON.stringify(sortedFiles));
-            this.setState({'files': sortedFiles});
-        });
-
-
-        //trigger file load
-        FileActions.getFileAndFolders.source.next(this.props.path);
+        if( this.props.folders){
+            this.setState({'folders': this.props.folders});
+        }
     }
 
     componentWillUnmount(){
@@ -123,14 +98,16 @@ class FileList extends Component{
     componentWillReceiveProps(newProps){
         if( this.props.path !== newProps.path ) {
             this.props = newProps;
-            FileActions.getFileAndFolders.source.next(this.props.path);
+            if( newProps.folders)   this.state.folders = newProps.folders;
+            if( newProps.files)     this.state.files = newProps.files;
         }
     }
 
 
     shouldComponentUpdate(nextProps, nextState) {
         return (nextProps.path !== this.props.path
-            || nextState.files  !== this.state.files
+            || nextState.folders  !== this.props.folders
+            || nextState.files  !== this.props.files
             || nextState.order  !== this.state.order
             || nextState.orderBy  !== this.state.orderBy
             || nextState.showDeleteFolderDialog  !== this.state.showDeleteFolderDialog
@@ -273,7 +250,7 @@ class FileList extends Component{
 
     render() {
         const classes = this.props.classes;
-        const { files, order, orderBy, selected } = this.state;
+        const {folders, files, order, orderBy, selected } = this.state;
         let checkIsSelected = path => this.state.selected.indexOf(path) !== -1;
 
         return (
@@ -288,24 +265,22 @@ class FileList extends Component{
                             rowCount={files.length}
                         />
                         <TableBody>
-                            {this.state.files.filter((f=>!f.toString().startsWith(".") && !f.toString().startsWith("jcr:")  )).map(node => {
-
+                            {folders.filter((f=>!f.toString().startsWith(".") )).map(node => {
                                 const isSelected = checkIsSelected(node.path);
+                                return (
+                                   <FolderRow key={node.path}
+                                              folder={node}
+                                              isSelected={isSelected}
+                                              onDelete={this.handleFolderDelete}
+                                              onDownload={this.handleFolderDownload}
+                                              onNavigate={(path_)=>AppActions.navigateTo.next(path_)}/>
+                                );
+                            })}
 
-                                if( (node['jcr:primaryType'] === "dam:folder" || node['jcr:primaryType'] === "nt:folder") ){
 
-                                    return (
-                                       <FolderRow key={node.path}
-                                                  folder={node}
-                                                  isSelected={isSelected}
-                                                  onDelete={this.handleFolderDelete}
-                                                  onDownload={this.handleFolderDownload}
-                                                  onNavigate={(path_)=>AppActions.navigateTo.next(path_)}/>
-                                    );
-
-                                }else {
-
-                                    return (
+                            {files.filter((f=>!f.toString().startsWith(".") )).map(node => {
+                                const isSelected = checkIsSelected(node.path);
+                                return (
                                         <FileRow key={node.path}
                                                  file={node}
                                                  isSelected={isSelected}
@@ -315,7 +290,6 @@ class FileList extends Component{
                                                  onKeyDown={(event, path_) => this.handleClick(event, path_)}
                                                  onNavigate={(path_) => AppActions.navigateTo.next(path_)}/>
                                     )
-                                }
                             })}
                         </TableBody>
 
@@ -418,7 +392,7 @@ const FileRow = (props, context) => (
             }
             <Typography style={{display:'inline', paddingLeft:'16px'}}>{props.file.name}</Typography>
         </TableCell>
-        <TableCell  padding="default" style={{padding:'8px'}}>{moment(props.file['dam:date.created']?props.file['dam:date.created']:props.file['jcr:created']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
+        <TableCell  padding="default" style={{padding:'8px'}}>{moment(props.file['createdDate']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
         <TableCell  padding="default" style={{padding:'8px', textAlign:'center'}}>
             <Button onClick={()=>props.onDelete(props.file.path)} style={{minWidth:'24px', padding:"4px"}}><DeleteIcon /></Button>
             {props.file._links.download &&
@@ -431,8 +405,8 @@ const FileRow = (props, context) => (
 
 
 
-FileList.propTypes = {
+FolderAndFileList.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styleSheet)(FileList));
+export default withRouter(withStyles(styleSheet)(FolderAndFileList));

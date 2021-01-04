@@ -6,15 +6,11 @@ import com.mikenimer.familydam.modules.auth.models.Family;
 import com.mikenimer.familydam.modules.auth.models.User;
 import com.mikenimer.familydam.modules.auth.repositories.ApplicationRepository;
 import com.mikenimer.familydam.modules.auth.repositories.UserRepository;
-import com.mikenimer.familydam.modules.files.models.CreateFolderRequest;
 import com.mikenimer.familydam.modules.files.models.Folder;
+import com.mikenimer.familydam.modules.files.models.requests.CreateFolderRequest;
 import com.mikenimer.familydam.modules.files.repositories.FolderRepository;
-import io.swagger.annotations.Api;
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.types.MapAccessor;
-import org.neo4j.driver.types.TypeSystem;
 import org.springframework.data.neo4j.core.Neo4jTemplate;
-import org.springframework.data.neo4j.core.PreparedQuery;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -22,22 +18,20 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-@RestController
-@Api(value = "Folder API")
-@RequestMapping(value = "/files/api", produces = "application/hal+json")
+//@RestController
+//@Api(value = "Folder API")
+//@RequestMapping(value = "/files/api", produces = "application/hal+json")
 public class FolderApi {
 
     private static final System.Logger Log = System.getLogger(FolderApi.class.getName());
@@ -80,17 +74,18 @@ public class FolderApi {
             parentfolder = folderyRepository.findById(body.getParentId());
         }
 
-        Folder folder = new Folder();
-        folder.setName( body.getName() );
-        folder.setCreatedBy( user.get() );
-        folder.setApplication(application.get());
-        if( parentfolder.isPresent() ){
-            folder.setParent(parentfolder.get());
-        }
+        Folder folder = Folder.builder()
+            .withName(body.getName())
+            .withCreatedBy(user.get())
+            .withApplication(application.get())
+            .withParent(parentfolder.isPresent()?parentfolder.get():null)
+            .build();
 
         Folder f = folderyRepository.save(folder);
         return EntityModel.of(f);
     }
+
+
 
 
     /**
@@ -103,16 +98,10 @@ public class FolderApi {
         try {
             User authUser = ((AppUserDetails) (((UsernamePasswordAuthenticationToken) principal).getPrincipal())).getUser();
 
+            //query
+            List<Folder> folders = folderyRepository.findRootFoldersByUserId(authUser.getId());
 
-            //root folders
-            PreparedQuery<Folder> query = PreparedQuery.queryFor(Folder.class)
-                .withCypherQuery("MATCH (a:Application)-[:IN_APP]->(f:Folder)-[:CREATED_BY]->(u:User) where a.slug = 'files' and u.id=$userId return f ORDER BY f.name")
-                .withParameters(Map.of("userId", authUser.getId()))
-                .usingMappingFunction(new FolderMapper())
-                .build();
-            List<Folder> folders = neo4jTemplate.toExecutableQuery(query).getResults();
-
-            //decorate
+            //decorate entries
             List<EntityModel<Folder>> folderEntities = folders.stream().map(f -> {
                 Link sLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolder(f.getId(), principal)).withSelfRel();
                 Link childrenLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolderChildren(f.getId(), principal)).withRel("children");
@@ -131,6 +120,8 @@ public class FolderApi {
     }
 
 
+
+
     /**
      * Get single folder
      * @param folderId
@@ -141,23 +132,16 @@ public class FolderApi {
     public EntityModel<Folder> getFolder(@PathVariable("folderId") String folderId, Principal principal){
         User authUser = ((AppUserDetails)(((UsernamePasswordAuthenticationToken) principal).getPrincipal())).getUser();
 
-        //child folders
-        Optional<Folder> folders = neo4jTemplate.toExecutableQuery(
-            PreparedQuery.queryFor(Folder.class)
-                .withCypherQuery("match (f{id:$folderId}) return f ORDER BY f.name")
-                .withParameters(Map.of("folderId", folderId))
-                .usingMappingFunction(new FolderMapper())
-                .build()
-        ).getSingleResult();
+        Optional<Folder> folder = folderyRepository.findByIdAndUserId(folderId, authUser.getId());
 
-        if( !folders.isPresent() ){
+        if( !folder.isPresent() ){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Folder not found");
         }
 
         //Hateoas links
         Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolder(folderId, principal)).withSelfRel();
-        Link childrenLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolderChildren( folders.get().getId(), principal)).withRel("children");
-        return EntityModel.of(folders.get(), selfLink, childrenLink);
+        Link childrenLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolderChildren( folder.get().getId(), principal)).withRel("children");
+        return EntityModel.of(folder.get(), selfLink, childrenLink);
     }
 
 
@@ -172,19 +156,13 @@ public class FolderApi {
         User authUser = ((AppUserDetails)(((UsernamePasswordAuthenticationToken) principal).getPrincipal())).getUser();
 
         //child folders
-        List<Folder> folders = neo4jTemplate.toExecutableQuery(
-            PreparedQuery.queryFor(Folder.class)
-                .withCypherQuery("MATCH (fParent{id:$folderId})-[:IS_CHILD]->(f:Folder)-[:CREATED_BY]->(u:User) where u.id=$userId return f ORDER BY f.name")
-                .withParameters(Map.of("folderId", folderId, "userId", authUser.getId()))
-                .usingMappingFunction(new FolderMapper())
-                .build()
-        ).getResults();
-
+        List<Folder> folders = folderyRepository.findByParentIdAndUserId(folderId, authUser.getId());
 
         //decorate
         List<EntityModel<Folder>> folderEntities = folders.stream().map(f -> {
             Link sLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolder(f.getId(), principal)).withSelfRel();
-            return EntityModel.of(f, sLink);
+            Link childrenLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolderChildren( f.getId(), principal)).withRel("children");
+            return EntityModel.of(f, sLink, childrenLink);
         }).collect(Collectors.toList());
 
         //Hateoas links
@@ -192,31 +170,5 @@ public class FolderApi {
         return CollectionModel.of(folderEntities, selfLink);
     }
 
-
-    /**
-     * Map Neo4J node into a Folder
-     */
-    private class FolderMapper implements BiFunction<TypeSystem, MapAccessor, Folder>{
-        @Override
-        public Folder apply(TypeSystem typeSystem, MapAccessor mapAccessor) {
-            Date createdDate = null;
-            Date modifiedDate = null;
-            try {
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                createdDate = df.parse(mapAccessor.get("f").get("createdDate").asString());
-                modifiedDate = df.parse(mapAccessor.get("f").get("lastModifiedDate").asString());
-            }catch(ParseException ex){
-                Log.log(System.Logger.Level.WARNING, "Unable to parse '{}' or '{}'", mapAccessor.get("f").get("createdDate").asString(), mapAccessor.get("f").get("lastModifiedDate").asString());
-            }
-
-            return Folder.builder()
-                .id(mapAccessor.get("f").get("id").asString())
-                .name(mapAccessor.get("f").get("name").asString())
-                .slug(mapAccessor.get("f").get("slug").asString())
-                .createdDate(createdDate)
-                .lastModifiedDate(modifiedDate)
-                .build();
-        }
-    }
 
 }

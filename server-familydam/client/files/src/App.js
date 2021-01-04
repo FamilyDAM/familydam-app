@@ -14,7 +14,7 @@ import GetUserService from "./library/services/GetUserService";
 
 const styleSheet = (theme) => ({
     progress: {
-        margin: `0 ${theme.spacing.unit * 2}px`,
+        margin: `0 ${theme.spacing() * 2}px`,
         width: '100px',
         height: '100px',
         position: 'absolute',
@@ -48,11 +48,8 @@ class App extends Component {
     }
 
 
-    componentWillMount() {
-        this.setState({"isMounted": true});
-    }
-
     componentDidMount(){
+        this.setState({"isMounted": true});
 
         GetUserService.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
             // redirect to dashboard

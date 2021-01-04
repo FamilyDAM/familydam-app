@@ -93,7 +93,7 @@ class UserEditForm extends Component {
     }
 
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({"isMounted":true, "isLoading": false});
 
         UserManagerActions.saveUser.sink.takeWhile(() => this.state.isMounted).subscribe(user_ => {
