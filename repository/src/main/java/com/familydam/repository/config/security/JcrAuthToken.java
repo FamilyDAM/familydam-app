@@ -39,4 +39,6 @@ public class JcrAuthToken extends UsernamePasswordAuthenticationToken implements
     public void setDetails(Object details) {
         super.setDetails(details);
     }
+
+
 }

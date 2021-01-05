@@ -11,7 +11,7 @@
     <groupId>com.familydam</groupId>
     <artifactId>repository</artifactId>
     <version>0.4.0</version>
-    <name>FamilyDAM</name>
+    <name>FamilyDAM Repo</name>
     <description>Standalone JCR Repository</description>
 
 

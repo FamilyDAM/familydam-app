@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 import javax.jcr.Repository;
 
@@ -32,10 +33,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .cors().and().csrf().disable()
-            .sessionManagement().invalidSessionUrl("/index.html")
+            .cors()
             .and()
-            .httpBasic()
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .invalidSessionUrl("/index.html")
             .and()
                 .authorizeRequests()
                 .antMatchers("/index.html").permitAll()
@@ -62,21 +65,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .anyRequest().authenticated()
             //.loginProcessingUrl("/perform_login")
             .and()
+                .httpBasic()
+                .realmName("FamilyDAM")
+            .and()
                 .formLogin()
                 .loginProcessingUrl("/login")
                 .loginPage("/index.html")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .defaultSuccessUrl("/home/index.html", true)
-                .failureUrl("/index.html")
+                .failureUrl("/index.html?m=invalidLogin")
                 .permitAll()
             .and()
                 // If user isn't authorised to access a path...
                 .exceptionHandling()
                 // ...redirect them to /403
-                .accessDeniedPage("/index.html")
+                .accessDeniedPage("/index.html?m=notAuthorized")
             .and()
                 .logout()
                 .logoutUrl("/logout")
+                .logoutSuccessUrl("/index.html")
                 .invalidateHttpSession(true)
+                .clearAuthentication(true)
                 .deleteCookies("JSESSIONID");
 
     }

@@ -8,11 +8,7 @@ import com.familydam.repository.services.auth.UpdateUserService;
 import com.familydam.repository.services.auth.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.jcr.Repository;
 import javax.jcr.Session;
@@ -25,7 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Controller
+@CrossOrigin
+@RestController
 public class User {
 
     @Autowired

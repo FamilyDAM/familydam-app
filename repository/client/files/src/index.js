@@ -16,7 +16,7 @@ import App from './App';
 /**
  * Setup i18n/Localization formats & messages
  */
-addLocaleData(require('react-intl/locale-data/en'));
+//addLocaleData(require('react-intl/locale-data/en'));
 const i18nMessages = {
     "en-EN":require('./i18n/locales/en-EN.json')
 };
