@@ -7,6 +7,7 @@ import com.mikenimer.familydam.modules.auth.models.User;
 import com.mikenimer.familydam.modules.auth.repositories.ApplicationRepository;
 import com.mikenimer.familydam.modules.files.models.File;
 import com.mikenimer.familydam.modules.files.models.Folder;
+import com.mikenimer.familydam.modules.files.models.FolderProj;
 import com.mikenimer.familydam.modules.files.repositories.FileRepository;
 import com.mikenimer.familydam.modules.files.repositories.FolderRepository;
 import org.springframework.hateoas.CollectionModel;
@@ -87,9 +88,9 @@ public class Api {
 
 
             //query
-            Optional<Folder> folder = folderRepository.findById(folderId);
+            Optional<FolderProj> folder = folderRepository.findById2(folderId);
             if( folder.isPresent() ) {
-                List<EntityModel<Folder>> folders = decorateFolders(folderRepository.findByParentIdAndUserId(folderId, authUser.getId()));
+                List<EntityModel<FolderProj>> folders = decorateFolders(folderRepository.findByParentIdAndUserId(folderId, authUser.getId()));
                 List<EntityModel<File>> files = decorateFiles(fileRepository.findByParentIdAndUserId(folderId, authUser.getId()));
 
 
@@ -135,7 +136,7 @@ public class Api {
 
             Folder parent = null;
             if( folderId.isPresent() ){
-                Optional<Folder> parentF = folderRepository.findByIdAndUserId(folderId.get(), authUser.getId());
+                Optional<Folder> parentF = folderRepository.findById(folderId.get());
                 if( !parentF.isPresent() ){
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Folder '" +folderId.get() +"' not found");
                 }
@@ -161,11 +162,16 @@ public class Api {
     }
 
 
-    private List<EntityModel<Folder>> decorateFolders(List<Folder> folders) {
+    private List<EntityModel<FolderProj>> decorateFolders(List<FolderProj> folders) {
         return folders.stream().map((f)->{
             Link self = Link.of("/files/api/").withRel("self"); //todo
             return EntityModel.of(f, self);
         }).collect(Collectors.toList());
+    }
+
+    private EntityModel<FolderProj> decorateFolder(FolderProj folder) {
+        Link self = Link.of("/files/api/").withRel("self"); //todo
+        return EntityModel.of(folder, self);
     }
 
     private EntityModel<Folder> decorateFolder(Folder folder) {

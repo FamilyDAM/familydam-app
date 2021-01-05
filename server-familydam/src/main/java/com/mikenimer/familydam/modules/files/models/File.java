@@ -2,22 +2,22 @@ package com.mikenimer.familydam.modules.files.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mikenimer.familydam.modules.auth.models.Application;
+import com.mikenimer.familydam.modules.auth.models.Family;
 import com.mikenimer.familydam.modules.auth.models.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.neo4j.core.schema.*;
 import org.springframework.data.neo4j.core.support.DateString;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Node("File")
-@AllArgsConstructor
+@Getter
+@Setter
+@Data
 @NoArgsConstructor
-@Getter @Setter
+@AllArgsConstructor
+@Builder(setterPrefix = "with")
 public class File {
     private static String LABEL = "File";
 
@@ -42,26 +42,31 @@ public class File {
     @Relationship(type = "IS_CHILD", direction = Relationship.Direction.INCOMING)
     public Folder parent;
 
+
+    @JsonIgnore
+    @Relationship(type = "CREATED_BY", direction = Relationship.Direction.OUTGOING)
+    public User createdBy;
+
     //Metadata
     @JsonIgnore
-    @Relationship(type = "CREATED_BY_APP", direction = Relationship.Direction.INCOMING)
+    @Relationship(type = "CREATED_BY_APP", direction = Relationship.Direction.OUTGOING)
     public Application application;
 
     @JsonIgnore
-    @Relationship(type = "IS_OWNER", direction = Relationship.Direction.INCOMING)
-    public User owner;
+    @Relationship(type = "CREATED_BY_FAMILY", direction = Relationship.Direction.OUTGOING)
+    public Family family;
 
+    public static class FileBuilder {
+        private String name;
+        private String slug;
+        private Date createdDate = new Date();
+        private Date lastModifiedDate = new Date();
+        private String contentType = "application/octet-stream";
 
-
-    public File(String name, @NotNull Application app, @NotNull Folder parent, @NotNull User owner) {
-        this.name = name;
-        this.application = app;
-        this.parent = parent;
-        this.owner = owner;
-    }
-
-    public void setName(String name) {
-        this.name = name.trim();
-        this.slug = name.trim().toLowerCase().replaceAll("[^a-z0-9-]+", "_");
+        public File.FileBuilder withName(String name) {
+            this.name = name;
+            this.slug = name.trim().toLowerCase().replaceAll("[^a-z0-9-]+", "_");
+            return this;
+        }
     }
 }

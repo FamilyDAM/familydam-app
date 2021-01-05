@@ -7,6 +7,7 @@ import com.mikenimer.familydam.modules.auth.models.User;
 import com.mikenimer.familydam.modules.auth.repositories.ApplicationRepository;
 import com.mikenimer.familydam.modules.auth.repositories.UserRepository;
 import com.mikenimer.familydam.modules.files.models.Folder;
+import com.mikenimer.familydam.modules.files.models.FolderProj;
 import com.mikenimer.familydam.modules.files.models.requests.CreateFolderRequest;
 import com.mikenimer.familydam.modules.files.repositories.FolderRepository;
 import org.neo4j.driver.Driver;
@@ -94,15 +95,15 @@ public class FolderApi {
      * @return
      */
     @GetMapping(path="/folders", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollectionModel<EntityModel<Folder>> getRootFolders(Principal principal){
+    public CollectionModel<EntityModel<FolderProj>> getRootFolders(Principal principal){
         try {
             User authUser = ((AppUserDetails) (((UsernamePasswordAuthenticationToken) principal).getPrincipal())).getUser();
 
             //query
-            List<Folder> folders = folderyRepository.findRootFoldersByUserId(authUser.getId());
+            List<FolderProj> folders = folderyRepository.findRootFoldersByUserId(authUser.getId());
 
             //decorate entries
-            List<EntityModel<Folder>> folderEntities = folders.stream().map(f -> {
+            List<EntityModel<FolderProj>> folderEntities = folders.stream().map(f -> {
                 Link sLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolder(f.getId(), principal)).withSelfRel();
                 Link childrenLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolderChildren(f.getId(), principal)).withRel("children");
                 return EntityModel.of(f, sLink, childrenLink);
@@ -152,14 +153,14 @@ public class FolderApi {
      * @return
      */
     @GetMapping(path="/folders/{folderId}/children", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollectionModel<EntityModel<Folder>> getFolderChildren(@PathVariable("folderId") String folderId, Principal principal){
+    public CollectionModel<EntityModel<FolderProj>> getFolderChildren(@PathVariable("folderId") String folderId, Principal principal){
         User authUser = ((AppUserDetails)(((UsernamePasswordAuthenticationToken) principal).getPrincipal())).getUser();
 
         //child folders
-        List<Folder> folders = folderyRepository.findByParentIdAndUserId(folderId, authUser.getId());
+        List<FolderProj> folders = folderyRepository.findByParentIdAndUserId(folderId, authUser.getId());
 
         //decorate
-        List<EntityModel<Folder>> folderEntities = folders.stream().map(f -> {
+        List<EntityModel<FolderProj>> folderEntities = folders.stream().map(f -> {
             Link sLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolder(f.getId(), principal)).withSelfRel();
             Link childrenLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FolderApi.class).getFolderChildren( f.getId(), principal)).withRel("children");
             return EntityModel.of(f, sLink, childrenLink);

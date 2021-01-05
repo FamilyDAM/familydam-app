@@ -1,7 +1,5 @@
 package com.mikenimer.familydam.modules.files.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mikenimer.familydam.modules.auth.models.Application;
 import com.mikenimer.familydam.modules.auth.models.Family;
@@ -15,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Node("Folder")
+@Data
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,25 +41,24 @@ public class Folder {
     @Property
     public String contentType = "application/folder";
 
-    @JsonIgnore
+    //@JsonIgnore
     @Relationship(type = "IS_CHILD", direction = Relationship.Direction.INCOMING)
     public Folder parent;
 
-    //Metadata
-    @JsonIgnore
-    @Relationship(type = "IN_APP", direction = Relationship.Direction.INCOMING)
-    public Application application;
-
-    @JsonIgnore
+    //@JsonIgnore
     @Relationship(type = "CREATED_BY", direction = Relationship.Direction.OUTGOING)
     public User createdBy;
 
-    @JsonIgnore
-    @Relationship(type = "IN_FAMILY", direction = Relationship.Direction.OUTGOING)
+    //@JsonIgnore
+    @Relationship(type = "CREATED_BY_APP", direction = Relationship.Direction.OUTGOING)
+    public Application application;
+
+    //@JsonIgnore
+    @Relationship(type = "CREATED_BY_FAMILY", direction = Relationship.Direction.OUTGOING)
     public Family family;
 
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    //@JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonProperty("_embedded")
     public List getEmbedded() {
         return embedded;
