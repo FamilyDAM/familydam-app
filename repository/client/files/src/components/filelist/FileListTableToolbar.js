@@ -61,17 +61,11 @@ class FileListTableToolbar extends Component {
                 <div className={classes.spacer}/>
                 <div className={classes.actions} style={{width:'100px', marginRight:'8px'}}>
 
-                    <IconButton aria-label="Delete">
-                        <DeleteIcon
-                            onChange={(event, newValue) => {
-                                alert('todo');
-                            }}/>
+                    <IconButton aria-label="Delete" onChange={(event, newValue) => {alert('todo');}}>
+                        <DeleteIcon/>
                     </IconButton>
-                    <IconButton aria-label="Download">
-                        <FileDownloadIcon
-                            onClixk={(event, newValue) => {
-                                this.props.handleDownload(files[0].name, files[0].path);
-                            }}/>
+                    <IconButton aria-label="Download" onClick={(event, newValue) => {this.props.handleDownload(files[0].name, files[0].path);}}>
+                        <FileDownloadIcon />
                     </IconButton>
 
                 </div>

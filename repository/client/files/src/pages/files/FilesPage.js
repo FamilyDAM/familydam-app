@@ -5,32 +5,26 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
-
-import CircularProgress from '@material-ui/core/CircularProgress';
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
-import FileUpload from '@material-ui/icons/Folder'; //todo change back to upload icon
-import FolderIcon from '@material-ui/icons/Folder';
-import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
-import FileScanner from '../../utilities/FileScanner';
+
+
+import { Button, Breadcrumb, Space } from 'antd';
+import { HomeOutlined, FileOutlined, UploadOutlined, FolderAddOutlined } from '@ant-design/icons';
 
 import AppShell from '../../library/appShell/AppShell';
-import AppActions from '../../library/actions/AppActions';
-import Breadcrumb from '../../library/breadcrumb/Breadcrumb';
-import FileList from '../../components/filelist/FileList';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
 import UploadDialog from '../../components/uploaddialog/UploadDialog';
 import NewFolderDialog from '../../components/newfolderdialog/NewFolderDialog';
-import fileActions from "../../actions/FileActions";
-import FileActions from "../../actions/FileActions";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import FileReceiver from "../../components/filereceiver/FileReceiver";
+import GetFilesAndFoldersService from "../../services/GetFileAndFoldersService";
+import TableView from "../../components/tableView/TableView";
+import CreateFolderService from "../../services/CreateFolderService";
 
 const styleSheet = (theme) => ({
     progress: {
-        margin: `0 ${theme.spacing.unit * 2}px`,
+        margin: `0 ${theme.spacing() * 2}px`,
         width: '100px',
         height: '100px',
         position: 'absolute',
@@ -52,7 +46,9 @@ const styleSheet = (theme) => ({
 
     fileGridAppBar:{
         gridRow:'1',
-        gridColumn:'1/3'
+        gridColumn:'1/3',
+        zIndex:500,
+        colorDefault:'#eeeeee'
     },
 
     fileGridFileList:{
@@ -99,63 +95,59 @@ class FilesPage extends Component {
         super(props);
 
         this.state = {
-            isMounted:false,
-            isLoading:false,
+            isLoading:true,
+            isMounted:true,
             canAddFile:true,
             canAddFolder:true,
             showAddFolderDialog:false,
             showUploadSidebar:false,
             showNewFolderDialog:false,
+            showUploadDialog:false,
             selectedFiles:[],
             uploadFiles:[],
-            root:"/content",
-            visibleRoot:"/content/files",
-            path:"/content/files"
+            root:"/",
+            visibleRoot:"/",
+            path:"/",
+            folders:[],
+            files:[]
         };
 
-        this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
-        this.handleUploadClosed = this.handleUploadClosed.bind(this);
-        this.handleAfterOnDelete = this.handleAfterOnDelete.bind(this);
+        //this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
+        //this.handleUploadClosed = this.handleUploadClosed.bind(this);
+        //this.handleAfterOnDelete = this.handleAfterOnDelete.bind(this);
         //this.handleOnFileDrop  = this.handleOnFileDrop.bind(this);
-        this.handleFileSelect  = this.handleFileSelect.bind(this);
-        this.handleFileChange  = this.handleFileChange.bind(this);
-    }
-
-    componentWillMount(){
-        this.setState({isMounted:true});
-        this.validatePath();
+        //this.handleFileSelect  = this.handleFileSelect.bind(this);
+        //this.handleFileChange  = this.handleFileChange.bind(this);
     }
 
     componentDidMount(){
-        AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe((path)=>{
-            console.log("{FilesPage} navigateTo=" +path);
-            if (path.substring(0, 3) === "://") {
-                if( window.location.href.substring( window.location.href.indexOf("#")+1) !== path.substring(2) ){
-                    window.location.href = path.substring(2);
-                }
-            }else{
-                this.props.history.push(path);
+        this.setState({isMounted:true});
+
+        GetFilesAndFoldersService.isLoading.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
+            this.setState({'isLoading': data_ });
+        });
+        CreateFolderService.isLoading.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
+            this.setState({'isLoading': data_ });
+        });
+
+        GetFilesAndFoldersService.sink.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
+            let folders = [];
+            let files = [];
+            let folder = data_;
+
+            if( data_._embedded){
+                folders = data_._embedded.folders || [];
             }
 
-            //this.setState({"selectedFiles":[]});
-        });
-
-        //.takeWhile(() => this.state.isMounted)
-        FileActions.stageFile.bufferTime(5).subscribe((files_)=>{
-            if( files_.length > 0) {
-                var _files = this.state.uploadFiles;
-                for (const f of files_) {
-                    _files.push(f);
-                }
-                console.log("stage file || files=" +files_.length +"/" +_files.length);
-                this.setState({showUploadDialog: true, uploadFiles: _files})
+            if( data_._embedded ){
+                files = data_._embedded.files || [];
             }
+
+            this.setState({'folder': data_, 'folders': folders, 'files': files});
         });
 
-        FileActions.stageAction.subscribe((action_)=>{
-            this.setState({showUploadDialog:true})
-        });
-
+        //trigger load of all folders and files
+        GetFilesAndFoldersService.source.next(this.props.location.pathname);
     }
 
 
@@ -164,24 +156,31 @@ class FilesPage extends Component {
     }
 
     componentWillReceiveProps(newProps){
+        if( this.props.location.pathname !== newProps.location.pathname) {
+            GetFilesAndFoldersService.source.next(newProps.location.pathname);
+        }
         this.props = newProps;
-        this.validatePath();
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return (nextProps.path !== this.props.path
-            || nextProps.location !== this.props.location
-            || nextProps.user !== this.props.user
-            || nextState.path !== this.state.path
-            || nextState.root !== this.state.root
-            || nextState.selectedFiles !== this.state.selectedFiles
-            || nextState.showUploadDialog !== this.state.showUploadDialog
-            || nextState.showNewFolderDialog !== this.state.showNewFolderDialog
-        );
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return this.props.location.pathname != nextProps.location.pathname
+            || this.state.folders != nextState.folders
+            || this.state.files != nextState.files
+            || this.state.showNewFolderDialog != nextState.showNewFolderDialog
+            || this.state.isLoading != nextState.isLoading;
+    }
+
+    handleCreateFolder(folderName){
+        var parentId = this.state.folder.id || null;
+
+        CreateFolderService.sink.subscribe(function (results_) {
+            console.log(results_);
+        }.bind(this));
+        CreateFolderService.source.next({"parentId": parentId, "name": folderName});
     }
 
 
-
+    /**
     validatePath() {
         let _path = this.props.path;
         if( this.props.location.pathname && this.props.location.pathname.toString().startsWith(this.state.visibleRoot) ){
@@ -209,7 +208,7 @@ class FilesPage extends Component {
 
     handleUploadClosed(){
         this.setState({'showUploadDialog':false, uploadFiles:[]});
-        fileActions.getFileAndFolders.source.next(this.state.path);
+        GetFileAndFoldersService.source.next(this.state.path);
     }
 
     handleAfterOnDelete(path_){
@@ -225,8 +224,9 @@ class FilesPage extends Component {
         }
         this.setState({selectedFiles:selectedFiles});
 
-        fileActions.getFileAndFolders.source.next(this.state.path);
+        GetFileAndFoldersService.source.next(null);
     }
+**/
 
     /**
     handleOnFileDrop(files_){
@@ -235,12 +235,14 @@ class FilesPage extends Component {
         this.setState({"uploadFiles":_files})
     }**/
 
+    /**
     handleFileChange(e, files) {
         new FileScanner().scanFiles(e, this.state.path, e.target.files);
-    }
+    } **/
 
 
 
+    /**
     handleFileDownload(name_, path_){
         var link=document.createElement('a');
         document.body.appendChild(link);
@@ -249,7 +251,7 @@ class FilesPage extends Component {
         link.click();
 
         return false;
-    }
+    }**/
 
 
     render() {
@@ -257,46 +259,36 @@ class FilesPage extends Component {
         var classes = this.props.classes;
         const _sidebarVisible = this.state.showUploadSidebar || this.state.uploadFiles.length>0 || this.state.selectedFiles.length>0;
 
-        if( this.state.isLoading ){
-            return (
-                <AppShell user={this.props.user}>
-                    <CircularProgress className={classes.progress} size={50} />
-                </AppShell>
-            );
-        }
-
-
-
         return (
             <AppShell user={this.props.user} open={false}>
                 <div className={classes.fileGrid}>
                     <AppBar color="default" position="static" elevation={0}
-                            className={classes.fileGridAppBar}
-                            style={{'colorDefault':'#eeeeee'}}>
+                            className={classes.fileGridAppBar}>
 
                         <Toolbar className={classes.toolbarContainer}>
-                            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                                <FolderIcon />
-                            </IconButton>
                             <Typography variant="h6" className={classes.title}>
-                                <Breadcrumb root={this.state.root} path={this.state.path}/>
+                                <Breadcrumb>
+                                    <Breadcrumb.Item href="/">
+                                        <HomeOutlined />
+                                    </Breadcrumb.Item>
+                                    <Breadcrumb.Item href="/files">
+                                        <FileOutlined />
+                                        <span>Files</span>
+                                    </Breadcrumb.Item>
+                                    <Breadcrumb.Item>{this.props.path}</Breadcrumb.Item>
+                                </Breadcrumb>
                             </Typography>
-                            <div>
-                                <Button
-                                    color="primary"
-                                    disabled={!this.state.canAddFile}
-                                    onClick={this.handleFileSelect}>
-                                    <FileUpload/>&nbsp;&nbsp;Add Files
-                                </Button>
+                            <Space>
+                                <Button type="primary"
+                                        disabled={!this.state.canAddFile}
+                                        onClick={this.handleFileSelect}
+                                        icon={<UploadOutlined />}>Add Files</Button>
 
-                                <Button
-                                    label="New Folder"
-                                    color="primary"
-                                    disabled={!this.state.canAddFolder}
-                                    onClick={()=>{this.setState({'showNewFolderDialog':true})}}>
-                                    <NewFolderIcon/>&nbsp;&nbsp;New Folder
-                                </Button>
-                            </div>
+                                <Button type="primary"
+                                        disabled={!this.state.canAddFolder}
+                                        onClick={()=>{this.setState({'showNewFolderDialog':true})}}
+                                        icon={<FolderAddOutlined />}>New Folder</Button>
+                            </Space>
                         </Toolbar>
                     </AppBar>
 
@@ -306,12 +298,11 @@ class FilesPage extends Component {
                             path={this.state.path}
                             onFileDrop={this.handleOnFileDrop}/>
 
-                        <FileList
-                            path={this.state.path}
-                            onSelectionChange={this.handleFileSelectionChange}
-                            onDelete={this.handleAfterOnDelete}
-                            style={{gridRow:"1 / 4", gridColumn:"1 / 3"}}/>
-
+                        <TableView
+                            loading={this.state.isLoading}
+                            folders={this.state.folders}
+                            files={this.state.files}
+                            onRowClick={this.handleOnRowClick} />
                     </div>
 
 
@@ -332,6 +323,7 @@ class FilesPage extends Component {
                         path={this.state.path}/>
 
                     <NewFolderDialog
+                        onSave={this.handleCreateFolder}
                         onClose={()=>{this.setState({'showNewFolderDialog':false})}}
                         open={this.state.showNewFolderDialog}
                         path={this.state.path}/>

@@ -39,7 +39,7 @@ class FileInfoSidebar extends Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.setState({isMounted: true, fileActions: FileActions});
         this.handleRatingChange = this.handleRatingChange.bind(this);
         this.handleTagChange = this.handleTagChange.bind(this);

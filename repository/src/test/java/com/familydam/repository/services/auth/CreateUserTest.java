@@ -2,6 +2,8 @@ package com.familydam.repository.services.auth;
 
 
 import com.familydam.repository.Constants;
+import com.familydam.repository.modules.auth.services.CreateUserService;
+import com.familydam.repository.modules.auth.services.UserListService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,7 +1,7 @@
 package com.familydam.repository.config;
 
 import com.familydam.repository.config.repo.InitialDAMContent;
-import com.familydam.repository.models.AdminUser;
+import com.familydam.repository.modules.auth.models.AdminUser;
 import org.apache.commons.io.FileUtils;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;

@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import {addLocaleData} from 'react-intl';
 import registerServiceWorker from './registerServiceWorker';
 
+import 'antd/dist/antd.css';
+
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 //@see https://www.materialpalette.com
@@ -16,7 +18,7 @@ import App from './App';
 /**
  * Setup i18n/Localization formats & messages
  */
-//addLocaleData(require('react-intl/locale-data/en'));
+//addLocaleData(require('../react-intl/locale-data/en'));
 const i18nMessages = {
     "en-EN":require('./i18n/locales/en-EN.json')
 };

@@ -1,7 +1,6 @@
 {
   "private": true,
   "workspaces": [
-    "auth",
     "home",
     "files",
     "photos",

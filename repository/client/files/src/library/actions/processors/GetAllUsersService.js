@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import UserActions from '../UserActions';
-import AppSettings from '../../../library/actions/AppSettings';
+import AppSettings from '../AppSettings';
+import {Subject, BehaviorSubject} from "@reactivex/rxjs";
 
 /**
  * @SEE http://docs.spring.io/spring-xd/docs/1.2.0.M1/reference/html/#processors
@@ -10,12 +10,14 @@ import AppSettings from '../../../library/actions/AppSettings';
  */
 class GetAllUsersService {
 
-    sink=undefined;
+    isLoading = new BehaviorSubject(true);
+    source = new Subject();
+    sink = new Subject();
 
-    constructor(source_, sink_, saveUserSink_) {
+
+    constructor() {
         //console.log("{GetUsers Service} subscribe");
-        this.sink = sink_;
-        source_.subscribe(this.getUsers.bind(this));
+        this.source.subscribe(this.getUsers.bind(this));
 
         //refresh the list after any user data is saved
         //saveUserSink_.subscribe(this.getUsers.bind(this));
@@ -29,12 +31,13 @@ class GetAllUsersService {
     async getUsers()
     {
         const baseUrl = AppSettings.baseHost.getValue();
-        const _url = baseUrl +'/api/v1/auth/users';
+        const _url = baseUrl +'/core/api/users';
 
         const headers = new Headers();
         headers.append('pragma', 'no-cache');
         headers.append('cache-control', 'no-cache');
 
+        this.isLoading.next(true);
 
         //Save or Create user
         const users = await fetch( _url, {
@@ -46,21 +49,25 @@ class GetAllUsersService {
         .then(async (response) => response.json())
         .then( (users) => {
             var list = [];
-            for (var i = 0; i < users.length; i++) {
-                var item = users[i];
-                if (item.firstName === undefined) {
-                    item.firstName = item.username;
+            if( users && users._embedded ) {
+                for (var i = 0; i < users._embedded.users.length; i++) {
+                    var item = users._embedded.users[i];
+                    list.push(item);
                 }
-                list.push(item);
             }
             //sort by username (friendly first name0
             var _sortedUsers = list.sort(function (a, b) {
-                if (a.username > b.username) return 1;
-                if (a.username < b.username) return -1;
+                if (a.name > b.name) return 1;
+                if (a.name < b.name) return -1;
                 return 0;
             });
 
             return _sortedUsers;
+        })
+        .then( (users) => {
+            //flip flag
+            this.isLoading.next(false);
+            return users;
         })
         .catch(err => {
             //send the error to the store (through the sink observer
@@ -72,7 +79,7 @@ class GetAllUsersService {
                 //this.sink.error(_error);
                 //reload
                 setTimeout(()=>{
-                    UserActions.getAllUsers.source.next(true);
+                    this.source.next(true);
                 }, 500);
 
             }
@@ -86,4 +93,4 @@ class GetAllUsersService {
 }
 
 
-export default GetAllUsersService;
+export default new GetAllUsersService();
