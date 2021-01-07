@@ -1,18 +1,27 @@
 package com.familydam.repository.modules.files.api;
 
+import com.familydam.repository.models.ContentNode;
 import com.familydam.repository.modules.auth.config.security.JcrAuthToken;
 import com.familydam.repository.modules.auth.models.AdminUser;
 import com.familydam.repository.modules.files.services.*;
 import com.familydam.repository.utils.NodeToMapUtil;
 import org.apache.jackrabbit.commons.JcrUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.jcr.*;
 import javax.jcr.nodetype.NodeType;
@@ -23,12 +32,13 @@ import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
-public class Content {
+public class ContentApi {
 
-    Logger log = LoggerFactory.getLogger(Content.class);
+    Logger log = LoggerFactory.getLogger(ContentApi.class);
 
 
     @Autowired
@@ -67,9 +77,9 @@ public class Content {
         try {
             session.checkPermission(path, Session.ACTION_READ);
         }catch (AccessControlException ex){
-            return ResponseEntity.status(403).build();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }catch ( RepositoryException re){
-            return ResponseEntity.status(500).body(re.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, re.getMessage());
         }
 
         // todo find workaround for '+' char: "/content/files/mike/Photos/alaska/kayden - garage sell 2019/smugmug/Flowers+"
@@ -83,48 +93,40 @@ public class Content {
         //Return the actual nt:file Input Stream
         if( !"application/json".equals(accept) && n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) )
         {
-            InputStream inputStream;
-            byte[] out = null;
-
-            //Check the type, if a file, we want to read the file as a stream to return.
-            if( n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {
-                String mimeType = n.getNode("jcr:content").getProperty("jcr:mimeType").getString();
-                if (mimeType.startsWith("image")) {
-                    //special handling of images (with cached resize support)
-                    inputStream = fsReadImageService.readFile(n, request);
-                    out=org.apache.commons.io.IOUtils.toByteArray(inputStream);
-                }else{
-                    //read raw file
-                    inputStream = fsReadFileService.readFile(n);
-                    out=org.apache.commons.io.IOUtils.toByteArray(inputStream);
-                }
-            }
-
-
-            //set headers
-            HttpHeaders responseHeaders = new HttpHeaders();
-            if( request.getParameterMap().containsKey("download") ) {
-                responseHeaders.add("content-disposition", "attachment; filename=" + n.getName());
-            }
-            responseHeaders.add("Content-Type", n.getNode("jcr:content").getProperty("jcr:mimeType").getString());
+            byte[] out = readFileSteam(n, request.getParameter("size"));
+            HttpHeaders responseHeaders = getFileStreamHeaders(request.getParameterMap(), n);
 
             //return stream
-
             if( out != null ) {
                 return new ResponseEntity(out, responseHeaders, HttpStatus.OK);
             }else{
                 return ResponseEntity.notFound().build();
             }
         }
-        // Get Data for Node (json of properties)
+
+        // Get Data for Single Node (json of properties)
         else if( n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {
+            //todo convert to Hal+EntityModel
             Map nodeMap = NodeToMapUtil.convert(n);
             return ResponseEntity.ok(nodeMap);
         }
+
+
         //Get list of all child nodes
         else {
-            List<Map> nodes = fsListService.listNodes(session, path);
-            return ResponseEntity.ok(nodes);
+            List<ContentNode> nodes = fsListService.listNodes(session, path);
+
+            List<EntityModel<ContentNode>> entityNodes = nodes.stream().map((cn)->{
+                Link selfLink = WebMvcLinkBuilder.linkTo(ContentApi.class).slash(cn.getPath()).withSelfRel();
+                return EntityModel.of(cn, selfLink);
+            }).collect(Collectors.toList());
+
+            RepresentationModel model = HalModelBuilder
+                .emptyHalModel()
+                .embed(entityNodes)
+                .link(WebMvcLinkBuilder.linkTo(ContentApi.class).slash(path).withSelfRel())
+                .build();
+            return ResponseEntity.ok(model);
         }
     }
 
@@ -196,5 +198,40 @@ public class Content {
         }
         return ResponseEntity.ok().build();
     }
+
+
+
+    @NotNull
+    private HttpHeaders getFileStreamHeaders(Map<String, String[]> reqParams, Node n) throws RepositoryException {
+        //set headers
+        HttpHeaders responseHeaders = new HttpHeaders();
+        if( reqParams.containsKey("download") ) {
+            responseHeaders.add("content-disposition", "attachment; filename=" + n.getName());
+        }
+        responseHeaders.add("Content-Type", n.getNode("jcr:content").getProperty("jcr:mimeType").getString());
+        return responseHeaders;
+    }
+
+    @Nullable
+    private byte[] readFileSteam(Node n, String size) throws RepositoryException, IOException {
+        InputStream inputStream;
+        byte[] out = null;
+
+        //Check the type, if a file, we want to read the file as a stream to return.
+        if( n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {
+            String mimeType = n.getNode("jcr:content").getProperty("jcr:mimeType").getString();
+            if (mimeType.startsWith("image") && size != null) {
+                //special handling of images (with cached resize support)
+                inputStream = fsReadImageService.readFile(n, size);
+                out=org.apache.commons.io.IOUtils.toByteArray(inputStream);
+            }else{
+                //read raw file
+                inputStream = fsReadFileService.readFile(n);
+                out=org.apache.commons.io.IOUtils.toByteArray(inputStream);
+            }
+        }
+        return out;
+    }
+
 
 }

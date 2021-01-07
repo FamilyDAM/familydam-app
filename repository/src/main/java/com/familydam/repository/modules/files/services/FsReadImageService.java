@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,10 +51,10 @@ public class FsReadImageService implements IRestService {
     }
 
 
-    public InputStream readFile(Node node, HttpServletRequest request) throws RepositoryException {
+    public InputStream readFile(Node node, String size) throws RepositoryException {
         try {
-            if (request.getParameter("size") != null) {
-                return readFile(node, request.getParameter("size"));
+            if (size != null) {
+                return  resize(node, Integer.valueOf(size));
             }
             return JcrUtils.readFile(node);
         } catch (Exception ex) {
@@ -63,15 +62,6 @@ public class FsReadImageService implements IRestService {
         }
     }
 
-
-    public InputStream readFile(Node node, String size) throws RepositoryException {
-        try {
-            Integer _size = new Integer(size);
-            return resize(node, _size);
-        } catch (Exception ex) {
-            return JcrUtils.readFile(node);
-        }
-    }
 
 
     public InputStream resize(Node node, Integer longSize) throws Exception {

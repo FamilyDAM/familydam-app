@@ -52,9 +52,18 @@ public class Constants {
 
     //Node props
     public static final String CHILDREN = "children";
+    public static final String ID = "id";
+    public static final String NAME = ":name";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
     public static final String EMAIL = "email";
+    public static final String PASSWORD = "password";
+    public static final String ORDER = "order";
+    public static final Object SLUG = "slug";
+    public static final Object LABEL = "label";
+    public static final Object PATH = "path";
+    public static final Object ROLES = "roles";
+    public static final Object EMBEDDED = "embedded";
 
     //Events
     public static final String EVENT_IMAGE_METADATA = "image.metadata";
@@ -79,8 +88,6 @@ public class Constants {
 
 
     // simple strings
-    public static final String PATH= "path";
-    public static final String NAME= "name";
     public static final String TYPE= "type";
     public static final String VALUE= "value";
     public static final String DESCRIPTION= "description";
@@ -106,4 +113,5 @@ public class Constants {
     public static final String PUBLISHER = "publisher";
     public static final String WIDTH = "width";
     public static final String HEIGHT = "height";
+
 }

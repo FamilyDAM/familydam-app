@@ -2,13 +2,19 @@ package com.familydam.repository.modules.auth.api;
 
 import com.familydam.repository.modules.auth.config.security.JcrAuthToken;
 import com.familydam.repository.modules.auth.models.AdminUser;
+import com.familydam.repository.modules.auth.models.User;
 import com.familydam.repository.modules.auth.services.CreateUserService;
 import com.familydam.repository.modules.auth.services.GetUserService;
 import com.familydam.repository.modules.auth.services.UpdateUserService;
 import com.familydam.repository.modules.auth.services.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.jcr.Repository;
 import javax.jcr.Session;
@@ -23,7 +29,8 @@ import java.util.UUID;
 
 
 @RestController
-public class User {
+@RequestMapping("/api/v1/auth")
+public class UserApi {
 
     @Autowired
     Repository repository;
@@ -45,25 +52,30 @@ public class User {
 
 
     @CrossOrigin
-    @GetMapping(value = {"/api/v1/auth/user/me"})
+    @GetMapping(value = {"/user/me"})
     @ResponseBody
-    public ResponseEntity authenticatedUser(Principal principal) throws Exception
+    public EntityModel<User> authenticatedUser(Principal principal) throws Exception
     {
         if( principal == null ){
-            return ResponseEntity.status(401).build();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-        Map user = getUserService.getUser(session, (String)((JcrAuthToken) principal).getPrincipal() );
+
+        User user = getUserService.getUser(session, (String)((JcrAuthToken) principal).getPrincipal() );
         if( user == null ){
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(user);
+
+        //self link
+        Link link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserApi.class).authenticatedUser(principal)).withSelfRel();
+
+        return EntityModel.of(user, link);
     }
 
 
 
-    @GetMapping(value = {"/api/v1/auth/user/{username}"})
+    @GetMapping(value = {"/user/{username}"})
     @ResponseBody
     public ResponseEntity authenticatedUser(Principal principal, @PathVariable String username) throws Exception
     {
@@ -72,10 +84,12 @@ public class User {
         }
 
         Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-        Map user = getUserService.getUser(session,  username );
+
+        User user = getUserService.getUser(session,  username );
         if( user == null ){
             return ResponseEntity.notFound().build();
         }
+
         return ResponseEntity.ok(user);
     }
 
@@ -87,7 +101,7 @@ public class User {
      * @return
      * @throws Exception
      */
-    @PostMapping(value={"/api/v1/auth/user", "/api/v1/auth/user/{username}"})
+    @PostMapping(value={"/user", "/user/{username}"})
     public ResponseEntity createUser(Principal principal, HttpServletRequest request, @PathVariable(required = false) String username) throws Exception
     {
         Session session;

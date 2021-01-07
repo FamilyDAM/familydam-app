@@ -19,7 +19,7 @@
         function selectUser(e){
             const id = e.currentTarget.attributes["data-id"].value;
             e.currentTarget.style="border-color:blue;width:56px;";
-            document.getElementById('user').setAttribute('value', id);
+            document.getElementById('username').setAttribute('value', id);
             document.getElementById('password').disabled = false;
             document.getElementById('submitBtn').disabled = false;
             document.getElementById('password').focus();
@@ -56,7 +56,7 @@
                     </fieldset>
                     <fieldset style="text-align: center">
                         <input type="submit" id="submitBtn" value="Login" disabled></input>
-                        <input type="hidden" id="user" name="user" value="">
+                        <input type="hidden" id="username" name="username" value="">
                     </fieldset>
                 </div>
             </form>

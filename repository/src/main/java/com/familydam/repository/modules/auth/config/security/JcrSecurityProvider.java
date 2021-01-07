@@ -39,7 +39,10 @@ public class JcrSecurityProvider implements AuthenticationProvider
 
 
         try {
-            SimpleCredentials simpleCredentials = new SimpleCredentials(name, password.toCharArray());
+            //BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String pwd = password.trim();//encoder.encode(password);
+
+            SimpleCredentials simpleCredentials = new SimpleCredentials(name, pwd.toCharArray());
             Session session = repository.login(simpleCredentials);
 
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();

@@ -1,10 +1,10 @@
 package com.familydam.repository.modules.auth.services;
 
 import com.familydam.repository.Constants;
+import com.familydam.repository.modules.auth.utils.KeyEncryption;
 import com.familydam.repository.services.IRestService;
 import com.familydam.repository.utils.NodeToMapUtil;
 import com.familydam.repository.utils.jcr.AccessControlUtil;
-import com.familydam.repository.modules.auth.utils.KeyEncryption;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
@@ -38,15 +37,15 @@ public class CreateUserService implements IRestService
     public Map createUser(Session session_, Map user_) throws RepositoryException {
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
 
-        Object username = user_.get(":name").toString().toLowerCase();
-        Object pwd = user_.get("pwd").toString();
-        Object isFamilyAdmin = new Boolean(user_.get(Constants.IS_FAMILY_ADMIN).toString());
+        Object username = user_.get(Constants.NAME).toString().toLowerCase();
+        Object pwd = user_.get(Constants.PASSWORD).toString();
+        Object isFamilyAdmin = Boolean.parseBoolean(user_.get(Constants.IS_FAMILY_ADMIN).toString());
         User _user = userManager.createUser((String) username, (String) pwd);
 
 
         _user.setProperty(Constants.FIRST_NAME, new StringValue((String)user_.get(Constants.FIRST_NAME)));
         _user.setProperty(Constants.LAST_NAME, new StringValue((String)user_.get(Constants.LAST_NAME)));
-        _user.setProperty(Constants.EMAIL, new StringValue((String)user_.get(Constants.EMAIL)));
+        //_user.setProperty(Constants.EMAIL, new StringValue((String)user_.get(Constants.EMAIL)));
         _user.setProperty(Constants.IS_FAMILY_ADMIN, new BooleanValue( (Boolean)isFamilyAdmin ));
         session_.save();
 
@@ -73,7 +72,7 @@ public class CreateUserService implements IRestService
 
 
 
-    private void initializeUserFolders(Session session_, User user_) throws PathNotFoundException, RepositoryException {
+    private void initializeUserFolders(Session session_, User user_) throws RepositoryException {
         Node contentNode = session_.getNode("/content");
         Node contentFileNode = contentNode.getNode("files");
         Node userNode = contentFileNode.addNode(user_.getID(), NodeType.NT_FOLDER);
@@ -124,7 +123,7 @@ public class CreateUserService implements IRestService
             //todo, if the user isSuperAdmin - change the system admin password to match (todo: keep in sync)
 
             // start job to generate encryption keys for the user
-            createSecurityKeys(session, user);
+            //createSecurityKeys(session, user);
         }
     }
 

@@ -1,7 +1,10 @@
 package com.familydam.repository.modules.files.services;
 
+import com.familydam.repository.models.ContentNode;
+import com.familydam.repository.models.UnstructuredNode;
+import com.familydam.repository.modules.files.models.FileNode;
+import com.familydam.repository.modules.files.models.FolderNode;
 import com.familydam.repository.services.IRestService;
-import com.familydam.repository.utils.NodeToMapUtil;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +17,6 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -27,7 +29,7 @@ public class FsListService implements IRestService
     Logger log = LoggerFactory.getLogger(FsListService.class);
 
 
-    public List<Map> listNodes(Session session, String path) throws RepositoryException
+    public List<ContentNode> listNodes(Session session, String path) throws RepositoryException
     {
         Iterable<Node> childNodes;
 
@@ -59,7 +61,13 @@ public class FsListService implements IRestService
             })
             .map(node -> {
                 try {
-                    return NodeToMapUtil.convert(node);
+                    if( node.isNodeType(NodeType.NT_FOLDER)){
+                        return FolderNode.builder().withNode(node).build();
+                    } else if( node.isNodeType(NodeType.NT_FILE)){
+                        return FileNode.builder().withNode(node).build();
+                    } else {
+                        return UnstructuredNode.builder().withNode(node).build();
+                    }
                 }catch (RepositoryException re){
                     log.error(re.getMessage(), re);
                 }

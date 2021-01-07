@@ -1,10 +1,12 @@
 package com.familydam.repository.modules.auth;
 
+import com.familydam.repository.Constants;
 import com.familydam.repository.modules.auth.models.AdminUser;
+import com.familydam.repository.modules.auth.models.User;
+import com.familydam.repository.modules.auth.services.CreateUserService;
 import com.familydam.repository.modules.auth.services.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,23 +17,27 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.jcr.*;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @CrossOrigin
 @Controller
 public class AuthAppController {
 
     UserListService userListService;
+    CreateUserService createUserService;
     Repository repository;
     AdminUser adminUser;
 
 
     @Autowired
-    public AuthAppController(Repository repository, AdminUser adminUser, UserListService userListService) {
+    public AuthAppController(Repository repository, AdminUser adminUser, UserListService userListService, CreateUserService createUserService) {
         this.repository = repository;
         this.adminUser = adminUser;
         this.userListService = userListService;
+        this.createUserService = createUserService;
     }
 
 
@@ -45,16 +51,22 @@ public class AuthAppController {
 
 
         ModelAndView mv = new ModelAndView();
+        mv.addObject("backgroundImage", getBackgroundImageUrl());
+
         try {
             Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
 
-            List<Map> users = userListService.listUsers(session, true);
+            List<User> users = userListService.listUsers(session, true);
+
+            if( users.size() == 0 ){
+                mv.setViewName("auth/init");
+                return mv;
+            }
 
             mv.addObject("users", users);
-            mv.addObject("backgroundImage", getBackgroundImageUrl());
             mv.setViewName("auth/index");
-
             return mv;
+
         }catch(LoginException ex){
             ex.printStackTrace();
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
@@ -72,34 +84,44 @@ public class AuthAppController {
         @RequestParam("password") String password
     ) {
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        //BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-//        //first create a new family
-//        Family family = new Family();
-//        family.setName(lastName);
-//        family = familyRepository.save(family);
-//
-//        //second, add the first user
-//        User user = new User();
-//        user.setName(name);
-//        user.setLastName(lastName);
-//        user.setRoles(AuthConstants.ROLE_FAMILY_ADMIN + "," + AuthConstants.ROLE_FAMILY_MEMBER);
-//        user.setPassword(encoder.encode(password)); //link to family
-//        user.setFamily(family);
-//        userRepository.save(user);
-//
-//
-//        //Create nodes for installed applications
-//        for (IApplicationConfig config : applicationConfigs) {
-//            Application a = config.getAppNode();
-//            a.setFamily(family);
-//            applicationRepository.save(a);
-//        }
+        Session session;
+        Session adminSession;
+
+        try {
+            //First User
+            adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
+            if (userListService.listUsers(adminSession, true).size() == 0) {
+                session = adminSession;
+            } else {
+                //redirect back to home page /login
+                ModelAndView mv = new ModelAndView("redirect:/index.html");
+                return mv;
+            }
 
 
-        ModelAndView mv = new ModelAndView("redirect:/index.html");
-        mv.addObject("backgroundImage", "https://picsum.photos/1024/1024");
-        return mv;
+
+            Map newParams = new HashMap();
+            newParams.put(Constants.ID, UUID.randomUUID().toString());
+            newParams.put(Constants.NAME, name.trim().toLowerCase());
+            newParams.put(Constants.FIRST_NAME, name.trim());
+            newParams.put(Constants.LAST_NAME, lastName.trim());
+            newParams.put(Constants.PASSWORD, password.trim());//encoder.encode(password));
+            newParams.put(Constants.IS_FAMILY_ADMIN, true);
+
+            //todo,  give admin user admin permissions so we can use the logged in user instead of system permission
+            createUserService.createUser(session, newParams);
+
+            //redirect back to home page /login
+            ModelAndView mv = new ModelAndView("redirect:/index.html");
+            return mv;
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
+
     }
 
 }

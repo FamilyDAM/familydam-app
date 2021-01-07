@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 public class UserListService implements IRestService
 {
-    public List<Map> listUsers(Session session_, Boolean excludeAdmin_) throws RepositoryException {
+    public List<com.familydam.repository.modules.auth.models.User> listUsers(Session session_, Boolean excludeAdmin_) throws RepositoryException {
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
 
         Iterator<Authorizable> users = userManager.findAuthorizables(new org.apache.jackrabbit.api.security.user.Query() {
@@ -30,7 +30,7 @@ public class UserListService implements IRestService
 
         boolean isFirst = true;
 
-        List<Map> _users = new ArrayList();
+        List<com.familydam.repository.modules.auth.models.User> _users = new ArrayList();
         while (users.hasNext()) {
             User u = (User) users.next();
 
@@ -49,7 +49,9 @@ public class UserListService implements IRestService
             user.put("id", u.getID());
             user.put("_isAdmin", u.isAdmin());
             user.put("_isDisabled", u.isDisabled());
-            _users.add(user);
+
+
+            _users.add(com.familydam.repository.modules.auth.models.User.builder().withMap(user).build());
 
         }
 

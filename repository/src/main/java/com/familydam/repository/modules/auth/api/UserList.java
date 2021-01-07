@@ -1,6 +1,7 @@
 package com.familydam.repository.modules.auth.api;
 
 import com.familydam.repository.modules.auth.models.AdminUser;
+import com.familydam.repository.modules.auth.models.User;
 import com.familydam.repository.modules.auth.services.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,7 +14,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -33,7 +33,7 @@ public class UserList {
     public List listUsers(HttpServletRequest request) throws Exception {
         Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
 
-        List<Map> users = userListService.listUsers(session, true);
+        List<User> users = userListService.listUsers(session, true);
         //System.out.println("Users: " +users.size());
         return users;
     }

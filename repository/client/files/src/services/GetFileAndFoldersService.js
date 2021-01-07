@@ -49,7 +49,7 @@ class GetFilesAndFoldersService {
         });
 
         const response = await req.json();
-        if( apps.status == 200 ) {
+        if( req.status == 200 ) {
             this.sink.next(response);
             this.isLoading.next(false);
         }else{
