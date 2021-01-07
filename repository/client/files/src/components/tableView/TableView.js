@@ -35,12 +35,12 @@ class TableView extends Component {
                 title: 'type',
                 dataIndex: 'type',
                 width: 80,
-                render: (text, record) => <span>{record.contentType}</span>, //todo: replace with icon
+                render: (text, record) => <span>{record.primaryType}</span>, //todo: replace with icon
             }, {
                 title: 'Name',
                 dataIndex: 'name',
                 key: 'name',
-                render: (text, record) => <Link to={record.id}>{text}</Link>,
+                render: (text, record) => <Link to={record.path}>{text}</Link>,
             },
             {
                 title: 'Date Created',
@@ -88,7 +88,7 @@ class TableView extends Component {
         const rowSelection = this.getRowSelection();
 
         return (
-            <Table rowKey="id"
+            <Table rowKey="path"
                    loading={this.props.loading}
                    columns={this.getColumns()}
                    dataSource={rows}

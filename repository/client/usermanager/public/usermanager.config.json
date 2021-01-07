@@ -5,6 +5,6 @@
   "order": 1,
   "slug": "usermanager",
   "label": "User Manager",
-  "path": "://usermanager/index.html",
+  "path": "/usermanager/index.html",
   "roles": []
 }

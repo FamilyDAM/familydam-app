@@ -5,6 +5,6 @@
   "order": 2,
   "slug": "photos",
   "label": "Photo Gallery",
-  "path": "://photos/index.html",
+  "path": "/photos/index.html",
   "roles": []
 }

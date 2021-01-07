@@ -160,11 +160,11 @@ class Sidebar extends Component {
 
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
-                                <ListItem button key={item.homeUrl} onClick={()=>window.location.href = item.homeUrl}>
+                                <ListItem button key={item.path} onClick={()=>window.location.href = item.path}>
                                     <Avatar style={{marginRight:'8px'}}>
                                         <FolderIcon />
                                     </Avatar>
-                                    <ListItemText primary={item.name} primaryTypographyProps={{type:"body2"}}
+                                    <ListItemText primary={item.label} primaryTypographyProps={{type:"body2"}}
                                                   className={this.props.open?classes.openLabel:classes.closedLabel}/>
                                 </ListItem>
 

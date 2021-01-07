@@ -27,7 +27,7 @@ class GetUsersService {
      * @param val_
      * @returns {*}
      */
-    async getUser(username_)
+    getUser(username_)
     {
         const baseUrl = AppSettings.baseHost.getValue();
         const _url = baseUrl +'/api/v1/auth/user/me';
@@ -39,17 +39,12 @@ class GetUsersService {
 
         this.isLoading.next(true);
 
-        const req = await fetch( _url, {
+        fetch( _url, {
             method: 'GET',
             mode: 'cors',
             headers: headers,
             credentials: "include"
-        });
-
-        const json = await req.json();
-        this.sink.next(json);
-
-        /**
+        })
             //check for redirect
             .then(response => {
                 if(response.redirected) {
@@ -73,7 +68,6 @@ class GetUsersService {
                     this.sink.error(_error);
                 }
             });
-         **/
 
     }
 

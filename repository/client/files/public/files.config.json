@@ -5,6 +5,6 @@
   "order": 1,
   "slug": "files",
   "label": "File Browser",
-  "path": "://files/index.html",
+  "path": "/files/index.html",
   "roles": []
 }

@@ -131,19 +131,11 @@ class FilesPage extends Component {
         });
 
         GetFilesAndFoldersService.sink.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
-            let folders = [];
-            let files = [];
-            let folder = data_;
+            const folder = data_;
+            const folders = data_.folders || [];
+            const files = data_.files || [];
 
-            if( data_._embedded){
-                folders = data_._embedded.folders || [];
-            }
-
-            if( data_._embedded ){
-                files = data_._embedded.files || [];
-            }
-
-            this.setState({'folder': data_, 'folders': folders, 'files': files});
+            this.setState({'folder': data_, 'folders': data_, 'files': files});
         });
 
         //trigger load of all folders and files

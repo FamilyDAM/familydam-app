@@ -30,10 +30,10 @@ class LoadClientAppsService {
     async loadApps(data_)
     {
         const baseUrl = AppSettings.baseHost.getValue();
-        const _url = baseUrl +'/api/v1/core/clientapps'; //+'/core/api/apps';
+        const _url = baseUrl +'/api/v1/apps/'; //+'/core/api/apps';
 
         const headers = new Headers();
-        headers.append('Accept', 'application/json');
+        headers.append('Accept', 'application/hal+json');
 
         this.isLoading.next(true);
 
@@ -46,21 +46,20 @@ class LoadClientAppsService {
         });
 
         const response = await apps.json();
-        if( apps.status == 200 && response._embedded.applications ){
+        if( apps.status == 200 && response._embedded && response._embedded.apps ){
             const primaryApps = [];
             const secondaryApps = [];
-            response._embedded.applications.forEach( (app)=>{
-                if( app.isPrimaryApp ){
+            response._embedded.apps.forEach( (app)=>{
+                if( app.primary ){
                     primaryApps.push(app);
                     return;
                 }
                 secondaryApps.push(app);
             });
-            this.sink.next({"primaryApps":primaryApps, "secondaryApps":secondaryApps});
-        }else{
-            console.dir(err);
-            var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
-            this.sink.error(_error);
+
+            var _primaryApps = primaryApps.sort((a,b)=>a.order - b.order)
+            var _secondaryApps = secondaryApps.sort((a,b)=>a.order - b.order)
+            this.sink.next({"primaryApps":_primaryApps, "secondaryApps":_secondaryApps});
         }
 
     }

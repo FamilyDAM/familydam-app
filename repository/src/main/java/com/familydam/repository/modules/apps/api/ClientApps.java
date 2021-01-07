@@ -5,11 +5,13 @@ import com.familydam.repository.modules.apps.services.ClientAppsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,7 +31,7 @@ public class ClientApps {
 
     @GetMapping(value = {"/"})
     @ResponseBody
-    public CollectionModel<EntityModel<ClientApp>> listPath(Principal principal) throws Exception {
+    public ResponseEntity listPath(Principal principal) throws Exception {
 
         List<ClientApp> apps = clientAppsService.getClientApps();
 
@@ -42,7 +44,14 @@ public class ClientApps {
 
         //self link
         Link link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ClientApps.class).listPath(principal)).withSelfRel();
-        return CollectionModel.of(entityApps, link);
+
+        RepresentationModel result = HalModelBuilder
+            .emptyHalModel()
+            .embed(entityApps)
+            .link(link)
+            .build();
+
+        return ResponseEntity.ok(result);
     }
 
 
