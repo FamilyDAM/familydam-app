@@ -68,7 +68,7 @@ public class AppBrowser {
         }
 
 
-        mv.setViewName("browser/browser");
+        mv.setViewName("browser/index");
         return mv;
     }
 

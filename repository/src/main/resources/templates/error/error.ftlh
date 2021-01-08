@@ -10,7 +10,7 @@
     </style>
 </head>
 <body>
-<h1>404 Error Page</h1>
+<h1>Default Error Page</h1>
 <table>
     <tr>
         <td>Date</td>
@@ -30,12 +30,12 @@
     </tr>
     <tr>
         <td>Exception</td>
-        <td>${exception!"No exception thrown"}</td>
+        <td>${exception}</td>
     </tr>
     <tr>
         <td>Trace</td>
         <td>
-            <pre>${trace!"No Stacktrace available"}</pre>
+            <pre>${trace}</pre>
         </td>
     </tr>
 </table>
