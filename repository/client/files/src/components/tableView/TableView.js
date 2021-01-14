@@ -1,17 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {withRouter, Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
-import {Table, Tag, Space, Modal} from 'antd';
-import { format, parseISO } from 'date-fns'
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import Typography from "@material-ui/core/Typography";
-import DialogActions from "@material-ui/core/DialogActions";
+import {Modal, Space, Table} from 'antd';
+import { FileOutlined, FolderOutlined} from '@ant-design/icons';
+
+
+import {format, parseISO} from 'date-fns'
 import Button from "@material-ui/core/Button";
-import LoadingButton from "../../library/loadingButton/LoadingButton";
-import Paper from "@material-ui/core/Paper";
 
 
 class TableView extends Component {
@@ -71,10 +67,16 @@ class TableView extends Component {
     getColumns(){
         return [
             {
-                title: 'type',
+                title: '',
                 dataIndex: 'type',
-                width: 80,
-                render: (text, record) => <span>{record.primaryType}</span>, //todo: replace with icon
+                width: 30,
+                render: (text, record) => {
+                    if( record.primaryType === "nt:folder" ){
+                        return (<FolderOutlined style={{fontSize:'24px'}}/>);
+                    }else{
+                        return (<FileOutlined style={{fontSize:'24px'}}/>);
+                    }
+                }
             }, {
                 title: 'Name',
                 dataIndex: 'name',
@@ -93,12 +95,20 @@ class TableView extends Component {
                 title: 'Action',
                 key: 'action',
                 width: 200,
-                render: (text, record) => (
-                    <Space size="middle">
-                        <Button type="link">Info</Button>
-                        <Button type="link" data-path={record.path} onClick={record.primaryType==='nt:file'?this.handleFileDelete:this.handleFolderDelete}>Delete</Button>
-                    </Space>
-                ),
+                render: (text, record) => {
+                    if (record.primaryType === 'nt:file') {
+                        return (<Space size="middle">
+                            <Button type="link">Info</Button>
+                            <Button type="link" data-path={record.path}
+                                    onClick={this.handleFileDelete}>Delete</Button>
+                        </Space>)
+                    } else {
+                        return (<Space size="middle">
+                            <Button type="link" data-path={record.path}
+                                    onClick={this.handleFolderDelete}>Delete</Button>
+                        </Space>)
+                    }
+                },
             },
         ];
     }

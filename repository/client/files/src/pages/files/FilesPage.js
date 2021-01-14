@@ -116,6 +116,7 @@ class FilesPage extends Component {
 
         //create refs
         this.fileInputFieldRef = React.createRef();
+        this.uploadRef = React.createRef();
 
         this.handleFileDelete = this.handleFileDelete.bind(this);
         this.handleFolderDelete = this.handleFolderDelete.bind(this);
@@ -220,8 +221,6 @@ class FilesPage extends Component {
             console.log("Create Folder:" +location_);
             this.setState({showAddFolderDialog:false, showUploadSidebar:false, showNewFolderDialog:false, showUploadDialog:false});
 
-            //const relPath = location_.substring( basehost.length );
-            //this.props.history.push(relPath);
             //trigger load of all folders and files
             GetFilesAndFoldersService.source.next(this.state.path);
         }.bind(this));
@@ -241,59 +240,8 @@ class FilesPage extends Component {
         GetFilesAndFoldersService.source.next(this.state.path);
     }
 
-
     /**
-     * Upload Dialog methods
-
-     handleFileSelect(){
-        this.fileInputFieldRef.current.click();
-    }
-
-     handleUploadClosed(){
-        this.setState({'showUploadDialog':false, uploadFiles:[]});
-        GetFileAndFoldersService.source.next(this.state.path);
-    }*/
-
-    /**
-    handleFileSelectionChange(files){
-        this.setState({selectedFiles:files, showUploadSidebar:false});
-    }
-
-
-
-    handleAfterOnDelete(path_){
-        //console.log("handleAfterOnDelete: " +this.state.path);
-
-        //remove deleted item from list of selectedfiles
-        var selectedFiles = [];
-        for (var i = 0; i < this.state.selectedFiles.length; i++) {
-            var obj = this.state.selectedFiles[i];
-            if( obj !== path_){
-                selectedFiles.push(obj);
-            }
-        }
-        this.setState({selectedFiles:selectedFiles});
-
-        GetFileAndFoldersService.source.next(null);
-    }
-**/
-
-    /**
-    handleOnFileDrop(files_){
-        const _files = this.state.uploadFiles;
-        _files.push(files_);
-        this.setState({"uploadFiles":_files})
-    }**/
-
-    /**
-    handleFileChange(e, files) {
-        new FileScanner().scanFiles(e, this.state.path, e.target.files);
-    } **/
-
-
-
-    /**
-    handleFileDownload(name_, path_){
+     handleFileDownload(name_, path_){
         var link=document.createElement('a');
         document.body.appendChild(link);
         link.href=path_ ;
@@ -301,7 +249,60 @@ class FilesPage extends Component {
         link.click();
 
         return false;
-    }**/
+    }
+
+     */
+
+
+    UploadOnChangeHandler(info){
+        //console.log("Upload OnChange");
+        //console.dir(info);
+        //console.dir(this.uploadRef);
+
+        const { status } = info.file;
+        if (status !== 'uploading') {
+            //console.log(info.file, info.fileList);
+        }
+        if (status === 'done') {
+            message.success(`${info.file.name} file uploaded successfully.`);
+            if(info.fileList){
+                let allDone = true;
+                info.fileList.forEach((x)=>{
+                    if( x.status !== "done"){
+                        allDone = false;
+                    }
+                });
+
+                if( allDone ){
+                    //GetFilesAndFoldersService.source.next(this.props.location.pathname);
+                    //window.location = location.pathname;
+                    window.location.reload();
+                    //console.log("done");
+                }
+            }
+        } else if (status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+        }
+    }
+
+    UploadCustomRequestHandler(req){
+        UploadFileService.source.next({path:req.action, file:req.file, onError:req.onError, onProgress:req.onProgress, onSuccess:req.onSuccess})
+    }
+
+    /**
+     * remove file items that have been uploaded successfully
+     * @param originNode : ReactElement
+     * @param file
+     * @param fileList
+     * @return originNode
+     * @constructor
+     */
+    UploadItemRenderHandler(originNode, file, fileList){
+        if( file.status !== "done" ) {
+            return originNode;
+        }
+    }
+
 
 
     render() {
@@ -319,37 +320,18 @@ class FilesPage extends Component {
             directory:true,
             showUploadList: {showRemoveIcon:true, showPreviewIcon:false, showDownloadIcon:false},
             action: this.props.location.pathname,
-            onChange(info) {
-                const { status } = info.file;
-                if (status !== 'uploading') {
-                    console.log(info.file, info.fileList);
-                }
-                if (status === 'done') {
-                    message.success(`${info.file.name} file uploaded successfully.`);
-                    if(info.fileList){
-                        let allDone = true;
-                        info.fileList.forEach((x)=>{
-                            if( x.status !== "done"){
-                                allDone = false;
-                            }
-                        });
-
-                        if( allDone ){
-                            //GetFilesAndFoldersService.source.next(this.props.location.pathname);
-                            //window.location = location.pathname;
-                            window.location.reload();
-                        }
-                    }
-                } else if (status === 'error') {
-                    message.error(`${info.file.name} file upload failed.`);
-                }
-            },
-            customRequest(req) {
-                UploadFileService.source.next({path:req.action, file:req.file, onError:req.onError, onProgress:req.onProgress, onSuccess:req.onSuccess})
-            }
+            onChange: this.UploadOnChangeHandler.bind(this),
+            customRequest: this.UploadCustomRequestHandler.bind(this),
+            itemRender: this.UploadItemRenderHandler.bind(this)
         };
 
-        console.dir(draggerProps);
+        message.config({
+            top: 24,
+            duration: .5,
+            maxCount: 3
+        });
+
+        //console.dir(draggerProps);
 
         const pathParts = this.parseBreadcrumbPath(this.props.location.pathname);
 
@@ -396,8 +378,8 @@ class FilesPage extends Component {
                             onDeleteFolder={this.handleFolderDelete}/>
 
 
-                        <div style={{marginTop:'24px', height:'200px'}}>
-                            <Dragger {...draggerProps}>
+                        <div style={{marginTop:'24px'}}>
+                            <Dragger {...draggerProps} ref={this.uploadRef}>
                                 <p className="ant-upload-drag-icon">
                                     <FolderOutlined />
                                 </p>
@@ -436,7 +418,6 @@ class FilesPage extends Component {
 
 
                 <input type="file"
-                       ref="fileInputField"
                        ref={this.fileInputFieldRef}
                        style={{'display': 'none'}}
                        multiple
