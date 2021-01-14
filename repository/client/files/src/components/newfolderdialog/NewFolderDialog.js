@@ -57,9 +57,10 @@ class NewFolderDialog extends Component {
 
 
     handleSave(){
-        if( this.props.handleSave && this.state.folderName.length > 0) {
-            this.props.handleSave(this.state.folderName)
+        if( this.props.onSave && this.state.folderName.length > 0) {
+            this.props.onSave(this.state.folderName)
         }
+        this.setState({"open":false});
     }
 
 

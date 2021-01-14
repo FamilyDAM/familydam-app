@@ -14,6 +14,7 @@ import Paper from '@material-ui/core/Paper';
 
 import AppShell from '../../library/appShell/AppShell';
 import AppActions from '../../library/actions/AppActions';
+import LoadClientAppsService from "../../library/services/LoadClientAppsService";
 
 
 const styleSheet = (theme) => ({
@@ -85,11 +86,11 @@ class DashboardPage extends Component {
         };
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({"isMounted":true});
 
 
-        AppActions.loadClientApps.sink.takeWhile(() => this.state.isMounted).subscribe( (data)=> {
+        LoadClientAppsService.sink.takeWhile(() => this.state.isMounted).subscribe( (data)=> {
             if( data ) {
                this.setState({
                     "primaryApps": data.primaryApps,
@@ -102,10 +103,6 @@ class DashboardPage extends Component {
 
     componentWillUnmount() {
         this.setState({"isMounted":false});
-    }
-
-    componentWillReceiveProps(oldProps, newProps){
-        debugger;
     }
 
 
@@ -129,7 +126,7 @@ class DashboardPage extends Component {
 
                         {this.state.primaryApps && this.state.primaryApps.filter(app=>app.slug !== "home").map((app, indx)=> {
                             return (
-                                <Paper key={app.path} data-indx={indx} className={classes['contentAppCard' +indx]} onClick={() => AppActions.navigateTo.next(app.path)}>
+                                <Paper key={app.path} data-indx={indx} className={classes['contentAppCard' +indx]} onClick={() => window.location.href = app.path}>
                                     <FileIcon style={{width: '48px', height: '48px'}}/>
                                     <Typography style={{fontSize: '24px'}}>{app.label}</Typography>
                                 </Paper>

@@ -91,13 +91,6 @@ const styleSheet = (theme) => ({
 
 class Sidebar extends Component {
 
-
-    constructor(props, context) {
-        super(props);
-
-        this.handleNavClick = this.handleNavClick.bind(this);
-    }
-
     shouldComponentUpdate(nextProps, nextState) {
         return (nextProps.open !== this.props.open
             || nextProps.user !== this.props.user
@@ -106,17 +99,11 @@ class Sidebar extends Component {
     }
 
 
-    handleNavClick(path){
-        if( this.props.onNavClick){
-            this.props.onNavClick(path);
-        }
-    }
-
     handleLogout(){
         window.localStorage.clear();
         //UserActions.getUser.sink.next(next);
         AppActions.logout.source.next(true);
-        AppActions.navigateTo.next("://");
+        window.location = "/index.html";
     }
 
 
@@ -148,7 +135,7 @@ class Sidebar extends Component {
                         />
                     </div>
                     <div className={classes.sidebarProfileName}>
-                        <Typography component="div" type={"title"}>{this.props.user.firstName} {this.props.user.lastName}</Typography>
+                        <Typography component="div" type={"title"}>{this.props.user.name} {this.props.user.lastName}</Typography>
                     </div>
                     <div className={classes.sidebarButtons}>
 
@@ -173,7 +160,7 @@ class Sidebar extends Component {
 
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
-                                <ListItem button key={item.path} onClick={()=>this.handleNavClick(item.path)}>
+                                <ListItem button key={item.path} onClick={()=>window.location.href = item.path}>
                                     <Avatar style={{marginRight:'8px'}}>
                                         <FolderIcon />
                                     </Avatar>
@@ -187,7 +174,7 @@ class Sidebar extends Component {
 
 
                     <List style={{gridColumn: "1",gridRow: "3"}} className={!this.props.open?classes.openLabel:classes.closedLabel}>
-                        <ListItem button onClick={()=>this.handleNavClick('://app-usermanager/index.html')}>
+                        <ListItem button onClick={()=>window.location.href = '://app-usermanager/index.html'}>
                             <Avatar>
                                 <AccountCircle
                                     style={{'width': 48, 'height': 48}}

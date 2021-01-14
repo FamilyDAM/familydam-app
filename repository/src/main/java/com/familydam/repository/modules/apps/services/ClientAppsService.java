@@ -25,7 +25,7 @@ public class ClientAppsService implements IRestService
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
 
         //Dynamically look for Config files, used to define each application
-        Resource[] resources = resolver.getResources("/static/**/*.config.json");
+        Resource[] resources = resolver.getResources("/public/**/*.config.json");
         for (Resource resource : resources) {
             clientApps.add(ClientApp.builder().withResource(resource).build());
         }

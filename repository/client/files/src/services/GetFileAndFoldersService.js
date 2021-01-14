@@ -29,10 +29,15 @@ class GetFilesAndFoldersService {
         const baseUrl = AppSettings.baseHost.getValue();
 
         let _url = baseUrl +'/content/';
-        if( path_  && path_.length > 1 ) {
-            _url = baseUrl + path_;// + ".graph.1.json/nt:file,sling:file,nt:folder,sling:folder,dam:file,dam:folder/name,index,parent,links,path,jcr:primaryType,jcr:created,jcr:mixinTypes&t=1";
+
+        if (path_ && path_.length > 1) {
+            if( path_.startsWith("http")){
+                _url = path_;
+            }else {
+                _url = baseUrl + path_;
+            }
         }
-            
+
         const headers = new Headers();
         headers.append('Accept', 'application/hal+json');
 
@@ -57,10 +62,10 @@ class GetFilesAndFoldersService {
 
             this.isLoading.next(false);
         } else {
-            console.dir(err);
-            var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
-            this.sink.error(_error);
             this.isLoading.next(false);
+            //console.dir(req);
+            var _error = {'code': req.status, 'status': req.statusText, 'message': await req.text()};
+            this.sink.error(_error);
         }
 
 

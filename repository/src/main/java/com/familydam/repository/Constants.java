@@ -3,6 +3,7 @@ package com.familydam.repository;
 public class Constants {
 
     public static final String IS_FAMILY_ADMIN = "isFamilyAdmin";
+    public static final String APP_ROOT = "/content";
 
 
     // paths

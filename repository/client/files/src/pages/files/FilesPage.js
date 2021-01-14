@@ -2,15 +2,15 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import React, {Component} from 'react';
-import {withRouter} from 'react-router-dom';
+import {withRouter, Link} from 'react-router-dom';
 import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 
 
-import { Button, Breadcrumb, Space } from 'antd';
-import { HomeOutlined, FileOutlined, UploadOutlined, FolderAddOutlined } from '@ant-design/icons';
+import { Button, Breadcrumb, Space, Upload, message } from 'antd';
+import { HomeOutlined, FileOutlined, UploadOutlined, FolderOutlined, FolderAddOutlined, InboxOutlined } from '@ant-design/icons';
 
 import AppShell from '../../library/appShell/AppShell';
 import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
@@ -21,6 +21,9 @@ import FileReceiver from "../../components/filereceiver/FileReceiver";
 import GetFilesAndFoldersService from "../../services/GetFileAndFoldersService";
 import TableView from "../../components/tableView/TableView";
 import CreateFolderService from "../../services/CreateFolderService";
+import AppSettings from "../../library/actions/AppSettings";
+import UploadFileService from "../../services/UploadFileService";
+import DeleteFileOrFolderService from "../../services/DeleteFileOrFolderService";
 
 const styleSheet = (theme) => ({
     progress: {
@@ -105,23 +108,29 @@ class FilesPage extends Component {
             showUploadDialog:false,
             selectedFiles:[],
             uploadFiles:[],
-            root:"/",
-            visibleRoot:"/",
-            path:"/",
+            path:"/content/files",
+            visibleRoot:"/content/files",
             folders:[],
             files:[]
         };
 
+        //create refs
+        this.fileInputFieldRef = React.createRef();
+
+        this.handleFileDelete = this.handleFileDelete.bind(this);
+        this.handleFolderDelete = this.handleFolderDelete.bind(this);
+
+        //this.handleFileSelect  = this.handleFileSelect.bind(this);
+        //this.handleUploadClosed  = this.handleUploadClosed.bind(this);
         //this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
         //this.handleUploadClosed = this.handleUploadClosed.bind(this);
         //this.handleAfterOnDelete = this.handleAfterOnDelete.bind(this);
         //this.handleOnFileDrop  = this.handleOnFileDrop.bind(this);
-        //this.handleFileSelect  = this.handleFileSelect.bind(this);
-        //this.handleFileChange  = this.handleFileChange.bind(this);
     }
 
     componentDidMount(){
         this.setState({isMounted:true});
+        this.validatePath();
 
         GetFilesAndFoldersService.isLoading.takeWhile(() => this.state.isMounted).subscribe((data_)=>{
             this.setState({'isLoading': data_ });
@@ -139,7 +148,11 @@ class FilesPage extends Component {
         });
 
         //trigger load of all folders and files
-        GetFilesAndFoldersService.source.next(this.props.location.pathname);
+        if( this.props.location.pathname.startsWith(this.state.path)) {
+            GetFilesAndFoldersService.source.next(this.props.location.pathname );
+        }else{
+            GetFilesAndFoldersService.source.next(this.state.path);
+        }
     }
 
 
@@ -148,10 +161,11 @@ class FilesPage extends Component {
     }
 
     componentWillReceiveProps(newProps){
-        if( this.props.location.pathname !== newProps.location.pathname) {
-            GetFilesAndFoldersService.source.next(newProps.location.pathname);
-        }
         this.props = newProps;
+        this.setState({showAddFolderDialog:false, showUploadSidebar:false, showNewFolderDialog:false, showUploadDialog:false});
+
+        var newPath = this.validatePath();
+        GetFilesAndFoldersService.source.next(newPath);
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -162,17 +176,7 @@ class FilesPage extends Component {
             || this.state.isLoading != nextState.isLoading;
     }
 
-    handleCreateFolder(folderName){
-        var parentId = this.state.folder.id || null;
 
-        CreateFolderService.sink.subscribe(function (results_) {
-            console.log(results_);
-        }.bind(this));
-        CreateFolderService.source.next({"parentId": parentId, "name": folderName});
-    }
-
-
-    /**
     validatePath() {
         let _path = this.props.path;
         if( this.props.location.pathname && this.props.location.pathname.toString().startsWith(this.state.visibleRoot) ){
@@ -184,24 +188,78 @@ class FilesPage extends Component {
 
         if( _path.toString().startsWith(this.state.visibleRoot)) {
             this.setState({"path": _path});
+            return _path;
         }else{
             //todo show invalid path
             console.log("Invalid Path: " +_path);
+            return this.props.path;
         }
     }
 
-    handleFileSelect(){
-        this.refs.fileInputField.click();
+
+    parseBreadcrumbPath(path, part){
+        let parts = path.split("/");
+        if(path.startsWith("/")){
+            parts = parts.slice(1)
+        }
+
+        const visibleParts = [];
+        for (let i = 1; i < parts.length; i++) {
+            const p = parts[i];
+            visibleParts.push( {label: p, path: '/' +parts.slice(0, i+1).join("/")} )
+        }
+        return visibleParts;
     }
 
+
+    handleCreateFolder(folderName){
+        const parentId = this.state.folder.id || null;
+        const basehost = AppSettings.baseHost.value;
+
+        CreateFolderService.sink.subscribe(function (location_) {
+            console.log("Create Folder:" +location_);
+            this.setState({showAddFolderDialog:false, showUploadSidebar:false, showNewFolderDialog:false, showUploadDialog:false});
+
+            //const relPath = location_.substring( basehost.length );
+            //this.props.history.push(relPath);
+            //trigger load of all folders and files
+            GetFilesAndFoldersService.source.next(this.state.path);
+        }.bind(this));
+        CreateFolderService.source.next({"path": this.state.path, "name": folderName});
+    }
+
+
+    async handleFileDelete(path_){
+        await DeleteFileOrFolderService.execute(path_);
+        //reload after deletion
+        GetFilesAndFoldersService.source.next(this.state.path);
+    }
+
+    async handleFolderDelete(path_){
+        await DeleteFileOrFolderService.execute(path_);
+        //reload after deletion
+        GetFilesAndFoldersService.source.next(this.state.path);
+    }
+
+
+    /**
+     * Upload Dialog methods
+
+     handleFileSelect(){
+        this.fileInputFieldRef.current.click();
+    }
+
+     handleUploadClosed(){
+        this.setState({'showUploadDialog':false, uploadFiles:[]});
+        GetFileAndFoldersService.source.next(this.state.path);
+    }*/
+
+    /**
     handleFileSelectionChange(files){
         this.setState({selectedFiles:files, showUploadSidebar:false});
     }
 
-    handleUploadClosed(){
-        this.setState({'showUploadDialog':false, uploadFiles:[]});
-        GetFileAndFoldersService.source.next(this.state.path);
-    }
+
 
     handleAfterOnDelete(path_){
         //console.log("handleAfterOnDelete: " +this.state.path);
@@ -250,6 +308,51 @@ class FilesPage extends Component {
         //console.log("render:" +this.state.uploadFiles.length);
         var classes = this.props.classes;
         const _sidebarVisible = this.state.showUploadSidebar || this.state.uploadFiles.length>0 || this.state.selectedFiles.length>0;
+        const {Dragger} = Upload;
+        const location = this.props.location;
+
+        const draggerProps = {
+            name: 'file',
+            multiple: true,
+            listType: 'picture',
+            withCredentials: true,
+            directory:true,
+            showUploadList: {showRemoveIcon:true, showPreviewIcon:false, showDownloadIcon:false},
+            action: this.props.location.pathname,
+            onChange(info) {
+                const { status } = info.file;
+                if (status !== 'uploading') {
+                    console.log(info.file, info.fileList);
+                }
+                if (status === 'done') {
+                    message.success(`${info.file.name} file uploaded successfully.`);
+                    if(info.fileList){
+                        let allDone = true;
+                        info.fileList.forEach((x)=>{
+                            if( x.status !== "done"){
+                                allDone = false;
+                            }
+                        });
+
+                        if( allDone ){
+                            //GetFilesAndFoldersService.source.next(this.props.location.pathname);
+                            //window.location = location.pathname;
+                            window.location.reload();
+                        }
+                    }
+                } else if (status === 'error') {
+                    message.error(`${info.file.name} file upload failed.`);
+                }
+            },
+            customRequest(req) {
+                UploadFileService.source.next({path:req.action, file:req.file, onError:req.onError, onProgress:req.onProgress, onSuccess:req.onSuccess})
+            }
+        };
+
+        console.dir(draggerProps);
+
+        const pathParts = this.parseBreadcrumbPath(this.props.location.pathname);
+
 
         return (
             <AppShell user={this.props.user} open={false}>
@@ -263,19 +366,16 @@ class FilesPage extends Component {
                                     <Breadcrumb.Item href="/">
                                         <HomeOutlined />
                                     </Breadcrumb.Item>
-                                    <Breadcrumb.Item href="/files">
+                                    <Breadcrumb.Item href={'#/'}>
                                         <FileOutlined />
                                         <span>Files</span>
                                     </Breadcrumb.Item>
-                                    <Breadcrumb.Item>{this.props.path}</Breadcrumb.Item>
+                                    {pathParts.map((p)=>{
+                                        return (<Breadcrumb.Item><Link to={p.path} >{p.label}</Link></Breadcrumb.Item>);
+                                    })}
                                 </Breadcrumb>
                             </Typography>
                             <Space>
-                                <Button type="primary"
-                                        disabled={!this.state.canAddFile}
-                                        onClick={this.handleFileSelect}
-                                        icon={<UploadOutlined />}>Add Files</Button>
-
                                 <Button type="primary"
                                         disabled={!this.state.canAddFolder}
                                         onClick={()=>{this.setState({'showNewFolderDialog':true})}}
@@ -286,15 +386,28 @@ class FilesPage extends Component {
 
 
                     <div className={classes.fileGridFileList} style={{gridColumn:_sidebarVisible?'1/2':'1/3'}}>
-                        <FileReceiver
-                            path={this.state.path}
-                            onFileDrop={this.handleOnFileDrop}/>
 
                         <TableView
                             loading={this.state.isLoading}
                             folders={this.state.folders}
                             files={this.state.files}
-                            onRowClick={this.handleOnRowClick} />
+                            onRowClick={this.handleOnRowClick}
+                            onDeleteFile={this.handleFileDelete}
+                            onDeleteFolder={this.handleFolderDelete}/>
+
+
+                        <div style={{marginTop:'24px', height:'200px'}}>
+                            <Dragger {...draggerProps}>
+                                <p className="ant-upload-drag-icon">
+                                    <FolderOutlined />
+                                </p>
+                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                <p className="ant-upload-hint">
+                                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+                                    band files
+                                </p>
+                            </Dragger>
+                        </div>
                     </div>
 
 
@@ -315,7 +428,7 @@ class FilesPage extends Component {
                         path={this.state.path}/>
 
                     <NewFolderDialog
-                        onSave={this.handleCreateFolder}
+                        onSave={this.handleCreateFolder.bind(this)}
                         onClose={()=>{this.setState({'showNewFolderDialog':false})}}
                         open={this.state.showNewFolderDialog}
                         path={this.state.path}/>
@@ -324,8 +437,9 @@ class FilesPage extends Component {
 
                 <input type="file"
                        ref="fileInputField"
-                       multiple
+                       ref={this.fileInputFieldRef}
                        style={{'display': 'none'}}
+                       multiple
                        onChange={this.handleFileChange}/>
 
             </AppShell>

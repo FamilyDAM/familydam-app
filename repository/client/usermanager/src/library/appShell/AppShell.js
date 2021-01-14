@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from "@material-ui/core/styles";
-
+import {takeWhile} from 'rxjs/operators';
 
 import Sidebar from '../sidebar/Sidebar';
 import AppHeader from '../appheader/AppHeader';
 import AppActions from '../actions/AppActions';
+import LoadClientAppsService from "../services/LoadClientAppsService";
 
 
 const styleSheet = (theme) => ({
@@ -71,10 +72,10 @@ class AppShell extends Component {
     }
 
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({"isMounted":true});
 
-        AppActions.navigateTo.takeWhile(() => this.state.isMounted).subscribe(function(path){
+        AppActions.navigateTo.pipe(takeWhile(() => this.state.isMounted)).subscribe(function(path){
             //debugger;
             if ( path !== "://" && path.substring(0, 3) === "://") {
                 window.location.href = path.substring(2);
@@ -83,15 +84,15 @@ class AppShell extends Component {
             }
         }.bind(this));
 
-        AppActions.loadClientApps.sink.subscribe( (data)=> {
+        LoadClientAppsService.sink.pipe(takeWhile(() => this.state.isMounted)).subscribe( (data)=> {
             if( data ) {
                 this.setState({
-                    "primaryApps": data.primaryApps,
-                    "secondaryApps": data.secondaryApps
+                    "primaryApps": data.primaryApps || [],
+                    "secondaryApps": data.secondaryApps || []
                 });
             }
         });
-        AppActions.loadClientApps.source.next(true);
+        LoadClientAppsService.source.next(true);
     }
 
     componentWillUnmount() {

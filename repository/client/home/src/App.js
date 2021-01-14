@@ -7,8 +7,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //views
 import DashboardPage from './pages/dashboard/DashboardPage';
-
-import UserActions from './library/actions/UserActions';
+import GetUserService from "./library/services/GetUserService";
 
 
 const styleSheet = (theme) => ({
@@ -51,10 +50,9 @@ class App extends Component {
     componentDidMount(){
         this.setState({"isMounted":true});
 
-        UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
+        GetUserService.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
             // redirect to dashboard
-            console.dir(user_);
-            console.log("UserActions.getUser.sink");
+            //console.dir(user_);
             if( user_ )
             {
                 this.setState({"user": user_});
@@ -63,7 +61,7 @@ class App extends Component {
             }
         });
 
-        UserActions.getUser.source.next(null)
+        GetUserService.source.next(null)
     }
 
 
@@ -90,7 +88,7 @@ class App extends Component {
             <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
                 <Router>
                     <Switch>
-                        <Route path="/" component={() => <DashboardPage user={this.state.user}/>}/>
+                        <Route path="/*" component={() => <DashboardPage user={this.state.user}/>}/>
                     </Switch>
                 </Router>
             </IntlProvider>

@@ -1,0 +1,10 @@
+{
+  "primary": true,
+  "secondary": false,
+  "embedded": false,
+  "order": 0,
+  "slug": "home",
+  "label": "Home",
+  "path": "/home/index.html",
+  "roles": []
+}

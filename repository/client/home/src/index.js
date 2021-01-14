@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {addLocaleData} from 'react-intl';
-import registerServiceWorker from './registerServiceWorker';
+//import registerServiceWorker from './registerServiceWorker';
 
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
@@ -16,7 +16,7 @@ import App from './App';
 /**
  * Setup i18n/Localization formats & messages
  */
-addLocaleData(require('react-intl/locale-data/en'));
+//addLocaleData(require('react-intl/locale-data/en'));
 const i18nMessages = {
     "en-EN":require('./i18n/locales/en-EN.json')
 };
@@ -50,4 +50,4 @@ const renderApp = function(){
 }
 
 renderApp();
-registerServiceWorker();
+//registerServiceWorker();

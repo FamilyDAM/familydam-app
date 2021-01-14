@@ -32,24 +32,30 @@ class CreateFolderService {
     {
         const baseUrl = AppSettings.baseHost.getValue();
 
-        var _name = data_.name ;
-        var _url = baseUrl +data_.path +"/" +_name;
+        var _name = props_.name ;
+        var _url = baseUrl +props_.path +"/";
 
         var formData = new FormData();
-        formData.append("name", data_.username);
-        formData.append("contentType", "application/folder");
+        formData.append("name", props_.name);
+        formData.append("jcr:primaryType", "nt:folder");
 
-        const req = await fetch(_url, {
-            method: "POST",
-            body: formData
-        });
+        try {
+            const req = await fetch(_url, {
+                method: "POST",
+                body: formData,
+                credentials: "include"
+            });
 
-        const response = await req.json();
 
-        if( apps.status == 200 ) {
-            this.sink.next(response);
-            this.isLoading.next(false);
-        }else{
+            if (req.status == 200) {
+                const body = await req.json();
+                const location = body._links.self.href;
+                this.sink.next(location);
+                this.isLoading.next(false);
+            } else {
+                throw new Error("Unknown Error");//todo, send better error
+            }
+        } catch(err){
             console.dir(err);
             var _error = {'code': err.status, 'status': err.statusText, 'message': err.responseText};
             this.sink.error(_error);
