@@ -44,6 +44,7 @@
  - dam:tags (STRING) multiple
  - dam:people (STRING) multiple
  - dam:rating (LONG)
+ - dam:description (STRING)
 
 
 //Node Specific mixins

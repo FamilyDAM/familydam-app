@@ -3,8 +3,10 @@ package com.familydam.repository.modules.files.api;
 import com.familydam.repository.models.ContentNode;
 import com.familydam.repository.modules.auth.config.security.JcrAuthToken;
 import com.familydam.repository.modules.auth.models.AdminUser;
+import com.familydam.repository.modules.files.models.FileNode;
+import com.familydam.repository.modules.files.models.FolderNode;
 import com.familydam.repository.modules.files.services.*;
-import com.familydam.repository.utils.NodeToMapUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,10 +95,16 @@ public class FilesApi {
 
         String accept = request.getHeader("Accept");
         //Return the actual nt:file Input Stream
-        if( !"application/json".equals(accept) && n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) )
+        if( ( !"application/json".equals(accept) || !"application/hal+json".equals(accept) )
+                && n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) )
         {
+
             byte[] out = readFileSteam(n, request.getParameter("size"));
             HttpHeaders responseHeaders = getFileStreamHeaders(request.getParameterMap(), n);
+            responseHeaders.add("Content-Type", n.getNode("jcr:content").getProperty("jcr:mimeType").getString());
+            if( request.getParameterMap().containsKey("download") ) {
+                responseHeaders.add("content-disposition", "attachment; filename=" + request.getParameter("download"));
+            }
 
             //return stream
             if( out != null ) {
@@ -107,11 +115,11 @@ public class FilesApi {
         }
 
         // Get Data for Single Node (json of properties)
-        else if( n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {
-            //todo convert to Hal+EntityModel
-            Map nodeMap = NodeToMapUtil.convert(n);
-            return ResponseEntity.ok(nodeMap);
-        }
+//        else if( n.getPrimaryNodeType().isNodeType(NodeType.NT_FILE) ) {
+//            //todo convert to Hal+EntityModel
+//            Map nodeMap = NodeToMapUtil.convert(n);
+//            return ResponseEntity.ok(nodeMap);
+//        }
 
 
         //Get list of all child nodes
@@ -120,7 +128,13 @@ public class FilesApi {
 
             List<EntityModel<ContentNode>> entityNodes = nodes.stream().map((cn)->{
                 Link selfLink = WebMvcLinkBuilder.linkTo(FilesApi.class).slash(cn.getPath()).withSelfRel();
-                return EntityModel.of(cn, selfLink);
+                if( cn instanceof FileNode ) {
+                    Link downloadLink = WebMvcLinkBuilder.linkTo(FilesApi.class).slash(cn.getPath() + "?download=" + cn.getName()).withRel("download");
+                    return EntityModel.of(cn, selfLink, downloadLink);
+                }else{
+                    //todo add support for downloading zip of all files in a folder
+                    return EntityModel.of(cn, selfLink);
+                }
             }).collect(Collectors.toList());
 
             RepresentationModel model = HalModelBuilder
@@ -134,7 +148,7 @@ public class FilesApi {
 
 
     /**
-     * Modify the whole object
+     * Modify the whole object, including the binary file
      * @param principal
      * @param request
      * @return
@@ -171,18 +185,28 @@ public class FilesApi {
      * @throws IOException
      */
     @PutMapping(value = {"/content/files/**"})
-    public ResponseEntity putEntry(Principal principal, StandardMultipartHttpServletRequest request) throws RepositoryException, IOException
+    public ResponseEntity putEntry(Principal principal, HttpServletRequest request, @RequestBody String fileOrFolder) throws RepositoryException, IOException
     {
         Session session = repo.login( ((JcrAuthToken)principal).getCredentials() );
-        //Session session = repo.login( new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()) );
 
         if( !session.hasPermission(request.getRequestURI(), Session.ACTION_SET_PROPERTY) ){
-            return ResponseEntity.status(403).build();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        nodeUpdatePropertyService.updateNode(session, request.getRequestURI(), request.getParameterMap());
+        Map jsonProps = new ObjectMapper().readValue(fileOrFolder, Map.class);
+        if( "nt:folder".equals(jsonProps.get("primaryType")) ){
+            FolderNode folder = new ObjectMapper().readValue(fileOrFolder, FolderNode.class);
+            nodeUpdatePropertyService.updateNode(session, request.getRequestURI(), folder.toJcrMap());
+            return ResponseEntity.ok().build();
 
-        return ResponseEntity.ok().build();
+        }else if( "nt:file".equals(jsonProps.get("primaryType")) ){
+            FileNode file = new ObjectMapper().readValue(fileOrFolder, FileNode.class);
+            nodeUpdatePropertyService.updateNode(session, request.getRequestURI(), file.toJcrMap());
+            return ResponseEntity.ok().build();
+        }
+
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid Node Type, only nt:folder or nt:file nodes are allowed");
+
     }
 
 

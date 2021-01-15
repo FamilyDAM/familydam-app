@@ -46,8 +46,13 @@ public class NodeUpdatePropertyService implements IRestService
                 }
                 node.setProperty((String)key, values.toArray(new String[values.size()]));
             }
-            else if( key.equals("dam:rating") ) {
-                node.setProperty((String)key, Long.valueOf(((String[])properties.get(key))[0]));
+            else if( !"path".equals(key) && !"jcr:primaryType".equals(key) && !"jcr:createdBy".equals(key) ){
+                Object val = properties.get(key);
+                if( val instanceof String )  node.setProperty((String)key, (String)val);
+                if( val instanceof Double )  node.setProperty((String)key, (Double) val);
+                if( val instanceof Float )  node.setProperty((String)key, (Long) val);
+                if( val instanceof Integer )  node.setProperty((String)key, (Integer) val);
+                if( val instanceof Boolean )  node.setProperty((String)key, (Boolean) val);
             }
         }
 

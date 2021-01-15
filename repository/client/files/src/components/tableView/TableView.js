@@ -1,24 +1,27 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router-dom';
 
-import {Modal, Space, Table} from 'antd';
-import { FileOutlined, FolderOutlined} from '@ant-design/icons';
+import {Drawer, Modal, Space, Table} from 'antd';
+import {FileOutlined, FolderOutlined} from '@ant-design/icons';
 
 
 import {format, parseISO} from 'date-fns'
 import Button from "@material-ui/core/Button";
+import SingleImageView from "../fileinfosidebar/SingleImageView";
 
 
-class TableView extends Component {
+class TableView extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             isMounted: true,
             showDeleteFileDialog: false,
+            showSidebar: false,
             pendingFileToDelete: [],
             folders: [],
-            files: []
+            files: [],
+            selectedFile: {}
         };
 
         this.handleRowClick = this.handleRowClick.bind(this);
@@ -26,6 +29,7 @@ class TableView extends Component {
         this.handleFileDeleteConfirmation = this.handleFileDeleteConfirmation.bind(this);
         this.handleFolderDelete = this.handleFolderDelete.bind(this);
         this.handleFolderDeleteConfirmation = this.handleFolderDeleteConfirmation.bind(this);
+        this.handleNodeChange = this.handleNodeChange.bind(this);
     }
 
     handleRowClick(e){
@@ -33,7 +37,8 @@ class TableView extends Component {
         this.props.onRowClick(id);
     }
 
-    onTableChangeHandler(pagination, filters, sorter, extra: { currentDataSource: [], action: paginate | sort | filter }){
+    onTableChangeHandler(pagination, filters, sorter, extra){
+        //extra: { currentDataSource: [], action: paginate | sort | filter }
         console.log("onTableChange");
     }
 
@@ -61,6 +66,41 @@ class TableView extends Component {
         return false;
     }
 
+    //Save changes
+    handleNodeChange(node){
+        if( this.props.onNodeChange ){
+            this.props.onNodeChange(node);
+        }
+    }
+
+
+    fieldNameSorter(a, b, c){
+        //first put folders before files
+        console.log(c);
+        if( a.primaryType==="nt:folder" && b.primaryType==="nt:file") return -1;
+        else if( a.primaryType==="nt:file" && b.primaryType==="nt:folder") return 1;
+        else if( a.primaryType === b.primaryType) {
+            // sort by field
+            if( a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ) return -1;//c==="descend")?-1:1;
+            else if( a.name.trim().toLowerCase() > b.name.trim().toLowerCase() ) return 1;//c==="descend")?1:-1;
+            else return 0;
+        }
+        else return 0;
+    }
+
+    fieldDateSorter(a, b, c, d){
+        //first put folders before files
+        if( a.primaryType==="nt:folder" && b.primaryType==="nt:file") return -1;
+        else if( a.primaryType==="nt:file" && b.primaryType==="nt:folder") return 1;
+        else if( a.primaryType === b.primaryType) {
+            // sort by field
+            if( a.createdDate < b.createdDate ) return c==="ascend"?1:-1;
+            else if( a.createdDate > b.createdDate ) return c==="ascend"?-1:1;
+            else return 0;
+        }
+        else return 0;
+    }
+
 
 
 
@@ -73,6 +113,8 @@ class TableView extends Component {
                 render: (text, record) => {
                     if( record.primaryType === "nt:folder" ){
                         return (<FolderOutlined style={{fontSize:'24px'}}/>);
+                    }if( record.primaryType === "nt:file" && record.mimeType.startsWith("image/") ){
+                        return (<img src={record.path +"?size=100"} alt="" style={{width:'24px'}}/>);
                     }else{
                         return (<FileOutlined style={{fontSize:'24px'}}/>);
                     }
@@ -81,14 +123,23 @@ class TableView extends Component {
                 title: 'Name',
                 dataIndex: 'name',
                 key: 'name',
-                render: (text, record) => <Link to={record.path}>{text}</Link>,
+                sorter: this.fieldNameSorter,
+                render: (text, record) => {
+
+                    if( record.primaryType === "nt:folder" ){
+                        return (<Link to={record.path}>{text}</Link>);
+                    }else{
+                        return (<a onClick={()=>this.setState({showSidebar:true, selectedFile: record})}>{text}</a>);
+                    }
+                },
             },
             {
                 title: 'Date Created',
-                dataIndex: 'createdDate',
-                key: 'createdDate',
+                dataIndex: 'dateCreated',
+                key: 'dateCreated',
                 width: 200,
                 responsive: ['md'],
+                sorter: this.fieldDateSorter,
                 render: text => <span>{text?format(parseISO(text || ""),'yyyy-MM-dd hh:mm:ss a'):''}</span>,
             },
             {
@@ -96,16 +147,20 @@ class TableView extends Component {
                 key: 'action',
                 width: 200,
                 render: (text, record) => {
-                    if (record.primaryType === 'nt:file') {
+                    const downloadBtn = record._links.download && this.props.onDownload? <Button type="link" data-path={record.path} onClick={()=>this.props.onDownload(record.name, record._links.download.href)}>Download</Button> : <span/>;
+                    const deleteBtn = record._links.self? <Button type="link" data-path={record.path} onClick={this.handleFileDelete}>Delete</Button> : <span/>;
+                    const editBtn = <span/>; //<Button type="link" data-path={record.path} onClick={()=>this.setState({showSidebar:true, selectedFile: record})}>Edit</Button>
+
+                    if (record.primaryType === 'nt:file' && record.mimeType.startsWith("image/")) {
                         return (<Space size="middle">
-                            <Button type="link">Info</Button>
-                            <Button type="link" data-path={record.path}
-                                    onClick={this.handleFileDelete}>Delete</Button>
+                            {downloadBtn}
+                            {deleteBtn}
+                            {editBtn}
                         </Space>)
                     } else {
                         return (<Space size="middle">
-                            <Button type="link" data-path={record.path}
-                                    onClick={this.handleFolderDelete}>Delete</Button>
+                            {downloadBtn}
+                            {deleteBtn}
                         </Space>)
                     }
                 },
@@ -134,17 +189,7 @@ class TableView extends Component {
         let rows = [];
         rows = rows.concat(this.props.folders);
         rows = rows.concat(this.props.files);
-
-        rows.sort((a, b)=>{
-            if( a.primaryType > b.primaryType) return -1;
-            else if( a.primaryType < b.primaryType) return 1;
-            else if( a.primaryType === b.primaryType) {
-                if( a.name.trim().toLowerCase() < b.name.trim().toLowerCase() ) return -1;
-                else if( a.name.trim().toLowerCase() > b.name.trim().toLowerCase() ) return 1;
-                else return 0;
-            }
-            else return 0;
-        })
+        rows.sort(this.fieldNameSorter);
 
         const rowSelection = this.getRowSelection();
 
@@ -162,6 +207,23 @@ class TableView extends Component {
                            ...rowSelection,
                        }}
                        onChange={this.onTableChangeHandler}></Table>
+
+                <Drawer
+                    title="File Info"
+                    placement="right"
+                    closable={true}
+                    getContainer={false}
+                    width="350"
+                    bodyStyle={{padding:'0px'}}
+                    onClose={()=>this.setState({showSidebar:false, selectedFile:{}})}
+                    visible={this.state.showSidebar}
+                >
+                    <SingleImageView
+                        node={this.state.selectedFile}
+                        onRatingChange={this.handleNodeChange}
+                        onDescriptionChange={this.handleNodeChange}
+                        onTagChange={this.handleNodeChange}/>
+                </Drawer>
 
                 <Modal
                     visible={this.state.showDeleteFileDialog}
@@ -188,53 +250,6 @@ class TableView extends Component {
 
     }
 }
-
-/***
- *
- *
- <Dialog
- ignoreBackdropClick
- maxWidth="sm"
- open={this.state.showDeleteFileDialog}
- style={{'padding':'8px'}}>
- <DialogTitle>Delete Confirmation</DialogTitle>
- <DialogContent>
- <Typography>Are you sure you want to delete this file?</Typography>
- </DialogContent>
- <DialogActions>
- <Button onClick={this.handleCancelDialog} color="primary">
- Cancel
- </Button>
- <LoadingButton
- isLoading={this.state.isLoading}
- label="Delete"
- onKeyDown={(e)=>{if(e.keyCode===13) this.handleFileDeleteOk()}}
- onClick={this.handleFileDeleteOk}></LoadingButton>
- </DialogActions>
- </Dialog>
-
- <Dialog
- ignoreBackdropClick
- maxWidth="sm"
- open={this.state.showDeleteFolderDialog}
- style={{'padding':'8px'}}>
- <DialogTitle>Delete Confirmation</DialogTitle>
- <DialogContent>
- <Typography>Are you sure you want to delete this folder and all of the files in it?</Typography>
- </DialogContent>
- <DialogActions>
- <Button onClick={this.handleCancelDialog} color="primary">
- Cancel
- </Button>
- <LoadingButton
- isLoading={this.state.isLoading}
- label="Delete"
- onKeyDown={(e)=>{if(e.keyCode===13) this.handleFolderDeleteOk()}}
- onClick={this.handleFolderDeleteOk}></LoadingButton>
- </DialogActions>
- </Dialog>
- */
-
 
 TableView.propTypes = {
     files: PropTypes.array.isRequired,

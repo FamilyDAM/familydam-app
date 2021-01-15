@@ -1,29 +1,27 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import React, {Component} from 'react';
-import {withRouter, Link} from 'react-router-dom';
+import React from 'react';
+import {Link, withRouter} from 'react-router-dom';
 import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 
 
-import { Button, Breadcrumb, Space, Upload, message } from 'antd';
-import { HomeOutlined, FileOutlined, UploadOutlined, FolderOutlined, FolderAddOutlined, InboxOutlined } from '@ant-design/icons';
+import {Breadcrumb, Button, message, Space, Upload} from 'antd';
+import {FileOutlined, FolderAddOutlined, FolderOutlined, HomeOutlined} from '@ant-design/icons';
 
 import AppShell from '../../library/appShell/AppShell';
-import FileInfoSidebar from '../../components/fileinfosidebar/FileInfoSidebar';
-import UploadDialog from '../../components/uploaddialog/UploadDialog';
 import NewFolderDialog from '../../components/newfolderdialog/NewFolderDialog';
 import Typography from "@material-ui/core/Typography";
-import FileReceiver from "../../components/filereceiver/FileReceiver";
 import GetFilesAndFoldersService from "../../services/GetFileAndFoldersService";
 import TableView from "../../components/tableView/TableView";
 import CreateFolderService from "../../services/CreateFolderService";
 import AppSettings from "../../library/actions/AppSettings";
 import UploadFileService from "../../services/UploadFileService";
 import DeleteFileOrFolderService from "../../services/DeleteFileOrFolderService";
+import SaveFileOrFolderService from "../../services/SaveFileOrFolderService";
 
 const styleSheet = (theme) => ({
     progress: {
@@ -91,7 +89,7 @@ const styleSheet = (theme) => ({
 });
 
 
-class FilesPage extends Component {
+class FilesPage extends React.PureComponent {
 
 
     constructor(props, context) {
@@ -120,13 +118,8 @@ class FilesPage extends Component {
 
         this.handleFileDelete = this.handleFileDelete.bind(this);
         this.handleFolderDelete = this.handleFolderDelete.bind(this);
+        this.handleNodeChange = this.handleNodeChange.bind(this);
 
-        //this.handleFileSelect  = this.handleFileSelect.bind(this);
-        //this.handleUploadClosed  = this.handleUploadClosed.bind(this);
-        //this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
-        //this.handleUploadClosed = this.handleUploadClosed.bind(this);
-        //this.handleAfterOnDelete = this.handleAfterOnDelete.bind(this);
-        //this.handleOnFileDrop  = this.handleOnFileDrop.bind(this);
     }
 
     componentDidMount(){
@@ -148,8 +141,16 @@ class FilesPage extends Component {
             this.setState({'folder': data_, 'folders': data_, 'files': files});
         });
 
+
+        SaveFileOrFolderService.sink.takeWhile(() => this.state.isMounted).subscribe({
+            next: (v) => message.info('Item has been saved'),
+            error: (e) => message.info('Error saving item')
+        });
+
+
         //trigger load of all folders and files
         if( this.props.location.pathname.startsWith(this.state.path)) {
+            this.setState({path: this.props.location.pathname})
             GetFilesAndFoldersService.source.next(this.props.location.pathname );
         }else{
             GetFilesAndFoldersService.source.next(this.state.path);
@@ -161,21 +162,25 @@ class FilesPage extends Component {
         this.setState({isMounted:false});
     }
 
-    componentWillReceiveProps(newProps){
-        this.props = newProps;
+
+    componentDidUpdate(props_, state_) {
+        //this.props = props_;
         this.setState({showAddFolderDialog:false, showUploadSidebar:false, showNewFolderDialog:false, showUploadDialog:false});
 
-        var newPath = this.validatePath();
-        GetFilesAndFoldersService.source.next(newPath);
+        const currentPath = this.state.path;
+        const newPath = this.validatePath();
+        if( currentPath !== newPath ) {
+            GetFilesAndFoldersService.source.next(newPath);
+        }
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return this.props.location.pathname != nextProps.location.pathname
-            || this.state.folders != nextState.folders
-            || this.state.files != nextState.files
-            || this.state.showNewFolderDialog != nextState.showNewFolderDialog
-            || this.state.isLoading != nextState.isLoading;
-    }
+    // shouldComponentUpdate(nextProps, nextState, nextContext) {
+    //     return this.props.location.pathname != nextProps.location.pathname
+    //         || this.state.folders != nextState.folders
+    //         || this.state.files != nextState.files
+    //         || this.state.showNewFolderDialog != nextState.showNewFolderDialog
+    //         || this.state.isLoading != nextState.isLoading;
+    // }
 
 
     validatePath() {
@@ -217,7 +222,7 @@ class FilesPage extends Component {
         const parentId = this.state.folder.id || null;
         const basehost = AppSettings.baseHost.value;
 
-        CreateFolderService.sink.subscribe(function (location_) {
+        CreateFolderService.sink.takeWhile(() => this.state.isMounted).subscribe(function (location_) {
             console.log("Create Folder:" +location_);
             this.setState({showAddFolderDialog:false, showUploadSidebar:false, showNewFolderDialog:false, showUploadDialog:false});
 
@@ -240,18 +245,15 @@ class FilesPage extends Component {
         GetFilesAndFoldersService.source.next(this.state.path);
     }
 
-    /**
-     handleFileDownload(name_, path_){
+
+    handleFileDownload(name_, path_){
         var link=document.createElement('a');
         document.body.appendChild(link);
         link.href=path_ ;
         link.download=name_;
         link.click();
-
-        return false;
+        link.remove();
     }
-
-     */
 
 
     UploadOnChangeHandler(info){
@@ -304,6 +306,18 @@ class FilesPage extends Component {
     }
 
 
+    handleOnRowClick(event){
+        console.log(event);
+    }
+
+
+
+    //Node has been update, save changes
+    handleNodeChange(node){
+        SaveFileOrFolderService.source.next(node);
+    }
+
+
 
     render() {
         //console.log("render:" +this.state.uploadFiles.length);
@@ -353,7 +367,7 @@ class FilesPage extends Component {
                                         <span>Files</span>
                                     </Breadcrumb.Item>
                                     {pathParts.map((p)=>{
-                                        return (<Breadcrumb.Item><Link to={p.path} >{p.label}</Link></Breadcrumb.Item>);
+                                        return (<Breadcrumb.Item key={p.path}><Link to={p.path} >{p.label}</Link></Breadcrumb.Item>);
                                     })}
                                 </Breadcrumb>
                             </Typography>
@@ -374,6 +388,8 @@ class FilesPage extends Component {
                             folders={this.state.folders}
                             files={this.state.files}
                             onRowClick={this.handleOnRowClick}
+                            onNodeChange={this.handleNodeChange}
+                            onDownload={this.handleFileDownload}
                             onDeleteFile={this.handleFileDelete}
                             onDeleteFolder={this.handleFolderDelete}/>
 
@@ -392,22 +408,6 @@ class FilesPage extends Component {
                         </div>
                     </div>
 
-
-
-
-                    <FileInfoSidebar
-                        files={this.state.selectedFiles}
-                        className={classes.fileGridSidebar}
-                        onDelete={this.handleAfterOnDelete}
-                        onDownload={this.handleFileDownload}
-                        style={{display:this.state.selectedFiles.length>0?'block':'none'}}
-                    />
-
-                    <UploadDialog
-                        onClose={this.handleUploadClosed}
-                        open={this.state.showUploadDialog}
-                        files={this.state.uploadFiles}
-                        path={this.state.path}/>
 
                     <NewFolderDialog
                         onSave={this.handleCreateFolder.bind(this)}

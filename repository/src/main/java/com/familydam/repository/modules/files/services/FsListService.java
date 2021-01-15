@@ -1,7 +1,6 @@
 package com.familydam.repository.modules.files.services;
 
 import com.familydam.repository.models.ContentNode;
-import com.familydam.repository.models.UnstructuredNode;
 import com.familydam.repository.modules.files.models.FileNode;
 import com.familydam.repository.modules.files.models.FolderNode;
 import com.familydam.repository.services.IRestService;
@@ -53,8 +52,7 @@ public class FsListService implements IRestService
             .filter(node -> {
                 try {
                     return node.getPrimaryNodeType().isNodeType(NodeType.NT_FILE)
-                        || node.getPrimaryNodeType().isNodeType(NodeType.NT_FOLDER)
-                        || node.getPrimaryNodeType().isNodeType(NodeType.NT_UNSTRUCTURED);
+                        || node.getPrimaryNodeType().isNodeType(NodeType.NT_FOLDER);
                 }catch(RepositoryException ex){
                     return false;
                 }
@@ -65,8 +63,6 @@ public class FsListService implements IRestService
                         return FolderNode.builder().withNode(node).build();
                     } else if( node.isNodeType(NodeType.NT_FILE)){
                         return FileNode.builder().withNode(node).build();
-                    } else {
-                        return UnstructuredNode.builder().withNode(node).build();
                     }
                 }catch (RepositoryException re){
                     log.error(re.getMessage(), re);

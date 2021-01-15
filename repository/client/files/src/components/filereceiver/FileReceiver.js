@@ -62,4 +62,4 @@ class FileReceiver extends Component {
     }
 }
 
-export default FileReceiver;
+//export default FileReceiver;

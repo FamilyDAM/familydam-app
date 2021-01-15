@@ -4,4 +4,5 @@ public interface ContentNode {
     public String getPrimaryType();
     public Integer getIndex();
     public String getPath();
+    public String getName();
 }

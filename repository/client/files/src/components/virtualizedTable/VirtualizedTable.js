@@ -123,4 +123,4 @@ class VirtualizedTable extends React.PureComponent {
     }
 }
 
-export default withStyles(styles)(VirtualizedTable);
+//export default withStyles(styles)(VirtualizedTable);

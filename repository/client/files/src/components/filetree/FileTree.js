@@ -28,4 +28,4 @@ class FileTree extends Component{
     }
 }
 
-export default withStyles(styleSheet)(FileTree);
+//export default withStyles(styleSheet)(FileTree);

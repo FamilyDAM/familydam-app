@@ -409,4 +409,4 @@ FolderAndFileList.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styleSheet)(FolderAndFileList));
+//export default withRouter(withStyles(styleSheet)(FolderAndFileList));

@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import Paper from "@material-ui/core/Paper";
 
 import FileListTableToolbar from '../filelist/FileListTableToolbar';
-
 import FileActions from '../../actions/FileActions';
 import SingleImageView from "./SingleImageView";
 import MultiImageView from "./MultiImageView";
@@ -128,4 +127,4 @@ FileList.propTypes = {
     files: PropTypes.array.isRequired,
 };
 
-export default withRouter(withStyles(styleSheet)(FileInfoSidebar));
+//export default withRouter(withStyles(styleSheet)(FileInfoSidebar));

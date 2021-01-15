@@ -234,4 +234,4 @@ class UploadDialog extends Component {
 }
 
 
-export default withStyles(styleSheet)(UploadDialog);
+//export default withStyles(styleSheet)(UploadDialog);

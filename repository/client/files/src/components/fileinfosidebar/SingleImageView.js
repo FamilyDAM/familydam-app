@@ -1,16 +1,17 @@
 import React, {Component} from 'react';
-import {withStyles} from "@material-ui/core/styles";
 
+import { Input, Rate, Select, Tabs } from 'antd';
+const { TextArea } = Input;
+const { TabPane } = Tabs;
+const { Option } = Select;
+
+import {withStyles} from "@material-ui/core/styles";
 import AppSettings from "../../library/actions/AppSettings";
 import Rating from "@material-ui/lab/Rating";
-import {TagPicker} from "rsuite";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
 import Chip from "@material-ui/core/Chip";
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
@@ -19,10 +20,10 @@ import moment from "moment";
 
 const styleSheet = (theme) => ({
     gridListRoot: {
-        margin: '24px',
+        margin: '0px',
         display:'grid',
         gridGap:'8px',
-        gridTemplateRows:'175px 25px 50px 3fr',
+        gridTemplateRows:'175px 25px 50px 25px 50px 25px 25px 3fr',
         gridTemplateColumns:'16px auto 16px',
         background: theme.palette.background.paper,
         justifyContent: 'center'
@@ -37,11 +38,16 @@ const styleSheet = (theme) => ({
         gridColumn: '2'
     },
     itemKeywords: {
-        gridRow: '3/5',
+        gridRow: '3',
         gridColumn: '2'
     },
-    itemInfo: {
+    itemDescription: {
         gridRow: '5',
+        gridColumn: '2',
+        width: '100%'
+    },
+    itemInfo: {
+        gridRow: '8',
         gridColumn: '2'
     },
 });
@@ -57,55 +63,58 @@ class SingleImageView extends Component {
             tabIndex: this.props.tabIndex?this.props.tabIndex:0
         };
 
-        this.handleTabChange = this.handleTabChange.bind(this);
-        this.handleAddKeywordChange = this.handleAddKeywordChange.bind(this);
-        this.handleAddKeywordClick = this.handleAddKeywordClick.bind(this);
-        this.handleKeywordDelete = this.handleKeywordDelete.bind(this);
+        this.handleRatingChange = this.handleRatingChange.bind(this);
+        this.handleTagChange = this.handleTagChange.bind(this);
+        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
+        this.handleDescriptionSave = this.handleDescriptionSave.bind(this);
     }
 
-    handleAddKeywordChange(e){
-        this.setState({'keyword': e.target.value});
+    handleRatingChange(rating){
+        this.props.node['rating'] = rating;
+
+        if( this.props.onRatingChange ){
+            this.props.onRatingChange(this.props.node);
+        }
+
+        this.setState({"rating":rating}); //set value to refresh UI
     }
 
     //send to parent, with keyword field value
-    handleAddKeywordClick(event, newValue){
-        //resend complete list
-        var tags = this.props.node['dam:tags'];
+    handleTagChange(tags){
+        this.props.node['tags'] = tags;
 
-        var words = this.state.keyword.split(",");
-        for (const word of words) {
-            tags.push(word);
+        if( this.props.onTagChange ){
+            this.props.onTagChange(this.props.node);
         }
 
-        this.props.handleTagChange(tags);
-        //reset
-        this.setState({'keyword':''});
+        this.setState({"tags":tags}); //set value to refresh UI
     }
 
-    //send list with single keyword deleted
-    handleKeywordDelete(tag){
-        //resend complete list
-        var tagList = [];
-        var tags = this.props.node['dam:tags'];
-        for( var i=0; i < tags.length; i++){
-            if( tags[i] !== tag){
-                tagList.push(tags[i]);
-            }
+    //update local prop
+    handleDescriptionChange(event){
+        this.props.node['description'] = event.currentTarget.value;
+        this.setState({"description":event.currentTarget.value}); //set value to refresh UI
+    }
+
+    //on focus out, save to server
+    handleDescriptionSave(event){
+        if( this.props.onDescriptionChange ){
+            this.props.onDescriptionChange(this.props.node);
         }
-        this.props.handleTagChange(tagList);
-
-        //reset local obj
-        this.props.node['dam:tags'] = tagList;
-    }
-
-    handleTabChange(event, newValue){
-        this.setState({'tabIndex':newValue});
     }
 
 
 
     render(){
         var classes = this.props.classes;
+
+        const tags = [];
+        if(this.props.node['tags']){
+            this.props.node['tags'].map((tag)=>{
+                tags.push(<Option key={tag}>{tag}</Option>);
+            });
+        }
+
 
         return (
             <div className={classes.gridListRoot}>
@@ -122,12 +131,11 @@ class SingleImageView extends Component {
 
 
                 <div className={classes.itemRating}>
-                    <Rating
-                        name="img-ratings"
-                        value={this.props.node['dam:rating']}
-                        onChange={this.props.handleRatingChange}
-                        style={{ float: 'right' }}
-                    />
+                    <Rate
+                        allowHalf
+                        onChange={this.handleRatingChange}
+                        value={this.props.node['rating']}
+                        style={{ float: 'right' }}/>
                 </div>
 
 
@@ -135,64 +143,57 @@ class SingleImageView extends Component {
                 <div className={classes.itemKeywords}>
                     <Typography variant="h6">Keywords:</Typography>
 
-                    <div>
-                    { this.props.node['dam:tags'] && this.props.node['dam:tags'].map((tag)=>{
-                        return (
-                            <Chip size="small" label={tag} onDelete={()=>this.handleKeywordDelete(tag)} />
-                        )
-                    })}
-                    </div>
+                    <Select mode="tags" style={{ width: '100%' }} placeholder="Tags Mode" value={this.props.node['tags']} onChange={this.handleTagChange}>
+                        {tags}
+                    </Select>
+                </div>
 
-                    <div>
-                         <TextField
-                            id="addKeyword"
-                            ref="addKeywordField"
-                            label="Add Keyword"
-                            margin="normal"
-                            value={this.state.keyword}
-                            style={{'width':'75%'}}
-                            onChange={this.handleAddKeywordChange}
-                        />
-                        <Button
-                            color="primary"
-                            style={{'verticalAlign':'bottom'}}
-                            disabled={this.state.keyword.length==0}
-                            onClick={this.handleAddKeywordClick}>Add</Button>
-                    </div>
+                <div className={classes.itemDescription}>
+                    <Typography variant="h6">Description:</Typography>
+                    <TextArea id="description"
+                              rows={3}
+                              value={this.props.node['description']}
+                              onChange={this.handleDescriptionChange}
+                              onBlur={this.handleDescriptionSave}></TextArea>
                 </div>
 
                 <div className={classes.itemInfo}>
-                    <hr style={{'width':'100%'}}/>
-                    <Tabs value="Details" indicatorColor="primary" textColor="primary" variant="fullWidth" onChange={this.props.handleTabChange}>
-                        <Tab label="Details" />
-                        <Tab label="Versions" />
+
+                    <Tabs defaultActiveKey="details" style={{width:'100%'}}>
+                        <TabPane tab="Details" key="details">
+                            <div>
+                                <Table>
+                                    <TableBody>
+                                        <TableRow style={{padding:'8px'}}>
+                                            <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Type</TableCell>
+                                            <TableCell align="left">{this.props.node['mimeType']}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Resolution</TableCell>
+                                            <TableCell align="left">{this.props.node['width']} x {this.props.node['height']}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Created</TableCell>
+                                            <TableCell align="left">{moment(this.props.node['dateCreated']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Modified</TableCell>
+                                            <TableCell align="left">{moment(this.props.node['dateLastModified']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                                <br/>
+                                <p>{this.props.node['path']}</p>
+                            </div>
+                        </TabPane>
+                        <TabPane tab="Versions" key="versions">
+                            (coming soon)
+                        </TabPane>
+                        <TabPane tab="Duplicates" key="duplicates">
+                            (coming soon)
+                        </TabPane>
                     </Tabs>
 
-                    {this.state.tabIndex === 0 &&
-                        <div>
-                            <Table>
-                                <TableBody>
-                                    <TableRow style={{padding:'8px'}}>
-                                        <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Type</TableCell>
-                                        <TableCell align="left">{this.props.node['jcr:content']['jcr:mimeType']}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Resolution</TableCell>
-                                        <TableCell align="left">{this.props.node['width']} x {this.props.node['height']}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Created</TableCell>
-                                        <TableCell align="left">{moment(this.props.node['dam:date.created']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row" align="right" style={{padding:'8px'}}>Modified</TableCell>
-                                        <TableCell align="left">{moment(this.props.node['jcr:lastModified']).format('MMM Do YYYY, h:mm:ss a')}</TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </div>
-                    }
-                    {this.state.tabIndex === 1 && <div>Versions Panel</div>}
                 </div>
 
 
