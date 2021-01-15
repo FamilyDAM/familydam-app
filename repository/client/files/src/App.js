@@ -11,6 +11,7 @@ import 'rsuite/dist/styles/rsuite-default.css';
 //views
 import FilesPage from './pages/files/FilesPage';
 import GetUserService from "./library/services/GetUserService";
+import AppSettings from "./library/actions/AppSettings";
 
 const styleSheet = (theme) => ({
     progress: {
@@ -40,10 +41,7 @@ class App extends Component {
 
         // set it running locally with npm start, so you can still call running server
         if( window.location.href.indexOf(":3000") > -1){
-            //AppSettings.baseHost.next("http://localhost:9000");
-            //AppSettings.basicUser.next("Mike");
-            //AppSettings.basicPwd.next("admin");
-            //UserActions.getUser.sink.next( {"user":{"firstName":"","lastName":""}} );
+            AppSettings.baseHost.next("http://localhost:9000");
         }
     }
 

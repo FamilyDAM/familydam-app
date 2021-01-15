@@ -30,7 +30,7 @@ class CreateFolderService {
      */
     async createDirectory(props_)
     {
-        const baseUrl = AppSettings.baseHost.getValue();
+        const baseUrl = AppSettings.baseHost.getValue() || "";
 
         var _name = props_.name ;
         var _url = baseUrl +props_.path +"/";

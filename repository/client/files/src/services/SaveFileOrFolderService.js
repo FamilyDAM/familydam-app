@@ -30,7 +30,7 @@ class SaveFileOrFolderService {
      */
     async execute(node_)
     {
-        const baseUrl = AppSettings.baseHost.getValue();
+        const baseUrl = AppSettings.baseHost.getValue() || "";
 
         var _name = node_.name ;
         var _url = baseUrl +node_.path;

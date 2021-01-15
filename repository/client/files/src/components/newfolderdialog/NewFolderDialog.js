@@ -8,9 +8,6 @@ import {withStyles} from "@material-ui/core/styles";
 import { Modal } from 'antd';
 import TextField from '@material-ui/core/TextField';
 
-import FileActions from '../../actions/FileActions';
-import GetFilesAndFoldersService from "../../services/GetFileAndFoldersService";
-
 const styleSheet = (theme) => ({ });
 
 

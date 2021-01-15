@@ -30,7 +30,7 @@ class GetAllUsersService {
      */
     async getUsers()
     {
-        const baseUrl = AppSettings.baseHost.getValue();
+        const baseUrl = AppSettings.baseHost.getValue() || "";
         const _url = baseUrl +'/api/v1/auth/users';
 
         const headers = new Headers();

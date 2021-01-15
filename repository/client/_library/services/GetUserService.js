@@ -29,7 +29,7 @@ class GetUsersService {
      */
     getUser(username_)
     {
-        const baseUrl = AppSettings.baseHost.getValue();
+        const baseUrl = AppSettings.baseHost.getValue() || "";
         const _url = baseUrl +'/api/v1/auth/user/me';
 
         const headers = new Headers();

@@ -25,7 +25,7 @@ class DeleteFileOrFolderService {
      */
     async execute(path_)
     {
-        const baseUrl = AppSettings.baseHost.getValue();
+        const baseUrl = AppSettings.baseHost.getValue() || "";
 
         var _url = baseUrl +path_;
     ;
