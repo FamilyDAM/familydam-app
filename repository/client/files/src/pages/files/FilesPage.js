@@ -359,7 +359,7 @@ class FilesPage extends React.PureComponent {
                         <Toolbar className={classes.toolbarContainer}>
                             <Typography variant="h6" className={classes.title}>
                                 <Breadcrumb>
-                                    <Breadcrumb.Item href="/">
+                                    <Breadcrumb.Item href="/home/index.html">
                                         <HomeOutlined />
                                     </Breadcrumb.Item>
                                     <Breadcrumb.Item href={'#/'}>

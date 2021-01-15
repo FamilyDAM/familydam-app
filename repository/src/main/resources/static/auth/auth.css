@@ -19,7 +19,7 @@ body{
     height:100%;
     display: grid;
     grid-template-columns: 1fr 300px 96px;
-    grid-template-rows: 64px 1fr 64px;
+    grid-template-rows: 64px 1fr 80px;
     gap: 0px 0px;
     grid-template-areas:
     ". . ."
@@ -132,6 +132,9 @@ fieldset {
     color: darkgray;
 }
 
+.clock {
+    padding-left: 48px;
+}
 
 auth-clock {
     width: 280px;

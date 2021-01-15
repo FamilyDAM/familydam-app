@@ -46,7 +46,7 @@ public class AuthAppController {
     }
 
 
-    @GetMapping(path = "/index.html")
+    @GetMapping(path = {"/", "/index.html"})
     public ModelAndView loginHomePage(Principal principal) {
 
 

@@ -52,4 +52,4 @@ const renderApp = function(){
 }
 
 renderApp();
-registerServiceWorker();
+//registerServiceWorker();

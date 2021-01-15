@@ -140,7 +140,7 @@ class AppHeader extends Component {
                             return (
                                 <MenuItem key={item.path}
                                           color="secondary"
-                                          onClick={()=>{this.handleNavClick(item.path);this.handleMenuClose()}}>{item.label}</MenuItem>
+                                          onClick={()=>{window.location=item.path;this.handleMenuClose()}}>{item.label}</MenuItem>
                             )
                         })}
 

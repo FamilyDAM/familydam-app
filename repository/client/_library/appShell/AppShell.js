@@ -130,7 +130,7 @@ class AppShell extends Component {
                     <AppHeader
                         apps={this.state.secondaryApps}
                         onToggle={this.handleOpenCloseToggle}
-                        onNavClick={(path)=>AppActions.navigateTo.next(path)}/>
+                        onNavClick={(path)=>window.location=path}/>
                 </header>
 
 
@@ -139,7 +139,7 @@ class AppShell extends Component {
                     apps={this.state.primaryApps}
                     secondaryApps={this.state.secondaryApps}
                     open={this.state.isOpen}
-                    onNavClick={(path)=>AppActions.navigateTo.next(path)}/>
+                    onNavClick={(path)=>window.location=path}/>
 
 
                 <div className={classes.main}>
