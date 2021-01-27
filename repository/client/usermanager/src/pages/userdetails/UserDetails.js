@@ -12,9 +12,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 import AppShell from '../../library/appShell/AppShell';
-import UserActions from "../../library/actions/UserActions";
-import UserEditForm from "../../components/usereditform";
 import {Typography} from "@material-ui/core";
+import GetAllUsersService from "../../library/services/GetAllUsersService";
 
 
 const styleSheet = (theme) => ({
@@ -55,7 +54,8 @@ class UserDetails extends Component {
         this.setState({"isMounted":true, "isLoading": true});
 
         const _userId = this.props.userId;
-        UserActions.getAllUsers.sink.takeWhile(() => this.state.isMounted).subscribe(users_ => {
+
+        GetAllUsersService.sink.takeWhile(() => this.state.isMounted).subscribe(users_ => {
             if (users_) {
                 this.setState({"isLoading": false});
                 for (const user of users_) {
@@ -67,7 +67,8 @@ class UserDetails extends Component {
             }
         });
 
-        UserActions.getAllUsers.source.next(true);
+        GetAllUsersService.source.next(true);
+
 
         if( !_userId ){
             this.setState({"isMounted":true, "isLoading":false});
@@ -109,4 +110,4 @@ class UserDetails extends Component {
 }
 
 
-export default injectIntl(withRouter(withStyles(styleSheet)(UserDetails)));
+//export default injectIntl(withRouter(withStyles(styleSheet)(UserDetails)));

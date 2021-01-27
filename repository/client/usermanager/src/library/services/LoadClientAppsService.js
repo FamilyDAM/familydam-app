@@ -29,7 +29,7 @@ class LoadClientAppsService {
      */
     async loadApps(data_)
     {
-        const baseUrl = AppSettings.baseHost.getValue();
+        const baseUrl = AppSettings.baseHost.getValue() || "";
         const _url = baseUrl +'/api/v1/apps/'; //+'/core/api/apps';
 
         const headers = new Headers();

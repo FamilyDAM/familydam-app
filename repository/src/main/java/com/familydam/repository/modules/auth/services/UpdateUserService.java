@@ -36,20 +36,27 @@ public class UpdateUserService implements IRestService
 {
     Logger log = LoggerFactory.getLogger(UpdateUserService.class);
 
-    public Map updateUser(Session session_, String username, Map user_) throws RepositoryException {
-        UserManager userManager = ((JackrabbitSession) session_).getUserManager();
+    public Map updateUser(Session adminSession_, String username, Map user_) throws RepositoryException {
+        UserManager userManager = ((JackrabbitSession) adminSession_).getUserManager();
         Authorizable authorizable = userManager.getAuthorizable(username);
 
-        if( !session_.hasPermission(authorizable.getPath(), Session.ACTION_SET_PROPERTY) ){
+        if( !adminSession_.hasPermission(authorizable.getPath(), Session.ACTION_SET_PROPERTY) ){
             throw new RepositoryException("User is not allowed to edit user");
         }
 
         //update properties
         authorizable.setProperty(Constants.FIRST_NAME, new StringValue((String)user_.get(Constants.FIRST_NAME)));
         authorizable.setProperty(Constants.LAST_NAME, new StringValue((String)user_.get(Constants.LAST_NAME)));
-        authorizable.setProperty(Constants.EMAIL, new StringValue((String)user_.get(Constants.EMAIL)));
-        authorizable.setProperty(Constants.IS_FAMILY_ADMIN, new BooleanValue( (Boolean)user_.get(Constants.IS_FAMILY_ADMIN) ));
-        session_.save();
+        //authorizable.setProperty(Constants.EMAIL, new StringValue((String)user_.get(Constants.EMAIL)));
+        authorizable.setProperty(Constants.IS_FAMILY_ADMIN, new BooleanValue( Boolean.valueOf((user_.get(Constants.IS_FAMILY_ADMIN).toString()) )));
+        adminSession_.save();
+
+        String p = (String)user_.get(Constants.PASSWORD);
+        String pc = (String)user_.get(Constants.PASSWORD_CONFIRM);
+        if( p != null && pc != null && p.length() > 0 && p.equals(pc)) {
+            ((User) authorizable).changePassword(p);
+            adminSession_.save();
+        }
 
         //return user
         return AuthorizableToMapUtil.convert(authorizable);

@@ -55,7 +55,6 @@ public class AuthAppController {
 
         try {
             Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-
             List<User> users = userListService.listUsers(session, true);
 
             if( users.size() == 0 ){
@@ -91,9 +90,11 @@ public class AuthAppController {
 
         try {
             //First User
+            boolean isFirstUser = true;
             adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
             if (userListService.listUsers(adminSession, true).size() == 0) {
                 session = adminSession;
+                isFirstUser = true;
             } else {
                 //redirect back to home page /login
                 ModelAndView mv = new ModelAndView("redirect:/index.html");
@@ -104,11 +105,12 @@ public class AuthAppController {
 
             Map newParams = new HashMap();
             newParams.put(Constants.ID, UUID.randomUUID().toString());
-            newParams.put(Constants.NAME, name.trim().toLowerCase());
+            newParams.put(Constants.JCR_NAME, name.trim().toLowerCase());
             newParams.put(Constants.FIRST_NAME, name.trim());
             newParams.put(Constants.LAST_NAME, lastName.trim());
             newParams.put(Constants.PASSWORD, password.trim());//encoder.encode(password));
             newParams.put(Constants.IS_FAMILY_ADMIN, true);
+            newParams.put(Constants.IS_SYSTEM_ADMIN, isFirstUser);
 
             //todo,  give admin user admin permissions so we can use the logged in user instead of system permission
             createUserService.createUser(session, newParams);

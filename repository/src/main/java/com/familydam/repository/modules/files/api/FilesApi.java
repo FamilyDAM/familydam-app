@@ -69,6 +69,9 @@ public class FilesApi {
     FsNewFolderService fsNewFolderService;
 
 
+    public FilesApi() {
+        System.out.println("start");
+    }
 
     @GetMapping(value = {"/content/files", "/content/files/**"})
     @ResponseBody
@@ -165,7 +168,7 @@ public class FilesApi {
         if( "nt:folder".equals(type)){
             String folderPath = fsNewFolderService.createFolder(request, session);
 
-            var model = HalModelBuilder
+            RepresentationModel model = HalModelBuilder
                 .emptyHalModel()
                 .link(WebMvcLinkBuilder.linkTo(FilesApi.class).slash(folderPath).withSelfRel())
                 .build();

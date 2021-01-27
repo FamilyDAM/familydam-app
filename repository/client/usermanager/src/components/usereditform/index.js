@@ -264,6 +264,4 @@ class UserEditForm extends Component {
 
 }
 
-
-
-export default withStyles(styleSheet)(UserEditForm);
+//export default withStyles(styleSheet)(UserEditForm);

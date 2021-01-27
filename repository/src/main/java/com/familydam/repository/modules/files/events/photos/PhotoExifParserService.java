@@ -14,6 +14,7 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -30,6 +31,7 @@ import java.util.Collection;
 import java.util.Date;
 
 @Service
+@Lazy(value = false)
 public class PhotoExifParserService implements EventListener, IEventService {
     Logger log = LoggerFactory.getLogger(PhotoSizeInfoService.class);
 
@@ -49,6 +51,7 @@ public class PhotoExifParserService implements EventListener, IEventService {
         ObservationManager om = session.getWorkspace().getObservationManager();
         om.addEventListener(this, Event.NODE_ADDED, "/content/files", true, null, null, false);
         session.save();
+        log.debug("Photos Exif Parser Event Listener Registered");
     }
 
 

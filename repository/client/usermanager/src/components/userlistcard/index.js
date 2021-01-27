@@ -88,4 +88,4 @@ class UserListCard extends Component {
 }
 
 
-export default withStyles(styleSheet)(UserListCard);
+//export default withStyles(styleSheet)(UserListCard);

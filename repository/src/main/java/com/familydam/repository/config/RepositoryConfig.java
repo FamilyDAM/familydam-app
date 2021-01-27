@@ -58,7 +58,6 @@ public class RepositoryConfig {
     private Environment environment;
 
 
-
     @Autowired
     public RepositoryConfig(Environment environment) {
 
@@ -181,7 +180,7 @@ public class RepositoryConfig {
     private void checkAndSetAdminPassword(Repository repo, AdminUser adminUser) throws RepositoryException {
         try{
             //System.out.println("checkAndSetAdminPassword | " +adminUser.username +":" +adminUser.password);
-            String adminId = adminUser.username; //environment.getProperty("oak.PARAM_ADMIN_ID");
+            String adminId = adminUser.username;
             Session session = repo.login(new SimpleCredentials( adminId, adminId.toCharArray() ));
 
             Authorizable auth = ((JackrabbitSession)session).getUserManager().getAuthorizable(adminId);

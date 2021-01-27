@@ -31,7 +31,7 @@ class ListPhotosService {
         const path_ = args_.path;
         const groupBy_ = args_.groupBy || 'date:day';
 
-        const baseUrl = AppSettings.baseHost.getValue();
+        const baseUrl = AppSettings.baseHost.getValue() || "";
         //const user = AppSettings.basicUser.getValue();
         //const pwd = AppSettings.basicPwd.getValue();
 

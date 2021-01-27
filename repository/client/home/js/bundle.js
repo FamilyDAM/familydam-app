@@ -99034,7 +99034,7 @@ var App = function (_Component) {
         value: function componentDidMount() {
             var _this2 = this;
 
-            this.setState({ "isMounted": true, user: { firstName: "mike" } });
+            this.setState({ "isMounted": true, user: { firstName: "" } });
 
             __WEBPACK_IMPORTED_MODULE_8__actions_UserActions__["a" /* default */].getUser.sink.takeWhile(function () {
                 return _this2.state.isMounted;

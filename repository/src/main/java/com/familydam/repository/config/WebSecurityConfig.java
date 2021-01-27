@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 import javax.jcr.Repository;
 
@@ -37,7 +38,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .cors()
             .and()
                 .csrf().disable()
-                .sessionManagement().invalidSessionUrl("/index.html")
+                .sessionManagement()
+                    .invalidSessionUrl("/index.html?m=invalidsession")
+                    .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS,"*").permitAll()
@@ -48,11 +51,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/auth/**/*.*").permitAll()
                 .antMatchers("/fonts/**/*.*").permitAll()
                 .antMatchers("/images/**/*.*").permitAll()
+                .antMatchers("/home/static/**/*.*").permitAll()
                 .anyRequest().authenticated()
             //.loginProcessingUrl("/perform_login")
             .and()
                 .httpBasic()
-                .realmName("FamilyDAM")
             .and()
                 .formLogin()
                 .loginProcessingUrl("/login")
@@ -72,7 +75,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/index.html")
                 .invalidateHttpSession(true)
-                .clearAuthentication(true)
                 .deleteCookies("JSESSIONID");
 
     }

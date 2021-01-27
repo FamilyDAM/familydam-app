@@ -7,46 +7,67 @@ import com.familydam.repository.utils.NodeToMapUtil;
 import com.familydam.repository.utils.jcr.AccessControlUtil;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.JackrabbitSession;
-import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
-import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
 import org.apache.jackrabbit.value.BooleanValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.security.AccessControlManager;
-import javax.jcr.security.Privilege;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
 public class CreateUserService implements IRestService
 {
+
     Logger log = LoggerFactory.getLogger(CreateUserService.class);
+
+    @Autowired
+    UserListService userListService;
+
+
 
     public Map createUser(Session session_, Map user_) throws RepositoryException {
         UserManager userManager = ((JackrabbitSession) session_).getUserManager();
 
-        Object username = user_.get(Constants.NAME).toString().toLowerCase();
+        //Make sure we don't create duplicate users
+        List<com.familydam.repository.modules.auth.models.User> existingUsers = userListService.listUsers(session_, false);
+        long matches = existingUsers.stream().filter(user -> user.getName().equalsIgnoreCase((String)user_.get(Constants.JCR_NAME))).count();
+        if( matches>0 ){
+            throw new RuntimeException("User with this name already exists");
+        }
+
+
+
+        Object id = UUID.randomUUID().toString();
+        Object username = user_.get(Constants.JCR_NAME).toString().trim();
         Object pwd = user_.get(Constants.PASSWORD).toString();
-        Object isFamilyAdmin = Boolean.parseBoolean(user_.get(Constants.IS_FAMILY_ADMIN).toString());
         User _user = userManager.createUser((String) username, (String) pwd);
 
 
         _user.setProperty(Constants.FIRST_NAME, new StringValue((String)user_.get(Constants.FIRST_NAME)));
         _user.setProperty(Constants.LAST_NAME, new StringValue((String)user_.get(Constants.LAST_NAME)));
-        //_user.setProperty(Constants.EMAIL, new StringValue((String)user_.get(Constants.EMAIL)));
+
+        Object isFamilyAdmin = false;
+        if( user_.containsKey(Constants.IS_FAMILY_ADMIN) ){
+            isFamilyAdmin = Boolean.parseBoolean(user_.get(Constants.IS_FAMILY_ADMIN).toString());
+        }
         _user.setProperty(Constants.IS_FAMILY_ADMIN, new BooleanValue( (Boolean)isFamilyAdmin ));
+
+
+        Object isSystemAdmin = false;
+        if( user_.containsKey(Constants.IS_SYSTEM_ADMIN) ){
+            isSystemAdmin = Boolean.parseBoolean(user_.get(Constants.IS_SYSTEM_ADMIN).toString());
+        }
+        _user.setProperty(Constants.IS_SYSTEM_ADMIN, new BooleanValue( (Boolean)isSystemAdmin ));
+
         session_.save();
 
 
@@ -55,10 +76,6 @@ public class CreateUserService implements IRestService
         userNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
         userNode.addMixin(Constants.MIXIN_DAM_EXTENSIBLE);
         userNode.addMixin(Constants.MIXIN_DAM_USER);
-        session_.save();
-
-        initializeUserFolders(session_, _user);
-        //authorizePaths(session_, _user);
         session_.save();
 
         Map user = NodeToMapUtil.convert(userNode);
@@ -70,46 +87,6 @@ public class CreateUserService implements IRestService
         return user;
     }
 
-
-
-    private void initializeUserFolders(Session session_, User user_) throws RepositoryException {
-        Node contentNode = session_.getNode("/content");
-        Node contentFileNode = contentNode.getNode("files");
-        Node userNode = contentFileNode.addNode(user_.getID(), NodeType.NT_FOLDER);
-
-
-        //Add default sub folders to home folder
-        //todo pull these from application.properties (i18n)
-        userNode.addNode("Documents", NodeType.NT_FOLDER);
-        userNode.addNode("Music", NodeType.NT_FOLDER);
-        userNode.addNode("Movies", NodeType.NT_FOLDER);
-        userNode.addNode("Photos", NodeType.NT_FOLDER);
-
-        //setup email
-        Node contentEmailNode = session_.getNode("/content/email");
-        Node emailNode = contentEmailNode.addNode(user_.getID(), NodeType.NT_FOLDER);
-
-        //setup web
-        Node contentWebNode = session_.getNode("/content/web");
-        Node webNode = contentWebNode.addNode(user_.getID(), NodeType.NT_FOLDER);
-
-
-        //add read permission to all family root content
-        assignPrivilege(session_, user_, contentNode, Privilege.JCR_READ);
-        assignPrivilege(session_, user_, contentFileNode, Privilege.JCR_READ);
-        //add read/write/all permision to this users files
-        assignPrivilege(session_, user_, contentNode, Privilege.JCR_ALL);
-        assignPrivilege(session_, user_, contentNode, Privilege.JCR_ALL);
-        assignPrivilege(session_, user_, contentNode, Privilege.JCR_ALL);
-    }
-
-    private void assignPrivilege(Session session_, User user_, Node contentNode, String... privledge) throws RepositoryException {
-        AccessControlManager acm = session_.getAccessControlManager();
-        JackrabbitAccessControlList acl = AccessControlUtils.getAccessControlList(session_, contentNode.getPath());
-        Privilege[] privileges = AccessControlUtils.privilegesFromNames(session_, privledge);
-        acl.addEntry(user_.getPrincipal(), privileges, true);
-        acm.setPolicy(contentNode.getPath(), acl);
-    }
 
 
     private void handleNewUser(Session session, Node node_, Map user_) throws RepositoryException
@@ -126,6 +103,7 @@ public class CreateUserService implements IRestService
             //createSecurityKeys(session, user);
         }
     }
+
 
     /**
      * Generate a public/private key for each user.

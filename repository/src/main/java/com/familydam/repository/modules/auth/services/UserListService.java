@@ -1,5 +1,6 @@
 package com.familydam.repository.modules.auth.services;
 
+import com.familydam.repository.Constants;
 import com.familydam.repository.services.IRestService;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;
@@ -46,9 +47,20 @@ public class UserListService implements IRestService
                 user.put(prop, u.getProperty(prop)[0].getString());
             }
 
-            user.put("id", u.getID());
-            user.put("_isAdmin", u.isAdmin());
-            user.put("_isDisabled", u.isDisabled());
+            user.put(Constants.JCR_ID, u.getID());
+            user.put(Constants.JCR_NAME, u.getID());
+            user.put(Constants.IS_FAMILY_ADMIN, false);
+            user.put(Constants.IS_SYSTEM_ADMIN, false);
+
+            if( u.hasProperty(Constants.IS_FAMILY_ADMIN) ) {
+                user.put(Constants.IS_FAMILY_ADMIN, u.getProperty(Constants.IS_FAMILY_ADMIN)[0].getBoolean());
+            }
+            if( u.hasProperty(Constants.IS_SYSTEM_ADMIN) ) {
+                user.put(Constants.IS_SYSTEM_ADMIN, u.getProperty(Constants.IS_SYSTEM_ADMIN)[0].getBoolean());
+            }
+
+            user.put(Constants.IS_DISABLED, u.isDisabled());
+            if( u.hasProperty(Constants.JCR_CREATED) )user.put(Constants.JCR_CREATED, u.getProperty(Constants.JCR_CREATED)[0].getDate().getTime());
 
 
             _users.add(com.familydam.repository.modules.auth.models.User.builder().withMap(user).build());

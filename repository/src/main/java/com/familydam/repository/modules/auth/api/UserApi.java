@@ -1,5 +1,6 @@
 package com.familydam.repository.modules.auth.api;
 
+import com.familydam.repository.Constants;
 import com.familydam.repository.modules.auth.config.security.JcrAuthToken;
 import com.familydam.repository.modules.auth.models.AdminUser;
 import com.familydam.repository.modules.auth.models.User;
@@ -7,9 +8,14 @@ import com.familydam.repository.modules.auth.services.CreateUserService;
 import com.familydam.repository.modules.auth.services.GetUserService;
 import com.familydam.repository.modules.auth.services.UpdateUserService;
 import com.familydam.repository.modules.auth.services.UserListService;
+import org.apache.jackrabbit.api.JackrabbitSession;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +23,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,25 +82,29 @@ public class UserApi {
 
     @GetMapping(value = {"/user/{username}"})
     @ResponseBody
-    public ResponseEntity authenticatedUser(Principal principal, @PathVariable String username) throws Exception
+    public ResponseEntity getUserByName(Principal principal, @PathVariable String username)
     {
         if( principal == null ){
-            return ResponseEntity.status(401).build();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
+        try {
+            Session session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
 
-        User user = getUserService.getUser(session,  username );
-        if( user == null ){
-            return ResponseEntity.notFound().build();
+            User user = getUserService.getUser(session, username);
+            if (user == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+
+            return ResponseEntity.ok(user);
+        }catch (RepositoryException ex){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-
-        return ResponseEntity.ok(user);
     }
 
 
     /**
-     * Create New User
+     * Create New User or update user
      * @param principal
      * @param request
      * @return
@@ -104,24 +113,11 @@ public class UserApi {
     @PostMapping(value={"/user", "/user/{username}"})
     public ResponseEntity createUser(Principal principal, HttpServletRequest request, @PathVariable(required = false) String username) throws Exception
     {
-        Session session;
-        Session adminSession;
+        Session session = null;
+        Session adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
         if( principal != null ){
             //Check permission of user, needs to be family admin
             session = repository.login(((JcrAuthToken)principal).getCredentials());
-            //For the first user we'll use the admin session, for all future users a admin family member has to create the account.
-            adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-            if(userListService.listUsers(adminSession, true).size() == 0) {
-                session = adminSession;
-            }
-        }else {
-            //First User
-            adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-            if(userListService.listUsers(adminSession, true).size() == 0) {
-                session = adminSession;
-            }else {
-                throw new AccessDeniedException("Invalid Principle");
-            }
         }
 
         Map newParams = new HashMap();
@@ -137,13 +133,49 @@ public class UserApi {
         Map user;
         try {
             if (username == null) {
-                //todo,  give admin user admin permissions so we can use the logged in user instead of system permission
-                session = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
-                user = createUserService.createUser(session, newParams);
+                //Create
+                if(userListService.listUsers(adminSession, true).size() == 0) {
+                    newParams.put(Constants.IS_SYSTEM_ADMIN, true);
+                }
+
+                user = createUserService.createUser(adminSession, newParams);
+
+
             } else {
-                user = updateUserService.updateUser(session, username, newParams);
+                //Edit
+                UserManager userManager = ((JackrabbitSession) adminSession).getUserManager();
+                Authorizable authorizable = userManager.getAuthorizable(principal.getName());
+
+                if( authorizable.getID().equalsIgnoreCase(username )  //edit yourself
+                    || authorizable.getProperty(Constants.IS_FAMILY_ADMIN)[0].getBoolean() //family admins can edit anyone
+                    || (authorizable.hasProperty(Constants.IS_SYSTEM_ADMIN) && authorizable.getProperty(Constants.IS_SYSTEM_ADMIN)[0].getBoolean()) //super admins can edit anyone
+                 ) {
+                    //update isFamilyAdmin, if it's a super admin - just in case someone tries to turn off the isFamilyAdmin flag
+                    if( authorizable.getID().equalsIgnoreCase(username )
+                        && (authorizable.hasProperty(Constants.IS_SYSTEM_ADMIN)
+                            && authorizable.getProperty(Constants.IS_SYSTEM_ADMIN)[0].getBoolean()) ){
+                        newParams.put(Constants.IS_FAMILY_ADMIN, true);
+                    }
+
+                    user = updateUserService.updateUser(adminSession, username, newParams);
+                }else{
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+                }
             }
-            return ResponseEntity.created(URI.create("/api/v1/auth/user/me")).build();
+
+
+            //convert map to model
+            User _user = User.builder().withMap(user).build();
+
+            //return with Hateos link
+            RepresentationModel model = HalModelBuilder
+                .emptyHalModel()
+                .embed(EntityModel.of(_user))
+                .link(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserApi.class).getUserByName(principal, _user.getName())).withSelfRel())
+                .build();
+
+            return ResponseEntity.ok(model);
+
         }catch (Exception ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }

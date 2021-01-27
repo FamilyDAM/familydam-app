@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
-import AppSettings from '../AppSettings';
+import AppSettings from '../actions/AppSettings';
 import {Subject, BehaviorSubject} from "@reactivex/rxjs";
 
 /**
@@ -30,7 +30,7 @@ class GetAllUsersService {
      */
     async getUsers()
     {
-        const baseUrl = AppSettings.baseHost.getValue();
+        const baseUrl = AppSettings.baseHost.getValue() || "";
         const _url = baseUrl +'/api/v1/auth/users';
 
         const headers = new Headers();
@@ -43,7 +43,8 @@ class GetAllUsersService {
         const users = await fetch( _url, {
             method: 'GET',
             cache: "no-cache",
-            headers: headers
+            headers: headers,
+            credentials: "include"
         })
         //parse json
         .then(async (response) => response.json())

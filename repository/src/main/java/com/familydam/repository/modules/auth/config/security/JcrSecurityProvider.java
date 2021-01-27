@@ -37,7 +37,6 @@ public class JcrSecurityProvider implements AuthenticationProvider
         String password = credentials.toString();
         //System.out.println("credentials class: " + credentials.getClass());
 
-
         try {
             //BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String pwd = password.trim();//encoder.encode(password);
@@ -49,7 +48,6 @@ public class JcrSecurityProvider implements AuthenticationProvider
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_FAMILY_ADMIN"));
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_FAMILY_MEMBER"));
             Authentication auth = new JcrAuthToken(name, simpleCredentials, grantedAuthorities);
-
 
             return auth;
         }catch( Exception ex){

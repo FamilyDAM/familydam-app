@@ -6,6 +6,7 @@ import com.familydam.repository.services.IEventService;
 import com.familydam.repository.modules.files.services.FsReadFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Service
+@Lazy(value = false)
 public class PhotoSizeInfoService implements IEventService, EventListener
 {
     Logger log = LoggerFactory.getLogger(PhotoSizeInfoService.class);
@@ -47,6 +49,8 @@ public class PhotoSizeInfoService implements IEventService, EventListener
         ObservationManager om = session.getWorkspace().getObservationManager();
         om.addEventListener(this, Event.NODE_ADDED, "/content/files", true, null, null, false);
         session.save();
+
+        log.debug("Photos Size Info Listener Registered");
     }
 
     @Override

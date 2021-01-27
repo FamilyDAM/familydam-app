@@ -40,9 +40,6 @@ class App extends Component {
         /*
         if( window.location.href.indexOf(":3000") > -1){
             AppSettings.baseHost.next("http://localhost:9000");
-            AppSettings.basicUser.next("Mike");
-            AppSettings.basicPwd.next("admin");
-            UserActions.getUser.sink.next( {"user":{"firstName":"","lastName":""}} );
         }*/
     }
 

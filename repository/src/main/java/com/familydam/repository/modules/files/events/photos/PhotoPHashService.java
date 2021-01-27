@@ -6,6 +6,7 @@ import com.familydam.repository.modules.files.services.FsReadFileService;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +27,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 @Service
+@Lazy(value = false)
 public class PhotoPHashService implements IEventService, EventListener
 {
     Logger log = LoggerFactory.getLogger(PhotoPHashService.class);
@@ -47,6 +49,7 @@ public class PhotoPHashService implements IEventService, EventListener
         ObservationManager om = session.getWorkspace().getObservationManager();
         om.addEventListener(this, Event.NODE_ADDED, "/content/files", true, null, null, false);
         session.save();
+        log.debug("Photos PHash Event Listener Registered");
     }
 
     @Override

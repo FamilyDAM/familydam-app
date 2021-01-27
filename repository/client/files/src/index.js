@@ -1,12 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {addLocaleData} from 'react-intl';
-import registerServiceWorker from './registerServiceWorker';
 
 import 'antd/dist/antd.css';
 
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 //@see https://www.materialpalette.com
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import indigo from '@material-ui/core/colors/indigo';

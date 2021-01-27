@@ -21,7 +21,7 @@ import java.util.*;
  * A simple utility class providing utilities with respect to
  * access control over repositories.
  */
-public class AccessControlUtil {
+public class  AccessControlUtil {
 
     // the name of the accessor method for the AccessControlManager
     private static final String METHOD_GET_ACCESS_CONTROL_MANAGER = "getAccessControlManager";

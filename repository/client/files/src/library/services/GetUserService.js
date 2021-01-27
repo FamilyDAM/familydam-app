@@ -42,8 +42,7 @@ class GetUsersService {
         fetch( _url, {
             method: 'GET',
             mode: 'cors',
-            headers: headers,
-            credentials: "include"
+            headers: headers
         })
             //check for redirect
             .then(response => {

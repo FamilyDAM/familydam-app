@@ -10,8 +10,8 @@ import UserList from './pages/userlist/UserList';
 import UserDetails from './pages/userdetails/UserDetails';
 
 //import AppSettings from './library/actions/AppSettings';
-import UserActions from './library/actions/UserActions';
-
+import AppSettings from "./library/actions/AppSettings";
+import GetUserService from "./library/services/GetUserService";
 
 
 const styleSheet = (theme) => ({
@@ -43,10 +43,9 @@ class App extends Component {
 
 
         // set it running locally with npm start, so you can still call running server
-        // if( window.location.href.indexOf(":3000") > -1){
-        //     AppSettings.baseHost.next("http://localhost:9000");
-        //     UserActions.getUser.sink.next( {"user":{"firstName":"","lastName":""}} );
-        // }
+        if( window.location.href.indexOf(":3000") > -1){
+            AppSettings.baseHost.next("http://localhost:9000");
+        }
 
     }
 
@@ -54,15 +53,15 @@ class App extends Component {
     componentWillMount(){
         this.setState({"isMounted":true});
 
-        UserActions.getUser.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
+        GetUserService.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
             // redirect to dashboard
             if( user_ )
             {
-                this.setState({"isLoading": false, "isAuthenticated":true, "user": user_});
+                this.setState({"isAuthenticated":true, "isLoading":false, "user": user_});
             }
         });
 
-        UserActions.getUser.source.next(null);
+        GetUserService.source.next(null);
     }
 
 
@@ -87,9 +86,7 @@ class App extends Component {
                 <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
                     <Router>
                         <Switch>
-                            <Route path="/" exact={true} component={() => <UserList user={this.state.user}/>}/>
-                            <Route path="/new" exact={true} component={(path_) => <UserDetails user={this.state.user} userId={path_.match.params.user}/>}/>
-                            <Route path="/u/:user" component={(path_) => <UserDetails user={this.state.user} userId={path_.match.params.user}/>}/>
+                            <Route path="/" component={() => <UserList user={this.state.user}/>}></Route>
                         </Switch>
                     </Router>
                 </IntlProvider>

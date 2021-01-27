@@ -21,13 +21,15 @@ const styleSheet = (theme) => ({
 
     sidebarOpen:{
         width: '240px',
-        height: '100vh',
+        minHeight: '100vh',
+        height: '100%',
         background:'#fff'
     },
 
     sidebarClosed:{
         width: '72px',
-        height: '100vh',
+        minHeight: '100vh',
+        height: '100%',
         background:'#fff'
     },
 
