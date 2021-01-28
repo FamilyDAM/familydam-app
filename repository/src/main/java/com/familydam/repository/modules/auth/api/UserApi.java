@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/auth")
 public class UserApi {
@@ -56,7 +56,7 @@ public class UserApi {
     AdminUser adminUser;
 
 
-    @CrossOrigin
+
     @GetMapping(value = {"/user/me"})
     @ResponseBody
     public EntityModel<User> authenticatedUser(Principal principal) throws Exception
@@ -155,6 +155,7 @@ public class UserApi {
                         && (authorizable.hasProperty(Constants.IS_SYSTEM_ADMIN)
                             && authorizable.getProperty(Constants.IS_SYSTEM_ADMIN)[0].getBoolean()) ){
                         newParams.put(Constants.IS_FAMILY_ADMIN, true);
+                        //todo add jcr ADMIN role
                     }
 
                     user = updateUserService.updateUser(adminSession, username, newParams);
@@ -180,6 +181,34 @@ public class UserApi {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
 
+    }
+
+
+    @DeleteMapping(value={"/user/{username}"})
+    public ResponseEntity deleteUser(Principal principal, @PathVariable(required = false) String username) throws Exception
+    {
+        try {
+            //todo: after we set user role on creation, use user permission to delete (not admin)
+            //Session session = repository.login(((JcrAuthToken) principal).getCredentials());
+            Session adminSession = repository.login(new SimpleCredentials(adminUser.username, adminUser.password.toCharArray()));
+
+            UserManager userManager = ((JackrabbitSession) adminSession).getUserManager();
+            Authorizable adminUser = userManager.getAuthorizable(principal.getName());
+            Authorizable userToDelete = userManager.getAuthorizable(username);
+
+
+            if( adminUser.hasProperty(Constants.IS_FAMILY_ADMIN) && adminUser.getProperty(Constants.IS_FAMILY_ADMIN)[0].getBoolean() ) {
+                userToDelete.remove();
+                adminSession.save();
+                return ResponseEntity.ok().build();
+            } else {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, principal.getName() +" is not allowed to delete users");
+            }
+
+
+        }catch (Exception ex){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
     }
 
 }

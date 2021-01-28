@@ -117,7 +117,7 @@ class AppHeader extends Component {
                     </IconButton>
 
                     <Typography variant="h5" color="inherit" className={classes.flex} onClick={()=>this.handleNavClick('://home/index.html')}>
-                        Family <i>D.A.M</i>
+                        Family Data Manager
                     </Typography>
 
                     <IconButton

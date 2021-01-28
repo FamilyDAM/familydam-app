@@ -7,8 +7,10 @@ import com.familydam.repository.utils.NodeToMapUtil;
 import com.familydam.repository.utils.jcr.AccessControlUtil;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.api.JackrabbitSession;
+import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
 import org.apache.jackrabbit.value.BooleanValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.slf4j.Logger;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.security.AccessControlManager;
+import javax.jcr.security.Privilege;
 import java.security.Principal;
 import java.util.*;
 
@@ -55,20 +59,30 @@ public class CreateUserService implements IRestService
         _user.setProperty(Constants.FIRST_NAME, new StringValue((String)user_.get(Constants.FIRST_NAME)));
         _user.setProperty(Constants.LAST_NAME, new StringValue((String)user_.get(Constants.LAST_NAME)));
 
-        Object isFamilyAdmin = false;
+        Boolean isFamilyAdmin = false;
         if( user_.containsKey(Constants.IS_FAMILY_ADMIN) ){
             isFamilyAdmin = Boolean.parseBoolean(user_.get(Constants.IS_FAMILY_ADMIN).toString());
+            //todo set JCR admin role
         }
         _user.setProperty(Constants.IS_FAMILY_ADMIN, new BooleanValue( (Boolean)isFamilyAdmin ));
 
 
-        Object isSystemAdmin = false;
+        Boolean isSystemAdmin = false;
         if( user_.containsKey(Constants.IS_SYSTEM_ADMIN) ){
             isSystemAdmin = Boolean.parseBoolean(user_.get(Constants.IS_SYSTEM_ADMIN).toString());
+            //todo set JCR admin role
         }
         _user.setProperty(Constants.IS_SYSTEM_ADMIN, new BooleanValue( (Boolean)isSystemAdmin ));
-
         session_.save();
+
+
+        if( isSystemAdmin || isFamilyAdmin ){
+            Node contentNode = session_.getNode("/");
+            assignPrivilege(session_, _user, contentNode, Privilege.JCR_ALL);
+            assignPrivilege(session_, _user, contentNode, Session.ACTION_SET_PROPERTY);
+            session_.save();
+        }
+
 
 
         // make sure the user has an UUID
@@ -85,6 +99,15 @@ public class CreateUserService implements IRestService
 
         log.trace("User " + userNode.getPath() + " created by " +session_.getUserID());
         return user;
+    }
+
+
+    private void assignPrivilege(Session session_, User user_, Node contentNode, String... privledge) throws RepositoryException {
+        AccessControlManager acm = session_.getAccessControlManager();
+        JackrabbitAccessControlList acl = AccessControlUtils.getAccessControlList(session_, contentNode.getPath());
+        Privilege[] privileges = AccessControlUtils.privilegesFromNames(session_, privledge);
+        acl.addEntry(user_.getPrincipal(), privileges, true);
+        acm.setPolicy(contentNode.getPath(), acl);
     }
 
 

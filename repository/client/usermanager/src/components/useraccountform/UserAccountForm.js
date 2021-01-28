@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
+import {takeWhile, catchError, distinct, empty} from 'rxjs/operators';
 import {withStyles} from "@material-ui/core/styles";
-import {Button, Checkbox, Form, Input, message, PageHeader, Space} from "antd";
+import {Button, Checkbox, Form, Input, Modal, message, PageHeader, Space} from "antd";
 import Paper from "@material-ui/core/Paper";
-
+import DeleteUserService from "../../services/DeleteUserService";
+import {EMPTY} from "rxjs";
 
 const styleSheet = (theme) => ({
     outerContainer: {
@@ -15,7 +17,36 @@ const styleSheet = (theme) => ({
 //  /* or 'row', 'row dense', 'column dense' */
 class UserAccountForm extends Component {
 
-    state = { user: this.props.user };
+    state = {
+        user: this.props.user,
+        showDeleteUserDialog: false
+    };
+
+
+    constructor(props, context) {
+        super(props, context);
+
+        DeleteUserService.sink.pipe(
+            takeWhile(() => this.state.isMounted),
+            catchError((err) => {
+                message.error(`Error Deleting User | ${err}`);
+                return EMPTY;
+            })).subscribe(
+            (next) => {
+                window.location.href = "/usermanager/"; //hard refresh
+                this.setState({showDeleteUserDialog:false})
+            }
+        );
+
+    }
+
+    componentDidMount() {
+        this.setState({isMounted:true});
+    }
+
+    componentWillUnmount() {
+        this.setState({isMounted:false});
+    }
 
     handleOnFinish = (form) => {
         let isValid = true;
@@ -36,6 +67,10 @@ class UserAccountForm extends Component {
         }
     }
 
+    handleDeleteUserConfirmation = () =>{
+        DeleteUserService.source.next(this.state.user);
+    }
+
 
     deleteConfim = (e)=>{
         alert('TODO: are you sure');
@@ -44,7 +79,6 @@ class UserAccountForm extends Component {
 
     render(){
         const classes = this.props.classes;
-
         const layout = {
             labelCol: { span: 4 },
             wrapperCol: { span: 12 },
@@ -101,7 +135,7 @@ class UserAccountForm extends Component {
 
                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
                             <Space >
-                                <Button type="secondary" htmlType="submit" onClick={this.deleteConfim}>
+                                <Button type="secondary" htmlType="button" onClick={() => this.setState({showDeleteUserDialog: true})}>
                                     Delete
                                 </Button>
                                 <Button type="primary" htmlType="submit">
@@ -112,6 +146,18 @@ class UserAccountForm extends Component {
 
                     </Form>
                 </PageHeader>
+
+
+                <Modal
+                    okText="Yes"
+                    cancelText="No"
+                    title="Are you sure?"
+                    visible={this.state.showDeleteUserDialog}
+                    onCancel={() => {this.setState({showDeleteUserDialog: false})}}
+                    onOk={this.handleDeleteUserConfirmation}>
+                    <p>Do you want to delete this user?</p>
+                    <p>This will delete all files, properties, and settings</p>
+                </Modal>
             </Paper>
         );
     }

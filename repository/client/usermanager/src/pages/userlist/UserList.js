@@ -68,10 +68,6 @@ class UserList extends Component {
     constructor(props, context) {
         super(props);
 
-        this.handleClick = this.handleClick.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleEdit = this.handleEdit.bind(this);
-
         this.state = {
             isMounted:true,
             isLoading:false,
@@ -94,7 +90,7 @@ class UserList extends Component {
         CreateUserService.sink.takeWhile(() => this.state.isMounted).subscribe({
             next: user => {
                 GetAllUsersService.source.next(true);
-                this.props.history.push("/u/" +user.name +"/account");
+                window.location.href = "/usermanager/"; //hard refresh
             },
             error: err => {
                 console.error(err);
@@ -123,19 +119,6 @@ class UserList extends Component {
         UpdateUserService.source.next(userProps);
     }
 
-
-    handleClick(event) {
-        this.setState({anchorEl:event.currentTarget});
-    }
-
-    handleClose() {
-        this.setState({anchorEl:null});
-    }
-
-    handleEdit(user_) {
-        this.setState({anchorEl:null});
-        AppActions.navigateTo.next("/u/" +user_.id)
-    }
 
     handleSubMenuSelect(e){
         this.props.history.push(e.key);
