@@ -159,7 +159,7 @@ class UserList extends Component {
                     <div className={classes.container}>
 
                         <div className={classes.userlist}>
-                            <div className={classes.userlistpart} style={{minHeight: '50%'}}>
+                            <div className={classes.userlistpart} style={{minHeight: '100%'}}>
                                 <Menu mode="inline"
                                       openKeys={[selectedMenu]}
                                       defaultSelectedKeys={[selectedSubMenu]}
@@ -167,31 +167,40 @@ class UserList extends Component {
                                       onSelect={this.handleSubMenuSelect.bind(this)}
                                       style={{ width: '100%' }}>
                                     {this.state.users.map( u=> {
-                                        return ( <SubMenu key={'/u/' +u.name} icon={<UserOutlined/>} title={u.firstName} >
-                                                    <Menu.Item key={'/u/' +u.name +'/account'}>Account</Menu.Item>
-                                                </SubMenu> )
+                                        if( this.props.user.isFamilyAdmin || u.name === this.props.user.name ) {
+                                            return (<SubMenu key={'/u/' + u.name} icon={<UserOutlined/>}
+                                                             title={u.firstName}>
+                                                        <Menu.Item key={'/u/' + u.name + '/account'}>Account</Menu.Item>
+                                                    </SubMenu>)
+                                        }
                                     })}
                                 </Menu>
 
                             </div>
-                            <div className={classes.userlistlink}>
-                                <Button type="link" size="large" icon={<UserAddOutlined />} onClick={()=>this.props.history.push('/new')}>
-                                    Add Family Member
-                                </Button>
-                            </div>
+                            {(this.props.user && this.props.user.isFamilyAdmin) &&
+                                <div className={classes.userlistlink}>
+                                    <Button type="link" size="large" icon={<UserAddOutlined/>}
+                                            onClick={() => this.props.history.push('/new')}>
+                                        Add Family Member
+                                    </Button>
+                                </div>
+                            }
                         </div>
 
                         <div className={classes.userforms}>
                             <HashRouter>
                             <Switch>
                                 <Route exact path="/u/:user/account" component={(path_) => <UserAccountForm
-                                    user={this.state.users.filter(u=>u.name===selectedUser).pop()}
+                                    user={this.props.user}
+                                    selectedUser={this.state.users.filter(u=>u.name===selectedUser).pop()}
                                     onSave={this.handleSaveNewUser}/>} />
                                 <Route exact path="/u/:user/permissions" component={(path_) => <div>Permissions</div>} />
                                 <Route exact path="/u/:user/web" component={(path_) => <div>Web</div>} />
                                 <Route exact path="/u/:user/friends" component={(path_) => <div>Friends</div>} />
                                 <Route exact path="/u/:user" component={(path_) => <UserAccountForm/>} />
-                                <Route path="/new" exact={true} component={(path_) => <NewUserForm onSave={this.handleCreateNewUser}/>} />
+                                {(this.props.user && this.props.user.isFamilyAdmin) &&
+                                    <Route path="/new" exact={true} component={(path_) => <NewUserForm onSave={this.handleCreateNewUser}/>} />
+                                }
                             </Switch>
                             </HashRouter>
                         </div>

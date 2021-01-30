@@ -1,9 +1,6 @@
 import {Subject} from '@reactivex/rxjs';
-import LogoutService from "./processors/LogoutService";
 
 class AppActions {
-
-
 
     //Use this to navigation around the app Or outside
     navigateTo = new Subject();

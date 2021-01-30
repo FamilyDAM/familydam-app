@@ -7,7 +7,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 //views
 import UserList from './pages/userlist/UserList';
-import UserDetails from './pages/userdetails/UserDetails';
 
 //import AppSettings from './library/actions/AppSettings';
 import AppSettings from "./library/actions/AppSettings";

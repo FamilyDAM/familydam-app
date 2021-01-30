@@ -19,6 +19,7 @@ class UserAccountForm extends Component {
 
     state = {
         user: this.props.user,
+        selectedUser: this.props.selectedUser,
         showDeleteUserDialog: false
     };
 
@@ -68,7 +69,7 @@ class UserAccountForm extends Component {
     }
 
     handleDeleteUserConfirmation = () =>{
-        DeleteUserService.source.next(this.state.user);
+        DeleteUserService.source.next(this.state.selectedUser);
     }
 
 
@@ -85,12 +86,12 @@ class UserAccountForm extends Component {
         };
 
         let title = '';
-        if( this.state.user && this.state.user.firstName ){
-            title = this.state.user.firstName;
+        if( this.state.selectedUser && this.state.selectedUser.firstName ){
+            title = this.state.selectedUser.firstName;
         }
-        if( this.state.user && this.state.user.lastName ){
+        if( this.state.selectedUser && this.state.selectedUser.lastName ){
             title += ' ';
-            title += this.state.user.lastName;
+            title += this.state.selectedUser.lastName;
         }
 
 
@@ -103,7 +104,7 @@ class UserAccountForm extends Component {
                     <Form {...layout}
                           name="user-edit-form"
                           autoComplete="off"
-                          initialValues={this.state.user}
+                          initialValues={this.state.selectedUser}
                           onFinish={this.handleOnFinish}>
 
 
@@ -116,11 +117,14 @@ class UserAccountForm extends Component {
                         <Form.Item name="lastName" label="Last Name" rules={[{ required: true, message: 'First Name is required' }]}>
                             <Input name="lastName" autoComplete="off"  />
                         </Form.Item>
-                        <Form.Item name="isFamilyAdmin" label="Is Parent" valuePropName="checked">
-                            <Checkbox name="isFamilyAdmin"
-                                      disabled={this.state.user?this.state.user.isSystemAdmin||false:false}
-                                      checked={this.state.user?this.state.user.isFamilyAdmin||false:false}>(Parents have full access to all data)</Checkbox>
-                        </Form.Item>
+                        {(this.state.user && this.props.user.isFamilyAdmin) &&
+                            <Form.Item name="isFamilyAdmin" label="Is Parent" valuePropName="checked">
+                                <Checkbox name="isFamilyAdmin"
+                                          disabled={this.state.selectedUser ? this.state.selectedUser.isSystemAdmin || false : false}
+                                          checked={this.state.selectedUser ? this.state.selectedUser.isFamilyAdmin || false : false}>(Parents
+                                    have full access to all data)</Checkbox>
+                            </Form.Item>
+                        }
 
                         <fieldset>
                             <legend>Change Password</legend>
@@ -135,12 +139,16 @@ class UserAccountForm extends Component {
 
                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
                             <Space >
+                                {(this.state.user && this.state.user.isFamilyAdmin) &&
                                 <Button type="secondary" htmlType="button" onClick={() => this.setState({showDeleteUserDialog: true})}>
                                     Delete
                                 </Button>
+                                }
+                                {(this.state.selectedUser && this.state.user && (this.props.user.isFamilyAdmin || this.state.selectedUser.name === this.props.user.name)) &&
                                 <Button type="primary" htmlType="submit">
                                     Submit
                                 </Button>
+                                }
                         </Space>
                         </Form.Item>
 

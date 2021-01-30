@@ -2,8 +2,11 @@ import React, {Component} from 'react';
 import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
 
+import {Button, Menu} from 'antd';
+import { HomeOutlined, FileImageOutlined, FolderOutlined } from '@ant-design/icons';
+
 //import Button from '@material-ui/core/Button';
-import Button from '@material-ui/core/Button';
+//import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
@@ -137,14 +140,14 @@ class Sidebar extends Component {
                         />
                     </div>
                     <div className={classes.sidebarProfileName}>
-                        <Typography component="div" type={"title"}>{this.props.user.name} {this.props.user.lastName}</Typography>
+                        <Typography component="div" type={"title"}>{this.props.user.firstName} {this.props.user.lastName}</Typography>
                     </div>
                     <div className={classes.sidebarButtons}>
 
-                        <Button onClick={this.handleLogout}>Logout</Button>
+                        <Button type="link" onClick={this.handleLogout}>Logout</Button>
 
                         {profileApp &&
-                        <Button onClick={()=>AppActions.navigateTo.next(profileApp.path)}>Profile</Button>
+                        <Button type="link" onClick={()=>window.location.href=profileApp.path +"#/u/" +this.props.user.name +"/account"}>Profile</Button>
                         }
                     </div>
                 </Paper>
@@ -155,24 +158,24 @@ class Sidebar extends Component {
                     <div style={{gridColumn: "1",gridRow: "1"}}>
                         <Typography type="title"
                                     className={this.props.open?classes.openLabel:classes.closedLabel}
-                                    style={{'paddingLeft':'16px', paddingTop:'16px', gridColumn: "1", gridRow: "1"}}>Apps</Typography>
+                                    style={{'fontSize':'16px','paddingLeft':'16px', paddingTop:'16px', gridColumn: "1", gridRow: "1"}}>Apps</Typography>
                     </div>
 
-                    <List style={{gridColumn: "1",gridRow: "2"}}>
-
+                    <Menu style={{gridColumn: "1",gridRow: "2"}}>
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
-                                <ListItem button key={item.path} onClick={()=>window.location.href = item.path}>
-                                    <Avatar style={{marginRight:'8px'}}>
-                                        <FolderIcon />
-                                    </Avatar>
-                                    <ListItemText primary={item.label} primaryTypographyProps={{type:"body2"}}
-                                                  className={this.props.open?classes.openLabel:classes.closedLabel}/>
-                                </ListItem>
-
+                                <Menu.Item key={item.path} style={{height:'34px'}} onClick={()=>window.location.href = item.path}>
+                                    {item.slug==='home'&& <HomeOutlined/>}
+                                    {item.slug==='files'&& <FolderOutlined/>}
+                                    {item.slug==='photos'&& <FileImageOutlined/>}
+                                    {item.label}
+                                </Menu.Item>
                             )
                         })}
-                    </List>
+                    </Menu>
+
+
+
 
 
                     <List style={{gridColumn: "1",gridRow: "3"}} className={!this.props.open?classes.openLabel:classes.closedLabel}>
@@ -189,5 +192,22 @@ class Sidebar extends Component {
         );
     }
 }
+
+/**
+ * <List style={{gridColumn: "1",gridRow: "2"}}>
+ {this.props.apps && this.props.apps.map((item)=>{
+                            return (
+                                <ListItem button key={item.path} onClick={()=>window.location.href = item.path}>
+                                    <Avatar style={{marginRight:'8px'}}>
+                                        <FolderIcon />
+                                    </Avatar>
+                                    <ListItemText primary={item.label} primaryTypographyProps={{type:"body2"}}
+                                                  className={this.props.open?classes.openLabel:classes.closedLabel}/>
+                                </ListItem>
+
+                            )
+                        })}
+ </List>
+ */
 
 export default injectIntl(withStyles(styleSheet)(Sidebar));
