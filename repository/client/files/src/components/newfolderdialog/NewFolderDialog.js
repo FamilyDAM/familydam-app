@@ -50,6 +50,10 @@ class NewFolderDialog extends Component {
         this.setState({
             open: false,
         });
+
+        if( this.props.onCancel ){
+            this.props.onCancel();
+        }
     };
 
 

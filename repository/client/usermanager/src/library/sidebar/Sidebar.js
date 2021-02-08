@@ -3,20 +3,13 @@ import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
 
 import {Button, Menu} from 'antd';
-import { HomeOutlined, FileImageOutlined, FolderOutlined } from '@ant-design/icons';
+import {FileImageOutlined, FolderOutlined, HomeOutlined, UserOutlined} from '@ant-design/icons';
 
-//import Button from '@material-ui/core/Button';
-//import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/Folder';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-//import PhotoIcon from '@material-ui/icons/Photo';
-
 import AppActions from '../actions/AppActions';
 
 
@@ -83,7 +76,9 @@ const styleSheet = (theme) => ({
     },
 
     openLabel:{
-        display:'inline'
+        display:'inline',
+        marginLeft: '10px',
+        fontSize: '16px'
     },
 
     closedLabel:{
@@ -143,32 +138,25 @@ class Sidebar extends Component {
                         <Typography component="div" type={"title"}>{this.props.user.firstName} {this.props.user.lastName}</Typography>
                     </div>
                     <div className={classes.sidebarButtons}>
-
                         <Button type="link" onClick={this.handleLogout}>Logout</Button>
-
                         {profileApp &&
-                        <Button type="link" onClick={()=>window.location.href=profileApp.path +"#/u/" +this.props.user.name +"/account"}>Profile</Button>
+                            <Button type="link" onClick={()=>window.location.href=profileApp.path +"#/u/" +this.props.user.name +"/account"}>Profile</Button>
                         }
                     </div>
                 </Paper>
 
 
                 <div className={this.props.open?classes.appListsOpen:classes.appListsClosed}>
-
-                    <div style={{gridColumn: "1",gridRow: "1"}}>
-                        <Typography type="title"
-                                    className={this.props.open?classes.openLabel:classes.closedLabel}
-                                    style={{'fontSize':'16px','paddingLeft':'16px', paddingTop:'16px', gridColumn: "1", gridRow: "1"}}>Apps</Typography>
-                    </div>
+                    <div style={{gridColumn: "1",gridRow: "1"}}><br/></div>
 
                     <Menu style={{gridColumn: "1",gridRow: "2"}}>
                         {this.props.apps && this.props.apps.map((item)=>{
                             return (
-                                <Menu.Item key={item.path} style={{height:'34px'}} onClick={()=>window.location.href = item.path}>
-                                    {item.slug==='home'&& <HomeOutlined/>}
-                                    {item.slug==='files'&& <FolderOutlined/>}
-                                    {item.slug==='photos'&& <FileImageOutlined/>}
-                                    {item.label}
+                                <Menu.Item key={item.path}  onClick={()=>window.location.href = item.path}>
+                                    {item.slug==='home'&& <Button size="large" shape="circle" icon={<HomeOutlined style={{'marginRight': '0px'}}/>}/>}
+                                    {item.slug==='files'&& <Button size="large" shape="circle" icon={<FolderOutlined style={{'marginRight': '0px'}}/>}/>}
+                                    {item.slug==='photos'&& <Button size="large" shape="circle" icon={<FileImageOutlined style={{'marginRight': '0px'}}/>}/>}
+                                    <span className={this.props.open?classes.openLabel:classes.closedLabel}>{item.label}</span>
                                 </Menu.Item>
                             )
                         })}
@@ -177,37 +165,17 @@ class Sidebar extends Component {
 
 
 
-
-                    <List style={{gridColumn: "1",gridRow: "3"}} className={!this.props.open?classes.openLabel:classes.closedLabel}>
-                        <ListItem button onClick={()=>window.location.href = '://app-usermanager/index.html'}>
-                            <Avatar>
-                                <AccountCircle
-                                    style={{'width': 48, 'height': 48}}
-                                />
-                            </Avatar>
-                        </ListItem>
-                    </List>
+                    <Menu style={{gridColumn: "1", gridRow: "3"}} className={!this.props.open?classes.openLabel:classes.closedLabel}>
+                    `    <Button size="large"
+                            shape="circle"
+                            icon={<UserOutlined style={{'marginLeft': '0px','marginRight': '0px'}}/>}
+                            onClick={()=>window.location.href = '/usermanager/index.html'}/>`
+                    </Menu>
                 </div>
             </Paper>
         );
     }
 }
 
-/**
- * <List style={{gridColumn: "1",gridRow: "2"}}>
- {this.props.apps && this.props.apps.map((item)=>{
-                            return (
-                                <ListItem button key={item.path} onClick={()=>window.location.href = item.path}>
-                                    <Avatar style={{marginRight:'8px'}}>
-                                        <FolderIcon />
-                                    </Avatar>
-                                    <ListItemText primary={item.label} primaryTypographyProps={{type:"body2"}}
-                                                  className={this.props.open?classes.openLabel:classes.closedLabel}/>
-                                </ListItem>
-
-                            )
-                        })}
- </List>
- */
 
 export default injectIntl(withStyles(styleSheet)(Sidebar));

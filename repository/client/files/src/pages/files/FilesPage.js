@@ -100,7 +100,6 @@ class FilesPage extends React.PureComponent {
             isMounted:true,
             canAddFile:true,
             canAddFolder:true,
-            showAddFolderDialog:false,
             showUploadSidebar:false,
             showNewFolderDialog:false,
             showUploadDialog:false,
@@ -150,9 +149,10 @@ class FilesPage extends React.PureComponent {
 
         //trigger load of all folders and files
         if( this.props.location.pathname.startsWith(this.state.path)) {
-            this.setState({path: this.props.location.pathname})
+            this.setState({path: this.props.location.pathname, showNewFolderDialog:false})
             GetFilesAndFoldersService.source.next(this.props.location.pathname );
         }else{
+            this.setState({showNewFolderDialog:false});
             GetFilesAndFoldersService.source.next(this.state.path);
         }
     }
@@ -164,9 +164,6 @@ class FilesPage extends React.PureComponent {
 
 
     componentDidUpdate(props_, state_) {
-        //this.props = props_;
-        this.setState({showAddFolderDialog:false, showUploadSidebar:false, showNewFolderDialog:false, showUploadDialog:false});
-
         const currentPath = this.state.path;
         const newPath = this.validatePath();
         if( currentPath !== newPath ) {
@@ -210,7 +207,7 @@ class FilesPage extends React.PureComponent {
         }
 
         const visibleParts = [];
-        for (let i = 1; i < parts.length; i++) {
+        for (let i = 2; i < parts.length; i++) {
             const p = parts[i];
             visibleParts.push( {label: p, path: '/' +parts.slice(0, i+1).join("/")} )
         }
@@ -224,7 +221,7 @@ class FilesPage extends React.PureComponent {
 
         CreateFolderService.sink.takeWhile(() => this.state.isMounted).subscribe(function (location_) {
             console.log("Create Folder:" +location_);
-            this.setState({showAddFolderDialog:false, showUploadSidebar:false, showNewFolderDialog:false, showUploadDialog:false});
+            this.setState({showUploadSidebar:false, showNewFolderDialog:false, showUploadDialog:false});
 
             //trigger load of all folders and files
             GetFilesAndFoldersService.source.next(this.state.path);
@@ -318,6 +315,12 @@ class FilesPage extends React.PureComponent {
     }
 
 
+    handleCloseNewFolderDialog = (e) =>{
+        this.setState({showNewFolderDialog:false});
+        console.log(this.state.showNewFolderDialog)
+    }
+
+
 
     render() {
         //console.log("render:" +this.state.uploadFiles.length);
@@ -374,7 +377,7 @@ class FilesPage extends React.PureComponent {
                             <Space>
                                 <Button type="primary"
                                         disabled={!this.state.canAddFolder}
-                                        onClick={()=>{this.setState({'showNewFolderDialog':true})}}
+                                        onClick={()=>this.setState({'showNewFolderDialog':true})}
                                         icon={<FolderAddOutlined />}>New Folder</Button>
                             </Space>
                         </Toolbar>
@@ -411,7 +414,7 @@ class FilesPage extends React.PureComponent {
 
                     <NewFolderDialog
                         onSave={this.handleCreateFolder.bind(this)}
-                        onClose={()=>{this.setState({'showNewFolderDialog':false})}}
+                        onCancel={this.handleCloseNewFolderDialog}
                         open={this.state.showNewFolderDialog}
                         path={this.state.path}/>
                 </div>
