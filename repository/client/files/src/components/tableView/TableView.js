@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
 
 import {Drawer, Modal, Space, Table} from 'antd';
 import {FileOutlined, FolderOutlined} from '@ant-design/icons';
 
 
-import {format, parseISO} from 'date-fns'
+
 import Button from "@material-ui/core/Button";
 import SingleImageView from "../fileinfosidebar/SingleImageView";
 
@@ -105,6 +106,7 @@ class TableView extends React.PureComponent {
 
 
     getColumns(){
+        const { t } = this.props;
         return [
             {
                 title: '',
@@ -120,7 +122,7 @@ class TableView extends React.PureComponent {
                     }
                 }
             }, {
-                title: 'Name',
+                title: t('label.name', 'Name'),
                 dataIndex: 'name',
                 key: 'name',
                 sorter: this.fieldNameSorter,
@@ -134,21 +136,21 @@ class TableView extends React.PureComponent {
                 },
             },
             {
-                title: 'Date Created',
+                title: t('label.dateCreated', "Date Created"),
                 dataIndex: 'dateCreated',
                 key: 'dateCreated',
                 width: 200,
                 responsive: ['md'],
                 sorter: this.fieldDateSorter,
-                render: text => <span>{text?format(parseISO(text || ""),'yyyy-MM-dd hh:mm:ss a'):''}</span>,
+                render: text => <span>{text? t('date', {date: text}):''}</span>,
             },
             {
-                title: 'Action',
+                title: t('label.action', 'Action'),
                 key: 'action',
                 width: 200,
                 render: (text, record) => {
-                    const downloadBtn = record._links.download && this.props.onDownload? <Button type="link" data-path={record.path} onClick={()=>this.props.onDownload(record.name, record._links.download.href)}>Download</Button> : <span/>;
-                    const deleteBtn = record._links.self? <Button type="link" data-path={record.path} onClick={this.handleFileDelete}>Delete</Button> : <span/>;
+                    const downloadBtn = record._links.download && this.props.onDownload? <Button type="link" data-path={record.path} onClick={()=>this.props.onDownload(record.name, record._links.download.href)}>{t('label.download', 'Download')}</Button> : <span/>;
+                    const deleteBtn = record._links.self? <Button type="link" data-path={record.path} onClick={this.handleFileDelete}>{t('label.delete', 'Delete')}</Button> : <span/>;
                     const editBtn = <span/>; //<Button type="link" data-path={record.path} onClick={()=>this.setState({showSidebar:true, selectedFile: record})}>Edit</Button>
 
                     if (record.primaryType === 'nt:file' && record.mimeType.startsWith("image/")) {
@@ -184,7 +186,7 @@ class TableView extends React.PureComponent {
 
     render() {
         const classes = this.props.classes;
-
+        const { t } = this.props;
 
         let rows = [];
         rows = rows.concat(this.props.folders);
@@ -209,7 +211,7 @@ class TableView extends React.PureComponent {
                        onChange={this.onTableChangeHandler}></Table>
 
                 <Drawer
-                    title="File Info"
+                    title={t('label.fileInfo', 'File Info')}
                     placement="right"
                     closable={true}
                     getContainer={false}
@@ -229,20 +231,20 @@ class TableView extends React.PureComponent {
                     visible={this.state.showDeleteFileDialog}
                     onCancel={() => {this.setState({showDeleteFileDialog: false})}}
                     onOk={this.handleFileDeleteConfirmation}
-                    okText="Yes"
-                    cancelText="No"
-                    title="Are you sure?">
-                    <p>Do you want to delete this file?</p>
+                    okText={t('label.yes', 'Yes')}
+                    cancelText={t('label.no', 'No')}
+                    title={t('instr.areYouSure', 'Are you sure?')}>
+                    <p>{t('instr.deleteFolderTitle', 'Do you want to delete this file?')}</p>
                 </Modal>
 
                 <Modal
                     visible={this.state.showDeleteFolderDialog}
                     onCancel={() => {this.setState({showDeleteFolderDialog: false})}}
                     onOk={this.handleFolderDeleteConfirmation}
-                    okText="Yes"
-                    cancelText="No"
-                    title="Are you sure?">
-                    <p>Do you want to delete this folder and all files in it?</p>
+                    okText={t('label.yes', 'Yes')}
+                    cancelText={t('label.no', 'No')}
+                    title={t('instr.areYouSure', 'Are you sure?')}>
+                    <p>{t('instr.deleteFolderConfirmation', 'Do you want to delete this folder and all files in it?')}</p>
                 </Modal>
             </div>
 
@@ -256,4 +258,4 @@ TableView.propTypes = {
     folders: PropTypes.array.isRequired,
 };
 
-export default withRouter(TableView);
+export default  withTranslation()(withRouter(TableView));

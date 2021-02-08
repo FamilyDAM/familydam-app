@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
 
 import {Button, Menu} from 'antd';
@@ -178,4 +177,4 @@ class Sidebar extends Component {
 }
 
 
-export default injectIntl(withStyles(styleSheet)(Sidebar));
+export default withStyles(styleSheet)(Sidebar);

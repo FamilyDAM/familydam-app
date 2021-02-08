@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {HashRouter as Router, Route, Switch} from 'react-router-dom';
-import {IntlProvider} from 'react-intl';
+import i18n from './i18n/i18n.js';
 
 import {withStyles} from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -49,10 +49,11 @@ class App extends Component {
     componentDidMount(){
         this.setState({"isMounted": true});
 
-        GetUserService.sink.takeWhile(() => this.state.isMounted).subscribe((user_)=>{
+        GetUserService.sink.takeWhile(() => this.state.isMounted).subscribe(async(user_)=>{
             // redirect to dashboard
             if( user_ )
             {
+                await i18n.changeLanguage("en-US"); //zn-CH //todo: get from user_ langCode
                 this.setState({"isAuthenticated":true, "isLoading":false, "user": user_});
             }
         });
@@ -68,8 +69,6 @@ class App extends Component {
 
     render() {
         const classes = this.props.classes;
-        const locale = "en-EN";
-
 
         if (this.state.isLoading) {
             return (
@@ -80,13 +79,12 @@ class App extends Component {
         }
 
         return (
-            <IntlProvider locale={locale} key={locale} messages={this.props.i18nMessages[locale]}>
-                <Router>
-                    <Switch>
-                        <Route path="/" component={() => <FilesPage user={this.state.user}/>}/>
-                    </Switch>
-                </Router>
-            </IntlProvider>
+            <Router>
+                <Switch>
+                    <Route path="/" component={() => <FilesPage user={this.state.user}/>}/>
+                </Switch>
+            </Router>
+
         );
 
     }

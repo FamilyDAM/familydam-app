@@ -2,8 +2,8 @@
  * Copyright (c) 2015  Mike Nimer & 11:58 Labs
  */
 import React, {Component} from 'react';
+import { withTranslation } from 'react-i18next';
 import {withStyles} from "@material-ui/core/styles";
-//import AppActions from "../../actions/AppActions";
 
 import { Modal } from 'antd';
 import TextField from '@material-ui/core/TextField';
@@ -26,17 +26,12 @@ class NewFolderDialog extends Component {
     }
 
     componentDidMount() {
-        this.setState({isMounted:true});
+        this.setState({isMounted:true, "open":this.props.open});
     }
 
 
     componentWillUnmount(){
         this.setState({isMounted:false});
-    }
-
-    componentWillReceiveProps(newProps){
-        this.props = newProps;
-        this.setState({"open":newProps.open})
     }
 
 
@@ -67,18 +62,20 @@ class NewFolderDialog extends Component {
 
     render() {
         //var classes = this.props.classes;
+        const { t } = this.props;
+
         return (
             <Modal
                 visible={this.state.open}
                 onCancel={this.hideModal}
                 onOk={this.handleSave}
-                okText="Create"
-                cancelText="Cancel"
-                title="New Folder">
+                okText={t('label.create')}
+                cancelText={t('label.cancel')}
+                title={t('label.createNewFolder')}>
 
                     <TextField
                         id="newFolderName"
-                        label="Folder Name"
+                        label={t('label.folderName')}
                         value={this.state.folderName}
                         onChange={(e)=>this.setState({folderName: e.target.value})}
                         margin="dense"
@@ -92,4 +89,4 @@ class NewFolderDialog extends Component {
 }
 
 
-export default withStyles(styleSheet)(NewFolderDialog);
+export default withTranslation()(withStyles(styleSheet)(NewFolderDialog));

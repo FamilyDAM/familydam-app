@@ -1,0 +1,26 @@
+{
+    "date": "{{date, yyyy-MM-dd hh:mm:ss a}}",
+    "instr": {
+        "areYouSure": "你确定吗？",
+        "clickOrDrag": "单击或拖动文件到该区域以上传",
+        "clickOrDragDesc": "支持单次或批量上传。",
+        "deleteFolderConfirmation": "是否要删除此文件夹及其中的所有文件？",
+        "deleteFolderTitle": "您要删除此文件吗？"
+    },
+    "label": {
+        "action": "行动",
+        "cancel": "取消",
+        "create": "创造",
+        "createNewFolder": "建立新资料夹",
+        "dateCreated": "创建日期",
+        "delete": "删除",
+        "download": "下载",
+        "fileInfo": "文件信息",
+        "files": "档案",
+        "folderName": "文件夹名称",
+        "name": "名称",
+        "newFolder": "新建文件夹",
+        "no": "没有",
+        "yes": "是"
+    }
+}

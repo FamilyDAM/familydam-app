@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {injectIntl} from 'react-intl';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from "@material-ui/core/styles";
 import {takeWhile} from 'rxjs/operators';
@@ -151,4 +150,4 @@ class AppShell extends Component {
     }
 }
 
-export default injectIntl(withRouter(withStyles(styleSheet)(AppShell)));
+export default withRouter(withStyles(styleSheet)(AppShell));

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {injectIntl} from 'react-intl';
 import {withStyles} from "@material-ui/core/styles";
 
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -60,4 +59,4 @@ class LoadingButton extends Component {
     }
 }
 
-export default injectIntl(withStyles(styleSheet)(LoadingButton));
+export default withStyles(styleSheet)(LoadingButton);

@@ -3,7 +3,9 @@
  */
 import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
-import {injectIntl} from 'react-intl';
+import { withTranslation } from 'react-i18next';
+//import i18n from '../../i18n/i18n.js';
+
 import {withStyles} from "@material-ui/core/styles";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -325,6 +327,8 @@ class FilesPage extends React.PureComponent {
     render() {
         //console.log("render:" +this.state.uploadFiles.length);
         var classes = this.props.classes;
+        const { t } = this.props;
+
         const _sidebarVisible = this.state.showUploadSidebar || this.state.uploadFiles.length>0 || this.state.selectedFiles.length>0;
         const {Dragger} = Upload;
         const location = this.props.location;
@@ -356,8 +360,7 @@ class FilesPage extends React.PureComponent {
         return (
             <AppShell user={this.props.user} open={false}>
                 <div className={classes.fileGrid}>
-                    <AppBar color="default" position="static" elevation={0}
-                            className={classes.fileGridAppBar}>
+                    <AppBar color="default" position="static" elevation={0} className={classes.fileGridAppBar}>
 
                         <Toolbar className={classes.toolbarContainer}>
                             <Typography variant="h6" className={classes.title}>
@@ -367,7 +370,7 @@ class FilesPage extends React.PureComponent {
                                     </Breadcrumb.Item>
                                     <Breadcrumb.Item href={'#/'}>
                                         <FileOutlined />
-                                        <span>Files</span>
+                                        <span>{t('label.files', 'Files')}</span>
                                     </Breadcrumb.Item>
                                     {pathParts.map((p)=>{
                                         return (<Breadcrumb.Item key={p.path}><Link to={p.path} >{p.label}</Link></Breadcrumb.Item>);
@@ -378,7 +381,7 @@ class FilesPage extends React.PureComponent {
                                 <Button type="primary"
                                         disabled={!this.state.canAddFolder}
                                         onClick={()=>this.setState({'showNewFolderDialog':true})}
-                                        icon={<FolderAddOutlined />}>New Folder</Button>
+                                        icon={<FolderAddOutlined />}>{t('label.newFolder', 'New Folder')}</Button>
                             </Space>
                         </Toolbar>
                     </AppBar>
@@ -402,10 +405,9 @@ class FilesPage extends React.PureComponent {
                                 <p className="ant-upload-drag-icon">
                                     <FolderOutlined />
                                 </p>
-                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                <p className="ant-upload-text">{t('instr.clickOrDrag', 'Click or drag file to this area to upload')}</p>
                                 <p className="ant-upload-hint">
-                                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                                    band files
+                                    {t('instr.clickOrDragDesc', 'Support for a single or bulk upload.')}
                                 </p>
                             </Dragger>
                         </div>
@@ -433,4 +435,4 @@ class FilesPage extends React.PureComponent {
 }
 
 
-export default injectIntl(withRouter(withStyles(styleSheet)(FilesPage)));
+export default withTranslation()(withRouter(withStyles(styleSheet)(FilesPage)));

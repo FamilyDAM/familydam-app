@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 
 import 'antd/dist/antd.css';
 
-
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 //@see https://www.materialpalette.com
 import deepPurple from '@material-ui/core/colors/deepPurple';
@@ -13,13 +12,6 @@ import './index.css';
 
 import App from './App';
 
-/**
- * Setup i18n/Localization formats & messages
- */
-//addLocaleData(require('../react-intl/locale-data/en'));
-const i18nMessages = {
-    "en-EN":require('./i18n/locales/en-EN.json')
-};
 
 
 
@@ -43,7 +35,7 @@ const renderApp = function(){
 
     ReactDOM.render(
         <MuiThemeProvider theme={theme}>
-            <App i18nMessages={i18nMessages}/>
+            <App/>
         </MuiThemeProvider>
         , document.getElementById('root'));
 

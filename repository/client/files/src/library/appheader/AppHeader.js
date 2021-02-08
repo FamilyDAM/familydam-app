@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {injectIntl} from 'react-intl';
 
 import {UserOutlined} from '@ant-design/icons';
 
@@ -161,4 +160,4 @@ class AppHeader extends Component {
     }
 }
 
-export default injectIntl(withStyles(styleSheet)(AppHeader));
+export default withStyles(styleSheet)(AppHeader);
